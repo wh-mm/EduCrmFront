@@ -103,4 +103,34 @@ export default [{
     component: () =>
       import( /* webpackChunkName: "views" */ '@/views/work/process/leave/detail')
   }]
-}]
+},
+  {
+    path: '/work/process/expense',
+    component: Layout,
+    redirect: '/work/process/expense/form',
+    children: [{
+      path: 'form/:processDefinitionId',
+      name: '报销流程',
+      meta: {
+        i18n: 'work'
+      },
+      component: () =>
+        import( /* webpackChunkName: "views" */ '@/views/work/process/expense/form')
+    }, {
+      path: 'handle/:taskId/:processInstanceId/:businessId',
+      name: '处理报销流程',
+      meta: {
+        i18n: 'work'
+      },
+      component: () =>
+        import( /* webpackChunkName: "views" */ '@/views/work/process/expense/handle')
+    }, {
+      path: 'detail/:processInstanceId/:businessId',
+      name: '报销流程详情',
+      meta: {
+        i18n: 'work'
+      },
+      component: () =>
+        import( /* webpackChunkName: "views" */ '@/views/work/process/expense/detail')
+    }]
+  }]
