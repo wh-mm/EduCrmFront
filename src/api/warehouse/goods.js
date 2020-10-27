@@ -21,7 +21,7 @@ export const getPage = (parentId) => {
   })
 }
 
-export const getDetail = (id) => {
+export const getGoodsDetail = (id) => {
   return request({
     url: '/api/taocao-warehouse/goods/detail',
     method: 'get',
@@ -57,5 +57,3 @@ export const selectListBycode = (id) => {
     data: id
   })
 }
-
-

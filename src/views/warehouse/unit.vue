@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.unit_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,7 +32,8 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/goods";  import {mapGetters} from "vuex";
+  import {getList, getDetail, add, update, remove} from "@/api/warehouse/unit";
+  import {mapGetters} from "vuex";
 
   export default {
     data() {
@@ -58,61 +59,30 @@
           selection: true,
           dialogClickModal: false,
           column: [
-			 {
-			    label: "大类别",
-			    prop: "parentId",
-				type: "tree",
-				props: {
-					label: 'title',
-					value: 'id'
-				},
-				cascaderItem: ['goodsName'],
-				 search: true,
-				 dicUrl: "/api/blade-system/dictCategory/tree"
-			  },
             {
-              label: "货物类别",
-              prop: "goodsCategory",
-			  type: "tree",
-			  props: {
-			 	label: 'title',
-			 	value: 'id'
-			 },
-			 cascaderItem: ['goodsName'],
-			  search: true,
-			  dicUrl: "/api/blade-system/dictCategory/tree"
-            },
-
-			{
-              label: "货物名称",
-              prop: "goodsName",
+              label: "名称",
+              prop: "unitName",
               rules: [{
                 required: true,
-                message: "请输入货物名称",
+                message: "请输入名称",
                 trigger: "blur"
               }]
             },
-			
-			/*
             {
-              label: "货品编码",
-              prop: "goodsId",
-			  type: 'select',
-              props: {
-              	label: 'categoryName',
-              	value: 'id'
-              },
-			  search: true,
-			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
-            },
-			*/
-		   
-            {
-              label: "货品价格",
-              prop: "money",
+              label: "缩写",
+              prop: "unitSub",
               rules: [{
                 required: true,
-                message: "请输入货品价格",
+                message: "请输入缩写",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "单位编码",
+              prop: "unitCode",
+              rules: [{
+                required: true,
+                message: "请输入单位编码",
                 trigger: "blur"
               }]
             },
@@ -125,10 +95,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.unit_add, false),
+          viewBtn: this.vaildData(this.permission.unit_view, false),
+          delBtn: this.vaildData(this.permission.unit_delete, false),
+          editBtn: this.vaildData(this.permission.unit_edit, false)
         };
       },
       ids() {

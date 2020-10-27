@@ -23,19 +23,34 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.purchaseorder_delete"
                    @click="handleDelete">删 除
+
         </el-button>
       </template>
-    </avue-crud>
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,2)">审批</el-button>
+      </template>
+     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/goods";  import {mapGetters} from "vuex";
+  import {getList, add, getDetail,update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
+  import { getGoodsDetail } from "@/api/warehouse/goods";
+  import {mapGetters} from "vuex";
 
   export default {
     data() {
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
+        }
+      };
       return {
         form: {},
         query: {},
@@ -46,6 +61,7 @@
           total: 0
         },
         selectionList: [],
+
         option: {
           height:'auto',
           calcHeight: 30,
@@ -57,64 +73,132 @@
           viewBtn: true,
           selection: true,
           dialogClickModal: false,
-          column: [
-			 {
-			    label: "大类别",
-			    prop: "parentId",
-				type: "tree",
-				props: {
-					label: 'title',
-					value: 'id'
-				},
-				cascaderItem: ['goodsName'],
-				 search: true,
-				 dicUrl: "/api/blade-system/dictCategory/tree"
-			  },
-            {
-              label: "货物类别",
-              prop: "goodsCategory",
-			  type: "tree",
-			  props: {
-			 	label: 'title',
-			 	value: 'id'
-			 },
-			 cascaderItem: ['goodsName'],
-			  search: true,
-			  dicUrl: "/api/blade-system/dictCategory/tree"
-            },
+          dialogWidth: '80%',
 
-			{
-              label: "货物名称",
-              prop: "goodsName",
+          column: [
+            {
+              label: "采购订单号",
+              prop: "orderNumber",
+              editDisplay: false,
+              addDisplay: false,
+              search:true,
               rules: [{
                 required: true,
-                message: "请输入货物名称",
+                message: "请输入采购订单号",
                 trigger: "blur"
               }]
             },
-			
-			/*
             {
-              label: "货品编码",
-              prop: "goodsId",
-			  type: 'select',
-              props: {
-              	label: 'categoryName',
-              	value: 'id'
+              label: "类型",
+              prop: "type",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入类型",
+                trigger: "blur"
               },
-			  search: true,
-			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
+               { min: 1, max: 50, message: '类型长度在 1 到 50 个字符', trigger: 'blur' }
+              ]
             },
-			*/
-		   
             {
-              label: "货品价格",
-              prop: "money",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
-                trigger: "blur"
-              }]
+              label: "状态",
+              prop: "statusName",
+              addDisplay:false,
+              editDisplay:false,
+            },
+            {
+              label: '商品列表',
+              prop: 'purchaseOrderDetailList',
+              type: 'dynamic',
+              span:24,
+              children: {
+                align: 'center',
+                headerAlign: 'center',
+                 rowAdd:(done)=>{
+                   done({
+                    goodsQuantity: 1,
+                    discountPercentage: 0,
+                   });
+                 },
+                 rowDel:(row,done)=>{
+                     done();
+                 },
+
+                column: [
+                  {
+                  label: '商品',
+                  prop: "goodsId",
+                  type: 'select',
+                  width: 150,
+                  rules:[{
+                    type:'select',
+                    require:true,
+                    message:'请选择商品',
+                  }],
+                  props: {
+                    label: 'goodsName',
+                    value: 'id'
+                  },
+                  dicMethod:"post",
+                  dicUrl:'/api/taocao-warehouse/goods/dropDown',
+                  change: ({ value }) => {
+                    if(value){
+                      getGoodsDetail(value).then(res => {
+                        this.form.purchaseOrderDetailList.forEach(val => {
+                          if(val.goodsId == value){
+
+                            var detail = res.data.data;
+                            val.unit = detail.unitName;
+                            val.totalPrice =(detail.money*val.goodsQuantity).toFixed(2);
+                            val.money =detail.money;
+                          }
+                        });
+                      });
+                    }
+                  }
+                },{
+                  label: '单位',
+                  prop: "unit",
+                  disabled: true,
+                  placeholder: " ",
+                  width: 100,
+                }, {
+                  label: '单价(元)',
+                  prop: "money",
+                  disabled: true,
+                  placeholder: " ",
+                  width: 100,
+                },{
+                  label: '数量',
+                  prop: "goodsQuantity",
+                  type: "number",
+                  width: 100,
+                  rules: [{
+                    validator: validateQuantity,
+                    trigger: 'blur' ,
+                  }]
+
+                },{
+                  label: '采购仓库',
+                  prop: "warehouseId",
+                  type: "tree",
+                  props: {
+                    label: 'name',
+                    value: 'id'
+                  },
+                  dicMethod:"post",
+                  dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+                }, {
+                  label: '购货金额',
+                  prop: "totalPrice",
+                  disabled: true,
+                  slot: true,
+                  width: 80,
+                }, {
+                  label: '备注',
+                  prop: "remark",
+                }],
+              }
             },
           ]
         },
@@ -125,10 +209,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseorder_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseorder_view, false),
+          delBtn: this.vaildData(this.permission.purchaseorder_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseorder_edit, false)
         };
       },
       ids() {
@@ -248,6 +332,16 @@
           this.loading = false;
           this.selectionClear();
         });
+      },
+      updateStatus(id,status){
+        updateStatus(id,status).then(res => {
+          if(res.data.success){
+            this.$message.success(res.data.msg);
+          }else{
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+        })
       }
     }
   };

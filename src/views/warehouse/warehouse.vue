@@ -78,6 +78,7 @@
             {
               label: "仓库名称",
               prop: "name",
+              search: true,
               rules: [{
                 required: true,
                 message: "请输入仓库名称",

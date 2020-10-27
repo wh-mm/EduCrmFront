@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.purchaseorderdetail_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,10 +32,20 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/goods";  import {mapGetters} from "vuex";
+  import {getList, getDetail, add, update, remove} from "@/api/warehouse/purchaseorderdetail";
+  import {mapGetters} from "vuex";
 
   export default {
     data() {
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
+        }
+      };
       return {
         form: {},
         query: {},
@@ -58,64 +68,36 @@
           selection: true,
           dialogClickModal: false,
           column: [
-			 {
-			    label: "大类别",
-			    prop: "parentId",
-				type: "tree",
-				props: {
-					label: 'title',
-					value: 'id'
-				},
-				cascaderItem: ['goodsName'],
-				 search: true,
-				 dicUrl: "/api/blade-system/dictCategory/tree"
-			  },
             {
-              label: "货物类别",
-              prop: "goodsCategory",
-			  type: "tree",
-			  props: {
-			 	label: 'title',
-			 	value: 'id'
-			 },
-			 cascaderItem: ['goodsName'],
-			  search: true,
-			  dicUrl: "/api/blade-system/dictCategory/tree"
+              label: "采购id",
+              prop: "purchaseId",
+              rules: [{
+                required: true,
+                message: "请输入采购id",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "商品id",
+              prop: "goodsId",
+              rules: [{
+                required: true,
+                message: "请输入商品id",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
+              }]
             },
 
-			{
-              label: "货物名称",
-              prop: "goodsName",
-              rules: [{
-                required: true,
-                message: "请输入货物名称",
-                trigger: "blur"
-              }]
-            },
-			
-			/*
-            {
-              label: "货品编码",
-              prop: "goodsId",
-			  type: 'select',
-              props: {
-              	label: 'categoryName',
-              	value: 'id'
-              },
-			  search: true,
-			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
-            },
-			*/
-		   
-            {
-              label: "货品价格",
-              prop: "money",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
-                trigger: "blur"
-              }]
-            },
           ]
         },
         data: []
@@ -125,10 +107,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.purchaseorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseorderdetail_edit, false)
         };
       },
       ids() {
