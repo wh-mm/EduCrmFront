@@ -67,8 +67,8 @@
 					value: 'id'
 				},
 				cascaderItem: ['goodsName'],
-				 search: true,
-				 dicUrl: "/api/blade-system/dictCategory/tree"
+				search: true,
+				dicUrl: "/api/blade-system/dictCategory/tree?code=002"
 			  },
             {
               label: "货物类别",
@@ -80,7 +80,7 @@
 			 },
 			 cascaderItem: ['goodsName'],
 			  search: true,
-			  dicUrl: "/api/blade-system/dictCategory/tree"
+			  dicUrl: "/api/blade-system/dictCategory/tree?code=003"
             },
 
 			{
