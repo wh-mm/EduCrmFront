@@ -23,36 +23,34 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.warehouse_delete"
+                   v-if="permission.purchaseorder_delete"
                    @click="handleDelete">删 除
+
         </el-button>
       </template>
-    </avue-crud>
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,2)">审批</el-button>
+      </template>
+     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,testingOnlyCode} from "@/api/warehouse/warehouse";
+  import {getList, add, getDetail,update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
+  import { getGoodsDetail } from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var codeTestingOnly = (rule,value,callback) =>{
-        if (value === ''){
-          callback(new error("请输入编码！"))
-        }else {
-          testingOnlyCode(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
         }
-      }
-
+      };
       return {
         form: {},
         query: {},
@@ -63,6 +61,7 @@
           total: 0
         },
         selectionList: [],
+
         option: {
           height:'auto',
           calcHeight: 30,
@@ -74,54 +73,132 @@
           viewBtn: true,
           selection: true,
           dialogClickModal: false,
+          dialogWidth: '80%',
+
           column: [
             {
-              label: "仓库名称",
-              prop: "name",
-              search: true,
+              label: "采购订单号",
+              prop: "orderNumber",
+              editDisplay: false,
+              addDisplay: false,
+              search:true,
               rules: [{
                 required: true,
-                message: "请输入仓库名称",
-                trigger: "blur"
-              },
-              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-              ]
-            },
-            {
-              label: "编码",
-              prop: "code",
-              append: "仓库唯一编号",
-              rules: [{
-                required: true,
-                validator: codeTestingOnly,
-                trigger: "blur"
-              },
-              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-              ]
-            },
-            {
-              label: "地址",
-              prop: "addressArray",
-              type: "cascader",
-              rules: [{
-                required: true,
-                message: "请输入地址",
-                trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
-            },
-            {
-              label: "详细地址",
-              prop: "addressDetail",
-              rules: [{
-                required: true,
-                message: "请输入详细地址",
+                message: "请输入采购订单号",
                 trigger: "blur"
               }]
+            },
+            {
+              label: "类型",
+              prop: "type",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入类型",
+                trigger: "blur"
+              },
+               { min: 1, max: 50, message: '类型长度在 1 到 50 个字符', trigger: 'blur' }
+              ]
+            },
+            {
+              label: "状态",
+              prop: "statusName",
+              addDisplay:false,
+              editDisplay:false,
+            },
+            {
+              label: '商品列表',
+              prop: 'purchaseOrderDetailList',
+              type: 'dynamic',
+              span:24,
+              children: {
+                align: 'center',
+                headerAlign: 'center',
+                 rowAdd:(done)=>{
+                   done({
+                    goodsQuantity: 1,
+                    discountPercentage: 0,
+                   });
+                 },
+                 rowDel:(row,done)=>{
+                     done();
+                 },
+
+                column: [
+                  {
+                  label: '商品',
+                  prop: "goodsId",
+                  type: 'select',
+                  width: 150,
+                  rules:[{
+                    type:'select',
+                    require:true,
+                    message:'请选择商品',
+                  }],
+                  props: {
+                    label: 'goodsName',
+                    value: 'id'
+                  },
+                  dicMethod:"post",
+                  dicUrl:'/api/taocao-warehouse/goods/dropDown',
+                  change: ({ value }) => {
+                    if(value){
+                      getGoodsDetail(value).then(res => {
+                        this.form.purchaseOrderDetailList.forEach(val => {
+                          if(val.goodsId == value){
+
+                            var detail = res.data.data;
+                            val.unit = detail.unitName;
+                            val.totalPrice =(detail.money*val.goodsQuantity).toFixed(2);
+                            val.money =detail.money;
+                          }
+                        });
+                      });
+                    }
+                  }
+                },{
+                  label: '单位',
+                  prop: "unit",
+                  disabled: true,
+                  placeholder: " ",
+                  width: 100,
+                }, {
+                  label: '单价(元)',
+                  prop: "money",
+                  disabled: true,
+                  placeholder: " ",
+                  width: 100,
+                },{
+                  label: '数量',
+                  prop: "goodsQuantity",
+                  type: "number",
+                  width: 100,
+                  rules: [{
+                    validator: validateQuantity,
+                    trigger: 'blur' ,
+                  }]
+
+                },{
+                  label: '采购仓库',
+                  prop: "warehouseId",
+                  type: "tree",
+                  props: {
+                    label: 'name',
+                    value: 'id'
+                  },
+                  dicMethod:"post",
+                  dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+                }, {
+                  label: '购货金额',
+                  prop: "totalPrice",
+                  disabled: true,
+                  slot: true,
+                  width: 80,
+                }, {
+                  label: '备注',
+                  prop: "remark",
+                }],
+              }
             },
           ]
         },
@@ -132,10 +209,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.warehouse_add, false),
-          viewBtn: this.vaildData(this.permission.warehouse_view, false),
-          delBtn: this.vaildData(this.permission.warehouse_delete, false),
-          editBtn: this.vaildData(this.permission.warehouse_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseorder_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseorder_view, false),
+          delBtn: this.vaildData(this.permission.purchaseorder_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseorder_edit, false)
         };
       },
       ids() {
@@ -255,6 +332,16 @@
           this.loading = false;
           this.selectionClear();
         });
+      },
+      updateStatus(id,status){
+        updateStatus(id,status).then(res => {
+          if(res.data.success){
+            this.$message.success(res.data.msg);
+          }else{
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+        })
       }
     }
   };

@@ -49,7 +49,7 @@
           password2: '',
         },
         loading: false,
-        tenantMode: true,
+        tenantMode: false,
         accountBox: false,
       };
     },

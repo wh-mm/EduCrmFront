@@ -32,3 +32,23 @@ export const leaveDetail = (businessId) => {
     }
   })
 }
+
+// =====================报销流程===========================
+
+export const expenseProcess = (data) => {
+  return request({
+    url: '/api/blade-desk/process/expense/start-process',
+    method: 'post',
+    data
+  })
+}
+
+export const expenseDetail = (businessId) => {
+  return request({
+    url: '/api/blade-desk/process/expense/detail',
+    method: 'get',
+    params: {
+      businessId
+    }
+  })
+}

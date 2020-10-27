@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.warehouse_delete"
+                   v-if="permission.unit_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,27 +32,11 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,testingOnlyCode} from "@/api/warehouse/warehouse";
+  import {getList, getDetail, add, update, remove} from "@/api/warehouse/unit";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var codeTestingOnly = (rule,value,callback) =>{
-        if (value === ''){
-          callback(new error("请输入编码！"))
-        }else {
-          testingOnlyCode(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-
       return {
         form: {},
         query: {},
@@ -76,50 +60,29 @@
           dialogClickModal: false,
           column: [
             {
-              label: "仓库名称",
-              prop: "name",
-              search: true,
+              label: "名称",
+              prop: "unitName",
               rules: [{
                 required: true,
-                message: "请输入仓库名称",
+                message: "请输入名称",
                 trigger: "blur"
-              },
-              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-              ]
+              }]
             },
             {
-              label: "编码",
-              prop: "code",
-              append: "仓库唯一编号",
+              label: "缩写",
+              prop: "unitSub",
               rules: [{
                 required: true,
-                validator: codeTestingOnly,
+                message: "请输入缩写",
                 trigger: "blur"
-              },
-              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-              ]
+              }]
             },
             {
-              label: "地址",
-              prop: "addressArray",
-              type: "cascader",
+              label: "单位编码",
+              prop: "unitCode",
               rules: [{
                 required: true,
-                message: "请输入地址",
-                trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
-            },
-            {
-              label: "详细地址",
-              prop: "addressDetail",
-              rules: [{
-                required: true,
-                message: "请输入详细地址",
+                message: "请输入单位编码",
                 trigger: "blur"
               }]
             },
@@ -132,10 +95,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.warehouse_add, false),
-          viewBtn: this.vaildData(this.permission.warehouse_view, false),
-          delBtn: this.vaildData(this.permission.warehouse_delete, false),
-          editBtn: this.vaildData(this.permission.warehouse_edit, false)
+          addBtn: this.vaildData(this.permission.unit_add, false),
+          viewBtn: this.vaildData(this.permission.unit_view, false),
+          delBtn: this.vaildData(this.permission.unit_delete, false),
+          editBtn: this.vaildData(this.permission.unit_edit, false)
         };
       },
       ids() {

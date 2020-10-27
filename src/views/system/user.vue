@@ -52,13 +52,13 @@
                        icon="el-icon-refresh"
                        @click="handleReset">密码重置
             </el-button>
-            <el-button type="info"
+            <!--<el-button type="info"
                        size="small"
                        plain
                        v-if="userInfo.role_name.includes('admin')"
                        icon="el-icon-setting"
                        @click="handlePlatform">平台配置
-            </el-button>
+            </el-button>-->
             <el-button type="success"
                        size="small"
                        plain
@@ -124,7 +124,7 @@
             </template>
           </avue-form>
         </el-dialog>
-        <el-dialog title="用户平台配置"
+        <!--<el-dialog title="用户平台配置"
                    append-to-body
                    :visible.sync="platformBox">
           <avue-crud :option="platformOption"
@@ -152,7 +152,7 @@
               <el-tag>{{row.userTypeName}}</el-tag>
             </template>
           </avue-crud>
-        </el-dialog>
+        </el-dialog>-->
       </basic-container>
     </el-col>
   </el-row>
@@ -275,7 +275,11 @@
               label: "所属租户",
               prop: "tenantName",
               slot: true,
-              display: false
+              //display: !website.tenantMode,
+              hide: !website.tenantMode,
+              addDisplay: website.tenantMode,
+              editDisplay: website.tenantMode,
+              viewDisplay: website.tenantMode,
             },
             {
               label: "用户姓名",
@@ -530,77 +534,81 @@
           ]
         },
         data: [],
-        platformQuery: {},
-        platformSelectionList: [],
-        platformData: [],
-        platformForm: {},
-        platformOption: {
-          tip: false,
-          searchShow: true,
-          searchMenuSpan: 6,
-          border: true,
-          index: true,
-          selection: true,
-          viewBtn: true,
-          dialogClickModal: false,
-          menuWidth: 120,
-          editBtnText: '配置',
-          column: [
-            {
-              label: "登录账号",
-              prop: "account",
-              search: true,
-              display: false
-            },
-            {
-              label: "所属租户",
-              prop: "tenantName",
-              slot: true,
-              display: false
-            },
-            {
-              label: "用户姓名",
-              prop: "realName",
-              search: true,
-              display: false
-            },
-            {
-              label: "用户平台",
-              prop: "userTypeName",
-              slot: true,
-              display: false
-            },
-            {
-              label: "用户平台",
-              type: "select",
-              dicUrl: "/api/blade-system/dict/dictionary?code=user_type",
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dataType: "number",
-              search: true,
-              hide: true,
-              display: false,
-              prop: "userType",
-              rules: [{
-                required: true,
-                message: "请选择用户平台",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "用户拓展",
-              prop: "userExt",
-              type: "textarea",
-              minRows: 8,
-              span: 24,
-              overHidden: true,
-              row: true,
-              hide: true,
-            },
-          ],
-        },
+        // platformQuery: {},
+        // platformSelectionList: [],
+        // platformData: [],
+        // platformForm: {},
+        // platformOption: {
+        //   tip: false,
+        //   searchShow: true,
+        //   searchMenuSpan: 6,
+        //   border: true,
+        //   index: true,
+        //   selection: true,
+        //   viewBtn: true,
+        //   dialogClickModal: false,
+        //   menuWidth: 120,
+        //   editBtnText: '配置',
+        //   column: [
+        //     {
+        //       label: "登录账号",
+        //       prop: "account",
+        //       search: true,
+        //       display: false
+        //     },
+        //     {
+        //       label: "所属租户",
+        //       prop: "tenantName",
+        //       slot: true,
+        //       display: !website.tenantMode,
+        //       hide: !website.tenantMode,
+        //       addDisplay: website.tenantMode,
+        //       editDisplay: website.tenantMode,
+        //       viewDisplay: website.tenantMode,
+        //     },
+        //     {
+        //       label: "用户姓名",
+        //       prop: "realName",
+        //       search: true,
+        //       display: false
+        //     },
+        //     {
+        //       label: "用户平台",
+        //       prop: "userTypeName",
+        //       slot: true,
+        //       display: false
+        //     },
+        //     {
+        //       label: "用户平台",
+        //       type: "select",
+        //       dicUrl: "/api/blade-system/dict/dictionary?code=user_type",
+        //       props: {
+        //         label: "dictValue",
+        //         value: "dictKey"
+        //       },
+        //       dataType: "number",
+        //       search: true,
+        //       hide: true,
+        //       display: false,
+        //       prop: "userType",
+        //       rules: [{
+        //         required: true,
+        //         message: "请选择用户平台",
+        //         trigger: "blur"
+        //       }]
+        //     },
+        //     {
+        //       label: "用户拓展",
+        //       prop: "userExt",
+        //       type: "textarea",
+        //       minRows: 8,
+        //       span: 24,
+        //       overHidden: true,
+        //       row: true,
+        //       hide: true,
+        //     },
+        //   ],
+        // },
         excelForm: {},
         excelOption: {
           submitBtn: false,
