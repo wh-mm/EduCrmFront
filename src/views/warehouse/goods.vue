@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/goods";
+  import {getList, getDetail, add, update, remove,getPage} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
@@ -59,33 +59,75 @@
           selection: true,
           dialogClickModal: false,
           column: [
+			 {
+			    label: "大类别",
+			    prop: "parentId",
+				type: "tree",
+				props: {
+					label: 'title',
+					value: 'id'
+				},
+				cascaderItem: ['goodsName'],
+				 search: true,
+				 dicUrl: "/api/blade-system/dictCategory/tree"
+			  },
             {
-              label: "货品名称",
+              label: "货物类别",
+              prop: "goodsCategory",
+			  type: "tree",
+			  props: {
+			 	label: 'title',
+			 	value: 'id'
+			 },
+			 cascaderItem: ['goodsName'],
+			  search: true,
+			  dicUrl: "/api/blade-system/dictCategory/tree"
+            },
+
+			{
+              label: "货物名称",
               prop: "goodsName",
               rules: [{
                 required: true,
-                message: "请输入货品名称",
+                message: "请输入货物名称",
                 trigger: "blur"
               }]
             },
+			
+			/*
             {
               label: "货品id",
               prop: "goodsId",
-              rules: [{
-                required: true,
-                message: "请输入货品id",
-                trigger: "blur"
-              }]
+			  type: 'select',
+              props: {
+              	label: 'categoryName',
+              	value: 'id'
+              },
+			  search: true,
+			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
             },
+			*/
+		   
             {
               label: "货品价格",
-              prop: "goodsMoney",
+              prop: "money",
               rules: [{
                 required: true,
                 message: "请输入货品价格",
                 trigger: "blur"
               }]
             },
+			{
+			  label: "货品规格",
+			  prop: "goodsSpecifications",
+			  type: "tree",
+			  props: {
+			  	label: 'dictValue',
+			  	value: 'dictKey'
+			  },
+			   dicUrl: "/api/blade-system/dictCategory/dictionary?code=50"
+			},
+			
           ]
         },
         data: []

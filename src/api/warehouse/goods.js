@@ -2,12 +2,21 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/goods/list',
+    url: '/api/taocao-warehouse/goods/page',
     method: 'get',
     params: {
       ...params,
       current,
       size,
+    }
+  })
+}
+export const getPage = (parentId) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/page',
+    method: 'get',
+    params: {
+     data: parentId
     }
   })
 }
@@ -40,11 +49,13 @@ export const add = (row) => {
   })
 }
 
-export const update = (row) => {
+
+export const selectListBycode = (id) => {
   return request({
-    url: '/api/taocao-warehouse/goods/submit',
-    method: 'post',
-    data: row
+    url: '/api/taocao-warehouse/goods/selectListBycode',
+    method: 'get',
+    data: id
   })
 }
+
 

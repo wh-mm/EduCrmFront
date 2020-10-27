@@ -4,7 +4,7 @@
       <basic-container>
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>业务字典列表</span>
+            <span>类别字典列表</span>
           </div>
           <div class="clearfix">
             <avue-crud
@@ -51,7 +51,7 @@
       <basic-container>
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>[{{dictValue}}] 业务字典详情</span>
+            <span>[{{dictValue}}] 类别字典详情</span>
           </div>
           <div class="clearfix">
             <avue-crud
