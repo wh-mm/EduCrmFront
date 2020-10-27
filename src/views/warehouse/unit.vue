@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.unit_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove} from "@/api/warehouse/goods";
+  import {getList, getDetail, add, update, remove} from "@/api/warehouse/unit";
   import {mapGetters} from "vuex";
 
   export default {
@@ -60,48 +60,32 @@
           dialogClickModal: false,
           column: [
             {
-              label: "货品名称",
-              prop: "goodsName",
-              rules: [{
-                required: true,
-                message: "请输入货品名称",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "货品编码",
-              prop: "goodsId",
-              rules: [{
-                required: true,
-                message: "请输入货品id",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "货品价格",
-              prop: "money",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "单位",
-              prop: "unit",
-              type: 'select',
+              label: "名称",
+              prop: "unitName",
               rules: [{
                 required: true,
                 message: "请输入名称",
                 trigger: "blur"
-              }],
-            props: {
-              label: 'unitName',
-              value: 'unitSub'
+              }]
             },
-            dicMethod:"post",
-            dicUrl: "/api/taocao-warehouse/unit/dropDown",
-            }
+            {
+              label: "缩写",
+              prop: "unitSub",
+              rules: [{
+                required: true,
+                message: "请输入缩写",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "单位编码",
+              prop: "unitCode",
+              rules: [{
+                required: true,
+                message: "请输入单位编码",
+                trigger: "blur"
+              }]
+            },
           ]
         },
         data: []
@@ -111,10 +95,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.unit_add, false),
+          viewBtn: this.vaildData(this.permission.unit_view, false),
+          delBtn: this.vaildData(this.permission.unit_delete, false),
+          editBtn: this.vaildData(this.permission.unit_edit, false)
         };
       },
       ids() {
@@ -193,7 +177,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getGoodsDetail(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
