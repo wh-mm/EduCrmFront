@@ -103,7 +103,7 @@
 				prop: "goodsName",
 				rules: [{ 
 					required: true,
-					validator: goodsNames,
+
 					trigger: 'blur',
 					}],
 			},
