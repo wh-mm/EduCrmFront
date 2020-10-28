@@ -32,10 +32,25 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/goods";  import {mapGetters} from "vuex";
+  import {getList, getDetail, add, update, remove,getDictionaryByParentId,selectGoodsName} from "@/api/warehouse/goods"; 
+   import {mapGetters} from "vuex";
 
   export default {
     data() {
+		var goodsNames = (rule, value, callback)=>{
+			console.log(value.length);
+			  if (value.length >= 20) {
+				callback(new Error('货物名称不能超过20个字'));
+			  } else {
+					selectGoodsName(value).then((res) => {
+						console.log(res);
+						if(res.data.code != 200){
+							callback(new Error('货物名称重复,请从新输入!'));
+						} else{
+							callback();
+					}})
+			  }
+			  };
       return {
         form: {},
         query: {},
@@ -59,39 +74,39 @@
           dialogClickModal: false,
           column: [
 			 {
-			    label: "大类别",
+			    label: "货物大类别",
 			    prop: "parentId",
 				type: "tree",
 				props: {
-					label: 'title',
+					label: 'dictValue',
 					value: 'id'
 				},
-				cascaderItem: ['goodsName'],
+				cascaderItem: ['goodsCategory'],
 				search: true,
-				dicUrl: "/api/blade-system/dictCategory/tree?code=002"
+				dicUrl: '/api/blade-system/dictCategory/dictionaryByParentId?parentId=0'
 			  },
             {
-              label: "货物类别",
+              label: "货物小类别",
               prop: "goodsCategory",
 			  type: "tree",
 			  props: {
-			 	label: 'title',
+			 	label: 'dictValue',
 			 	value: 'id'
 			 },
-			 cascaderItem: ['goodsName'],
+			// cascaderItem: ['goodsName'],
 			  search: true,
-			  dicUrl: "/api/blade-system/dictCategory/tree?code=003"
+			  dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
             },
 
 			{
-              label: "货物名称",
-              prop: "goodsName",
-              rules: [{
-                required: true,
-                message: "请输入货物名称",
-                trigger: "blur"
-              }]
-            },
+				label: "商品名称",					
+				prop: "goodsName",
+				rules: [{ 
+					required: true,
+					validator: goodsNames,
+					trigger: 'blur',
+					}],
+			},
 			
 			/*
             {
@@ -106,7 +121,18 @@
 			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
             },
 			*/
-		   
+		   {
+		     label: "规格",
+		     prop: "unit",
+			 type: "tree",
+			 props: {
+		    	label: 'dictValue',
+		    	value: 'dictKey'
+		    },
+			search: true,
+			dicUrl: "/api/blade-system/dictCategory/dictionary?code=unit"
+		    //dicUrl: "/api/blade-system/dict-biz/dictionary?code=050"
+		   },
             {
               label: "货品价格",
               prop: "money",

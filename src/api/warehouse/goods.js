@@ -21,7 +21,7 @@ export const getPage = (parentId) => {
   })
 }
 
-export const getGoodsDetail = (id) => {
+export const getDetail = (id) => {
   return request({
     url: '/api/taocao-warehouse/goods/detail',
     method: 'get',
@@ -50,10 +50,22 @@ export const add = (row) => {
 }
 
 
-export const selectListBycode = (id) => {
+export const dictionaryByParentId = (parentId) => {
   return request({
-    url: '/api/taocao-warehouse/goods/selectListBycode',
+    url: '/api/blade-system/dictCategory/dictionaryByParentId',
     method: 'get',
-    data: id
+    data: parentId
   })
 }
+export const selectGoodsName = (goodsName) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/selectGoodsName',
+    method: 'get',
+    params: {
+      goodsName,
+    }
+  })
+}
+
+
+
