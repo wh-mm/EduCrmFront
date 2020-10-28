@@ -306,6 +306,13 @@
               display: false
             },
             {
+              label: "薪资",
+              prop: "salary",
+              type: "number",
+              precision: 2,
+              display: false
+            },
+            {
               label: "用户平台",
               type: "select",
               dicUrl: "/api/blade-system/dict/dictionary?code=user_type",
@@ -467,7 +474,14 @@
                   prop: "statusName",
                   hide: true,
                   display: false
-                }
+                },
+                {
+                  label: "薪资",
+                  prop: "salary",
+                  type: "number",
+                  precision: 2,
+                  hide: true,
+                },
               ]
             },
             {
