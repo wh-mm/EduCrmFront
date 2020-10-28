@@ -37,6 +37,14 @@
 
   export default {
     data() {
+		var phonelength = (rule, value, callback) => {
+			console.log(value.length);
+			if (value.length != 11) {
+				callback(new Error('请输入正确手机号'));
+			} else {
+				callback();
+			}
+		};	
       return {
         form: {},
         query: {},
@@ -60,14 +68,17 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院ID",
+              label: "医院名称",
               prop: "hospitalId",
-              rules: [{
-                required: true,
-                message: "请输入医院ID",
-                trigger: "blur"
-              }]
-            },
+			  type: "select",
+              props: {
+              		label: "hospitalName",
+              		value: "id"
+              	},
+              	search: true,
+              	dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+              },
+			/*
             {
               label: "库存状态",
               prop: "inventoryStatus",
@@ -77,23 +88,32 @@
                 trigger: "blur"
               }]
             },
+			*/
             {
               label: "订单状态",
               prop: "orderStatic",
-              rules: [{
+			  type: "select",
+              props: {
+              	label: 'dictValue',
+              	value: 'dictKey'
+              },
                 required: true,
-                message: "请输入订单状态",
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
                 trigger: "blur"
-              }]
-            },
+              },
+            
+			
             {
-              label: "订单类型 1是调配机  2 煎药机",
+              label: "订单类型",
               prop: "orderType",
-              rules: [{
-                required: true,
-                message: "请输入订单类型 1是调配机  2 煎药机",
-                trigger: "blur"
-              }]
+			  type: "select",
+				props: {
+             	label: 'dictValue',
+             	value: 'dictKey'
+             },
+			 required: true,
+			 dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
+			 trigger: "blur"
             },
             {
               label: "收货地址",
@@ -117,19 +137,17 @@
               label: "收件人电话",
               prop: "addresseePhone",
               rules: [{
-                required: true,
-                message: "请输入收件人电话",
-                trigger: "blur"
+              	required: true,
+              	validator: phonelength,
+              	trigger: 'blur'
               }]
             },
             {
               label: "订单时间",
               prop: "orderTime",
-              rules: [{
-                required: true,
-                message: "请输入订单时间",
-                trigger: "blur"
-              }]
+				type: 'datetime',
+				format: "yyyy-MM-dd HH:mm:ss",
+				valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
             {
               label: "总价",
