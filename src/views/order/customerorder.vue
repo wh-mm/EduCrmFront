@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospital_delete"
+                   v-if="permission.order_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,23 +32,11 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,
-	selectHosptalByHospintl} from "@/api/hishospital/hospital";
+  import {getList, getDetail, add, update, remove} from "@/api/order/order";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-		var hospitalName = (rule, value, callback)=>{
-			console.log(value);
-			selectHosptalByHospintl(value).then((res) => {
-				console.log(res);
-				if(res.data.code != 200){
-					callback(new Error('医院名称重复,请从新输入!'));
-				} else{
-					callback();
-				}
-			})
-		};
       return {
         form: {},
         query: {},
@@ -72,20 +60,83 @@
           dialogClickModal: false,
           column: [
             {
-            	label: "医院名字",
-            	prop: "hospitalName",
-            	rules: [{
-					required: true,
-					validator:hospitalName,
-					trigger: 'blur' }],
-            },
-			
-            {
-              label: "医院收货地址",
-              prop: "hospitalProfile",
+              label: "医院ID",
+              prop: "hospitalId",
               rules: [{
                 required: true,
-                message: "请输入医院收货地址",
+                message: "请输入医院ID",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "库存状态",
+              prop: "inventoryStatus",
+              rules: [{
+                required: true,
+                message: "请输入库存状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "订单状态",
+              prop: "orderStatic",
+              rules: [{
+                required: true,
+                message: "请输入订单状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "订单类型 1是调配机  2 煎药机",
+              prop: "orderType",
+              rules: [{
+                required: true,
+                message: "请输入订单类型 1是调配机  2 煎药机",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收货地址",
+              prop: "address",
+              rules: [{
+                required: true,
+                message: "请输入收货地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人",
+              prop: "addressee",
+              rules: [{
+                required: true,
+                message: "请输入收件人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人电话",
+              prop: "addresseePhone",
+              rules: [{
+                required: true,
+                message: "请输入收件人电话",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "订单时间",
+              prop: "orderTime",
+              rules: [{
+                required: true,
+                message: "请输入订单时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "总价",
+              prop: "totalPrices",
+              rules: [{
+                required: true,
+                message: "请输入总价",
                 trigger: "blur"
               }]
             },
@@ -98,10 +149,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.hospital_add, false),
-          viewBtn: this.vaildData(this.permission.hospital_view, false),
-          delBtn: this.vaildData(this.permission.hospital_delete, false),
-          editBtn: this.vaildData(this.permission.hospital_edit, false)
+          addBtn: this.vaildData(this.permission.order_add, false),
+          viewBtn: this.vaildData(this.permission.order_view, false),
+          delBtn: this.vaildData(this.permission.order_delete, false),
+          editBtn: this.vaildData(this.permission.order_edit, false)
         };
       },
       ids() {
