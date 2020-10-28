@@ -19,7 +19,7 @@
               <el-input :disabled="true" v-model="form.expenseMoney"/>
             </el-form-item>
             <el-form-item label="报销类型">
-              <el-input :disabled="true" v-model="form.type"/>
+              <el-input :disabled="true" v-model="form.typeName"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -72,6 +72,7 @@
           },
           expenseMoney: '',
           type: '',
+          typeName: '',
           reason: '',
         }
       }

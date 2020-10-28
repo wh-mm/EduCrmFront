@@ -14,12 +14,12 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot="menuLeft">
-        <el-radio-group v-model="mode" size="small">
-          <el-radio-button label="1">通用流程</el-radio-button>
-          <el-radio-button label="2">定制流程</el-radio-button>
-        </el-radio-group>
-      </template>
+      <!--      <template slot="menuLeft">-->
+      <!--        <el-radio-group v-model="mode" size="small">-->
+      <!--          <el-radio-button label="1">通用流程</el-radio-button>-->
+      <!--          <el-radio-button label="2">定制流程</el-radio-button>-->
+      <!--        </el-radio-group>-->
+      <!--      </template>-->
       <template slot-scope="scope" slot="menu">
         <el-button type="text"
                    size="small"
@@ -43,10 +43,10 @@
                    @click.stop="handleSlotDelete(scope.row,scope.index)">删除
         </el-button>
       </template>
-      <template slot-scope="{row}"
-                slot="tenantId">
-        <el-tag>{{row.tenantId===''?'通用':row.tenantId}}</el-tag>
-      </template>
+      <!--      <template slot-scope="{row}"-->
+      <!--                slot="tenantId">-->
+      <!--        <el-tag>{{row.tenantId===''?'通用':row.tenantId}}</el-tag>-->
+      <!--      </template>-->
       <template slot-scope="{row}"
                 slot="version">
         <el-tag>v{{row.version}}</el-tag>
@@ -156,12 +156,12 @@
           menuWidth: 150,
           dialogClickModal: false,
           column: [
-            {
-              label: '租户编号',
-              prop: 'tenantId',
-              slot: true,
-              width: 120,
-            },
+            // {
+            //   label: '租户编号',
+            //   prop: 'tenantId',
+            //   slot: true,
+            //   width: 120,
+            // },
             {
               label: '流程主键',
               prop: 'id',

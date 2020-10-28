@@ -51,14 +51,19 @@
                 {
                   label: '报销类型',
                   prop: 'type',
-                  //type: 'select',
+                  type: 'select',
                   rules: [
                     {
                       required: true,
                       message: '请选择报销类型',
                       trigger: 'blur'
                     }
-                  ]
+                  ],
+                  dicUrl: "/api/blade-system/dict-biz/dictionary?code=expense_type",
+                  props: {
+                    label: "dictValue",
+                    value: "dictKey"
+                  },
                 },
                 {
                   label: '报销理由',

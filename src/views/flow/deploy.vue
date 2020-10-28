@@ -16,6 +16,7 @@
           tenantId: '',
           flowFile: [],
           file: {},
+          flowMode: 1,
         },
         option: {
           labelWidth: 120,
@@ -41,52 +42,52 @@
                 }
               ]
             },
-            {
-              label: "流程模式",
-              prop: "flowMode",
-              type: "radio",
-              dicData: [
-                {
-                  label: "通用流程",
-                  value: 1
-                },
-                {
-                  label: "定制流程",
-                  value: 2
-                }
-              ],
-              value: 1,
-              row: true,
-              span: 12,
-              rules: [
-                {
-                  required: true,
-                  message: '请选择流程模式',
-                  trigger: 'blur'
-                }
-              ],
-            },
-            {
-              label: "所属租户",
-              prop: "tenantId",
-              type: "tree",
-              multiple: true,
-              dicUrl: "/api/blade-system/tenant/select",
-              props: {
-                label: "tenantName",
-                value: "tenantId"
-              },
-              display: false,
-              row: true,
-              span: 12,
-              rules: [
-                {
-                  required: true,
-                  message: '请选择所属租户',
-                  trigger: 'blur'
-                }
-              ],
-            },
+            // {
+            //   label: "流程模式",
+            //   prop: "flowMode",
+            //   type: "radio",
+            //   dicData: [
+            //     {
+            //       label: "通用流程",
+            //       value: 1
+            //     },
+            //     {
+            //       label: "定制流程",
+            //       value: 2
+            //     }
+            //   ],
+            //   value: 1,
+            //   row: true,
+            //   span: 12,
+            //   rules: [
+            //     {
+            //       required: true,
+            //       message: '请选择流程模式',
+            //       trigger: 'blur'
+            //     }
+            //   ],
+            // },
+            // {
+            //   label: "所属租户",
+            //   prop: "tenantId",
+            //   type: "tree",
+            //   multiple: true,
+            //   dicUrl: "/api/blade-system/tenant/select",
+            //   props: {
+            //     label: "tenantName",
+            //     value: "tenantId"
+            //   },
+            //   display: false,
+            //   row: true,
+            //   span: 12,
+            //   rules: [
+            //     {
+            //       required: true,
+            //       message: '请选择所属租户',
+            //       trigger: 'blur'
+            //     }
+            //   ],
+            // },
             {
               label: '附件上传',
               prop: 'flowFile',
