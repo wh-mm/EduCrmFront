@@ -124,6 +124,8 @@
                 trigger: "blur"
               }]
             },
+			/*
+			*/
             {
               label: "收件人",
               prop: "addressee",
