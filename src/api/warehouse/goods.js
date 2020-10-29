@@ -68,7 +68,5 @@ export const selectGoodsName = (goodsName) => {
 }
 
 
-/*
-11
-*/
+
 

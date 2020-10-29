@@ -55,3 +55,4 @@ export const getInfo = (par) => {
     params: par.params
   })
 }
+/*
