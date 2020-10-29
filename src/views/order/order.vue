@@ -216,15 +216,14 @@
               },
               {
                 label: "地区",
-                prop: "provinceCode",
-                type: 'select',
+                prop: "addressArray",
+                type: 'cascader',
                 props: {
-                  label: 'name',
-                  value: 'code'
+                  label: 'title',
+                  value: 'id'
                 },
                 search: true,
-
-                dicUrl: '/api/blade-system/region/selectByParentCode'
+                dicUrl: '/api/blade-system/region/lazy-tree'
               },
               {
                 label: "规格",
@@ -931,8 +930,6 @@
               },],
               span: 6,
             },
-
-
             {
               label: "订单时间",
               prop: "orderTime",
@@ -1045,11 +1042,12 @@
               disabled: true,
               type: "select",
               span: 6,
-              props: {
+              /*props: {
                 label: "dictValue",
                 value: "dictKey"
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=006"
+           */
             },
             {
               label: "年龄",

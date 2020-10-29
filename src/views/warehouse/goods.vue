@@ -38,7 +38,6 @@
     add,
     update,
     remove,
-    getDictionaryByParentId,
     selectGoodsName
   } from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
@@ -112,24 +111,19 @@
               prop: "goodsName",
               rules: [{
                 required: true,
-
+                validator: goodsNames,
                 trigger: 'blur',
               }],
             },
-
-            /*
-                  {
-                    label: "货品编码",
-                    prop: "goodsId",
-              type: 'select',
-                    props: {
-                      label: 'categoryName',
-                      value: 'id'
-                    },
-              search: true,
-              dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
-                  },
-            */
+            {
+               label: "货品编码",
+               prop: "goodsCode",
+                    rules: [{
+                    required: true,
+                    message: "请输入货品编码",
+                    trigger: "blur"
+              }]
+            },
             {
               label: "规格",
               prop: "unit",
@@ -139,7 +133,7 @@
                 value: 'dictKey'
               },
               search: true,
-              dicUrl: "/api/blade-system/dictCategory/dictionary?code=unit"
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
               //dicUrl: "/api/blade-system/dict-biz/dictionary?code=050"
             },
             {
@@ -286,9 +280,6 @@
       }
     }
   };
-  /*
-
-   */
 </script>
 
 <style>
