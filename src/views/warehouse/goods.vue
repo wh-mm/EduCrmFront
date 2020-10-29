@@ -32,33 +32,25 @@
 </template>
 
 <script>
-  import {
-    getList,
-    getDetail,
-    add,
-    update,
-    remove,
-    selectGoodsName
-  } from "@/api/warehouse/goods";
+  import {getList, getGoodsDetail, add, update, remove,selectGoodsName} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var goodsNames = (rule, value, callback) => {
+      var goodsNames = (rule, value, callback)=>{
         console.log(value.length);
         if (value.length >= 20) {
           callback(new Error('货物名称不能超过20个字'));
         } else {
           selectGoodsName(value).then((res) => {
             console.log(res);
-            if (res.data.code != 200) {
+            if(res.data.code != 200){
               callback(new Error('货物名称重复,请从新输入!'));
-            } else {
+            } else{
               callback();
             }
-          })
-        }
-      };
+        })
+      }};
       return {
         form: {},
         query: {},
@@ -111,7 +103,7 @@
               prop: "goodsName",
               rules: [{
                 required: true,
-                validator: goodsNames,
+                validator:goodsNames,
                 trigger: 'blur',
               }],
             },
@@ -236,7 +228,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
+          getGoodsDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -278,6 +270,7 @@
           this.selectionClear();
         });
       }
+
     }
   };
 </script>
