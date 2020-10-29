@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,getDictionaryByParentId,selectGoodsName} from "@/api/warehouse/goods"; 
+  import {getList, getDetail, add, update, remove,getDictionaryByParentId,selectGoodsName} from "@/api/warehouse/goods";
    import {mapGetters} from "vuex";
 
   export default {
@@ -99,15 +99,15 @@
             },
 
 			{
-				label: "商品名称",					
+				label: "商品名称",
 				prop: "goodsName",
-				rules: [{ 
+				rules: [{
 					required: true,
 
 					trigger: 'blur',
 					}],
 			},
-			
+
 			/*
             {
               label: "货品编码",
@@ -121,18 +121,18 @@
 			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
             },
 			*/
-		   {
-		     label: "规格",
-		     prop: "unit",
-			 type: "tree",
-			 props: {
-		    	label: 'dictValue',
-		    	value: 'dictKey'
-		    },
-			search: true,
-			dicUrl: "/api/blade-system/dictCategory/dictionary?code=unit"
-		    //dicUrl: "/api/blade-system/dict-biz/dictionary?code=050"
-		   },
+          {
+          label: "规格",
+          prop: "unit",
+          type: "tree",
+          props: {
+              label: 'dictValue',
+              value: 'dictKey'
+            },
+          search: true,
+          dicUrl: "/api/blade-system/dictCategory/dictionary?code=unit"
+            //dicUrl: "/api/blade-system/dict-biz/dictionary?code=050"
+},
             {
               label: "货品价格",
               prop: "money",
@@ -277,6 +277,9 @@
       }
     }
   };
+  /*
+
+   */
 </script>
 
 <style>
