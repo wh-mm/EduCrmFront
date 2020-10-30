@@ -32,10 +32,25 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/goods";  import {mapGetters} from "vuex";
+  import {getList, getGoodsDetail, add, update, remove,selectGoodsName} from "@/api/warehouse/goods";
+  import {mapGetters} from "vuex";
 
   export default {
     data() {
+      var goodsNames = (rule, value, callback)=>{
+        console.log(value.length);
+        if (value.length >= 20) {
+          callback(new Error('货物名称不能超过20个字'));
+        } else {
+          selectGoodsName(value).then((res) => {
+            console.log(res);
+            if(res.data.code != 200){
+              callback(new Error('货物名称重复,请从新输入!'));
+            } else{
+              callback();
+            }
+        })
+      }};
       return {
         form: {},
         query: {},
@@ -47,7 +62,7 @@
         },
         selectionList: [],
         option: {
-          height:'auto',
+          height: 'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -58,55 +73,61 @@
           selection: true,
           dialogClickModal: false,
           column: [
-			 {
-			    label: "大类别",
-			    prop: "parentId",
-				type: "tree",
-				props: {
-					label: 'title',
-					value: 'id'
-				},
-				cascaderItem: ['goodsName'],
-				search: true,
-				dicUrl: "/api/blade-system/dictCategory/tree?code=002"
-			  },
             {
-              label: "货物类别",
+              label: "货物大类别",
+              prop: "parentId",
+              type: "tree",
+              props: {
+                label: 'dictValue',
+                value: 'id'
+              },
+              cascaderItem: ['goodsCategory'],
+              search: true,
+              dicUrl: '/api/blade-system/dictCategory/dictionaryByParentId?parentId=0'
+            },
+            {
+              label: "货物小类别",
               prop: "goodsCategory",
-			  type: "tree",
-			  props: {
-			 	label: 'title',
-			 	value: 'id'
-			 },
-			 cascaderItem: ['goodsName'],
-			  search: true,
-			  dicUrl: "/api/blade-system/dictCategory/tree?code=003"
+              type: "tree",
+              props: {
+                label: 'dictValue',
+                value: 'id'
+              },
+              // cascaderItem: ['goodsName'],
+              search: true,
+              dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
             },
 
-			{
-              label: "货物名称",
+            {
+              label: "商品名称",
               prop: "goodsName",
               rules: [{
                 required: true,
-                message: "请输入货物名称",
-                trigger: "blur"
+                validator:goodsNames,
+                trigger: 'blur',
+              }],
+            },
+            {
+               label: "货品编码",
+               prop: "goodsCode",
+                    rules: [{
+                    required: true,
+                    message: "请输入货品编码",
+                    trigger: "blur"
               }]
             },
-			
-			/*
             {
-              label: "货品编码",
-              prop: "goodsId",
-			  type: 'select',
+              label: "规格",
+              prop: "unit",
+              type: "tree",
               props: {
-              	label: 'categoryName',
-              	value: 'id'
+                label: 'dictValue',
+                value: 'dictKey'
               },
-			  search: true,
-			  dicUrl: "/api/taocao-warehouse/goods/selectListBycode/?code={{key}}",
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+              //dicUrl: "/api/blade-system/dict-biz/dictionary?code=050"
             },
-			*/
-		   
             {
               label: "货品价格",
               prop: "money",
@@ -207,7 +228,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
+          getGoodsDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -230,10 +251,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -249,6 +270,7 @@
           this.selectionClear();
         });
       }
+
     }
   };
 </script>

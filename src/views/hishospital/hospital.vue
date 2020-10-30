@@ -32,11 +32,23 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/hishospital/hospital";
+  import {getList, getDetail, add, update, remove,
+	selectHosptalByHospintl} from "@/api/hishospital/hospital";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
+		var hospitalName = (rule, value, callback)=>{
+			console.log(value);
+			selectHosptalByHospintl(value).then((res) => {
+				console.log(res);
+				if(res.data.code != 200){
+					callback(new Error('医院名称重复,请从新输入!'));
+				} else{
+					callback();
+				}
+			})
+		};
       return {
         form: {},
         query: {},
@@ -60,14 +72,14 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院名称",
+              label: "医院名字",
               prop: "hospitalName",
               rules: [{
-                required: true,
-                message: "请输入医院名称",
-                trigger: "blur"
-              }]
+					required: true,
+					validator:hospitalName,
+					trigger: 'blur' }],
             },
+
             {
               label: "医院收货地址",
               prop: "hospitalProfile",

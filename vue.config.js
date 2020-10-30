@@ -24,11 +24,8 @@ module.exports = {
       '/api': {
         //本地服务接口地址
         target: 'http://localhost:8080',
-<<<<<<< HEAD
         //远程演示服务地址,可用于直接启动项目
         //target: 'https://saber.bladex.vip/api',
-=======
->>>>>>> 71161516e7ce7ceaf6d52fd9cd92086b6d3bbf4e
         ws: true,
         pathRewrite: {
           '^/api': '/'

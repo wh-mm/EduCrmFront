@@ -87,3 +87,11 @@ export const getDictionary = (params) => {
     params,
   })
 }
+
+export const getDictionaryByParentId = (parentId) => {
+  return request({
+    url: '/api/blade-system/dictCategory/dictionaryByParentId',
+    method: 'get',
+    data: parentId
+  })
+}

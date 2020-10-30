@@ -114,7 +114,8 @@
     update,
     add,
     getDict,
-    getDictTree
+    getDictTree,
+	
   } from "@/api/warehouse/dictcategory";
   import {optionParent, optionChild} from "@/const/system/dictcategory";
   import {mapGetters} from "vuex";

@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-order/order/list',
+    url: '/api/taocao-warehouse/warehouseinoutput/list',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-order/order/detail',
+    url: '/api/taocao-warehouse/warehouseinoutput/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-order/order/remove',
+    url: '/api/taocao-warehouse/warehouseinoutput/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-order/order/submit',
+    url: '/api/taocao-warehouse/warehouseinoutput/submit',
     method: 'post',
     data: row
   })
@@ -42,10 +42,9 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-order/order/submit',
+    url: '/api/taocao-warehouse/warehouseinoutput/submit',
     method: 'post',
     data: row
   })
 }
-
 
