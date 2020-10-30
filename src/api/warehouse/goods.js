@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/goods/page',
+    url: '/api/taocao-warehouse/goods/list',
     method: 'get',
     params: {
       ...params,
@@ -21,7 +21,7 @@ export const getPage = (parentId) => {
   })
 }
 
-export const getDetail = (id) => {
+export const getGoodsDetail = (id) => {
   return request({
     url: '/api/taocao-warehouse/goods/detail',
     method: 'get',
@@ -49,7 +49,13 @@ export const add = (row) => {
   })
 }
 
-
+export const update = (row) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/submit',
+    method: 'post',
+    data: row
+  })
+}
 export const dictionaryByParentId = (parentId) => {
   return request({
     url: '/api/blade-system/dictCategory/dictionaryByParentId',

@@ -10,6 +10,7 @@
                ref="crud"
                @row-update="rowUpdate"
                @row-save="rowSave"
+               @row-del="rowDel"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -22,6 +23,7 @@
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
+        <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
@@ -141,7 +143,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, /*remove, */getInfo, getDrugList} from "@/api/order/order";
+  import {getList, getDetail, add, update, remove, getInfo, getDrugList} from "@/api/order/order";
   import {mapGetters} from "vuex";
 
   export default {
@@ -183,7 +185,6 @@
               {
                 label: "颗粒名称/药品名称",
                 prop: "goodsName",
-
               },
               {
                 label: "货物大类别",
@@ -903,15 +904,18 @@
               },],
               span: 6,
             },
+
+
             {
               label: "订单时间",
               prop: "orderTime",
               type: 'datetime',
-
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
               span: 6,
             },
+
+
           ],
         },
         baseOption: {
@@ -970,7 +974,6 @@
             {
               label: "订单时间",
               prop: "orderTime",
-              disabled: true,
               type: 'date',
               span: 6,
             },
@@ -1723,7 +1726,7 @@
         return {
           addBtn: this.vaildData(this.permission.order_add, false),
           viewBtn: this.vaildData(this.permission.order_view, false),
-          delBtn: this.vaildData(this.permission.order_delete, ),
+          delBtn: this.vaildData(this.permission.order_delete, false),
           editBtn: this.vaildData(this.permission.order_edit, false)
         };
       },
@@ -1768,9 +1771,9 @@
           cancelButtonText: "取消",
           type: "warning"
         })
-          /*.then(() => {
+          .then(() => {
             return remove(row.id);
-          })*/
+          })
           .then(() => {
             this.onLoad(this.page);
             this.$message({
@@ -1789,9 +1792,9 @@
           cancelButtonText: "取消",
           type: "warning"
         })
-          /*.then(() => {
+          .then(() => {
             return remove(this.ids);
-          })*/
+          })
           .then(() => {
             this.onLoad(this.page);
             this.$message({

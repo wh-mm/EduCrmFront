@@ -32,14 +32,14 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,testingOnlyCode} from "@/api/warehouse/warehouse";
+  import {getList, getDetail, add, update, remove,testingOnlyCode,selectWarehouseName} from "@/api/warehouse/warehouse";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
       var codeTestingOnly = (rule,value,callback) =>{
         if (value === ''){
-          callback(new error("请输入编码！"))
+          callback(new Error("请输入编码！"))
         }else {
           testingOnlyCode(this.form.id,value).then( res => {
             if(res.data.success){
@@ -52,6 +52,20 @@
           })
         }
       }
+      var warehousename = (rule, value, callback)=>{
+        console.log(value.length);
+        if (value.length >= 20) {
+          callback(new Error('货物名称不能超过20个字'));
+        } else {
+          selectWarehouseName(value).then((res) => {
+            console.log(res);
+            if(res.data.code != 200){
+              callback(new Error('货物名称重复,请从新输入!'));
+            } else{
+              callback();
+            }
+          })
+        }};
 
       return {
         form: {},
@@ -81,10 +95,10 @@
               search: true,
               rules: [{
                 required: true,
-                message: "请输入仓库名称",
+                validator:warehousename,
                 trigger: "blur"
               },
-              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
               ]
             },
             {
