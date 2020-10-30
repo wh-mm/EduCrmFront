@@ -29,7 +29,7 @@
         </el-button>
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
-        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,2)">审批</el-button>
+        <el-button v-if="row.status == 1"   icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,row.status)">审批</el-button>
       </template>
      </avue-crud>
   </basic-container>
@@ -41,12 +41,20 @@
   import {mapGetters} from "vuex";
 
   export default {
+
     data() {
       var validateQuantity = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入数量'));
         } else if (value <= 0) {
           callback(new Error('数量不能小于0'));
+        } else {
+          callback();
+        }
+      };
+      var validateWarehouse = (rule, value, callback)=>{
+        if (value === ' ') {
+          callback(new Error('请输入采购仓库'));
         } else {
           callback();
         }
@@ -101,6 +109,20 @@
               ]
             },
             {
+              label: "总价",
+              prop: "sumMoney",
+              editDisplay: false,
+              addDisplay: false,
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入采购订单号",
+                trigger: "blur"
+              }],
+
+
+            },
+            {
               label: "状态",
               prop: "statusName",
               addDisplay:false,
@@ -146,7 +168,6 @@
                       getGoodsDetail(value).then(res => {
                         this.form.purchaseOrderDetailList.forEach(val => {
                           if(val.goodsId == value){
-
                             var detail = res.data.data;
                             val.unit = detail.unitName;
                             val.totalPrice =(detail.money*val.goodsQuantity).toFixed(2);
@@ -157,6 +178,17 @@
                     }
                   }
                 },{
+                    label: '数量',
+                    prop: "goodsQuantity",
+                    type: "number",
+                    width: 100,
+                    rules: [{
+                      validator: validateQuantity,
+                      trigger: 'blur' ,
+                    }]
+
+                  },
+                  {
                   label: '单位',
                   prop: "unit",
                   disabled: true,
@@ -169,31 +201,22 @@
                   placeholder: " ",
                   width: 100,
                 },{
-                  label: '数量',
-                  prop: "goodsQuantity",
-                  type: "number",
-                  width: 100,
-                  rules: [{
-                    validator: validateQuantity,
-                    trigger: 'blur' ,
-                  }]
-
-                },{
                   label: '采购仓库',
                   prop: "warehouseId",
                   type: "tree",
+                    rules: [{
+                      required: true,
+                      message: "请输入采购仓库",
+                      validator: validateWarehouse,
+                      trigger: 'blur' ,
+                    }],
                   props: {
+
                     label: 'name',
                     value: 'id'
                   },
                   dicMethod:"post",
                   dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
-                }, {
-                  label: '购货金额',
-                  prop: "totalPrice",
-                  disabled: true,
-                  slot: true,
-                  width: 80,
                 }, {
                   label: '备注',
                   prop: "remark",
@@ -333,15 +356,32 @@
           this.selectionClear();
         });
       },
-      updateStatus(id,status){
-        updateStatus(id,status).then(res => {
-          if(res.data.success){
-            this.$message.success(res.data.msg);
-          }else{
-            this.$message.error(res.data.msg);
-          }
-          this.refreshChange();
+      updateStatus(id){
+        let status;
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
+          type: "warning"
         })
+          .then(() => {
+            console.log(status)
+            status = 2;
+          })
+          .catch(() => {
+            console.log(1);
+            status = 3;
+          }).finally(()=>{
+            console.log(status);
+          updateStatus(id,status).then(res => {
+            if(res.data.success){
+              this.$message.success(res.data.msg);
+            }else{
+              this.$message.error(res.data.msg);
+            }
+            this.refreshChange();
+            this.onLoad(this.page);
+          })
+        });
       }
     }
   };

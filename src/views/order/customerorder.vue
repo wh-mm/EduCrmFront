@@ -156,14 +156,6 @@
           callback();
         }
       };
-      var phonelength = (rule, value, callback) => {
-        console.log(value.length);
-        if (value.length != 11) {
-          callback(new Error('请输入正确手机号'));
-        } else {
-          callback();
-        }
-      };
       return {
         selectDrugDialogVisible: false,
         drugList: {
@@ -1669,10 +1661,10 @@
                 label: 'dictValue',
                 value: 'dictKey'
               },
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
-              trigger: "blur"
-            },
+                required: true,
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
+                trigger: "blur"
+              },
 
 
             {

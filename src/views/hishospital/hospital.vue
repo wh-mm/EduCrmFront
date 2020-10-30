@@ -72,14 +72,14 @@
           dialogClickModal: false,
           column: [
             {
-            	label: "医院名字",
-            	prop: "hospitalName",
-            	rules: [{
+              label: "医院名字",
+              prop: "hospitalName",
+              rules: [{
 					required: true,
 					validator:hospitalName,
 					trigger: 'blur' }],
             },
-			
+
             {
               label: "医院收货地址",
               prop: "hospitalProfile",
