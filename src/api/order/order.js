@@ -47,5 +47,22 @@ export const update = (row) => {
     data: row
   })
 }
+export const getInfo = (par) => {
+  return request({
+    url: par.url,
+    method: 'post',
+    params: par.params
+  })
+}
 
-
+export const getDrugList = (current, size, params) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/list',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+}

@@ -10,7 +10,6 @@
                ref="crud"
                @row-update="rowUpdate"
                @row-save="rowSave"
-               @row-del="rowDel"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -23,13 +22,12 @@
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-        <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
                :close-on-click-modal="false" :before-close="handleClose">
       <avue-crud :option="drugList.option" :table-loading="drugList.loading" :data="drugList.data"
-                 :page.sync="drugList.page" :permission="permissionList" v-model="drugList.form" ref="crud"
+                 :page.sync="drugList.page"  v-model="drugList.form" ref="crud"
                  @search-change="drugSearchChange" @search-reset="drugSearchReset"
                  @selection-change="drugSelectionChange" @current-change="currentChange" @size-change="drugSizeChange"
                  @refresh-change="drugRefreshChange" @on-load="drugOnLoad">
@@ -55,7 +53,7 @@
           <div slot="header" class="clearfix">
             <span>订单信息</span>
           </div>
-          <avue-form ref="form" v-model="addInfo.decoctingMedicine" :option="newAddDrugOption">
+          <avue-form ref="form" v-model="addInfo.decoctingList" :option="newAddDrugOption">
           </avue-form>
         </el-card>
         <el-card class="box-card">
@@ -108,7 +106,7 @@
           <div slot="header" class="clearfix">
             <span>订单信息</span>
           </div>
-          <avue-form ref="form" v-model="orderInfo.decoctingMedicine" :option="drugOption">
+          <avue-form ref="form" v-model="orderInfo.decoctingList" :option="drugOption">
           </avue-form>
         </el-card>
         <el-card class="box-card">
@@ -124,7 +122,7 @@
           <div slot="header" class="clearfix">
             <span>订单信息</span>
           </div>
-          <avue-form ref="form" v-model="orderInfo.blender" :option="grainOption">
+          <avue-form ref="form" v-model="orderInfo.blenderList" :option="grainOption">
           </avue-form>
         </el-card>
         <el-card class="box-card">
@@ -143,7 +141,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove, getInfo, getDrugList} from "@/api/order/order";
+  import {getList, getDetail, add, update, /*remove, */getInfo, getDrugList} from "@/api/order/order";
   import {mapGetters} from "vuex";
 
   export default {
@@ -156,14 +154,7 @@
           callback();
         }
       };
-      var phonelength = (rule, value, callback) => {
-        console.log(value.length);
-        if (value.length != 11) {
-          callback(new Error('请输入正确手机号'));
-        } else {
-          callback();
-        }
-      };
+
       return {
         selectDrugDialogVisible: false,
         drugList: {
@@ -195,10 +186,6 @@
 
               },
               {
-                label: "品种备注/药品脚注",
-                prop: "drugRemark",
-              },
-              {
                 label: "货物大类别",
                 prop: "parentId",
                 type: "tree",
@@ -221,17 +208,6 @@
                 cascaderItem: ['goodsName'],
                 search: true,
                 dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
-              },
-              {
-                label: "地区",
-                prop: "addressArray",
-                type: 'cascader',
-                props: {
-                  label: 'title',
-                  value: 'id'
-                },
-                search: true,
-                dicUrl: '/api/blade-system/region/lazy-tree'
               },
               {
                 label: "规格",
@@ -927,18 +903,15 @@
               },],
               span: 6,
             },
-
-
             {
               label: "订单时间",
               prop: "orderTime",
               type: 'datetime',
+
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
               span: 6,
             },
-
-
           ],
         },
         baseOption: {
@@ -997,6 +970,7 @@
             {
               label: "订单时间",
               prop: "orderTime",
+              disabled: true,
               type: 'date',
               span: 6,
             },
@@ -1654,6 +1628,7 @@
             label: "医院名称",
             prop: "hospitalId",
             type: "select",
+            disabled: true,
             props: {
               label: "hospitalName",
               value: "id"
@@ -1665,6 +1640,7 @@
               label: "订单状态",
               prop: "orderStatic",
               type: "select",
+              disabled: true,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -1679,6 +1655,7 @@
               label: "订单类型",
               prop: "orderType",
               type: "select",
+              disabled: true,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -1690,6 +1667,7 @@
             {
               label: "收货地址",
               prop: "address",
+              disabled: true,
               rules: [{
                 required: true,
                 message: "请输入收货地址",
@@ -1699,6 +1677,7 @@
             {
               label: "收件人",
               prop: "addressee",
+              disabled: true,
               rules: [{
                 required: true,
                 message: "请输入收件人",
@@ -1708,6 +1687,7 @@
             {
               label: "收件人电话",
               prop: "addresseePhone",
+              disabled: true,
               rules: [{
                 required: true,
                 validator: phonelength,
@@ -1717,6 +1697,7 @@
             {
               label: "订单时间",
               prop: "orderTime",
+              disabled: true,
               type: 'datetime',
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -1724,6 +1705,7 @@
             {
               label: "总价",
               prop: "totalPrices",
+              disabled: true,
               rules: [{
                 required: true,
                 message: "请输入总价",
@@ -1741,7 +1723,7 @@
         return {
           addBtn: this.vaildData(this.permission.order_add, false),
           viewBtn: this.vaildData(this.permission.order_view, false),
-          delBtn: this.vaildData(this.permission.order_delete, false),
+          delBtn: this.vaildData(this.permission.order_delete, ),
           editBtn: this.vaildData(this.permission.order_edit, false)
         };
       },
@@ -1786,9 +1768,9 @@
           cancelButtonText: "取消",
           type: "warning"
         })
-          .then(() => {
+          /*.then(() => {
             return remove(row.id);
-          })
+          })*/
           .then(() => {
             this.onLoad(this.page);
             this.$message({
@@ -1807,9 +1789,9 @@
           cancelButtonText: "取消",
           type: "warning"
         })
-          .then(() => {
+          /*.then(() => {
             return remove(this.ids);
-          })
+          })*/
           .then(() => {
             this.onLoad(this.page);
             this.$message({
@@ -1902,14 +1884,14 @@
         let par = {
           url: "",
           params: {
-            id: row.id
+            orderId: row.id
           }
         }
         this.orderType = row.orderType
         if (row.orderType == "1") {
-          par.url = "/api/business/order/selectOrderBlender"
+          par.url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else if (row.orderType == "2") {
-          par.url = "/api/business/order/selectOrderDecocting"
+          par.url = "/api/taocao-order/order/decoctingSelectByOrderId"
         }
         this.dialogVisible = true;
         console.log(par);
