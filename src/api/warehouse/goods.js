@@ -56,13 +56,7 @@ export const update = (row) => {
     data: row
   })
 }
-export const dictionaryByParentId = (parentId) => {
-  return request({
-    url: '/api/blade-system/dictCategory/dictionaryByParentId',
-    method: 'get',
-    data: parentId
-  })
-}
+
 export const selectGoodsName = (goodsName) => {
   return request({
     url: '/api/taocao-warehouse/goods/selectGoodsName',

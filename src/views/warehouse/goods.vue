@@ -93,7 +93,7 @@
                 label: 'dictValue',
                 value: 'id'
               },
-              // cascaderItem: ['goodsName'],
+              //cascaderItem: ['goodsName'],
               search: true,
               dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
             },
@@ -137,6 +137,24 @@
                 trigger: "blur"
               }]
             },
+            /*
+            {
+              label: "货品产地",
+              prop: "goodsRegion",
+              type: "cascader",
+              rules: [{
+                required: true,
+                message: "请输入货品价格",
+                trigger: "blur"
+              }],
+              props: {
+                label: "title",
+                value: "id"
+              },
+              dicUrl: "/api/blade-system/region/lazy-tree",
+            },
+
+             */
           ]
         },
         data: []

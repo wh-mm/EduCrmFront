@@ -75,7 +75,7 @@
           <div slot="header" class="clearfix">
             <span>订单信息</span>
           </div>
-          <avue-form ref="form" v-model="addInfo.blender" :option="newAddGrainOption">
+          <avue-form ref="form" v-model="addInfo.blenderList" :option="newAddGrainOption">
           </avue-form>
         </el-card>
         <el-card class="box-card">
@@ -91,7 +91,7 @@
         </el-card>
       </div>
       <span slot="footer" class="dialog-footer">
-			<el-button type="primary" @click="prescription()">保 存</el-button>
+			<el-button type="primary" @click="bcBtn()">保 存</el-button>
 			<el-button @click="reject()">取 消</el-button>
 		</span>
     </el-dialog>
@@ -143,11 +143,12 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove, getInfo, getDrugList} from "@/api/order/order";
+  import {getList, getDetail, add, update, remove, getInfo, selectListBydrugCategory,receiveDecoctingSave,receiveBlenderSave} from "@/api/order/order";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
+
       var phonelength = (rule, value, callback) => {
         console.log(value.length);
         if (value.length != 11) {
@@ -156,7 +157,6 @@
           callback();
         }
       };
-
       return {
         selectDrugDialogVisible: false,
         drugList: {
@@ -187,26 +187,13 @@
                 prop: "goodsName",
               },
               {
-                label: "货物大类别",
-                prop: "parentId",
-                type: "tree",
-                props: {
-                  label: 'dictValue',
-                  value: 'id'
-                },
-                cascaderItem: ['goodsCategory'],
-                search: true,
-                dicUrl: '/api/blade-system/dictCategory/dictionaryByParentId?parentId=0'
-              },
-              {
-                label: "货物小类别",
+                label: "货物类别",
                 prop: "goodsCategory",
                 type: "tree",
                 props: {
                   label: 'dictValue',
                   value: 'id'
                 },
-                cascaderItem: ['goodsName'],
                 search: true,
                 dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
               },
@@ -222,7 +209,7 @@
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
               },
               {
-                label: "贴数",
+                label: "数量",
                 prop: "tienum",
                 slot: true
               }
@@ -302,11 +289,12 @@
           selection: true,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [
+            {
             label: "委托单号",
             prop: "delnum",
             span: 6,
-          },
+            },
 
             {
               label: "医院名称",
@@ -328,11 +316,11 @@
               prop: "sex",
               type: "select",
               span: 6,
-             /* props: {
+              props: {
                 label: "dictValue",
                 value: "dictKey"
               },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=006"*/
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex"
             },
             {
               label: "年龄",
@@ -349,7 +337,7 @@
               prop: "address",
               span: 6,
             },
-            {
+           /* {
               label: "科室",
               prop: "department",
               span: 6,
@@ -373,7 +361,7 @@
               label: "诊断结果",
               prop: "diagresult",
               span: 6,
-            },
+            },*/
             {
               label: "贴数",
               prop: "dose",
@@ -384,16 +372,16 @@
               prop: "takenum",
               span: 6,
             },
-            {
+           /* {
               label: "取药时间",
               prop: "getdrugtime",
               span: 6,
-            },
-            {
+            },*/
+         /*   {
               label: "取药序号",
               prop: "getdrugnum",
               span: 6,
-            },
+            },*/
             {
               label: "煎药方案",
               prop: "decscheme",
@@ -414,16 +402,16 @@
               prop: "packagenum",
               span: 6,
             },
-            {
+        /*    {
               label: "记录时间",
               prop: "dotime",
               span: 6,
-            },
-            {
+            },*/
+         /*   {
               label: "操作人员",
               prop: "doperson",
               span: 6,
-            },
+            },*/
             {
               label: "收件方",
               prop: "dtbcompany",
@@ -454,11 +442,11 @@
               prop: "soaktime",
               span: 6,
             },
-            {
+         /*   {
               label: "标签数量",
               prop: "labelnum",
               span: 6,
-            },
+            },*/
             {
               label: "备注",
               prop: "remark",
@@ -474,16 +462,16 @@
               prop: "footnote",
               span: 6,
             },
-            {
+/*            {
               label: "下单时间",
               prop: "ordertime",
               span: 6,
-            },
-            {
+            },*/
+/*            {
               label: "处方状态",
               prop: "curstate",
               span: 6,
-            },
+            },*/
             {
               label: "煎药方式",
               prop: "decmothed",
@@ -499,7 +487,7 @@
               prop: "takemethod",
               span: 6,
             },
-            {
+/*            {
               label: "备注A",
               prop: "remarkA",
               span: 6,
@@ -508,7 +496,7 @@
               label: "备注B",
               prop: "remarkB",
               span: 6,
-            },
+            },*/
             {
               label: "药品总量",
               prop: "drugCount",
@@ -519,42 +507,42 @@
               prop: "isDaijian",
               span: 6,
             },
-            {
+/*            {
               label: "支付方式",
               prop: "payment",
               span: 6,
-            },
+            },*/
             {
               label: "医嘱",
               prop: "yizhu",
               span: 6,
             },
-            {
+/*            {
               label: "金额",
               prop: "money",
               span: 6,
-            },
+            },*//*
             {
               label: "病历号，健康卡号，病人ID，社保号，门诊号",
               prop: "outpatientNumber",
               span: 12,
               labelWidth: 300,
-            },
+            },*/
             {
               label: "序号",
               prop: "outpatientIndex",
               span: 6,
             },
-            {
+/*            {
               label: "处方类型",
               prop: "ptype",
               span: 6,
-            },
-            {
+            },*/
+/*            {
               label: "身份验证",
               prop: "token",
               span: 6,
-            },
+            },*/
           ],
         },
         newAddListOption: {
@@ -570,23 +558,35 @@
           dialogClickModal: false,
           menuBtn: false,
           column: [
-            {
+/*            {
               label: "委托单号",
               prop: "delnum",
             },
             {
               label: "药品编号",
               prop: "drugnum",
-            },
+            },*/
             {
               label: "药品名称",
-              prop: "drugname",
+              prop: "goodsName",
+            },
+            {
+              label: "院库药品编号",
+              prop: "goodsCode",
+            },
+            {
+              label: "货品小类别1",
+              prop: "goodsCategory",
             },
             {
               label: "规格",
-              prop: "drugposition",
+              prop: "unit",
             },
             {
+              label: "数量",
+              prop: "tienum",
+            },
+/*            {
               label: "单剂量",
               prop: "drugallnum",
             },
@@ -609,7 +609,7 @@
             {
               label: "单价",
               prop: "retailprice",
-            },
+            },*/
           ],
         },
         newAddGrainOption: {
@@ -641,6 +641,11 @@
               label: "患者性别",
               prop: "sex",
               span: 6,
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex"
             },
             {
               label: "患者年龄",
@@ -662,12 +667,12 @@
               prop: "address",
               span: 6,
             },
-            {
+            /*{
               label: "处方类型",
               prop: "isInpatient",
               span: 6,
-            },
-            {
+            },*/
+           /* {
               label: "住院处方床号信息",
               prop: "hospitalBedNo",
               span: 6,
@@ -681,7 +686,7 @@
               label: "处方付数",
               prop: "quantity",
               span: 6,
-            },
+            },*/
             {
               label: "分服次数",
               prop: "separateFrequency",
@@ -692,17 +697,17 @@
               prop: "doctorName",
               span: 6,
             },
-            {
+           /* {
               label: "科室名称",
               prop: "departmentName",
               span: 6,
-            },
+            },*/
             {
               label: "处方名称",
               prop: "presName",
               span: 6,
             },
-            {
+         /*   {
               label: "处方开具时间",
               prop: "presTime",
               span: 6,
@@ -721,8 +726,8 @@
               label: "处方划价时间",
               prop: "valuationTime",
               span: 6,
-            },
-            {
+            },*/
+         /*   {
               label: "挂单号",
               prop: "registerId",
               span: 6,
@@ -751,17 +756,17 @@
               label: "对应明细表条数",
               prop: "drugCount",
               span: 6,
-            },
-            {
+            },*/
+           /* {
               label: "处方备注说明",
               prop: "remarks",
               span: 6,
-            },
-            {
+            },*/
+/*            {
               label: "处方使用方法",
               prop: "usageMethod",
               span: 6,
-            },
+            },*/
           ],
         },
         newAddListOption1: {
@@ -776,50 +781,62 @@
           addBtn: false,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [/*{
             label: "处方ID",
             prop: "presId",
-          },
-            {
+          },*/
+           /* {
               label: "颗粒序号",
               prop: "drugNo",
-            },
+            },*/
             {
               label: "院方库颗粒名称",
-              prop: "drugName",
+              prop: "goodsName",
             },
             {
+              label: "货品小类别2",
+              prop: "goodsCategory",
+            },
+            {
+              label: "规格",
+              prop: "unit",
+            },
+            {
+              label: "数量",
+              prop: "tienum",
+            },
+           /* {
               label: "院库颗粒编号",
               prop: "drugId",
-            },
-            {
+            },*/
+            /*{
               label: "颗粒批号",
               prop: "batchNumber",
-            },
-            {
+            },*/
+          /*  {
               label: "饮片剂量",
               prop: "doseHerb",
-            },
-            {
+            },*/
+           /* {
               label: "当量",
               prop: "equivalent",
-            },
-            {
+            },*/
+           /* {
               label: "颗粒剂量",
               prop: "dose",
-            },
-            {
+            },*/
+           /* {
               label: "药品饮片单价",
               prop: "herbPrice",
-            },
-            {
+            },*/
+           /* {
               label: "药品颗粒单价",
               prop: "dosePrice",
-            },
-            {
+            },*/
+         /*   {
               label: "品种备注",
               prop: "remarks",
-            },
+            },*/
           ],
         },
         newAddOption: {
@@ -904,11 +921,10 @@
               },],
               span: 6,
             },
-
-
             {
               label: "订单时间",
               prop: "orderTime",
+
               type: 'datetime',
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -974,6 +990,7 @@
             {
               label: "订单时间",
               prop: "orderTime",
+              disabled: true,
               type: 'date',
               span: 6,
             },
@@ -1024,7 +1041,7 @@
                 label: "dictValue",
                 value: "dictKey"
               },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=006"
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex"
             },
             {
               label: "年龄",
@@ -1044,7 +1061,7 @@
               disabled: true,
               span: 6,
             },
-            {
+           /* {
               label: "科室",
               prop: "department",
               disabled: true,
@@ -1073,7 +1090,7 @@
               prop: "diagresult",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "贴数",
               prop: "dose",
@@ -1086,18 +1103,18 @@
               disabled: true,
               span: 6,
             },
-            {
+        /*    {
               label: "取药时间",
               prop: "getdrugtime",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+        /*    {
               label: "取药序号",
               prop: "getdrugnum",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "煎药方案",
               prop: "decscheme",
@@ -1122,18 +1139,18 @@
               disabled: true,
               span: 6,
             },
-            {
+           /* {
               label: "记录时间",
               prop: "dotime",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+       /*     {
               label: "操作人员",
               prop: "doperson",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "收件方",
               prop: "dtbcompany",
@@ -1151,13 +1168,13 @@
               prop: "dtbphone",
               disabled: true,
               span: 6,
-            },
+            },/*
             {
               label: "快递类型",
               prop: "dtbtype",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "浸泡加水量",
               prop: "soakwater",
@@ -1170,12 +1187,12 @@
               disabled: true,
               span: 6,
             },
-            {
+        /*    {
               label: "标签数量",
               prop: "labelnum",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "备注",
               prop: "remark",
@@ -1224,7 +1241,7 @@
               disabled: true,
               span: 6,
             },
-            {
+         /*   {
               label: "备注A",
               prop: "remarkA",
               disabled: true,
@@ -1235,7 +1252,7 @@
               prop: "remarkB",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "药品总量",
               prop: "drugCount",
@@ -1248,38 +1265,38 @@
               disabled: true,
               span: 6,
             },
-            {
+      /*      {
               label: "支付方式",
               prop: "payment",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "医嘱",
               prop: "yizhu",
               disabled: true,
               span: 6,
             },
-            {
+   /*         {
               label: "金额",
               prop: "money",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+        /*    {
               label: "病历号，健康卡号，病人ID，社保号，门诊号",
               prop: "outpatientNumber",
               disabled: true,
               span: 12,
               labelWidth: 300,
-            },
+            },*/
             {
               label: "序号",
               prop: "outpatientIndex",
               disabled: true,
               span: 6,
             },
-            {
+  /*          {
               label: "处方类型",
               prop: "ptype",
               disabled: true,
@@ -1290,7 +1307,7 @@
               prop: "token",
               disabled: true,
               span: 6,
-            },
+            },*/
           ],
         },
         listOption: {
@@ -1305,7 +1322,33 @@
           header: false,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [
+
+            {
+              label: "药品名称",
+              prop: "goodsName",
+              disabled: true,
+            },
+            {
+              label: "药品编号",
+              prop: "goodsCode",
+              disabled: true,
+            },
+            {
+              label: "货品小类别3",
+              prop: "goodsCategory",
+              disabled: true,
+            },
+            {
+              label: "规格",
+              prop: "unit",
+              disabled: true,
+            },
+            {
+              label: "数量",
+              prop: "tienum",
+              disabled: true,
+            },/*{
             label: "委托单号",
             prop: "delnum",
             disabled: true,
@@ -1354,7 +1397,7 @@
               label: "单价",
               prop: "retailprice",
               disabled: true,
-            },
+            },*/
           ],
         },
         grainOption: {
@@ -1390,6 +1433,11 @@
               prop: "sex",
               disabled: true,
               span: 6,
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex"
             },
             {
               label: "患者年龄",
@@ -1415,7 +1463,7 @@
               disabled: true,
               span: 6,
             },
-            {
+         /*   {
               label: "处方类型",
               prop: "isInpatient",
               disabled: true,
@@ -1426,8 +1474,8 @@
               prop: "hospitalBedNo",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+           /* {
               label: "就诊卡号",
               prop: "visitingCard",
               disabled: true,
@@ -1438,32 +1486,32 @@
               prop: "quantity",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+          /*  {
               label: "分服次数",
               prop: "separateFrequency",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "医生姓名",
               prop: "doctorName",
               disabled: true,
               span: 6,
             },
-            {
+           /* {
               label: "科室名称",
               prop: "departmentName",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "处方名称",
               prop: "presName",
               disabled: true,
               span: 6,
             },
-            {
+          /*  {
               label: "处方开具时间",
               prop: "presTime",
               disabled: true,
@@ -1486,8 +1534,8 @@
               prop: "valuationTime",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+           /* {
               label: "挂单号",
               prop: "registerId",
               disabled: true,
@@ -1510,8 +1558,8 @@
               prop: "unitPrice",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+          /*  {
               label: "处方总价",
               prop: "total",
               disabled: true,
@@ -1522,19 +1570,19 @@
               prop: "drugCount",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+           /* {
               label: "处方备注说明",
               prop: "remarks",
               disabled: true,
               span: 6,
-            },
-            {
+            },*/
+/*            {
               label: "处方使用方法",
               prop: "usageMethod",
               disabled: true,
               span: 6,
-            },
+            },*/
           ],
         },
         listOption1: {
@@ -1549,7 +1597,29 @@
           header: false,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [
+            {
+              label: "药品名称",
+              prop: "goodsName",
+            },
+            {
+              label: "院库药品编号",
+              prop: "goodsCode",
+            },
+            {
+              label: "货品小类别4",
+              prop: "goodsCategory",
+            },
+            {
+              label: "规格",
+              prop: "unit",
+            },
+            {
+              label: "数量",
+              prop: "tienum",
+            },
+
+            /*{
             label: "处方ID",
             prop: "presId",
             disabled: true,
@@ -1558,33 +1628,33 @@
               label: "颗粒序号",
               prop: "drugNo",
               disabled: true,
-            },
-            {
+            },*/
+/*            {
               label: "院方库颗粒名称",
               prop: "drugName",
               disabled: true,
-            },
-            {
+            },*/
+/*            {
               label: "院库颗粒编号",
               prop: "drugId",
               disabled: true,
-            },
-            {
+            },*/
+/*            {
               label: "颗粒批号",
               prop: "batchNumber",
               disabled: true,
-            },
-            {
+            },*/
+/*            {
               label: "饮片剂量",
               prop: "doseHerb",
               disabled: true,
-            },
-            {
+            },*/
+/*            {
               label: "当量",
               prop: "equivalent",
               disabled: true,
-            },
-            {
+            },*/
+            /*{
               label: "颗粒剂量",
               prop: "dose",
               disabled: true,
@@ -1603,7 +1673,7 @@
               label: "品种备注",
               prop: "remarks",
               disabled: true,
-            },
+            },*/
           ],
         },
         form: {},
@@ -1726,8 +1796,8 @@
         return {
           addBtn: this.vaildData(this.permission.order_add, false),
           viewBtn: this.vaildData(this.permission.order_view, false),
-          delBtn: this.vaildData(this.permission.order_delete, false),
-          editBtn: this.vaildData(this.permission.order_edit, false)
+          delBtn: false,
+          editBtn: false
         };
       },
       ids() {
@@ -1856,6 +1926,48 @@
         this.selectDrugDialogVisible = false
         this.$refs.crud.toggleSelection();
       },
+      //保存
+      bcBtn(){
+        this.$confirm("请仔细查阅一经保存无法删除！", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            //orderType:1:调配机；2：煎药机
+            let params ={};
+            console.log(this.addInfo)
+            console.log(this.orderType)
+            // return;
+            if (this.orderType == 1){
+              params.hospitalName = this.addInfo.order.hospitalId;
+              params.blender = this.addInfo.blenderList;
+              params.blenderDetailsList = this.addInfo.blenderDetailsList;
+              console.log(params);
+              receiveBlenderSave(params).then(res=>{
+                this.$message({
+                  type: "success",
+                  message: "操作成功!"
+                });
+                this.$refs.crud.toggleSelection();
+                console.log(res);
+              });
+            }else if(this.orderType == 2){
+              params.hospitalName = this.addInfo.order.hospitalId;
+              params.decoctingMedicine = this.addInfo.decoctingList;
+              params.decoctingDrugList = this.addInfo.decoctingDrugList;
+              receiveDecoctingSave(params).then(res=>{
+                this.$message({
+                  type: "success",
+                  message: "操作成功!"
+                });
+                this.$refs.crud.toggleSelection();
+                console.log(res);
+              });
+            }
+
+          })
+      },
       //取消
       reject() {
         this.$refs.crud.toggleSelection();
@@ -1868,6 +1980,7 @@
       //选择药品
       selectDrug() {
         this.selectDrugDialogVisible = true
+        this.drugRefreshChange();
       },
       //新增
       newAdd() {
@@ -1934,10 +2047,18 @@
         this.drugList.loading = true;
         console.log(page);
         console.log(params);
+        params.drugCategory = this.machineType
         console.log(this.drugList.query);
-        getDrugList(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
+        selectListBydrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
           console.log(res);
           const data = res.data.data;
+          console.log(data);
+          if (data.length == 0){
+            this.drugList.loading = false;
+            this.drugSelectionClear();
+            this.drugList.data = [];
+            return;
+          }
           data.records.forEach((value) => {
             value.tienum = 0
           })
