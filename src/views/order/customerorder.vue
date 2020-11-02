@@ -861,7 +861,7 @@
             search: true,
             dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
           },
-            {
+           /* {
               label: "订单状态",
               prop: "orderStatic",
               type: "select",
@@ -872,7 +872,7 @@
               span: 6,
               search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status"
-            },
+            },*/
             {
               label: "订单类型",
               prop: "orderType",
@@ -921,7 +921,7 @@
               },],
               span: 6,
             },
-            {
+            /*{
               label: "订单时间",
               prop: "orderTime",
 
@@ -929,7 +929,7 @@
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
               span: 6,
-            },
+            },*/
 
 
           ],
