@@ -784,10 +784,11 @@
           addBtn: false,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [
+            {
             label: "处方ID",
             prop: "presId",
-          },
+            },
             {
               label: "颗粒序号",
               prop: "drugNo",
@@ -1558,11 +1559,12 @@
           header: false,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [
+            {
             label: "处方ID",
             prop: "presId",
             disabled: true,
-          },
+            },
             {
               label: "颗粒序号",
               prop: "drugNo",

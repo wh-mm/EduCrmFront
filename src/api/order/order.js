@@ -55,9 +55,9 @@ export const getInfo = (par) => {
   })
 }
 
-export const getDrugList = (current, size, params) => {
+export const selectListBydrugCategory = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/goods/list',
+    url: '/api/taocao-warehouse/goods/selectListBydrugCategory',
     method: 'get',
     params: {
       ...params,
@@ -66,3 +66,19 @@ export const getDrugList = (current, size, params) => {
     }
   })
 }
+
+export const receiveDecoctingSave = (row) => {
+  return request({
+    url: '/api/taocao-order/order/receiveDecoctingSave',
+    method: 'post',
+    data: row
+  })
+}
+export const receiveBlenderSave = (row) => {
+  return request({
+    url: '/api/taocao-order/order/receiveBlenderSave',
+    method: 'post',
+    data: row
+  })
+}
+
