@@ -622,7 +622,7 @@
           selection: true,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [/*{
             label: "订单ID",
             prop: "orderId",
             span: 6,
@@ -631,7 +631,7 @@
               label: "处方编号",
               prop: "presId",
               span: 6,
-            },
+            },*/
             {
               label: "患者姓名",
               prop: "name",
@@ -1410,18 +1410,18 @@
           selection: true,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [/*{
             label: "订单ID",
             prop: "orderId",
             disabled: true,
             span: 6,
-          },
-            {
+          },*/
+           /* {
               label: "处方编号",
               prop: "presId",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "患者姓名",
               prop: "name",
