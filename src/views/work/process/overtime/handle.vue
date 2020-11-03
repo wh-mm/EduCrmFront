@@ -19,17 +19,17 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="报销金额">
-              <el-input :disabled="true" v-model="form.expenseMoney"/>
+            <el-form-item label="开始时间">
+              <el-input :disabled="true" v-model="form.startTime"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="报销类型">
-              <el-input :disabled="true" v-model="form.typeName"/>
+            <el-form-item label="结束时间">
+              <el-input :disabled="true" v-model="form.endTime"/>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="请假理由">
+        <el-form-item label="加班理由">
           <el-input :disabled="true" type="textarea" v-model="form.reason"/>
         </el-form-item>
         <el-form-item label="批复意见">
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-  import {historyFlowList, expenseDetail} from "@/api/work/process";
+  import {historyFlowList, overtimeDetail} from "@/api/work/process";
   import {completeTask} from "@/api/work/work";
 
   export default {
@@ -80,11 +80,9 @@
         form: {
           flow: {
             assigneeName: '',
-            taskDefinitionKey: '',
           },
-          expenseMoney: '',
-          type: '',
-          typeName: '',
+          startTime: '',
+          endTime: '',
           reason: '',
           comment: '',
         },
@@ -115,7 +113,7 @@
             this.flowList = data.data;
           }
         })
-        expenseDetail(this.businessId).then(res => {
+        overtimeDetail(this.businessId).then(res => {
           const data = res.data;
           if (data.success) {
             this.form = data.data;

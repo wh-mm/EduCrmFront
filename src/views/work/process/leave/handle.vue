@@ -3,8 +3,10 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       <el-row type="flex" class="row-bg" justify="end">
         <el-form-item>
-          <el-button type="primary" @click="handleAgree">同意</el-button>
-          <el-button type="danger" @click="handleDisagree">驳回</el-button>
+          <el-button v-if="form.flow.taskDefinitionKey == 'userTask'" type="primary" @click="handleAgree">重新申请</el-button>
+          <el-button v-else type="primary" @click="handleAgree">同意</el-button>
+          <el-button v-if="form.flow.taskDefinitionKey == 'userTask'" type="danger" @click="handleDisagree">关闭申请</el-button>
+          <el-button v-else type="danger" @click="handleDisagree">驳回</el-button>
           <el-button @click="handleCancel">关闭</el-button>
         </el-form-item>
       </el-row>
