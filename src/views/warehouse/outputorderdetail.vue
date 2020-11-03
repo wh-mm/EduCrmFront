@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.warehouse_delete"
+                   v-if="permission.outputorderdetail_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,56 +32,20 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,testingOnlyCode,selectName} from "@/api/warehouse/warehouse";
+  import {getList, getDetail, add, update, remove} from "@/api/warehouse/outputorderdetail";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var codeTestingOnly = (rule,value,callback) =>{
-        if (value === ''){
-          callback(new Error("请输入编码！"))
-        }else {
-          testingOnlyCode(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
         }
-      }
-      var selectWarehouseName = (rule,value,callback) =>{
-        if (value === ''){
-          callback(new Error("请输入仓库名称！"))
-        }else {
-          selectName(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-      // var warehousename = (rule, value, callback)=>{
-      //   console.log(value.length);
-      //   if (value.length >= 20) {
-      //     callback(new Error('货物名称不能超过20个字'));
-      //   } else {
-      //     selectWarehouseName(value).then((res) => {
-      //       console.log(res);
-      //       if(res.data.code != 200){
-      //         callback(new Error('货物名称重复,请从新输入!'));
-      //       } else{
-      //         callback();
-      //       }
-      //     })
-      //   }};
-
+      };
       return {
         form: {},
         query: {},
@@ -105,53 +69,35 @@
           dialogClickModal: false,
           column: [
             {
-              label: "仓库名称",
-              prop: "name",
-              search: true,
+              label: "出库id",
+              prop: "outputId",
               rules: [{
                 required: true,
-                validator:selectWarehouseName,
-                trigger: "blur"
-              },
-              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-              ]
-            },
-            {
-              label: "编码",
-              prop: "code",
-              append: "仓库唯一编号",
-              rules: [{
-                required: true,
-                validator: codeTestingOnly,
-                trigger: "blur"
-              },
-              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-              ]
-            },
-            {
-              label: "地址",
-              prop: "addressArray",
-              type: "cascader",
-              rules: [{
-                required: true,
-                message: "请输入地址",
-                trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
-            },
-            {
-              label: "详细地址",
-              prop: "addressDetail",
-              rules: [{
-                required: true,
-                message: "请输入详细地址",
+                message: "请输入采购id",
                 trigger: "blur"
               }]
             },
+            {
+              label: "商品id",
+              prop: "goodsId",
+              rules: [{
+                required: true,
+                message: "请输入商品id",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
+              }]
+            },
+
           ]
         },
         data: []
@@ -161,10 +107,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.warehouse_add, false),
-          viewBtn: this.vaildData(this.permission.warehouse_view, false),
-          delBtn: this.vaildData(this.permission.warehouse_delete, false),
-          editBtn: this.vaildData(this.permission.warehouse_edit, false)
+          addBtn: this.vaildData(this.permission.outputorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.outputorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.outputorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.outputorderdetail_edit, false)
         };
       },
       ids() {

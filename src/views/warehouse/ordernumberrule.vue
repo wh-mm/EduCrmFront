@@ -57,6 +57,7 @@
           index: true,
           viewBtn: true,
           selection: true,
+          menu: false,
           dialogClickModal: false,
           column: [
             {
@@ -104,10 +105,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.ordernumberrules_add, false),
-          viewBtn: this.vaildData(this.permission.ordernumberrules_view, false),
-          delBtn: this.vaildData(this.permission.ordernumberrules_delete, false),
-          editBtn: this.vaildData(this.permission.ordernumberrules_edit, false)
+          addBtn: this.vaildData(this.permission.ordernumberrule_add, false),
+          viewBtn: this.vaildData(this.permission.ordernumberrule_view, false),
+          delBtn: this.vaildData(this.permission.ordernumberrule_delete, false),
+          editBtn: this.vaildData(this.permission.ordernumberrule_edit, false)
         };
       },
       ids() {

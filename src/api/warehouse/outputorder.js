@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/list',
+    url: '/api/taocao-warehouse/outputorder/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/detail',
+    url: '/api/taocao-warehouse/outputorder/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/remove',
+    url: '/api/taocao-warehouse/outputorder/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/submit',
+    url: '/api/taocao-warehouse/outputorder/submit',
     method: 'post',
     data: row
   })
@@ -42,29 +42,21 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/submit',
+    url: '/api/taocao-warehouse/outputorder/submit',
     method: 'post',
     data: row
   })
 }
 
-export const  testingOnlyCode = (id,code) => {
+export const updateStatus = (id, status) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/testingOnlyCode',
-    method: 'get',
-    params: {
+    url: '/api/taocao-warehouse/outputorder/updateStatus',
+    method: 'post',
+    params:{
       id,
-      code
+      status
     }
   })
 }
-export const selectName = (id,name) => {
-  return request({
-    url: '/api/taocao-warehouse/warehouse/selectName',
-    method: 'get',
-    params: {
-      id,
-      name
-    }
-  })
-}
+
+
