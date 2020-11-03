@@ -52,3 +52,24 @@ export const expenseDetail = (businessId) => {
     }
   })
 }
+
+// =====================加班流程===========================
+
+export const overtimeProcess = (data) => {
+  return request({
+    url: '/api/blade-desk/process/overtime/start-process',
+    method: 'post',
+    data
+  })
+}
+
+export const overtimeDetail = (businessId) => {
+  return request({
+    url: '/api/blade-desk/process/overtime/detail',
+    method: 'get',
+    params: {
+      businessId
+    }
+  })
+}
+

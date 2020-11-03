@@ -133,4 +133,35 @@ export default [{
       component: () =>
         import( /* webpackChunkName: "views" */ '@/views/work/process/expense/detail')
     }]
-  }]
+  },
+  {
+    path: '/work/process/overtime',
+    component: Layout,
+    redirect: '/work/process/overtime/form',
+    children: [{
+      path: 'form/:processDefinitionId',
+      name: '加班流程',
+      meta: {
+        i18n: 'work'
+      },
+      component: () =>
+        import( /* webpackChunkName: "views" */ '@/views/work/process/overtime/form')
+    }, {
+      path: 'handle/:taskId/:processInstanceId/:businessId',
+      name: '处理加班流程',
+      meta: {
+        i18n: 'work'
+      },
+      component: () =>
+        import( /* webpackChunkName: "views" */ '@/views/work/process/overtime/handle')
+    }, {
+      path: 'detail/:processInstanceId/:businessId',
+      name: '加班流程详情',
+      meta: {
+        i18n: 'work'
+      },
+      component: () =>
+        import( /* webpackChunkName: "views" */ '@/views/work/process/overtime/detail')
+    }]
+  }
+  ]

@@ -18,20 +18,20 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot="menuLeft">
-        <el-button type="primary"
-                   size="small"
-                   icon="el-icon-plus"
-                   plain
-                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
-        </el-button>
-        <el-button type="primary"
-                   size="small"
-                   icon="el-icon-plus"
-                   plain
-                   @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
-        </el-button>
-      </template>
+<!--      <template slot="menuLeft">-->
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   plain-->
+<!--                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库-->
+<!--        </el-button>-->
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   plain-->
+<!--                   @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库-->
+<!--        </el-button>-->
+<!--      </template>-->
     </avue-crud>
     <el-dialog
       :title="title"
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-  import {getList,add} from "@/api/warehouse/warehouseinoutput";
+  import {getList,add,updateStatus} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
 
   export default {
@@ -83,7 +83,7 @@
           index: true,
           viewBtn: true,
           selection: true,
-          menu:false,
+          menu:true,
           dialogClickModal: false,
           column: [
             {
@@ -123,6 +123,7 @@
               prop: "type",
               type: "select",
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              search:true,
               props: {
                 label: "dictValue",
                 value: "dictKey"
@@ -197,6 +198,7 @@
               row: true,
               disabled:true,
               span: 24,
+
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               props: {
                 label: "dictValue",
@@ -218,9 +220,10 @@
       permissionList() {
         return {
           addBtn: false,
-          viewBtn: false,
+          viewBtn: true,
           delBtn: false,
           editBtn: false,
+
         };
       },
       ids() {
@@ -232,6 +235,19 @@
       }
     },
     methods: {
+      rowSave(row, done, loading) {
+        add(row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          done();
+        }, error => {
+          loading();
+          window.console.log(error);
+        });
+      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
@@ -282,6 +298,33 @@
         }).catch(() => {
           done();
         })
+      },
+      updateStatus(id){
+        let status;
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
+          type: "warning"
+        })
+          .then(() => {
+            console.log(status)
+            status = 2;
+          })
+          .catch(() => {
+            console.log(3);
+            status = 3;
+          }).finally(()=>{
+          console.log(status);
+          updateStatus(id,status).then(res => {
+            if(res.data.success){
+              this.$message.success(res.data.msg);
+            }else{
+              this.$message.error(res.data.msg);
+            }
+            this.refreshChange();
+            this.onLoad(this.page);
+          })
+        });
       }
     }
   };

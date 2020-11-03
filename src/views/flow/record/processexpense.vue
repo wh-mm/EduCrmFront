@@ -84,6 +84,10 @@
               }]
             },
             {
+              label: "状态",
+              prop: "status",
+            },
+            {
               label: "申请时间",
               prop: "applyTime",
               type: "datetime",
