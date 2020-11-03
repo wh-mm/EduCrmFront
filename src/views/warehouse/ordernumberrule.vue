@@ -79,15 +79,6 @@
               }]
             },
             {
-              label: "字段二 (时间戳)",
-              prop: "fieldTwo",
-              rules: [{
-                required: true,
-                message: "请输入字段二 (时间戳)",
-                trigger: "blur"
-              }]
-            },
-            {
               label: "字段三 (流水号)",
               prop: "fieldThree",
               rules: [{
