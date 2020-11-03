@@ -232,13 +232,14 @@
                 prop: "goodsName",
               },
               {
-                label: "货物类别",
+                label: "货物小类别",
                 prop: "goodsCategory",
                 type: "tree",
                 props: {
                   label: 'dictValue',
                   value: 'id'
                 },
+                //cascaderItem: ['goodsName'],
                 search: true,
                 dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
               },
@@ -334,11 +335,11 @@
           selection: true,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [/*{
             label: "委托单号",
             prop: "delnum",
             span: 6,
-            },
+            },*/
             {
               label: "医院名称",
               prop: "hospitalName",
@@ -1069,12 +1070,12 @@
           selection: true,
           dialogClickModal: false,
           menuBtn: false,
-          column: [{
+          column: [/*{
             label: "委托单号",
             prop: "delnum",
             disabled: true,
             span: 6,
-          },
+          },*/
 
             {
               label: "医院名称",
@@ -1082,12 +1083,12 @@
               disabled: true,
               span: 6,
             },
-            {
+            /*{
               label: "处方号",
               prop: "pspnum",
               disabled: true,
               span: 6,
-            },
+            },*/
             {
               label: "患者姓名",
               prop: "name",
@@ -1386,11 +1387,11 @@
           dialogClickModal: false,
           menuBtn: false,
           column: [
-            {
+           /* {
             label: "委托单号",
             prop: "delnum",
             disabled: true,
-            },
+            },*/
             {
               label: "药品编号",
               prop: "drugnum",
@@ -1975,8 +1976,9 @@
             let params = {};
             console.log(this.addInfo)
             console.log(this.orderType)
+            console.log(this.machineType)
             // return;
-            if (this.orderType == 1) {
+            if (this.machineType == 1) {
               params.hospitalName = this.addInfo.order.hospitalId;
               params.blender = this.addInfo.blender;
               params.blenderDetailsList = this.addInfo.blenderDetailsList;
@@ -2000,10 +2002,11 @@
                   })
                 }
               });
-            } else if (this.orderType == 2) {
+            } else if (this.machineType == 2) {
               params.hospitalName = this.addInfo.order.hospitalId;
               params.decocting = this.addInfo.decocting;
               params.decoctingDrugList = this.addInfo.decoctingDrugList;
+              console.log(params);
               receiveDecoctingSave(params).then(res => {
                 if (res.data.code == 200){
                   this.$message({
