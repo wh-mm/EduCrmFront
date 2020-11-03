@@ -78,6 +78,15 @@
               }]
             },
             {
+              label: "货品名称",
+              prop: "goodsName",
+              rules: [{
+                required: true,
+                message: "请输入医院药品编号",
+                trigger: "blur"
+              }]
+            },
+            {
               label: "医院药品编号",
               prop: "hospitalGoodsUmber",
               rules: [{
