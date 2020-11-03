@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import {getList} from "@/api/flow/record/processleave";
+  import {getList} from "@/api/flow/record/processovertime";
 
   export default {
     data() {
@@ -76,11 +76,11 @@
               }]
             },
             {
-              label: "请假理由",
+              label: "加班理由",
               prop: "reason",
               rules: [{
                 required: true,
-                message: "请输入请假理由",
+                message: "请输入加班理由",
                 trigger: "blur"
               }]
             },

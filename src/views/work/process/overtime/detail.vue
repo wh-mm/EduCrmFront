@@ -1,12 +1,8 @@
 <template>
   <basic-container>
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="form" label-width="80px">
       <el-row type="flex" class="row-bg" justify="end">
         <el-form-item>
-          <el-button v-if="form.flow.taskDefinitionKey == 'userTask'" type="primary" @click="handleAgree">重新申请</el-button>
-          <el-button v-else type="primary" @click="handleAgree">同意</el-button>
-          <el-button v-if="form.flow.taskDefinitionKey == 'userTask'" type="danger" @click="handleDisagree">关闭申请</el-button>
-          <el-button v-else type="danger" @click="handleDisagree">驳回</el-button>
           <el-button @click="handleCancel">关闭</el-button>
         </el-form-item>
       </el-row>
@@ -29,11 +25,8 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="请假理由">
+        <el-form-item label="加班理由">
           <el-input :disabled="true" type="textarea" v-model="form.reason"/>
-        </el-form-item>
-        <el-form-item label="批复意见">
-          <el-input type="textarea" v-model="form.comment"/>
         </el-form-item>
       </el-card>
       <el-card shadow="hover">
@@ -66,13 +59,11 @@
 </template>
 
 <script>
-  import {historyFlowList, leaveDetail} from "@/api/work/process";
-  import {completeTask} from "@/api/work/work";
+  import {historyFlowList, overtimeDetail} from "@/api/work/process";
 
   export default {
     data() {
       return {
-        taskId: '',
         businessId: '',
         processInstanceId: '',
         src: '',
@@ -84,26 +75,14 @@
           startTime: '',
           endTime: '',
           reason: '',
-          comment: '',
-        },
+        }
       }
     },
     created() {
       this.init();
     },
-    beforeRouteUpdate(to, from, next) {
-      // 在当前路由改变，但是该组件被复用时调用
-      // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候
-      // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用
-      // 可以访问组件实例 `this`
-      if (to.fullPath !== from.fullPath) {
-        next();
-        this.init();
-      }
-    },
     methods: {
       init() {
-        this.taskId = this.$route.params.taskId;
         this.processInstanceId = this.$route.params.processInstanceId;
         this.businessId = this.$route.params.businessId;
         this.src = `/api/blade-flow/process/diagram-view?processInstanceId=${this.$route.params.processInstanceId}`;
@@ -113,53 +92,10 @@
             this.flowList = data.data;
           }
         })
-        leaveDetail(this.businessId).then(res => {
+        overtimeDetail(this.businessId).then(res => {
           const data = res.data;
           if (data.success) {
             this.form = data.data;
-          }
-        })
-      },
-      handleAgree() {
-        if (!this.form.comment) {
-          this.$message.warning('请先填写批复意见');
-          return;
-        }
-        const params = {
-          taskId: this.taskId,
-          processInstanceId: this.processInstanceId,
-          flag: 'ok',
-          comment: this.form.comment,
-        };
-        completeTask(params).then(res => {
-          const data = res.data;
-          if (data.success) {
-            this.$message.success(data.msg);
-            this.$router.$avueRouter.closeTag();
-            this.$router.push({path: `/work/start`});
-          } else {
-            this.$message.error(data.msg || '提交失败');
-          }
-        })
-      },
-      handleDisagree() {
-        if (!this.form.comment) {
-          this.$message.warning('请先填写批复意见');
-          return;
-        }
-        const params = {
-          taskId: this.taskId,
-          processInstanceId: this.processInstanceId,
-          comment: this.form.comment,
-        };
-        completeTask(params).then(res => {
-          const data = res.data;
-          if (data.success) {
-            this.$message.success(data.msg);
-            this.$router.$avueRouter.closeTag();
-            this.$router.push({path: `/work/start`});
-          } else {
-            this.$message.error(data.msg || '提交失败');
           }
         })
       },

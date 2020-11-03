@@ -47,5 +47,38 @@ export const update = (row) => {
     data: row
   })
 }
+export const getInfo = (par) => {
+  return request({
+    url: par.url,
+    method: 'post',
+    params: par.params
+  })
+}
 
+export const selectListBydrugCategory = (current, size, params) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/selectListBydrugCategory',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+}
+
+export const receiveDecoctingSave = (row) => {
+  return request({
+    url: '/api/taocao-order/order/receiveDecoctingSave',
+    method: 'post',
+    data: row
+  })
+}
+export const receiveBlenderSave = (row) => {
+  return request({
+    url: '/api/taocao-order/order/receiveBlenderSave',
+    method: 'post',
+    data: row
+  })
+}
 

@@ -68,3 +68,12 @@ export const selectName = (id,name) => {
     }
   })
 }
+export const warehousename = (name) => {
+  return request({
+    url: '/api/taocao-warehouse/warehouse/selectName',
+    method: 'get',
+    params: {
+      name,
+    }
+  })
+}
