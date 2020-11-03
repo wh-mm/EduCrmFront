@@ -345,11 +345,11 @@
               prop: "hospitalName",
               span: 6,
             },
-            {
+            /*{
               label: "处方号",
               prop: "pspnum",
               span: 6,
-            },
+            },*/
             {
               label: "患者姓名",
               prop: "name",
@@ -1070,12 +1070,12 @@
           selection: true,
           dialogClickModal: false,
           menuBtn: false,
-          column: [/*{
+          column: [{
             label: "委托单号",
             prop: "delnum",
             disabled: true,
             span: 6,
-          },*/
+          },
 
             {
               label: "医院名称",
@@ -1083,12 +1083,12 @@
               disabled: true,
               span: 6,
             },
-            /*{
+            {
               label: "处方号",
               prop: "pspnum",
               disabled: true,
               span: 6,
-            },*/
+            },
             {
               label: "患者姓名",
               prop: "name",
