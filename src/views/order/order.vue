@@ -101,7 +101,7 @@
         <div slot="header" class="clearfix">
           <span>基础信息</span>
         </div>
-        <avue-form ref="form" v-model="orderInfo.order" :data="orderInfo" :option="baseOption"></avue-form>
+        <avue-form ref="form" v-model="orderInfo.order" :option="baseOption"></avue-form>
       </el-card>
       <div v-if="orderType == 2">
         <el-card class="box-card">
@@ -192,7 +192,6 @@
               {
                 label: "颗粒名称/药品名称",
                 prop: "goodsName",
-
               },
               {
                 label: "货物大类别",
@@ -784,11 +783,10 @@
           addBtn: false,
           dialogClickModal: false,
           menuBtn: false,
-          column: [
-            {
+          column: [{
             label: "处方ID",
             prop: "presId",
-            },
+          },
             {
               label: "颗粒序号",
               prop: "drugNo",
@@ -1564,7 +1562,7 @@
             label: "处方ID",
             prop: "presId",
             disabled: true,
-            },
+          },
             {
               label: "颗粒序号",
               prop: "drugNo",
