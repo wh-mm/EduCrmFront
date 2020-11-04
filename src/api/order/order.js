@@ -10,7 +10,7 @@ export const getList = (current, size, params) => {
       size,
     }
   })
-}
+};
 
 export const getDetail = (id) => {
   return request({
@@ -20,7 +20,7 @@ export const getDetail = (id) => {
       id
     }
   })
-}
+};
 
 export const remove = (ids) => {
   return request({
@@ -30,7 +30,7 @@ export const remove = (ids) => {
       ids,
     }
   })
-}
+};
 
 export const add = (row) => {
   return request({
@@ -38,7 +38,7 @@ export const add = (row) => {
     method: 'post',
     data: row
   })
-}
+};
 
 export const update = (row) => {
   return request({
@@ -47,15 +47,27 @@ export const update = (row) => {
     data: row
   })
 }
-export const getInfo = (par) => {
+export const getInfo = (url, orderId) => {
   return request({
-    url: par.url,
+    url: url,
     method: 'post',
-    params: par.params
+    params: {
+      orderId: orderId
+    }
   })
-}
+};
 
-export const selectListBydrugCategory = (current, size, params) => {
+export const dictionaryByName = (name) => {
+  return request({
+    url: '/api/blade-system/dictCategory/dictionaryByName',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+};
+
+export const selectListByDrugCategory = (current, size, params) => {
   return request({
     url: '/api/taocao-warehouse/goods/selectListBydrugCategory',
     method: 'get',
@@ -65,7 +77,7 @@ export const selectListBydrugCategory = (current, size, params) => {
       size,
     }
   })
-}
+};
 
 export const receiveDecoctingSave = (row) => {
   return request({
@@ -73,12 +85,12 @@ export const receiveDecoctingSave = (row) => {
     method: 'post',
     data: row
   })
-}
+};
 export const receiveBlenderSave = (row) => {
   return request({
     url: '/api/taocao-order/order/receiveBlenderSave',
     method: 'post',
     data: row
   })
-}
+};
 
