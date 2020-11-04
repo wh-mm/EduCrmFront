@@ -14,16 +14,44 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
+      <template slot="menuLeft">
+        <el-button type="primary"
+                   size="small"
+                   icon="el-icon-plus"
+                   plain
+                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
+        </el-button>
+
+      </template>
     </avue-crud>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
   import {getList} from "@/api/warehouse/repertory";
+  import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
+      var validateNumber = (rule, value, callback)=>{
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if(value < 1){
+          callback(new Error('请输入正确的数量'));
+        } else {
+          callback();
+        }
+      };
       return {
         form: {},
         query: {},
@@ -33,6 +61,9 @@
           currentPage: 1,
           total: 0
         },
+        obj:{},
+        title: '' ,
+        dialogVisible:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -77,11 +108,8 @@
               prop: "repertoryQuantity",
               rules: [{
                 trigger: "blur"
-              },    {
-                          pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
-                          message: "请输入合法的数量",
-                          trigger: "change"
-                        }]
+              },
+              ]
             },
             {
               label: "入库时间",
@@ -89,7 +117,81 @@
             },
           ]
         },
-        data: []
+        data: [],
+        optionForm : {
+          column: [
+            {
+              label: "商品",
+              prop: "goodsId",
+              type:'tree',
+              row: true,
+              span: 24,
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              rules:[{
+                required: true,
+                message: "请输入商品",
+                trigger: "blur",
+              }],
+
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/dropDown'
+            },
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+              row: true,
+              span: 24,
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+            },
+            {
+              label: "数量",
+              prop: "quantity",
+              type: "number",
+              precision: 0,
+              value: 1,
+              row: true,
+              span: 24,
+              rules: [{
+                validator: validateNumber,
+                trigger: 'change',
+              }]
+            },
+            {
+              label: "类型",
+              prop: "type",
+              type: "select",
+              row: true,
+              disabled:true,
+              span: 24,
+
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
+            },
+            {
+              label: "备注",
+              prop: "remark",
+              type: "textarea",
+              span: 24,
+            }
+          ]
+        }
       };
     },
     computed: {
@@ -111,6 +213,19 @@
       }
     },
     methods: {
+      rowSave(row, done, loading) {
+        add(row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          done();
+        }, error => {
+          loading();
+          window.console.log(error);
+        });
+      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
@@ -146,7 +261,22 @@
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
+      submit(form,done){
+        add(form).then( res => {
+          done();
+          if(res.data.success){
+            this.$refs.form.resetForm();
+            this.$message.success(res.data.msg);
+            this.dialogVisible = false;
+            this.onLoad(this.page, this.query);
+          }else {
+            this.$message.error(res.data.msg);
+          }
+        }).catch(() => {
+          done();
+        })
+      },
     }
   };
 </script>

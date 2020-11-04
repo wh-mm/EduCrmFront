@@ -119,7 +119,7 @@
             {
               label: "规格",
               prop: "unit",
-              type: "tree",
+              type: "select",
               props: {
                 label: 'dictValue',
                 value: 'dictKey'

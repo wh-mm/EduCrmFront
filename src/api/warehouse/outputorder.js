@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/list',
+    url: '/api/taocao-warehouse/outputorder/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/detail',
+    url: '/api/taocao-warehouse/outputorder/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/remove',
+    url: '/api/taocao-warehouse/outputorder/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/submit',
+    url: '/api/taocao-warehouse/outputorder/submit',
     method: 'post',
     data: row
   })
@@ -42,14 +42,15 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/submit',
+    url: '/api/taocao-warehouse/outputorder/submit',
     method: 'post',
     data: row
   })
 }
+
 export const updateStatus = (id, status) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/updateStatus',
+    url: '/api/taocao-warehouse/outputorder/updateStatus',
     method: 'post',
     params:{
       id,
@@ -57,4 +58,5 @@ export const updateStatus = (id, status) => {
     }
   })
 }
+
 

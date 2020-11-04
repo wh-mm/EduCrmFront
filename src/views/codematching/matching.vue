@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.warehouse_delete"
+                   v-if="permission.matching_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,56 +32,11 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,testingOnlyCode,selectName} from "@/api/warehouse/warehouse";
+  import {getList, getDetail, add, update, remove} from "@/api/codematching/matching";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var codeTestingOnly = (rule,value,callback) =>{
-        if (value === ''){
-          callback(new Error("请输入编码！"))
-        }else {
-          testingOnlyCode(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-      var selectWarehouseName = (rule,value,callback) =>{
-        if (value === ''){
-          callback(new Error("请输入仓库名称！"))
-        }else {
-          selectName(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-      // var warehousename = (rule, value, callback)=>{
-      //   console.log(value.length);
-      //   if (value.length >= 20) {
-      //     callback(new Error('货物名称不能超过20个字'));
-      //   } else {
-      //     selectWarehouseName(value).then((res) => {
-      //       console.log(res);
-      //       if(res.data.code != 200){
-      //         callback(new Error('货物名称重复,请从新输入!'));
-      //       } else{
-      //         callback();
-      //       }
-      //     })
-      //   }};
-
       return {
         form: {},
         query: {},
@@ -105,50 +60,38 @@
           dialogClickModal: false,
           column: [
             {
-              label: "仓库名称",
-              prop: "name",
-              search: true,
+              label: "医院id",
+              prop: "hospitalId",
               rules: [{
                 required: true,
-                validator:selectWarehouseName,
+                message: "请输入医院id",
                 trigger: "blur"
-              },
-              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-              ]
+              }]
             },
             {
-              label: "编码",
-              prop: "code",
-              append: "仓库唯一编号",
+              label: "商品id",
+              prop: "goodsId",
               rules: [{
                 required: true,
-                validator: codeTestingOnly,
+                message: "请输入商品id",
                 trigger: "blur"
-              },
-              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-              ]
+              }]
             },
             {
-              label: "地址",
-              prop: "addressArray",
-              type: "cascader",
+              label: "货品名称",
+              prop: "goodsName",
               rules: [{
                 required: true,
-                message: "请输入地址",
+                message: "请输入医院药品编号",
                 trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
+              }]
             },
             {
-              label: "详细地址",
-              prop: "addressDetail",
+              label: "医院药品编号",
+              prop: "hospitalGoodsUmber",
               rules: [{
                 required: true,
-                message: "请输入详细地址",
+                message: "请输入医院药品编号",
                 trigger: "blur"
               }]
             },
@@ -161,10 +104,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.warehouse_add, false),
-          viewBtn: this.vaildData(this.permission.warehouse_view, false),
-          delBtn: this.vaildData(this.permission.warehouse_delete, false),
-          editBtn: this.vaildData(this.permission.warehouse_edit, false)
+          addBtn: this.vaildData(this.permission.matching_add, false),
+          viewBtn: this.vaildData(this.permission.matching_view, false),
+          delBtn: this.vaildData(this.permission.matching_delete, false),
+          editBtn: this.vaildData(this.permission.matching_edit, false)
         };
       },
       ids() {
