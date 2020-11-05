@@ -115,9 +115,12 @@
                     message: "请输入货品编码",
                     trigger: "blur"
               }]
+            },{
+              label: "规格",
+              prop: "specification",
             },
             {
-              label: "规格",
+              label: "单位",
               prop: "unit",
               type: "select",
               props: {

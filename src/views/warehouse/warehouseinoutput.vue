@@ -102,16 +102,15 @@
             {
               label: "商品",
               prop: "goodsId",
-              type:'select',
-              row: true,
-              span: 24,
-            props: {
-              label: 'goodsName',
-              value: 'id'
-            },
-            search:true,
-            dicMethod:"post",
-            dicUrl:'/api/taocao-warehouse/goods/dropDown',
+              type:"select",
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              search:true,
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
+
             },
             {
               label: "数量",
@@ -147,18 +146,17 @@
               type:'tree',
               row: true,
               span: 24,
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
               rules:[{
                 required: true,
                 message: "请输入商品",
                 trigger: "blur",
               }],
-
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/dropDown'
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod: "post",
+              dicUrl: '/api/taocao-warehouse/goods/dropDown',
             },
             {
               label: "仓库",

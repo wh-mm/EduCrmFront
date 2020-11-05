@@ -58,6 +58,16 @@ export const updateStatus = (id, status) => {
     }
   })
 }
+export const updateApply = (id, status) => {
+  return request({
+    url: '/api/taocao-warehouse/purchaseorder/updateApply',
+    method: 'post',
+    params:{
+      id,
+      status
+    }
+  })
+}
 
 
 

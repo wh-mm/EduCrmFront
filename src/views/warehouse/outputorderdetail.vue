@@ -80,11 +80,13 @@
             {
               label: "商品id",
               prop: "goodsId",
-              rules: [{
-                required: true,
-                message: "请输入商品id",
-                trigger: "blur"
-              }]
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              search:true,
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
             },
             {
               label: "数量",

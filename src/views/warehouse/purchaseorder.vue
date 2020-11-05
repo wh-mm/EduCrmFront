@@ -25,11 +25,10 @@
                    plain
                    v-if="permission.purchaseorder_delete"
                    @click="handleDelete">删 除
-
         </el-button>
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
-        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type"
+        <el-button v-if="row.status == 0" icon="el-icon-check" :size="size" :type="type"
                    @click="updateStatus(row.id,row.status)">审批
         </el-button>
       </template>
@@ -132,6 +131,7 @@
               prop: "statusName",
               addDisplay: false,
               editDisplay: false,
+              viewDisplay:false,
             },
             {
               label: '商品列表',
@@ -168,7 +168,7 @@
                       value: 'id'
                     },
                     dicMethod: "post",
-                    dicUrl: '/api/taocao-warehouse/goods/dropDown?name={{key}}',
+                    dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -177,7 +177,7 @@
                             if (val.goodsId == value) {
                               var detail = res.data.data;
                               val.unit = detail.unitName;
-                              val.money = detail.money;
+                              // val.money = detail.money;
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });
@@ -188,7 +188,7 @@
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 100,
+                    width: 200,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -213,7 +213,7 @@
                   }, {
                     label: '单价(元)',
                     prop: "money",
-                    disabled: true,
+                    disabled: false,
                     placeholder: " ",
                     width: 100,
                   },
