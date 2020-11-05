@@ -121,7 +121,7 @@
   import {mapGetters} from "vuex";
   import {
     newAddDrugOption, newAddListOption, newAddDrugListOption, newAddGrainOption, option,
-    newAddBlenderListOption
+    newAddBlenderListOption, viewDrugListOption, viewAddBlenderListOption
   } from "@/const/order/customerorder"
 
   export default {
@@ -392,11 +392,11 @@
         let url = '';
         if (row.orderType === "jianyao") {
           this.viewOption = newAddDrugOption;
-          this.viewCrudOption = newAddDrugListOption;
+          this.viewCrudOption = viewDrugListOption;
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = newAddGrainOption;
-          this.viewCrudOption = newAddBlenderListOption;
+          this.viewCrudOption = viewAddBlenderListOption;
           url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else {
           this.$message({

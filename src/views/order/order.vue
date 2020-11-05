@@ -20,7 +20,7 @@
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-        <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>
+        <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
@@ -122,7 +122,7 @@
   import {mapGetters} from "vuex";
   import {
     newAddDrugOption, newAddListOption, newAddDrugListOption, newAddGrainOption, option,
-    newAddBlenderListOption
+    newAddBlenderListOption, viewDrugListOption, viewAddBlenderListOption
   } from "@/const/order/customerorder"
 
   export default {
@@ -393,11 +393,11 @@
         let url = '';
         if (row.orderType === "jianyao") {
           this.viewOption = newAddDrugOption;
-          this.viewCrudOption = newAddDrugListOption;
+          this.viewCrudOption = viewDrugListOption;
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = newAddGrainOption;
-          this.viewCrudOption = newAddBlenderListOption;
+          this.viewCrudOption = viewAddBlenderListOption;
           url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else {
           this.$message({
