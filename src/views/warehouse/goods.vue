@@ -133,19 +133,19 @@
               }]
             },{
               label: "规格",
-              prop: "specification",
-           /*   type: "select",
+              prop: "goodsSpecification",
+              type: "select",
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"*/
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
             },
 
             {
               label: "单位",
-              prop: "unit",
+              prop: "unitName",
               type: "select",
               props: {
                 label: 'dictValue',
@@ -153,7 +153,6 @@
               },
               search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
-              //dicUrl: "/api/blade-system/dict-biz/dictionary?code=050"
             },
             {
               label: "货品价格",
