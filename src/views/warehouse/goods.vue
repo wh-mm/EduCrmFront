@@ -19,13 +19,13 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <!--<el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.goods_delete"
                    @click="handleDelete">删 除
-        </el-button>
+        </el-button>-->
       </template>
     </avue-crud>
   </basic-container>
@@ -156,7 +156,7 @@
             },
             {
               label: "货品价格",
-              prop: "money",
+              prop: "unitPrice",
               rules: [{
                 required: true,
                 message: "请输入货品价格",

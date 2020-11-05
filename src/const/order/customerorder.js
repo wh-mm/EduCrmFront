@@ -572,6 +572,91 @@ export const newAddBlenderListOption = {
   ],
 };
 
+export const viewDrugListOption = {
+  calcHeight: 200,
+  border: true,
+  index: true,
+  viewBtn: false,
+  addBtn: false,
+  menu: false,
+  page: false,
+  dialogClickModal: false,
+  menuBtn: false,
+  column: [
+    {
+      label: "药品名称",
+      prop: "drugName",
+    },
+    {
+      label: "规格",
+      prop: "unit",
+      width: 120,
+    },
+    {
+      label: "单剂量",
+      prop: "drugAllnum",
+      slot: true,
+    },
+
+    {
+      label: "次数",
+      prop: "tienum",
+      slot: true,
+    },
+    {
+      label: "总剂量",
+      prop: "drugweight",
+      slot: true,
+    },
+    {
+      label: "药品脚注",
+      prop: "drugDescription",
+      slot: true,
+    },
+    {
+      label: "说明",
+      prop: "description",
+      slot: true,
+    },
+    {
+      label: "单价",
+      prop: "unitPrice",
+    },
+  ],
+};
+
+export const viewAddBlenderListOption = {
+  calcHeight: 200,
+  border: true,
+  index: true,
+  viewBtn: false,
+  addBtn: false,
+  menu: false,
+  page: false,
+  dialogClickModal: false,
+  menuBtn: false,
+  column: [
+    {
+      label: "药品名称",
+      prop: "drugName",
+    },
+    {
+      label: "饮片剂量",
+      prop: "doseHerb",
+      slot: true,
+    },
+    {
+      label: "当量",
+      prop: "equivalent",
+      slot: true,
+    },
+    {
+      label: "单价",
+      prop: "unitPrice",
+    },
+  ],
+};
+
 export const option = {
   addBtn: false,
   height: "auto",
