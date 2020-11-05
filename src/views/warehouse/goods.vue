@@ -32,25 +32,42 @@
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove,selectGoodsName} from "@/api/warehouse/goods";
+  import {getList, getGoodsDetail, add, update, remove,selectGoodsName,selectGoodsCode} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
+
 
   export default {
     data() {
-      var goodsNames = (rule, value, callback)=>{
-        console.log(value.length);
-        if (value.length >= 20) {
-          callback(new Error('货物名称不能超过20个字'));
-        } else {
-          selectGoodsName(value).then((res) => {
-            console.log(res);
-            if(res.data.code != 200){
-              callback(new Error('货物名称重复,请从新输入!'));
-            } else{
+      var selectName = (rule, value, callback)=>{
+        if (value === ''){
+          callback(new Error("请输入商品名称！"))
+        }else {
+          selectGoodsName(this.form.id,value).then( res => {
+            if(res.data.success){
               callback();
+            }else{
+              callback(new Error(res.data.msg));
             }
-        })
-      }};
+          },err =>{
+            callback(new Error(err.data.msg));
+          })
+        }
+      }
+      var selectCode = (rule,value,callback) =>{
+        if (value === ''){
+          callback(new Error("请输入编码！"))
+        }else {
+          selectGoodsCode(this.form.id,value).then( res => {
+            if(res.data.success){
+              callback();
+            }else{
+              callback(new Error(res.data.msg));
+            }
+          },err =>{
+            callback(new Error(err.data.msg));
+          })
+        }
+      }
       return {
         form: {},
         query: {},
@@ -97,13 +114,12 @@
               search: true,
               dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
             },
-
             {
               label: "商品名称",
               prop: "goodsName",
               rules: [{
                 required: true,
-                validator:goodsNames,
+                validator:selectName,
                 trigger: 'blur',
               }],
             },
@@ -112,7 +128,7 @@
                prop: "goodsCode",
                     rules: [{
                     required: true,
-                    message: "请输入货品编码",
+                     validator:selectCode,
                     trigger: "blur"
               }]
             },{
@@ -156,7 +172,6 @@
               },
               dicUrl: "/api/blade-system/region/lazy-tree",
             },
-
              */
           ]
         },
