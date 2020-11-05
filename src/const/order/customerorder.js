@@ -455,13 +455,8 @@ export const newAddListOption = {
       width: 120,
     },
     {
-      label: "数量",
-      prop: "tienum",
-      width: 120,
-    },
-    {
       label: "单剂量",
-      prop: "drugallnum",
+      prop: "drugAllnum",
       slot: true,
     },
 
@@ -477,7 +472,7 @@ export const newAddListOption = {
     },
     {
       label: "药品脚注",
-      prop: "drugdescription",
+      prop: "drugDescription",
       slot: true,
     },
     {
@@ -485,10 +480,10 @@ export const newAddListOption = {
       prop: "description",
       slot: true,
     },
-    /*{
+    {
       label: "单价",
-      prop: "retailprice",
-    },*/
+      prop: "money",
+    },
   ],
 };
 
@@ -513,13 +508,8 @@ export const newAddDrugListOption = {
       width: 120,
     },
     {
-      label: "数量",
-      prop: "tienum",
-      width: 120,
-    },
-    {
       label: "单剂量",
-      prop: "drugallnum",
+      prop: "drugAllnum",
       slot: true,
     },
 
@@ -533,10 +523,20 @@ export const newAddDrugListOption = {
       prop: "drugweight",
       slot: true,
     },
-    /*{
+    {
+      label: "药品脚注",
+      prop: "drugDescription",
+      slot: true,
+    },
+    {
+      label: "说明",
+      prop: "description",
+      slot: true,
+    },
+    {
       label: "单价",
-      prop: "retailprice",
-    },*/
+      prop: "money",
+    },
   ],
 };
 
