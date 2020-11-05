@@ -68,6 +68,7 @@ export const selectGoodsName = (id,name) => {
     }
   })
 }
+
 export const  selectGoodsCode = (id,code) => {
   return request({
     url: '/api/taocao-warehouse/goods/selectCode',
