@@ -23,7 +23,7 @@
       <template slot="menuLeft">
           <el-button type="button"
                      size="small"
-
+                     v-if="permission.purchaseorder_approval"
                      @click="updateStatusNew()">审批
           </el-button>
       </template>
