@@ -44,24 +44,32 @@
         </el-tab-pane>
       </el-tabs>
       <avue-form ref="addForm" v-model="addInfo.form" :option="addOption"></avue-form>
-      <avue-crud ref="addCrud" :data="addInfo.drugList" :option="newAddListOption">
+      <avue-crud ref="addCrud" :data="addInfo.drugList" :option="addCrudOption">
         <template slot="menuLeft">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
         </template>
-        <template slot="drugallnum" slot-scope="scope">
+        <template slot="drugAllnum" slot-scope="scope">
           <el-input-number type="textarea" size="mini" placeholder="请输入单剂量"
-                           v-model="scope.row.drugallnum"></el-input-number>
+                           v-model="scope.row.drugAllnum"></el-input-number>
         </template>
         <template slot="tienum" slot-scope="scope">
           <el-input-number type="textarea" size="mini" placeholder="请输入贴数"
                            v-model="scope.row.tienum"></el-input-number>
         </template>
-        <template slot="drugweight" slot-scope="scope">
-          {{scope.row.tienum * scope.row.drugallnum}}
+        <template slot="doseHerb" slot-scope="scope">
+          <el-input-number type="textarea" size="mini" placeholder="请输入饮片剂量"
+                           v-model="scope.row.doseHerb"></el-input-number>
         </template>
-        <template slot="drugdescription" slot-scope="scope">
-          <avue-input size="mini" placeholder="请输入" v-model="scope.row.drugdescription"></avue-input>
+        <template slot="equivalent" slot-scope="scope">
+          <el-input-number type="textarea" size="mini" placeholder="请输入当量"
+                           v-model="scope.row.equivalent"></el-input-number>
+        </template>
+        <template slot="drugweight" slot-scope="scope">
+          {{scope.row.tienum * scope.row.drugAllnum}}
+        </template>
+        <template slot="drugDescription" slot-scope="scope">
+          <avue-input size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
         </template>
         <template slot="description" slot-scope="scope">
           <avue-input size="mini" placeholder="说明" v-model="scope.row.description"></avue-input>
@@ -75,7 +83,29 @@
     <el-dialog title="订单详情" :visible.sync="dialogVisible" width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
       <avue-form ref="addForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
-      <avue-crud ref="addCrud" :data="orderInfo.drugList" :option="newAddDrugListOption"></avue-crud>
+      <avue-crud ref="addCrud" :data="orderInfo.drugList" :option="viewCrudOption">
+        <template slot="drugAllnum" slot-scope="scope">
+          {{scope.row.drugAllnum}}
+        </template>
+        <template slot="tienum" slot-scope="scope">
+          {{scope.row.tienum}}
+        </template>
+        <template slot="drugweight" slot-scope="scope">
+          {{scope.row.tienum * scope.row.drugAllnum}}
+        </template>
+        <template slot="drugDescription" slot-scope="scope">
+          {{scope.row.drugDescription}}
+        </template>
+        <template slot="description" slot-scope="scope">
+          {{scope.row.description}}
+        </template>
+        <template slot="doseHerb" slot-scope="scope">
+          {{scope.row.doseHerb}}
+        </template>
+        <template slot="equivalent" slot-scope="scope">
+          {{scope.row.equivalent}}
+        </template>
+      </avue-crud>
       <span slot="footer" class="dialog-footer">
 			  <el-button type="primary" @click="prescription()">抓 药</el-button>
 		  </span>
@@ -90,7 +120,8 @@
   } from "@/api/order/order";
   import {mapGetters} from "vuex";
   import {
-    newAddDrugOption, newAddListOption,newAddDrugListOption, newAddGrainOption,option
+    newAddDrugOption, newAddListOption, newAddDrugListOption, newAddGrainOption, option,
+    newAddBlenderListOption
   } from "@/const/order/customerorder"
 
   export default {
@@ -147,6 +178,10 @@
                 },
                 search: true,
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+              },
+              {
+                label: "单价",
+                prop: "unitPrice",
               }
             ]
           },
@@ -158,14 +193,16 @@
           drugList: [],
         },
         orderInfo: {
-          form:{},
-          drugList:[]
+          form: {},
+          drugList: []
         },
         orderType: 1,
         addOption: '',
-        viewOption:'',
+        addCrudOption: '',
+        viewOption: '',
+        viewCrudOption: '',
         newAddListOption: newAddListOption,
-        newAddDrugListOption:newAddDrugListOption,
+        newAddDrugListOption: newAddDrugListOption,
         form: {},
         query: {},
         loading: true,
@@ -201,9 +238,13 @@
       handleClick(tab, event) {
         if (tab.name === 'jianyao') {
           this.addOption = newAddDrugOption;
+          this.addCrudOption = newAddDrugListOption;
         } else if (tab.name === 'tiaopei') {
           this.addOption = newAddGrainOption;
+          this.addCrudOption = newAddBlenderListOption;
         }
+        this.addInfo.form = {};
+        this.addInfo.drugList = [];
       },
       searchReset() {
         this.query = {};
@@ -243,9 +284,11 @@
       },
       //确认选择
       selectDrugBtn() {
-        this.drugList.selectionList.forEach(l =>{
-          l.drugallnum = 1;
+        this.drugList.selectionList.forEach(l => {
+          l.drugAllnum = 1;
           l.tienum = 1;
+          l.doseHerb = 1;
+          l.equivalent = 1;
         })
         this.addInfo.drugList = this.drugList.selectionList;
         this.selectDrugDialogVisible = false;
@@ -326,13 +369,15 @@
       },
       //新增 按钮
       newAdd() {
-        this.addDialogVisible = true;
         if (this.activeName === 'jianyao') {
           this.addOption = newAddDrugOption;
+          this.addCrudOption = newAddDrugListOption;
         } else if (this.activeName === 'tiaopei') {
           this.addOption = newAddGrainOption;
+          this.addCrudOption = newAddBlenderListOption;
         }
-        this.addOption.detail=false;
+        this.addOption.detail = false;
+        this.addDialogVisible = true;
       },
       //抓药
       prescription() {
@@ -347,9 +392,11 @@
         let url = '';
         if (row.orderType === "jianyao") {
           this.viewOption = newAddDrugOption;
+          this.viewCrudOption = newAddDrugListOption;
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = newAddGrainOption;
+          this.viewCrudOption = newAddBlenderListOption;
           url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else {
           this.$message({
@@ -358,7 +405,7 @@
           })
           return;
         }
-        this.viewOption.detail=true;
+        this.viewOption.detail = true;
         this.dialogVisible = true;
         getInfo(url, row.id).then(res => {
           console.log(res.data);

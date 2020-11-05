@@ -18,19 +18,18 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot="menuLeft">
-        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.outputorder_delete"
-                   @click="handleDelete">删 除
 
-        </el-button>
+
+      <template slot="menuLeft">
+          <el-button type="button"
+                     size="small"
+
+                     @click="updateStatusNew()">审批
+          </el-button>
       </template>
-      <template slot-scope="{type,size,row}" slot="menu">
-        <el-button v-if="row.status == 1"   icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,row.status)">审批</el-button>
-      </template>
+<!--      <template slot-scope="{type,size,row}" slot="menu">-->
+<!--        <el-button v-if="row.status == 1"   icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,row.status)">审批</el-button>-->
+<!--      </template>-->
      </avue-crud>
     <el-dialog
       :title="title"
@@ -313,7 +312,7 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        this.loading = true;
+        this.loading = true;-
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
@@ -346,7 +345,38 @@
             this.onLoad(this.page);
           })
         });
-      }
+      },
+      updateStatusNew() {
+        if (this.selectionList.length >1 ){
+          return this.$message.error("选中一行数据");
+        }
+        if (this.selectionList[0].status != 1){
+          return this.$message.error("该任务已经完成");
+        }
+        var id= this.selectionList[0].id;
+        let status;
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
+          type: "warning"
+        })
+          .then(() => {
+            status = 2;
+          })
+          .catch(() => {
+            status = 3;
+          }).finally(() => {
+          updateStatus(id, status).then(res => {
+            if (res.data.success) {
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+            this.refreshChange();
+            this.onLoad(this.page);
+          })
+        });
+      },
     }
   };
 </script>

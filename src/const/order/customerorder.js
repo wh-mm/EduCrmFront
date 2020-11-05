@@ -455,13 +455,8 @@ export const newAddListOption = {
       width: 120,
     },
     {
-      label: "数量",
-      prop: "tienum",
-      width: 120,
-    },
-    {
       label: "单剂量",
-      prop: "drugallnum",
+      prop: "drugAllnum",
       slot: true,
     },
 
@@ -477,7 +472,7 @@ export const newAddListOption = {
     },
     {
       label: "药品脚注",
-      prop: "drugdescription",
+      prop: "drugDescription",
       slot: true,
     },
     {
@@ -485,10 +480,10 @@ export const newAddListOption = {
       prop: "description",
       slot: true,
     },
-    /*{
+    {
       label: "单价",
-      prop: "retailprice",
-    },*/
+      prop: "unitPrice",
+    },
   ],
 };
 
@@ -505,7 +500,7 @@ export const newAddDrugListOption = {
   column: [
     {
       label: "药品名称",
-      prop: "drugName",
+      prop: "goodsName",
     },
     {
       label: "规格",
@@ -513,13 +508,8 @@ export const newAddDrugListOption = {
       width: 120,
     },
     {
-      label: "数量",
-      prop: "tienum",
-      width: 120,
-    },
-    {
       label: "单剂量",
-      prop: "drugallnum",
+      prop: "drugAllnum",
       slot: true,
     },
 
@@ -533,10 +523,52 @@ export const newAddDrugListOption = {
       prop: "drugweight",
       slot: true,
     },
-    /*{
+    {
+      label: "药品脚注",
+      prop: "drugDescription",
+      slot: true,
+    },
+    {
+      label: "说明",
+      prop: "description",
+      slot: true,
+    },
+    {
       label: "单价",
-      prop: "retailprice",
-    },*/
+      prop: "unitPrice",
+    },
+  ],
+};
+
+export const newAddBlenderListOption = {
+  calcHeight: 200,
+  border: true,
+  index: true,
+  viewBtn: false,
+  addBtn: false,
+  menu: false,
+  page: false,
+  dialogClickModal: false,
+  menuBtn: false,
+  column: [
+    {
+      label: "药品名称",
+      prop: "goodsName",
+    },
+    {
+      label: "饮片剂量",
+      prop: "doseHerb",
+      slot: true,
+    },
+    {
+      label: "当量",
+      prop: "equivalent",
+      slot: true,
+    },
+    {
+      label: "单价",
+      prop: "unitPrice",
+    },
   ],
 };
 
