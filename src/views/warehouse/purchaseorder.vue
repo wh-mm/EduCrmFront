@@ -111,9 +111,7 @@
                 required: true,
                 message: "请输入类型",
                 trigger: "blur"
-              },
-                {min: 1, max: 50, message: '类型长度在 1 到 50 个字符', trigger: 'blur'}
-              ],
+              }],
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
               props: {
                 label: "dictValue",
@@ -189,6 +187,7 @@
                     prop: "goodsQuantity",
                     type: "number",
                     width: 200,
+
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -200,9 +199,8 @@
                         if (val.goodsId != "") {
                           this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                         }
-
                       });
-                    }
+                    },
                   },
                   {
                     label: '单位',
@@ -216,6 +214,16 @@
                     disabled: false,
                     placeholder: " ",
                     width: 100,
+                    change: ({value}) => {
+                      console.log(value)
+                      this.form.sumMoney = 0;
+                      this.form.purchaseOrderDetailList.forEach(val => {
+                        if (val.goodsId != "") {
+                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                        }
+
+                      });
+                    }
                   },
                   {
                     label: '*采购仓库(必选)',
@@ -390,6 +398,7 @@
           })
           .catch(() => {
             status = 3;
+
           }).finally(() => {
           updateStatus(id, status).then(res => {
             if (res.data.success) {
