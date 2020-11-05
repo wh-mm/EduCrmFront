@@ -60,22 +60,31 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院id",
+              label: "医院名称",
               prop: "hospitalId",
-              rules: [{
-                required: true,
-                message: "请输入医院id",
-                trigger: "blur"
-              }]
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
             {
-              label: "商品id",
+              label: "商品名称",
               prop: "goodsId",
+              type:"tree",
               rules: [{
                 required: true,
-                message: "请输入商品id",
+                message: "请输入商品名称",
                 trigger: "blur"
-              }]
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/dropDown',
             },
             {
               label: "货品名称",

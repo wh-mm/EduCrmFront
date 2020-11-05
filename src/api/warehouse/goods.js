@@ -57,12 +57,24 @@ export const update = (row) => {
   })
 }
 
-export const selectGoodsName = (goodsName) => {
+
+export const selectGoodsName = (id,name) => {
   return request({
-    url: '/api/taocao-warehouse/goods/selectGoodsName',
+    url: '/api/taocao-warehouse/goods/selectName',
     method: 'get',
     params: {
-      goodsName,
+      id,
+      name
+    }
+  })
+}
+export const  selectGoodsCode = (id,code) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/selectCode',
+    method: 'get',
+    params: {
+      id,
+      code
     }
   })
 }

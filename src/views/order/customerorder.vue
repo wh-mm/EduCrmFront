@@ -19,7 +19,7 @@
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-        <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>
+       <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
