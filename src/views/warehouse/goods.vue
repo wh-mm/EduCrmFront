@@ -134,7 +134,15 @@
             },{
               label: "规格",
               prop: "specification",
+           /*   type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"*/
             },
+
             {
               label: "单位",
               prop: "unit",

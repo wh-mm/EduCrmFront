@@ -35,20 +35,26 @@
   import {getList, getDetail, add, update, remove,
 	selectHosptalByHospintl} from "@/api/hishospital/hospital";
   import {mapGetters} from "vuex";
+ /* import {selectGoodsName} from "@/api/warehouse/goods";*/
 
   export default {
     data() {
-		var hospitalName = (rule, value, callback)=>{
-			console.log(value);
-			selectHosptalByHospintl(value).then((res) => {
-				console.log(res);
-				if(res.data.code != 200){
-					callback(new Error('医院名称重复,请从新输入!'));
-				} else{
-					callback();
-				}
-			})
-		};
+      var hospitalName = (rule, value, callback)=>{
+        if (value === ''){
+          callback(new Error("医院名称重复,请从新输入!"))
+        }else {
+          selectHosptalByHospintl(this.form.id,value).then( res => {
+            if(res.data.success){
+              callback();
+            }else{
+              callback(new Error(res.data.msg));
+            }
+          },err =>{
+            callback(new Error(err.data.msg));
+          })
+        }
+      }
+
       return {
         form: {},
         query: {},
@@ -75,20 +81,38 @@
               label: "医院名字",
               prop: "hospitalName",
               rules: [{
-					required: true,
-					validator:hospitalName,
-					trigger: 'blur' }],
+                required: true,
+                message: "请输入医院名字",
+                validator:hospitalName,
+                trigger: 'blur' }],
             },
 
             {
-              label: "医院收货地址",
+              label: "医院地址",
               prop: "hospitalProfile",
               rules: [{
                 required: true,
-                message: "请输入医院收货地址",
+                message: "请输入医院地址",
                 trigger: "blur"
               }]
             },
+            {
+              label: "医院接口开关",
+              prop: "hospitalSwitch",
+              type: "select",
+              rules: [{
+                required: true,
+                message: "请输入医院接口开关",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch"
+            },
+
           ]
         },
         data: []

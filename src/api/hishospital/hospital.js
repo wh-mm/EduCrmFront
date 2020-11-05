@@ -47,12 +47,13 @@ export const update = (row) => {
     data: row
   })
 }
-export const selectHosptalByHospintl = (hospitalName) => {
+export const selectHosptalByHospintl = (id,name) => {
   return request({
     url: '/api/taocao-hisHospital/hospital/selectHosptalByHospintl',
     method: 'get',
     params: {
-      hospitalName,
+      id,
+      name
     }
   })
 }
