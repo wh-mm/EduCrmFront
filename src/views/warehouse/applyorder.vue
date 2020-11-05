@@ -19,11 +19,23 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
 
-      <template slot-scope="{type,size,row}" slot="menu">
-        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type"
-                   @click="updateApply(row.id,row.status)">申请
+      <template slot-scope=""  slot="menuLeft">
+
+
+        <el-button type="button"
+                   size="small"
+
+                   @click="updateApplyNew()">审批
         </el-button>
+
       </template>
+
+<!--      <template slot-scope="{type,size,row}" slot="menu">-->
+<!--  -->
+<!--        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type"-->
+<!--                   @click="updateApply(row.id,row.status)">申请-->
+<!--        </el-button>-->
+<!--      </template>-->
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
@@ -394,6 +406,38 @@
           })
         });
       },
+      updateApplyNew() {
+        if (this.selectionList.length >1 ){
+          return this.$message.error("选中一行数据");
+        }
+        if (this.selectionList[0].status != 1){
+          return this.$message.error("该任务已经完成");
+        }
+        var id= this.selectionList[0].id;
+        let status;
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
+          type: "warning"
+        })
+          .then(() => {
+            status = 0;
+          })
+          .catch(() => {
+            status = 3;
+          }).finally(() => {
+          updateApply(id, status).then(res => {
+            if (res.data.success) {
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+            this.refreshChange();
+            this.onLoad(this.page);
+          })
+        });
+      },
+
     }
   };
 </script>
