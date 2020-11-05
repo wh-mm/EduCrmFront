@@ -18,20 +18,16 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot="menuLeft">
-        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.outputorder_delete"
-                   @click="handleDelete">删 除
 
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button v-if="row.status == 1" icon="el-icon-check" :size="size" :type="type"
+                   @click="updateApply(row.id,row.status)">申请
         </el-button>
       </template>
-      <template slot-scope="{type,size,row}" slot="menu">
-        <el-button v-if="row.status == 1"   icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,row.status)">审批</el-button>
+      <template slot-scope="{row}" slot="totalPriceForm">
+        {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
-     </avue-crud>
+    </avue-crud>
     <el-dialog
       :title="title"
       :visible.sync="dialogVisible"
@@ -45,7 +41,8 @@
 </template>
 
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus} from "@/api/warehouse/outputorder";
+  import {getList, add, getDetail, update, remove,updateApply} from "@/api/warehouse/purchaseorder";
+  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
@@ -72,7 +69,7 @@
         selectionList: [],
 
         option: {
-          height:'auto',
+          height: 'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -86,51 +83,65 @@
 
           column: [
             {
-              label: "出库单号",
+              label: "采购订单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
-              search:true,
+              search: true,
               rules: [{
                 required: true,
+                message: "请输入采购订单号",
                 trigger: "blur"
               }]
             },
             {
               label: "类型",
               prop: "type",
+              search: true,
               type: "select",
-              disabled: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              rules: [{
+                required: true,
+                message: "请输入类型",
+                trigger: "blur"
+              },
+                {min: 1, max: 50, message: '类型长度在 1 到 50 个字符', trigger: 'blur'}
+              ],
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
               props: {
                 label: "dictValue",
                 value: "dictKey"
               }
             },
             {
+              label: "总价",
+              prop: "sumMoney",
+              editDisplay: false,
+              disabled: true,
+            },
+            {
               label: "状态",
               prop: "statusName",
-              addDisplay:false,
-              editDisplay:false,
+              addDisplay: false,
+              editDisplay: false,
               viewDisplay:false,
             },
             {
               label: '商品列表',
-              prop: 'outputOrderDetailList',
+              prop: 'purchaseOrderDetailList',
               type: 'dynamic',
-              span:24,
+              span: 24,
               children: {
                 align: 'center',
                 headerAlign: 'center',
-                 rowAdd:(done)=>{
-                   done({
+                rowAdd: (done) => {
+                  done({
                     goodsQuantity: 1,
                     discountPercentage: 0,
-                   });
-                 },
-                 rowDel:(row,done)=>{
-                     done();
-                 },
+                  });
+                },
+                rowDel: (row, done) => {
+                  done();
+                },
                 column: [
                   {
                     label: '*商品',
@@ -150,38 +161,80 @@
                     },
                     dicMethod: "post",
                     dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-                  },{
+                    change: ({value}) => {
+                      if (value) {
+                        getGoodsDetail(value).then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.purchaseOrderDetailList.forEach(val => {
+                            if (val.goodsId == value) {
+                              var detail = res.data.data;
+                              val.unit = detail.unitName;
+                              val.money = detail.money;
+                            }
+                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                          });
+                        });
+                      }
+                    }
+                  }, {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
                     width: 100,
                     rules: [{
                       validator: validateQuantity,
-                      trigger: 'blur' ,
+                      trigger: 'blur'
                     }],
+                    change: ({value}) => {
+                      console.log(value)
+                      this.form.sumMoney = 0;
+                      this.form.purchaseOrderDetailList.forEach(val => {
+                        if (val.goodsId != "") {
+                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                        }
+
+                      });
+                    }
                   },
                   {
-                  label: '*出货仓库',
-                  prop: "warehouseId",
-                  type: "tree",
-                  rsearch:true,
+                    label: '单位',
+                    prop: "unit",
+                    disabled: true,
+                    placeholder: " ",
+                    width: 100,
+                  }, {
+                    label: '单价(元)',
+                    prop: "money",
+                    disabled: true,
+                    placeholder: " ",
+                    width: 100,
+                  },
+                  {
+                    label: '*采购仓库(必选)',
+                    prop: "warehouseId",
+                    type: "tree",
+                    rsearch: true,
                     rules: [{
                       required: true,
                       message: "请输入类型",
                       trigger: "blur"
-                    }
-                    ],
-                  props: {
-                    label: 'name',
-                    value: 'id'
+                    }],
+                    props: {
+                      label: 'name',
+                      value: 'id'
+                    },
+                    dicMethod: "post",
+                    dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
                   },
-                  dicMethod:"post",
-                  dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
-                },
                   {
-                  label: '备注',
-                  prop: "remark",
-                }],
+                    label: "采购额",
+                    prop: "totalPrice",
+                    formslot: true,
+                  },
+                  {
+                    label: '备注',
+                    prop: "remark",
+                  }],
               }
             },
           ]
@@ -193,10 +246,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.outputorder_add, false),
-          viewBtn: this.vaildData(this.permission.outputorder_view, false),
-          delBtn: this.vaildData(this.permission.outputorder_delete, false),
-          editBtn: this.vaildData(this.permission.outputorder_edit, false)
+          addBtn: false,
+          viewBtn: this.vaildData(this.permission.purchaseorder_view, false),
+          delBtn: false,
+          editBtn: this.vaildData(this.permission.purchaseorder_edit, false)
         };
       },
       ids() {
@@ -274,11 +327,6 @@
           });
       },
       beforeOpen(done, type) {
-        if (["add", "edit"].includes(type)) {
-          setTimeout(()=>{
-            this.form.type = 'out';
-          },10);
-        }
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
             this.form = res.data.data;
@@ -303,10 +351,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -322,31 +370,30 @@
           this.selectionClear();
         });
       },
-      updateStatus(id){
+      updateApply(id) {
         let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
+        this.$confirm("请确认是否通过申请?", {
+          confirmButtonText: "审批通过",
+          cancelButtonText: "驳回申请",
           type: "warning"
         })
           .then(() => {
-            status = 2;
+            status = 0;
           })
           .catch(() => {
             status = 3;
-          }).finally(()=>{
-            console.log(status);
-          updateStatus(id,status).then(res => {
-            if(res.data.success){
+          }).finally(() => {
+          updateApply(id, status).then(res => {
+            if (res.data.success) {
               this.$message.success(res.data.msg);
-            }else{
+            } else {
               this.$message.error(res.data.msg);
             }
             this.refreshChange();
             this.onLoad(this.page);
           })
         });
-      }
+      },
     }
   };
 </script>

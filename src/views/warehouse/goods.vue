@@ -131,9 +131,12 @@
                      validator:selectCode,
                     trigger: "blur"
               }]
+            },{
+              label: "规格",
+              prop: "specification",
             },
             {
-              label: "规格",
+              label: "单位",
               prop: "unit",
               type: "select",
               props: {
