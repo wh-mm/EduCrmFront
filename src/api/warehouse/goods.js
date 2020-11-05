@@ -23,7 +23,7 @@ export const getPage = (parentId) => {
 
 export const getGoodsDetail = (id) => {
   return request({
-    url: '/api/taocao-warehouse/goods/ ',
+    url: '/api/taocao-warehouse/goods/detail',
     method: 'get',
     params: {
       id

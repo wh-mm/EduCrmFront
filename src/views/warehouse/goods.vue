@@ -145,7 +145,7 @@
 
             {
               label: "单位",
-              prop: "unitName",
+              prop: "unit",
               type: "select",
               props: {
                 label: 'dictValue',
