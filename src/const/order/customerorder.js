@@ -482,7 +482,7 @@ export const newAddListOption = {
     },
     {
       label: "单价",
-      prop: "money",
+      prop: "unitPrice",
     },
   ],
 };
@@ -500,7 +500,7 @@ export const newAddDrugListOption = {
   column: [
     {
       label: "药品名称",
-      prop: "drugName",
+      prop: "goodsName",
     },
     {
       label: "规格",
@@ -535,7 +535,39 @@ export const newAddDrugListOption = {
     },
     {
       label: "单价",
-      prop: "money",
+      prop: "unitPrice",
+    },
+  ],
+};
+
+export const newAddBlenderListOption = {
+  calcHeight: 200,
+  border: true,
+  index: true,
+  viewBtn: false,
+  addBtn: false,
+  menu: false,
+  page: false,
+  dialogClickModal: false,
+  menuBtn: false,
+  column: [
+    {
+      label: "药品名称",
+      prop: "goodsName",
+    },
+    {
+      label: "饮片剂量",
+      prop: "doseHerb",
+      slot: true,
+    },
+    {
+      label: "当量",
+      prop: "equivalent",
+      slot: true,
+    },
+    {
+      label: "单价",
+      prop: "unitPrice",
     },
   ],
 };
