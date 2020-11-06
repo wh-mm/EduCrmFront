@@ -17,6 +17,7 @@
       <template slot="menuLeft">
         <el-button type="primary"
                    size="small"
+                   v-if="permission.repertory_input"
                    icon="el-icon-plus"
                    plain
                    @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
@@ -199,7 +200,7 @@
       permissionList() {
         return {
           addBtn: false,
-          viewBtn: false,
+          viewBtn: this.vaildData(this.permission.repertory_view, false),
           delBtn: false,
           editBtn: false
         };

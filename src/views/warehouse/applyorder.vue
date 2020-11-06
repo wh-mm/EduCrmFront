@@ -24,7 +24,7 @@
 
         <el-button type="button"
                    size="small"
-
+                   v-if="permission.purchaseorder_approval"
                    @click="updateApplyNew()">审批
         </el-button>
 
@@ -259,7 +259,7 @@
       permissionList() {
         return {
           addBtn: false,
-          viewBtn: this.vaildData(this.permission.purchaseorder_view, false),
+          viewBtn: this.vaildData(this.permission.purchaseorder_views, false),
           delBtn: false,
           editBtn: this.vaildData(this.permission.purchaseorder_edit, false)
         };
