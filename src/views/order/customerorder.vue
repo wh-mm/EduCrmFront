@@ -15,15 +15,16 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
+        </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-       <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
+        <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
-               :close-on-click-modal="false" >
+               :close-on-click-modal="false">
       <avue-crud :option="drugList.option" :table-loading="drugList.loading" :data="drugList.data"
                  :page.sync="drugList.page" v-model="drugList.form" ref="crudDrug"
                  @search-change="drugSearchChange" @search-reset="drugSearchReset"
@@ -115,7 +116,7 @@
 
 <script>
   import {
-    getList, getInfo,dictionaryByName,
+    getList, getInfo, dictionaryByName,
     selectListByDrugCategory, receiveDecoctingSave, receiveBlenderSave
   } from "@/api/order/order";
   import {mapGetters} from "vuex";
@@ -361,8 +362,8 @@
       },
       //选择药品
       selectDrug() {
-        dictionaryByName(this.activeName).then( res => {
-          this.$refs.crudDrug.updateDic("goodsCategory",res.data.data);
+        dictionaryByName(this.activeName).then(res => {
+          this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
         });
         this.selectDrugDialogVisible = true;
         this.drugRefreshChange();
