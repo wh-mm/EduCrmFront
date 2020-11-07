@@ -181,7 +181,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 150,
+                    width: 250,
                     filterable: true,
                     remote: true,
                     rules: [{
@@ -280,6 +280,8 @@
                   {
                     label: '备注',
                     prop: "remark",
+                    type: "textarea",
+                    width: 100,
                   }],
               }
             },

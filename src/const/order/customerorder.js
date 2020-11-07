@@ -6,6 +6,26 @@ export const phonelength = (rule, value, callback) => {
   }
 };
 
+
+export function isInteger(rule, value, callback) {
+  if (!value) {
+    return callback(new Error('输入不可以为空'));
+  }
+  setTimeout(() => {
+    if (!Number(value)) {
+      callback(new Error('请输入正整数'));
+    } else {
+      const re = /^[0-9]*[1-9][0-9]*$/;
+      const rsCheck = re.test(value);
+      if (!rsCheck) {
+        callback(new Error('请输入正整数'));
+      } else {
+        callback();
+      }
+    }
+  }, 0);
+}
+
 export const newAddDrugOption = {
   height: "auto",
   calcHeight: 30,
@@ -40,16 +60,16 @@ export const newAddDrugOption = {
           search: true,
           dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
         },
-        {
+       /* {
           label: "处方号",
           prop: "pspnum",
           span: 6,
           rules: [{
             required: true,
-            message: "请选择医院",
+            message: "请输入处方号",
             trigger: "blur",
           }],
-        },
+        },*/
         {
           label: "医生",
           prop: "doctor",
@@ -84,7 +104,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            message: "请选择医院",
+            message: "请输入患者姓名",
             trigger: "blur",
           }],
         },
@@ -110,6 +130,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
+            validator:isInteger,
             message: "请输入年龄",
             trigger: "blur",
           },
@@ -120,6 +141,11 @@ export const newAddDrugOption = {
           label: "电话",
           prop: "phone",
           span: 6,
+          rules: [{
+            required: true,
+            validator: phonelength,
+            trigger: 'blur'
+          }],
         },
         {
           label: "地址",
@@ -156,6 +182,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
+            validator:isInteger,
             message: "请填写贴数",
             trigger: "blur",
           }],
@@ -167,6 +194,7 @@ export const newAddDrugOption = {
           row: true,
           rules: [{
             required: true,
+            validator:isInteger,
             message: "请填写次数",
             trigger: "blur",
           }],
@@ -184,7 +212,12 @@ export const newAddDrugOption = {
         {
           label: "一煎时间",
           prop: "oncetime",
+          rules: [{
+            message: "请填写一煎时间",
+            trigger: "blur",
+          }],
           span: 6,
+
         },
         {
           label: "二煎时间",
@@ -267,6 +300,10 @@ export const newAddDrugOption = {
           label: "联系电话",
           prop: "dtbphone",
           span: 6,
+          rules: [{
+            /*validator: phonelength,*/
+            trigger: 'blur'
+          }],
         },
         {
           label: "快递类型",
@@ -377,17 +414,37 @@ export const newAddGrainOption = {
           label: "患者年龄",
           prop: "age",
           span: 6,
+          rules: [{
+            required: true,
+            validator:isInteger,
+            message: "请输入年龄",
+            trigger: "blur",
+          },
+            {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
+          ],
         },
         {
           label: "详细年龄",
           prop: "detailedAge",
           span: 6,
+          rules: [{
+            validator:isInteger,
+            message: "请输入年龄",
+            trigger: "blur",
+          },
+            {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
+          ],
         },
         {
           label: "患者联系电话",
           prop: "tele",
           span: 6,
           labelWidth: 110,
+          rules: [{
+            required: true,
+            validator: phonelength,
+            trigger: 'blur'
+          }],
         },
         {
           label: "患者联系地址",
@@ -411,13 +468,13 @@ export const newAddGrainOption = {
         {
           label: "处方付数",
           prop: "quantity",
-          span: 6,
           type: "select",
+          span: 6,
           props: {
             label: "dictValue",
             value: "dictKey"
           },
-          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_plural"
+          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
         },
         {
           label: "分服次数",
@@ -689,10 +746,12 @@ export const option = {
         label: 'dictValue',
         value: 'dictKey'
       },
+      search: true,
       required: true,
       dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
       trigger: "blur"
     },
+
     {
       label: "订单类型",
       prop: "orderType",
@@ -701,6 +760,7 @@ export const option = {
         label: 'dictValue',
         value: 'dictKey'
       },
+      search: true,
       required: true,
       dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
       trigger: "blur"
@@ -735,10 +795,34 @@ export const option = {
     },
     {
       label: "订单时间",
+      prop: "releaseTimeRange",
+      type: "datetime",
+      format: "yyyy-MM-dd hh:mm:ss",
+      valueFormat: "yyyy-MM-dd hh:mm:ss",
+      searchRange: true,
+      hide: true,
+      addDisplay: false,
+      editDisplay: false,
+      viewDisplay: false,
+      search: true,
+      rules: [{
+        required: true,
+        message: "请输入通知时间",
+        trigger: "blur"
+      }]
+    },
+    {
+      label: "订单时间",
       prop: "orderTime",
-      type: 'datetime',
-      format: "yyyy-MM-dd HH:mm:ss",
-      valueFormat: "yyyy-MM-dd HH:mm:ss",
+      type: "date",
+      width: 150 ,
+      format: "yyyy-MM-dd hh:mm:ss",
+      valueFormat: "yyyy-MM-dd hh:mm:ss",
+      rules: [{
+        required: true,
+        message: "请输入通知日期",
+        trigger: "click"
+      }]
     },
     {
       label: "总价",

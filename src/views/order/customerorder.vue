@@ -14,10 +14,12 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
+
       <template slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
       </template>
+
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
@@ -34,7 +36,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="selectDrugBtn()">保 存</el-button>
         <el-button @click="toggleSelection()">清 空</el-button>
-		  </span>
+      </span>
     </el-dialog>
     <el-dialog title="新 增" :visible.sync="addDialogVisible" width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
@@ -273,16 +275,6 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
-      onLoad(page, params = {}) {
-        this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-          const data = res.data.data;
-          this.page.total = data.total;
-          this.data = data.records;
-          this.loading = false;
-          this.selectionClear();
-        });
-      },
       //确认选择
       selectDrugBtn() {
         this.drugList.selectionList.forEach(l => {
@@ -368,6 +360,7 @@
         this.selectDrugDialogVisible = true;
         this.drugRefreshChange();
       },
+
       //新增 按钮
       newAdd() {
         if (this.activeName === 'jianyao') {
@@ -388,6 +381,31 @@
         });
         this.dialogVisible = false
       },
+      //时间
+      onLoad(page, params = {}) {
+        const {releaseTimeRange} = params;
+        let values = {
+          ...params,
+        };
+        if (releaseTimeRange) {
+          values = {
+            ...params,
+            startTime: releaseTimeRange[0],
+            endTime: releaseTimeRange[1],
+          };
+          values.releaseTimeRange = null;
+          this.query.releaseTimeRange = null;
+        }
+        this.loading = true;
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
+      },
+
       //查看
       lockInfo(row) {
         let url = '';
@@ -439,6 +457,7 @@
       drugRefreshChange() {
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
+
       drugOnLoad(page, params = {}) {
         this.drugList.loading = true;
         params.drugCategory = this.activeName;

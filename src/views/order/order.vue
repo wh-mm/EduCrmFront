@@ -17,6 +17,8 @@
       <template slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
+        <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
+        </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
@@ -273,16 +275,7 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
-      onLoad(page, params = {}) {
-        this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-          const data = res.data.data;
-          this.page.total = data.total;
-          this.data = data.records;
-          this.loading = false;
-          this.selectionClear();
-        });
-      },
+
       //确认选择
       selectDrugBtn() {
         this.drugList.selectionList.forEach(l => {
@@ -368,6 +361,10 @@
         this.selectDrugDialogVisible = true;
         this.drugRefreshChange();
       },
+      //推送
+      sendHttp(){
+        this.$alert("业务暂未对接", { },)
+      },
       //新增 按钮
       newAdd() {
         if (this.activeName === 'jianyao') {
@@ -387,6 +384,30 @@
           message: "抓药",
         });
         this.dialogVisible = false
+      },
+      //时间
+      onLoad(page, params = {}) {
+        const {releaseTimeRange} = params;
+        let values = {
+          ...params,
+        };
+        if (releaseTimeRange) {
+          values = {
+            ...params,
+            startTime: releaseTimeRange[0],
+            endTime: releaseTimeRange[1],
+          };
+          values.releaseTimeRange = null;
+          this.query.releaseTimeRange = null;
+        }
+        this.loading = true;
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
       },
       //查看
       lockInfo(row) {
