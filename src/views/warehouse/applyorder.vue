@@ -136,7 +136,13 @@
               editDisplay: false,
               viewDisplay:false,
             },
+            {
+              label: "采购员",
+              prop:"name",
+              addDisplay: false,
+              viewDisplay: false
 
+            },
             {
               label:"创建时间",
               prop:"createTime",
@@ -153,7 +159,7 @@
             {
               label: '商品列表',
               prop: 'purchaseOrderDetailList',
-              type: 'dynamic',
+              type: 'dynamic', //
               span: 24,
               children: {
                 align: 'center',
@@ -186,7 +192,8 @@
                     },
                     dicMethod: "post",
                     dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-                  }, {
+                  },
+                  {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
@@ -212,7 +219,8 @@
                     disabled: true,
                     placeholder: " ",
                     width: 100,
-                  }, {
+                  },
+                  {
                     label: '单价(元)',
                     prop: "money",
                     disabled: true,

@@ -88,8 +88,10 @@
           currentPage: 1,
           total: 0
         },
+        obj:{},
+        title: '' ,
+        dialogVisible:false,
         selectionList: [],
-
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -102,8 +104,6 @@
           selection: true,
           dialogClickModal: false,
           dialogWidth: '80%',
-
-
           column: [
             {
               label: "采购订单号",
@@ -145,6 +145,13 @@
               addDisplay: false,
               editDisplay: false,
               viewDisplay:false,
+            },
+            {
+              label: "采购员",
+              prop:"name",
+              addDisplay: false,
+              viewDisplay: false
+
             },
             {
               label:"创建时间",
@@ -499,6 +506,21 @@
             this.onLoad(this.page);
           })
         });
+      },
+      submit(form,done){
+        add(form).then( res => {
+          done();
+          if(res.data.success){
+            this.$refs.form.resetForm();
+            this.$message.success(res.data.msg);
+            this.dialogVisible = false;
+            this.onLoad(this.page, this.query);
+          }else {
+            this.$message.error(res.data.msg);
+          }
+        }).catch(() => {
+          done();
+        })
       },
     }
   };
