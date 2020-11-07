@@ -88,8 +88,8 @@
     <el-dialog title="订单详情" :visible.sync="dialogVisible" v-if="dialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
-      <avue-form ref="addForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
-      <avue-crud ref="addCrud" :data="orderInfo.drugList" :option="viewCrudOption">
+      <avue-form ref="viewForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
+      <avue-crud ref="viewCrud" :data="orderInfo.drugList" :option="viewCrudOption">
         <template slot="drugAllnum" slot-scope="scope">
           {{scope.row.drugAllnum}}
         </template>
@@ -233,6 +233,13 @@
         data: []
       };
     },
+    watch: {
+      addDialogVisible() {
+        if (!this.addDialogVisible) {
+          this.activeName = 'jianyao';
+        }
+      }
+    },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
@@ -253,13 +260,7 @@
     },
     methods: {
       handleClick(tab, event) {
-        if (tab.name === 'jianyao') {
-          this.addOption = Object.assign({}, newAddDrugOption);
-          this.addCrudOption = Object.assign({}, newAddDrugListOption);
-        } else if (tab.name === 'tiaopei') {
-          this.addOption = Object.assign({}, newAddGrainOption);
-          this.addCrudOption = Object.assign({}, newAddBlenderListOption);
-        }
+        this.tabFrom();
         this.addInfo.form = {};
         this.addInfo.drugList = [];
       },
@@ -384,15 +385,21 @@
       },
       //新增 按钮
       newAdd() {
+        this.addDialogVisible = true;
+        this.tabFrom();
+        this.addOption.detail = false;
+      },
+      tabFrom() {
         if (this.activeName === 'jianyao') {
           this.addOption = Object.assign({}, newAddDrugOption);
           this.addCrudOption = Object.assign({}, newAddDrugListOption);
         } else if (this.activeName === 'tiaopei') {
           this.addOption = Object.assign({}, newAddGrainOption);
           this.addCrudOption = Object.assign({}, newAddBlenderListOption);
+          setTimeout(() => {
+            this.$refs.addForm.updateDic("quantity");
+          }, 20);
         }
-        this.addOption.detail = false;
-        this.addDialogVisible = true;
       },
       //抓药
       prescription() {
@@ -477,7 +484,6 @@
       drugRefreshChange() {
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
-
       drugOnLoad(page, params = {}) {
         this.drugList.loading = true;
         params.drugCategory = this.activeName;
@@ -497,7 +503,7 @@
           this.drugList.loading = false;
           this.drugSelectionClear();
         });
-      }
+      },
     }
   };
 </script>
