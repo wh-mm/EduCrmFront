@@ -26,6 +26,13 @@
                    v-if="permission.purchaseorder_delete"
                    @click="handleDelete">删 除
         </el-button>-->
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   v-if="permission.purchaseorder_add"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   plain-->
+<!--                   @click="dialogVisible = true,title = '入 库' ">创 建-->
+<!--        </el-button>-->
 
         <el-button type="button"
                    size="small"
@@ -96,6 +103,7 @@
           dialogClickModal: false,
           dialogWidth: '80%',
 
+
           column: [
             {
               label: "采购订单号",
@@ -137,6 +145,19 @@
               addDisplay: false,
               editDisplay: false,
               viewDisplay:false,
+            },
+            {
+              label:"创建时间",
+              prop:"createTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
             },
             {
               label: '商品列表',
@@ -188,7 +209,9 @@
                           });
                         });
                       }
-                    }
+                    },
+
+
                   }, {
                     label: '*数量',
                     prop: "goodsQuantity",
@@ -385,9 +408,32 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
+      // onLoad(page, params = {}) {
+      //   this.loading = true;
+      //   getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+      //     const data = res.data.data;
+      //     this.page.total = data.total;
+      //     this.data = data.records;
+      //     this.loading = false;
+      //     this.selectionClear();
+      //   });
+      // },
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            start_time: createTime[0],
+            end_time: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

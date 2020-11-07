@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/warehouseinoutput/list',
+    url: '/api/taocao-warehouse/warehouseinoutput/page',
     method: 'get',
     params: {
       ...params,

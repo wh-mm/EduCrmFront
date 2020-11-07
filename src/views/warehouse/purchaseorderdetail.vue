@@ -77,17 +77,26 @@
                 trigger: "blur"
               }]
             },
+            // {
+            //   label: "商品id",
+            //   prop: "goodsId",
+            //   type:"select",
+            //   props: {
+            //     label: 'goodsName',
+            //     value: 'id'
+            //   },
+            //   search:true,
+            //   dicMethod:"post",
+            //   dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
+            // },
             {
               label: "商品id",
               prop: "goodsId",
-              type:"select",
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              search:true,
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
+              rules: [{
+                required: true,
+                message: "请输入商品id",
+                trigger: "blur"
+              }]
             },
             {
               label: "数量",

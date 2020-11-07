@@ -24,7 +24,7 @@
 
         <el-button type="button"
                    size="small"
-                   v-if="permission.purchaseorder_approval"
+                   v-if="permission.purchaseorders_approval"
                    @click="updateApplyNew()">审批
         </el-button>
 
@@ -54,7 +54,6 @@
 
 <script>
   import {getList, add, getDetail, update, remove,updateApply} from "@/api/warehouse/purchaseorder";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
@@ -137,6 +136,20 @@
               editDisplay: false,
               viewDisplay:false,
             },
+
+            {
+              label:"创建时间",
+              prop:"createTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+            },
             {
               label: '商品列表',
               prop: 'purchaseOrderDetailList',
@@ -159,7 +172,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 150,
+                    width: 120,
                     filterable: true,
                     remote: true,
                     rules: [{
@@ -173,26 +186,11 @@
                     },
                     dicMethod: "post",
                     dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-                    change: ({value}) => {
-                      if (value) {
-                        getGoodsDetail(value).then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.purchaseOrderDetailList.forEach(val => {
-                            if (val.goodsId == value) {
-                              var detail = res.data.data;
-                              val.unit = detail.unitName;
-                              val.money = detail.money;
-                            }
-                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                          });
-                        });
-                      }
-                    }
                   }, {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 100,
+                    width: 150,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -241,6 +239,7 @@
                   {
                     label: "采购额",
                     prop: "totalPrice",
+                    width: 100,
                     formslot: true,
                   },
                   {
@@ -373,8 +372,21 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            start_time: createTime[0],
+            end_time: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

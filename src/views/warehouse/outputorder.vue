@@ -114,6 +114,19 @@
               viewDisplay:false,
             },
             {
+              label:"创建时间",
+              prop:"updateTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+            },
+            {
               label: '商品列表',
               prop: 'outputOrderDetailList',
               type: 'dynamic',
@@ -312,8 +325,21 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        this.loading = true;-
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        const {updateTime} = params;
+        let values = {
+          ...params,
+        };
+        if (updateTime) {
+          values = {
+            ...params,
+            start_time: updateTime[0],
+            end_time: updateTime[1],
+          };
+          values.updateTime = null;
+          this.query.updateTime = null;
+        }
+        this.loading = true;
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

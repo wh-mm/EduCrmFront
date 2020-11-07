@@ -125,8 +125,10 @@
                 validator: codeTestingOnly,
                 trigger: "blur"
               },
-              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+
+               { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
               ]
+
             },
             {
               label: "地址",
@@ -151,6 +153,10 @@
                 message: "请输入详细地址",
                 trigger: "blur"
               }]
+            },
+            {
+              label:"创建时间",
+              prop:"updateTime"
             },
           ]
         },
