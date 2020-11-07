@@ -26,6 +26,7 @@
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
+               v-if="selectDrugDialogVisible"
                :close-on-click-modal="false">
       <avue-crud :option="drugList.option" :table-loading="drugList.loading" :data="drugList.data"
                  :page.sync="drugList.page" v-model="drugList.form" ref="crudDrug"
@@ -38,7 +39,8 @@
         <el-button @click="toggleSelection()">清 空</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="新 增" :visible.sync="addDialogVisible" width="90%" :modal="false" :close-on-click-modal="false"
+    <el-dialog title="新 增" :visible.sync="addDialogVisible" v-if="addDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="煎药机" name="jianyao">
@@ -53,19 +55,19 @@
           </el-button>
         </template>
         <template slot="drugAllnum" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入单剂量"
+          <el-input-number type="textarea" size="mini" placeholder="请输入单剂量" min="0" precision="2"
                            v-model="scope.row.drugAllnum"></el-input-number>
         </template>
         <template slot="tienum" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入贴数"
+          <el-input-number type="textarea" size="mini" placeholder="请输入贴数" min="0" precision="2"
                            v-model="scope.row.tienum"></el-input-number>
         </template>
         <template slot="doseHerb" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入饮片剂量"
+          <el-input-number type="textarea" size="mini" placeholder="请输入饮片剂量" min="0" precision="2"
                            v-model="scope.row.doseHerb"></el-input-number>
         </template>
         <template slot="equivalent" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入当量"
+          <el-input-number type="textarea" size="mini" placeholder="请输入当量" min="0" precision="2"
                            v-model="scope.row.equivalent"></el-input-number>
         </template>
         <template slot="drugweight" slot-scope="scope">
@@ -83,7 +85,8 @@
         <el-button @click="reject()">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="订单详情" :visible.sync="dialogVisible" width="90%" :modal="false" :close-on-click-modal="false"
+    <el-dialog title="订单详情" :visible.sync="dialogVisible" v-if="dialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
       <avue-form ref="addForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
       <avue-crud ref="addCrud" :data="orderInfo.drugList" :option="viewCrudOption">
@@ -118,13 +121,23 @@
 
 <script>
   import {
-    getList, getInfo, dictionaryByName,
-    selectListByDrugCategory, receiveDecoctingSave, receiveBlenderSave
+    dictionaryByName,
+    getInfo,
+    getList,
+    receiveBlenderSave,
+    receiveDecoctingSave,
+    selectListByDrugCategory
   } from "@/api/order/order";
   import {mapGetters} from "vuex";
   import {
-    newAddDrugOption, newAddListOption, newAddDrugListOption, newAddGrainOption, option,
-    newAddBlenderListOption, viewDrugListOption, viewAddBlenderListOption
+    newAddBlenderListOption,
+    newAddDrugListOption,
+    newAddDrugOption,
+    newAddGrainOption,
+    newAddListOption,
+    option,
+    viewAddBlenderListOption,
+    viewDrugListOption
   } from "@/const/order/customerorder"
 
   export default {
@@ -169,6 +182,7 @@
                   value: 'id'
                 },
                 search: true,
+                dicFlag: false,
                 dicUrl: "/api/blade-system/dictCategory/dictionaryByName"
               },
               {
@@ -240,11 +254,11 @@
     methods: {
       handleClick(tab, event) {
         if (tab.name === 'jianyao') {
-          this.addOption = newAddDrugOption;
-          this.addCrudOption = newAddDrugListOption;
+          this.addOption = Object.assign({}, newAddDrugOption);
+          this.addCrudOption = Object.assign({}, newAddDrugListOption);
         } else if (tab.name === 'tiaopei') {
-          this.addOption = newAddGrainOption;
-          this.addCrudOption = newAddBlenderListOption;
+          this.addOption = Object.assign({}, newAddGrainOption);
+          this.addCrudOption = Object.assign({}, newAddBlenderListOption);
         }
         this.addInfo.form = {};
         this.addInfo.drugList = [];
@@ -289,7 +303,7 @@
       },
       //保存
       bcBtn() {
-        this.$refs.addForm.validate(valid => {
+        this.$refs.addForm.validate((valid, callback) => {
           if (valid) {
             this.$confirm("请仔细查阅一经保存无法删除！", {
               confirmButtonText: "确定",
@@ -298,7 +312,6 @@
             })
               .then(() => {
                 let params = {};
-                console.log(this.addInfo);
                 params = this.addInfo.form;
                 params.orderType = this.activeName;
                 params.drugList = this.addInfo.drugList;
@@ -313,11 +326,13 @@
                       this.addDialogVisible = false
                       this.refreshChange();
                       this.addInfo.drugList = []
+                      this.addInfo.form = {};
                     } else {
                       this.$message({
                         type: "error",
                         message: res.data.msg
                       })
+                      callback();
                     }
                   });
                 } else if (this.activeName === 'jianyao') {
@@ -331,17 +346,21 @@
                       this.addDialogVisible = false
                       this.refreshChange();
                       this.addInfo.drugList = []
+                      this.addInfo.form = {};
                     } else {
                       this.$message({
                         type: "error",
                         message: res.data.msg
                       })
+                      callback();
                     }
                   });
                 }
-              })
+              }).catch(() => {
+              callback();
+            })
           }
-        });
+        })
       },
       //取消
       reject() {
@@ -354,21 +373,23 @@
       },
       //选择药品
       selectDrug() {
-        dictionaryByName(this.activeName).then(res => {
-          this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
-        });
         this.selectDrugDialogVisible = true;
         this.drugRefreshChange();
-      },
+        setTimeout(() => {
+          dictionaryByName(this.activeName).then(res => {
+            this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
+          });
+        }, 20);
 
+      },
       //新增 按钮
       newAdd() {
         if (this.activeName === 'jianyao') {
-          this.addOption = newAddDrugOption;
-          this.addCrudOption = newAddDrugListOption;
+          this.addOption = Object.assign({}, newAddDrugOption);
+          this.addCrudOption = Object.assign({}, newAddDrugListOption);
         } else if (this.activeName === 'tiaopei') {
-          this.addOption = newAddGrainOption;
-          this.addCrudOption = newAddBlenderListOption;
+          this.addOption = Object.assign({}, newAddGrainOption);
+          this.addCrudOption = Object.assign({}, newAddBlenderListOption);
         }
         this.addOption.detail = false;
         this.addDialogVisible = true;
@@ -410,12 +431,12 @@
       lockInfo(row) {
         let url = '';
         if (row.orderType === "jianyao") {
-          this.viewOption = newAddDrugOption;
-          this.viewCrudOption = viewDrugListOption;
+          this.viewOption = Object.assign({}, newAddDrugOption);
+          this.viewCrudOption = Object.assign({}, viewDrugListOption);
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
-          this.viewOption = newAddGrainOption;
-          this.viewCrudOption = viewAddBlenderListOption;
+          this.viewOption = Object.assign({}, newAddGrainOption);
+          this.viewCrudOption = Object.assign({}, viewAddBlenderListOption);
           url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else {
           this.$message({
@@ -427,7 +448,6 @@
         this.viewOption.detail = true;
         this.dialogVisible = true;
         getInfo(url, row.id).then(res => {
-          console.log(res.data);
           this.orderInfo = res.data.data;
         })
       },
