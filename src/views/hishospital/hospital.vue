@@ -36,6 +36,15 @@
 	selectHosptalByHospintl} from "@/api/hishospital/hospital";
   import {mapGetters} from "vuex";
  /* import {selectGoodsName} from "@/api/warehouse/goods";*/
+  /*1
+  1111111
+
+  11
+  * */
+
+  /*
+  13213
+   */
 
   export default {
     data() {
