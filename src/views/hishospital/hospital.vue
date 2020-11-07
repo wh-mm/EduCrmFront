@@ -35,17 +35,6 @@
   import {getList, getDetail, add, update, remove,
 	selectHosptalByHospintl} from "@/api/hishospital/hospital";
   import {mapGetters} from "vuex";
- /* import {selectGoodsName} from "@/api/warehouse/goods";*/
-  /*1
-  1111111
-
-  11
-  * */
-
-  /*
-  13213
-   */
-
   export default {
     data() {
       var hospitalName = (rule, value, callback)=>{
@@ -108,18 +97,19 @@
             {
               label: "医院接口开关",
               prop: "hospitalSwitch",
-              type: "select",
+              type: "switch",
               rules: [{
                 required: true,
                 message: "请输入医院接口开关",
                 trigger: "blur"
               }],
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch"
+              dicData: [{
+                label: '关',
+                value: false
+              }, {
+                label: '开',
+                value: true
+              }],
             },
 
           ]
