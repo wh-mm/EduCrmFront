@@ -18,8 +18,6 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-
-
       <template slot="menuLeft">
           <el-button type="button"
                      size="small"
@@ -27,26 +25,12 @@
                      @click="updateStatusNew()">审批
           </el-button>
       </template>
-<!--      <template slot-scope="{type,size,row}" slot="menu">-->
-<!--        <el-button v-if="row.status == 1"   icon="el-icon-check" :size="size" :type="type" @click="updateStatus(row.id,row.status)">审批</el-button>-->
-<!--      </template>-->
      </avue-crud>
-    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :modal="false"
-      :before-close="handleClose">
-      <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
-      </avue-form>
-    </el-dialog>
   </basic-container>
 </template>
-
 <script>
   import {getList, add, getDetail,update, remove, updateStatus} from "@/api/warehouse/outputorder";
   import {mapGetters} from "vuex";
-
   export default {
 
     data() {
@@ -69,7 +53,6 @@
           total: 0
         },
         selectionList: [],
-
         option: {
           height:'auto',
           calcHeight: 30,
@@ -82,7 +65,6 @@
           selection: true,
           dialogClickModal: false,
           dialogWidth: '80%',
-
           column: [
             {
               label: "出库单号",
@@ -148,7 +130,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 150,
+                    width: 200,
                     filterable: true,
                     remote: true,
                     rules: [{
@@ -166,7 +148,7 @@
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 100,
+                    width: 200,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur' ,
@@ -177,6 +159,7 @@
                   prop: "warehouseId",
                   type: "tree",
                   rsearch:true,
+                    width: 200,
                     rules: [{
                       required: true,
                       message: "请输入类型",
@@ -193,6 +176,7 @@
                   {
                   label: '备注',
                   prop: "remark",
+                  type:"textarea"
                 }],
               }
             },
