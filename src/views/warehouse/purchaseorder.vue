@@ -188,7 +188,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 250,
+                    width: 180,
                     filterable: true,
                     remote: true,
                     rules: [{
@@ -223,8 +223,7 @@
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 200,
-
+                    width: 180,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -250,7 +249,7 @@
                     prop: "money",
                     disabled: false,
                     placeholder: " ",
-                    width: 100,
+                    width: 110,
                     change: ({value}) => {
                       console.log(value)
                       this.form.sumMoney = 0;
@@ -387,9 +386,9 @@
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
             this.form = res.data.data;
-            // dropDowns(res.data.data.goodsName).then( res =>{
-            //   this.$refs.crud.updateDic('goodsId',res.data.data);
-            // })
+            dropDowns(res.data.data.goodsName).then( res =>{
+              this.$refs.crud.updateDic('goodsId',res.data.data);
+            })
           });
         }
         done();
