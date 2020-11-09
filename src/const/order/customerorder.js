@@ -105,6 +105,7 @@ export const newAddDrugOption = {
           prop: "doctor",
           span: 6,
           rules: [{
+            required: true,
             validator:zhongwen,
           }],
         },
@@ -331,6 +332,7 @@ export const newAddDrugOption = {
           prop: "dtbcompany",
           span: 6,
           rules: [{
+            required: true,
             validator:zhongwen,
           }],
 
@@ -340,7 +342,7 @@ export const newAddDrugOption = {
           prop: "dtbaddress",
           span: 18,
           required: true,
-
+          message: "请输入收货地址",
           trigger: 'blur'
         },
         {
@@ -446,6 +448,7 @@ export const newAddGrainOption = {
           prop: "name",
           span: 6,
           rules: [{
+            required: true,
             validator:zhongwen,
           }],
         },
@@ -539,6 +542,7 @@ export const newAddGrainOption = {
           prop: "doctorName",
           span: 6,
           rules: [{
+            required: true,
             validator:zhongwen,
           }],
         },

@@ -11,6 +11,7 @@
                @row-update="rowUpdate"
                @row-save="rowSave"
                @row-del="rowDel"
+               @row-click="handleRowClick"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -27,13 +28,16 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+      <template slot="hospitalSwitch" slot-scope="scope">
+        <el-switch v-model="scope.row.hospitalSwitch" disabled @click="(scope.row)"> </el-switch>
+      </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
   import {getList, getDetail, add, update, remove,
-	selectHosptalByHospintl} from "@/api/hishospital/hospital";
+	selectHosptalByHospintl,receiveDecocting} from "@/api/hishospital/hospital";
   import {mapGetters} from "vuex";
   export default {
     data() {
@@ -97,19 +101,7 @@
             {
               label: "医院接口开关",
               prop: "hospitalSwitch",
-              type: "switch",
-              rules: [{
-                required: true,
-                message: "请输入医院接口开关",
-                trigger: "blur"
-              }],
-              dicData: [{
-                label: '关',
-                value: false
-              }, {
-                label: '开',
-                value: true
-              }],
+              slot: true,
             },
 
           ]
@@ -135,7 +127,31 @@
         return ids.join(",");
       }
     },
+    //医院开关
     methods: {
+      handleRowClick(row) {
+        console.log(row.hospitalSwitch);
+        console.log(row.id);
+        let params = {
+          hospitalSwitch: !row.hospitalSwitch,
+          id: row.id
+        }
+        add(params).then((res)=>{
+          console.log(res)
+          if (res.data.code == 200){
+            this.$message({
+              type: "success",
+              message: res.data.msg
+            });
+            this.refreshChange();
+          }else{
+            this.$message({
+              type: "error",
+              message: res.data.msg
+            });
+          }
+        })
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -240,6 +256,9 @@
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
+          data.records.forEach((value)=>{
+            value.$cellEdit = true
+          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
@@ -250,4 +269,10 @@
 </script>
 
 <style>
+  .el-switch.is-disabled {
+    opacity: 1;
+  }
+  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
+    cursor: pointer !important;;
+  }
 </style>
