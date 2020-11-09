@@ -54,30 +54,26 @@
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
         </template>
-        <template slot="drugAllnum" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入单剂量" min="0" precision="2"
-                           v-model="scope.row.drugAllnum"></el-input-number>
-        </template>
-        <template slot="tienum" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入贴数" min="0" precision="2"
-                           v-model="scope.row.tienum"></el-input-number>
-        </template>
         <template slot="doseHerb" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入饮片剂量" min="0" precision="2"
-                           v-model="scope.row.doseHerb"></el-input-number>
+          <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0" ></el-input>
         </template>
         <template slot="equivalent" slot-scope="scope">
-          <el-input-number type="textarea" size="mini" placeholder="请输入当量" min="0" precision="2"
-                           v-model="scope.row.equivalent"></el-input-number>
+          <el-input type="number" v-model="scope.row.equivalent" placeholder="请输入当量" min="0" ></el-input>
+        </template>
+        <template slot="drugAllnum" slot-scope="scope">
+        <el-input type="number" v-model="scope.row.drugAllnum"  min=0 placeholder="请输入单剂量"></el-input>
+      </template>
+        <template slot="tienum" slot-scope="scope">
+          <el-input type="number" v-model="scope.row.tienum"  min=0 placeholder="请输入贴数"></el-input>
         </template>
         <template slot="drugweight" slot-scope="scope">
-          {{scope.row.tienum * scope.row.drugAllnum}}
+          {{scope.row.drugAllnum * scope.row.tienum}}
         </template>
         <template slot="drugDescription" slot-scope="scope">
-          <avue-input size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
+          <avue-input type="textarea" size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
         </template>
         <template slot="description" slot-scope="scope">
-          <avue-input size="mini" placeholder="说明" v-model="scope.row.description"></avue-input>
+          <avue-input type="textarea" size="mini" placeholder="说明" v-model="scope.row.description"></avue-input>
         </template>
       </avue-crud>
       <span slot="footer" class="dialog-footer">
@@ -256,7 +252,7 @@
       },
     },
     methods: {
-      handleClick(tab, event) {
+      handleClick() {
         this.tabFrom();
         this.addInfo.form = {};
         this.addInfo.drugList = [];
@@ -434,10 +430,14 @@
       //查看
       lockInfo(row) {
         let url = '';
+        this.dialogVisible = true;
         if (row.orderType === "jianyao") {
           this.viewOption = Object.assign({}, newAddDrugOption);
           this.viewCrudOption = Object.assign({}, viewDrugListOption);
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
+          setTimeout(() => {
+            this.$refs.addForm.updateDic("decscheme");
+          }, 20);
         } else if (row.orderType === "tiaopei") {
           this.viewOption = Object.assign({}, newAddGrainOption);
           this.viewCrudOption = Object.assign({}, viewAddBlenderListOption);
@@ -450,7 +450,6 @@
           return;
         }
         this.viewOption.detail = true;
-        this.dialogVisible = true;
         getInfo(url, row.id).then(res => {
           this.orderInfo = res.data.data;
         })
@@ -493,7 +492,10 @@
             return;
           }
           data.records.forEach((value) => {
+            value.drugAllnum = 0
             value.tienum = 0
+            value.doseHerb = 1
+            value.equivalent = 1
           })
           this.drugList.page.total = data.total;
           this.drugList.data = data.records;

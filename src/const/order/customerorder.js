@@ -26,6 +26,36 @@ export function isInteger(rule, value, callback) {
   }, 0);
 }
 
+
+export function isOneToNinetyNine(rule, value, callback) {
+  if (!value) {
+    return callback(new Error('输入不可以为空'));
+  }
+  setTimeout(() => {
+    if (!Number(value)) {
+      callback(new Error('请输入正确年龄'));
+    } else {
+      const re = /^[1-9][0-9]{0,1}$/;
+      const rsCheck = re.test(value);
+      if (!rsCheck) {
+        callback(new Error('请输入正整数，值为1-99'));
+      } else {
+        callback();
+      }
+    }
+  }, 0);
+}
+export const zhongwen = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请输入姓名'))
+  }
+  if (!/^[\u0391-\uFFE5A-Za-z]+$/.test(value)) {
+    callback(new Error('不可输入特殊字符'))
+  } else {
+    callback()
+  }
+}
+
 export const newAddDrugOption = {
   height: "auto",
   calcHeight: 30,
@@ -71,9 +101,12 @@ export const newAddDrugOption = {
           }],
         },*/
         {
-          label: "医生",
+          label: "医生姓名",
           prop: "doctor",
           span: 6,
+          rules: [{
+            validator:zhongwen,
+          }],
         },
         {
           label: "医生脚注",
@@ -89,6 +122,11 @@ export const newAddDrugOption = {
           label: "药品总量",
           prop: "drugCount",
           span: 6,
+          rules: [{
+            message: "请输入药品总量",
+            trigger: "blur",
+            validator:isInteger,
+          }],
         },
       ]
     },
@@ -104,8 +142,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            message: "请输入患者姓名",
-            trigger: "blur",
+            validator:zhongwen,
           }],
         },
         {
@@ -130,9 +167,8 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:isInteger,
-            message: "请输入年龄",
-            trigger: "blur",
+            validator:isOneToNinetyNine,
+
           },
             {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
           ],
@@ -151,6 +187,9 @@ export const newAddDrugOption = {
           label: "地址",
           prop: "address",
           span: 6,
+          required: true,
+
+          trigger: 'blur'
         },
       ]
     },
@@ -183,7 +222,6 @@ export const newAddDrugOption = {
           rules: [{
             required: true,
             validator:isInteger,
-            message: "请填写贴数",
             trigger: "blur",
           }],
         },
@@ -195,7 +233,6 @@ export const newAddDrugOption = {
           rules: [{
             required: true,
             validator:isInteger,
-            message: "请填写次数",
             trigger: "blur",
           }],
         },
@@ -205,7 +242,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            message: "请填写包装量",
+            validator:isInteger,
             trigger: "blur",
           }],
         },
@@ -293,11 +330,18 @@ export const newAddDrugOption = {
           label: "收件方",
           prop: "dtbcompany",
           span: 6,
+          rules: [{
+            validator:zhongwen,
+          }],
+
         },
         {
           label: "收件地址",
           prop: "dtbaddress",
           span: 18,
+          required: true,
+
+          trigger: 'blur'
         },
         {
           label: "联系电话",
@@ -361,12 +405,12 @@ export const newAddGrainOption = {
         {
           label: "收件人",
           prop: "addressee",
+          span: 6,
           rules: [{
             required: true,
-            message: "请输入收件人",
-            trigger: "blur",
-          },],
-          span: 6,
+            validator:zhongwen,
+          }],
+
         },
         {
           label: "收件人电话",
@@ -381,7 +425,7 @@ export const newAddGrainOption = {
         },
         {
           label: "收货地址",
-          prop: "address",
+          prop: "dtbaddress",
           rules: [{
             required: true,
             message: "请输入收货地址",
@@ -401,12 +445,20 @@ export const newAddGrainOption = {
           label: "患者姓名",
           prop: "name",
           span: 6,
+          rules: [{
+            validator:zhongwen,
+          }],
         },
         {
           label: "患者性别",
           prop: "sex",
           type: "select",
           span: 6,
+          rules: [{
+            required: true,
+            message: "请选择性别",
+            trigger: "blur",
+          }],
           props: {
             label: "dictValue",
             value: "dictKey"
@@ -419,9 +471,8 @@ export const newAddGrainOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:isInteger,
-            message: "请输入年龄",
-            trigger: "blur",
+            validator:isOneToNinetyNine,
+
           },
             {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
           ],
@@ -431,9 +482,8 @@ export const newAddGrainOption = {
           prop: "detailedAge",
           span: 6,
           rules: [{
-            validator:isInteger,
-            message: "请输入年龄",
-            trigger: "blur",
+            validator:isOneToNinetyNine,
+
           },
             {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
           ],
@@ -488,11 +538,66 @@ export const newAddGrainOption = {
           label: "医生姓名",
           prop: "doctorName",
           span: 6,
+          rules: [{
+            validator:zhongwen,
+          }],
         },
       ]
     },
   ],
 }
+
+export const newAddListOption = {
+  calcHeight: 200,
+  border: true,
+  index: true,
+  viewBtn: false,
+  addBtn: false,
+  menu: false,
+  page: false,
+  dialogClickModal: false,
+  menuBtn: false,
+  column: [
+    {
+      label: "药品名称",
+      prop: "goodsName",
+    },
+    {
+      label: "规格",
+      prop: "unit",
+      width: 120,
+    },
+    {
+      label: "单剂量",
+      prop: "drugAllnum",
+      slot: true,
+    },
+    {
+      label: "贴数",
+      prop: "tienum",
+      slot: true,
+    },
+    {
+      label: "总剂量",
+      prop: "drugweight",
+      slot: true,
+    },
+    {
+      label: "药品脚注",
+      prop: "drugDescription",
+      slot: true,
+    },
+    {
+      label: "说明",
+      prop: "description",
+      slot: true,
+    },
+    {
+      label: "单价",
+      prop: "unitPrice",
+    },
+  ],
+};
 
 export const newAddDrugListOption = {
   calcHeight: 200,
@@ -519,7 +624,6 @@ export const newAddDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-
     {
       label: "次数",
       prop: "tienum",
@@ -604,7 +708,6 @@ export const viewDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-
     {
       label: "次数",
       prop: "tienum",
@@ -750,8 +853,8 @@ export const option = {
       format: "yyyy-MM-dd hh:mm:ss",
       valueFormat: "yyyy-MM-dd hh:mm:ss",
       searchRange: true,
+      searchSpan:12,
       hide: true,
-      searchSpan: 12,
       addDisplay: false,
       editDisplay: false,
       viewDisplay: false,

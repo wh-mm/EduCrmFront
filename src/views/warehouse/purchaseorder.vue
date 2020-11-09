@@ -546,7 +546,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 250,
+                    width: 180,
                     filterable: true,
                     remote: true,
                     display:false,
@@ -581,7 +581,7 @@
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 200,
+                    width: 180,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -606,7 +606,7 @@
                     prop: "money",
                     disabled: false,
                     placeholder: " ",
-                    width: 100,
+                    width: 110,
                     change: ({value}) => {
                       this.form.sumMoney = 0;
                       this.form.purchaseOrderDetailList.forEach(val => {

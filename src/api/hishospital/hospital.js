@@ -57,4 +57,3 @@ export const selectHosptalByHospintl = (id,name) => {
     }
   })
 }
-

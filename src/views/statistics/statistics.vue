@@ -2,7 +2,13 @@
       <basic-container>
          <el-row :span="24" :gutter="20">
             <el-col :span="12">
-                <el-date-picker v-model="timeSlot" type="datetimerange" @change="orderTotal" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['12:00:00']"> </el-date-picker>
+                <el-date-picker v-model="timeSlot"
+                                type="datetimerange"
+                                @change="orderTotal"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                :default-time="['12:00:00']">
+                </el-date-picker>
             </el-col>
             <el-col :span="6">
                 <div class="total">金额总计：<span>￥{{totalPrices}}</span></div>
