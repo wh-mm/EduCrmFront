@@ -49,6 +49,7 @@
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
+
     </avue-crud>
     <el-dialog
       :title="title"
@@ -64,9 +65,8 @@
 
 <script>
   import {getList, add, getDetail, update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
-  import {getGoodsDetail, dropDowns} from "@/api/warehouse/goods";
+  import {getGoodsDetail, dropDowns,selecListGoodsName} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
-
   export default {
 
     data() {
@@ -78,6 +78,364 @@
         } else {
           callback();
         }
+      };
+      const addOption = {
+        height: 'auto',
+        calcHeight: 30,
+        tip: false,
+        searchShow: true,
+        searchMenuSpan: 6,
+        border: true,
+        index: true,
+        viewBtn: true,
+        selection: true,
+        dialogClickModal: false,
+        dialogWidth: '80%',
+        column: [
+          {
+            label: "采购订单号",
+            prop: "orderNumber",
+            editDisplay: false,
+            addDisplay: false,
+            search: true,
+            rules: [{
+              required: true,
+              message: "请输入采购订单号",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "类型",
+            prop: "type",
+            search: true,
+            type: "select",
+            rules: [{
+              required: true,
+              message: "请输入类型",
+              trigger: "blur"
+            }],
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
+            props: {
+              label: "dictValue",
+              value: "dictKey"
+            }
+          },
+          {
+            label: "总价",
+            prop: "sumMoney",
+            editDisplay: false,
+            disabled: true,
+          },
+          {
+            label: "状态",
+            prop: "statusName",
+            addDisplay: false,
+            editDisplay: false,
+            viewDisplay:false,
+          },
+          {
+            label: "采购员",
+            prop:"name",
+            addDisplay: false,
+            viewDisplay: false
+
+          },
+          {
+            label:"创建时间",
+            prop:"createTime",
+            dateDefault: true,
+            addDisplay: false,
+            viewDisplay: false,
+            type: "datetime",
+            searchSpan:12,
+            searchRange:true,
+            search:true,
+            format: "yyyy-MM-dd hh:mm:ss",
+            valueFormat: "yyyy-MM-dd hh:mm:ss",
+          },
+          {
+            label: '商品列表',
+            prop: 'purchaseOrderDetailList',
+            type: 'dynamic',
+            span: 24,
+            children: {
+              align: 'center',
+              headerAlign: 'center',
+              rowAdd: (done) => {
+                done({
+                  goodsQuantity: 1,
+                  discountPercentage: 0,
+                });
+              },
+              rowDel: (row, done) => {
+                done();
+              },
+              column: [
+                {
+                  label: '*商品',
+                  prop: "goodsId",
+                  type: 'select',
+                  width: 250,
+                  filterable: true,
+                  remote: true,
+                  display:false,
+                  rules: [{
+                    type: 'select',
+                    require: true,
+                    message: '请选择商品',
+                  }],
+                  props: {
+                    label: 'goodsName',
+                    value: 'id'
+                  },
+                  dicMethod: "post",
+                  dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+                  change: ({value}) => {
+                    if (value) {
+                      getGoodsDetail(value).then(res => {
+                        this.form.sumMoney = 0;
+                        this.form.purchaseOrderDetailList.forEach(val => {
+                          if (val.goodsId == value) {
+                            var detail = res.data.data;
+                            val.unit = detail.unitName;
+                            // val.money = detail.money;
+                          }
+                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                        });
+                      });
+                    }
+                  },
+                },
+                {
+                  label: '*商品',
+                  prop: "goodsName",
+                  display:false,
+                },
+                {
+                  label: '*数量',
+                  prop: "goodsQuantity",
+                  type: "number",
+                  width: 200,
+                  rules: [{
+                    validator: validateQuantity,
+                    trigger: 'blur'
+                  }],
+                  change: ({value}) => {
+                    this.form.sumMoney = 0;
+                    this.form.purchaseOrderDetailList.forEach(val => {
+                      if (val.goodsId != "") {
+                        this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                      }
+                    });
+                  },
+                },
+                {
+                  label: '单位',
+                  prop: "unit",
+                  disabled: true,
+                  placeholder: " ",
+                  width: 100,
+                }, {
+                  label: '单价(元)',
+                  prop: "money",
+                  disabled: false,
+                  placeholder: " ",
+                  width: 100,
+                  change: ({value}) => {
+                    this.form.sumMoney = 0;
+                    this.form.purchaseOrderDetailList.forEach(val => {
+                      if (val.goodsId != "") {
+                        this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                      }
+
+                    });
+                  }
+                },
+                {
+                  label: '*采购仓库(必选)',
+                  prop: "warehouseId",
+                  type: "tree",
+                  rsearch: true,
+                  rules: [{
+                    required: true,
+                    message: "请输入类型",
+                    trigger: "blur"
+                  }],
+                  props: {
+                    label: 'name',
+                    value: 'id'
+                  },
+                  dicMethod: "post",
+                  dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
+                },
+                {
+                  label: "采购额",
+                  prop: "totalPrice",
+                  formslot: true,
+                },
+                {
+                  label: '备注',
+                  prop: "remark",
+                  type: "textarea",
+                  width: 100,
+                }
+              ],
+            }
+          },
+        ]
+      };
+      const viewOption = {
+        height: 'auto',
+        calcHeight: 30,
+        tip: false,
+        searchShow: true,
+        searchMenuSpan: 6,
+        border: true,
+        index: true,
+        viewBtn: true,
+        selection: true,
+        dialogClickModal: false,
+        dialogWidth: '80%',
+        column: [
+          {
+            label: "采购订单号",
+            prop: "orderNumber",
+            editDisplay: false,
+            addDisplay: false,
+            search: true,
+            rules: [{
+              required: true,
+              message: "请输入采购订单号",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "类型",
+            prop: "type",
+            search: true,
+            type: "select",
+            rules: [{
+              required: true,
+              message: "请输入类型",
+              trigger: "blur"
+            }],
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
+            props: {
+              label: "dictValue",
+              value: "dictKey"
+            }
+          },
+          {
+            label: "总价",
+            prop: "sumMoney",
+            editDisplay: false,
+            disabled: true,
+          },
+          {
+            label: "状态",
+            prop: "statusName",
+            addDisplay: false,
+            editDisplay: false,
+            viewDisplay:false,
+          },
+          {
+            label: "采购员",
+            prop:"name",
+            addDisplay: false,
+            viewDisplay: false
+
+          },
+          {
+            label:"创建时间",
+            prop:"createTime",
+            dateDefault: true,
+            addDisplay: false,
+            viewDisplay: false,
+            type: "datetime",
+            searchSpan:12,
+            searchRange:true,
+            search:true,
+            format: "yyyy-MM-dd hh:mm:ss",
+            valueFormat: "yyyy-MM-dd hh:mm:ss",
+          },
+          {
+            label: '商品列表',
+            prop: 'purchaseOrderDetailList',
+            type: 'dynamic',
+            span: 24,
+            children: {
+              align: 'center',
+              headerAlign: 'center',
+              rowAdd: (done) => {
+                done({
+                  goodsQuantity: 1,
+                  discountPercentage: 0,
+                });
+              },
+              rowDel: (row, done) => {
+                done();
+              },
+              column: [
+                {
+                  label: '*商品',
+                  prop: "goodsName",
+                  display:false,
+                },
+                {
+                  label: '*数量',
+                  prop: "goodsQuantity",
+                  type: "number",
+                  width: 200,
+                  rules: [{
+                    validator: validateQuantity,
+                    trigger: 'blur'
+                  }],
+                },
+                {
+                  label: '单位',
+                  prop: "unit",
+                  disabled: true,
+                  placeholder: " ",
+                  width: 100,
+                }, {
+                  label: '单价(元)',
+                  prop: "money",
+                  disabled: false,
+                  placeholder: " ",
+                  width: 100,
+                },
+                {
+                  label: '*采购仓库(必选)',
+                  prop: "warehouseId",
+                  type: "tree",
+                  rsearch: true,
+                  rules: [{
+                    required: true,
+                    message: "请输入类型",
+                    trigger: "blur"
+                  }],
+                  props: {
+                    label: 'name',
+                    value: 'id'
+                  },
+                  dicMethod: "post",
+                  dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
+                },
+                {
+                  label: "采购额",
+                  prop: "totalPrice",
+                  formslot: true,
+                },
+                {
+                  label: '备注',
+                  prop: "remark",
+                  type: "textarea",
+                  width: 100,
+                }
+              ],
+            }
+          },
+        ]
       };
       return {
         form: {},
@@ -191,6 +549,7 @@
                     width: 250,
                     filterable: true,
                     remote: true,
+                    display:false,
                     rules: [{
                       type: 'select',
                       require: true,
@@ -217,20 +576,17 @@
                         });
                       }
                     },
-
-
-                  }, {
+                  },
+                  {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
                     width: 200,
-
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
                     }],
                     change: ({value}) => {
-                      console.log(value)
                       this.form.sumMoney = 0;
                       this.form.purchaseOrderDetailList.forEach(val => {
                         if (val.goodsId != "") {
@@ -252,7 +608,6 @@
                     placeholder: " ",
                     width: 100,
                     change: ({value}) => {
-                      console.log(value)
                       this.form.sumMoney = 0;
                       this.form.purchaseOrderDetailList.forEach(val => {
                         if (val.goodsId != "") {
@@ -289,7 +644,8 @@
                     prop: "remark",
                     type: "textarea",
                     width: 100,
-                  }],
+                  }
+                ],
               }
             },
           ]
@@ -359,8 +715,6 @@
             });
           });
       },
-
-
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -384,12 +738,64 @@
           });
       },
       beforeOpen(done, type) {
-        if (["edit", "view"].includes(type)) {
+        if(["add"].includes(type)){
+          let sp = {
+              label: '*商品',
+              prop: "goodsId",
+              type: 'select',
+              width: 250,
+              filterable: true,
+              remote: true,
+              display:false,
+              rules: [{
+                type: 'select',
+                require: true,
+                message: '请选择商品',
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod: "post",
+              dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+              change: ({value}) => {
+                if (value) {
+                  getGoodsDetail(value).then(res => {
+                    this.form.sumMoney = 0;
+                    this.form.purchaseOrderDetailList.forEach(val => {
+                      if (val.goodsId == value) {
+                        var detail = res.data.data;
+                        val.unit = detail.unitName;
+                        // val.money = detail.money;
+                      }
+                      this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                    });
+                  });
+                }
+              },
+            };
+            console.log(this.option.column[6].children.column[0]);
+          this.option.column[6].children.column[0] = sp;
+        }
+        if(["view"].includes(type)){
+          // eslint-disable-next-line no-undef
+          let sp = {
+              label: '*商品',
+              prop: "goodsName",
+            };
+          console.log(this.option.column[6].children.column[0]);
+          this.option.column[6].children.column[0] = sp;
           getDetail(this.form.id).then(res => {
-            this.form = res.data.data;
-            // dropDowns(res.data.data.goodsName).then( res =>{
-            //   this.$refs.crud.updateDic('goodsId',res.data.data);
-            // })
+            let form  = res.data.data;
+            form.purchaseOrderDetailList.forEach((value,index) => {
+              getGoodsDetail(value.goodsId).then( res =>{
+                value.goodsName = res.data.data.goodsName;
+                if(index == (form.purchaseOrderDetailList.length-1)){
+                  this.form = form
+
+                }
+              })
+            })
           });
         }
         done();
@@ -530,4 +936,5 @@
 </script>
 
 <style>
+
 </style>
