@@ -142,11 +142,11 @@
               search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
             },
-
             {
               label: "单位",
               prop: "unit",
               type: "select",
+              searchSpan:7,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
