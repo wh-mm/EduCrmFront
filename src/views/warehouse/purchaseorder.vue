@@ -64,7 +64,7 @@
 
 <script>
   import {getList, add, getDetail, update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {getGoodsDetail, dropDowns} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
@@ -102,8 +102,6 @@
           selection: true,
           dialogClickModal: false,
           dialogWidth: '80%',
-
-
           column: [
             {
               label: "采购订单号",
@@ -380,6 +378,9 @@
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
             this.form = res.data.data;
+            // dropDowns(res.data.data.goodsName).then( res =>{
+            //   this.$refs.crud.updateDic('goodsId',res.data.data);
+            // })
           });
         }
         done();

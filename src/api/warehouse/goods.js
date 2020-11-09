@@ -69,7 +69,7 @@ export const selectGoodsName = (id,name) => {
   })
 }
 
-export const  selectGoodsCode = (id,code) => {
+export const selectGoodsCode = (id, code) => {
   return request({
     url: '/api/taocao-warehouse/goods/selectCode',
     method: 'get',
@@ -79,6 +79,16 @@ export const  selectGoodsCode = (id,code) => {
     }
   })
 }
+export const dropDowns = (name) => {
+  return request({
+    url: '/api/taocao-warehouse/goods/dropDowns',
+    method: 'post',
+    params: {
+      name
+    }
+  })
+}
+
 
 
 

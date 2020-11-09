@@ -494,59 +494,6 @@ export const newAddGrainOption = {
   ],
 }
 
-export const newAddListOption = {
-  calcHeight: 200,
-  border: true,
-  index: true,
-  viewBtn: false,
-  addBtn: false,
-  menu: false,
-  page: false,
-  dialogClickModal: false,
-  menuBtn: false,
-  column: [
-    {
-      label: "药品名称",
-      prop: "goodsName",
-    },
-    {
-      label: "规格",
-      prop: "unit",
-      width: 120,
-    },
-    {
-      label: "单剂量",
-      prop: "drugAllnum",
-      slot: true,
-    },
-
-    {
-      label: "贴数",
-      prop: "tienum",
-      slot: true,
-    },
-    {
-      label: "总剂量",
-      prop: "drugweight",
-      slot: true,
-    },
-    {
-      label: "药品脚注",
-      prop: "drugDescription",
-      slot: true,
-    },
-    {
-      label: "说明",
-      prop: "description",
-      slot: true,
-    },
-    {
-      label: "单价",
-      prop: "unitPrice",
-    },
-  ],
-};
-
 export const newAddDrugListOption = {
   calcHeight: 200,
   border: true,
@@ -804,6 +751,7 @@ export const option = {
       valueFormat: "yyyy-MM-dd hh:mm:ss",
       searchRange: true,
       hide: true,
+      searchSpan: 12,
       addDisplay: false,
       editDisplay: false,
       viewDisplay: false,

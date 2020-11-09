@@ -134,7 +134,6 @@
     newAddDrugListOption,
     newAddDrugOption,
     newAddGrainOption,
-    newAddListOption,
     option,
     viewAddBlenderListOption,
     viewDrugListOption
@@ -218,8 +217,6 @@
         addCrudOption: '',
         viewOption: '',
         viewCrudOption: '',
-        newAddListOption: newAddListOption,
-        newAddDrugListOption: newAddDrugListOption,
         form: {},
         query: {},
         loading: true,
