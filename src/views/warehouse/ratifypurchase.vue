@@ -18,34 +18,12 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot-scope=""  slot="menuLeft">
-<!--        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.purchaseorder_delete"
-                   @click="handleDelete">删 除
-        </el-button>-->
-<!--        <el-button type="primary"-->
-<!--                   size="small"-->
-<!--                   v-if="permission.purchaseorder_add"-->
-<!--                   icon="el-icon-plus"-->
-<!--                   plain-->
-<!--                   @click="dialogVisible = true,title = '入 库' ">创 建-->
-<!--        </el-button>-->
 
-        <el-button type="button"
-                   size="small"
-                   v-if="permission.purchaseorder_approval"
-                   @click="updateStatusNew()">审批
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button v-if="row.status == 0 && this.permission.purchaseorder_view" icon="el-icon-check" :size="size" :type="type"
+                   @click="updateStatus(row.id,row.status)">审批
         </el-button>
-
       </template>
-<!--      <template slot-scope="{type,size,row}" slot="menu">-->
-<!--        <el-button v-if="row.status == 0 " icon="el-icon-check" :size="size" :type="type"-->
-<!--                   @click="updateStatus(row.id,row.status,)">审批-->
-<!--        </el-button>-->
-<!--      </template>-->
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
@@ -64,7 +42,7 @@
 
 <script>
   import {getList, add, getDetail, update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
-  import {getGoodsDetail, dropDowns} from "@/api/warehouse/goods";
+  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
   export default {
@@ -88,10 +66,8 @@
           currentPage: 1,
           total: 0
         },
-        obj:{},
-        title: '' ,
-        dialogVisible:false,
         selectionList: [],
+
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -104,6 +80,7 @@
           selection: true,
           dialogClickModal: false,
           dialogWidth: '80%',
+
           column: [
             {
               label: "采购订单号",
@@ -147,26 +124,6 @@
               viewDisplay:false,
             },
             {
-              label: "采购员",
-              prop:"name",
-              addDisplay: false,
-              viewDisplay: false
-
-            },
-            {
-              label:"创建时间",
-              prop:"createTime",
-              dateDefault: true,
-              addDisplay: false,
-              viewDisplay: false,
-              type: "datetime",
-              searchSpan:12,
-              searchRange:true,
-              search:true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
-            },
-            {
               label: '商品列表',
               prop: 'purchaseOrderDetailList',
               type: 'dynamic',
@@ -188,7 +145,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 250,
+                    width: 150,
                     filterable: true,
                     remote: true,
                     rules: [{
@@ -216,9 +173,7 @@
                           });
                         });
                       }
-                    },
-
-
+                    }
                   }, {
                     label: '*数量',
                     prop: "goodsQuantity",
@@ -287,8 +242,6 @@
                   {
                     label: '备注',
                     prop: "remark",
-                    type: "textarea",
-                    width: 100,
                   }],
               }
             },
@@ -301,9 +254,9 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.purchaseorder_add, false),
+          addBtn: false,
           viewBtn: this.vaildData(this.permission.purchaseorder_view, false),
-          delBtn: this.vaildData(this.permission.purchaseorder_delete, false),
+          delBtn: false,
           editBtn: this.vaildData(this.permission.purchaseorder_edit, false)
         };
       },
@@ -359,8 +312,6 @@
             });
           });
       },
-
-
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -387,9 +338,6 @@
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
             this.form = res.data.data;
-            // dropDowns(res.data.data.goodsName).then( res =>{
-            //   this.$refs.crud.updateDic('goodsId',res.data.data);
-            // })
           });
         }
         done();
@@ -420,32 +368,9 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
-      // onLoad(page, params = {}) {
-      //   this.loading = true;
-      //   getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-      //     const data = res.data.data;
-      //     this.page.total = data.total;
-      //     this.data = data.records;
-      //     this.loading = false;
-      //     this.selectionClear();
-      //   });
-      // },
       onLoad(page, params = {}) {
-        const {createTime} = params;
-        let values = {
-          ...params,
-        };
-        if (createTime) {
-          values = {
-            ...params,
-            start_time: createTime[0],
-            end_time: createTime[1],
-          };
-          values.createTime = null;
-          this.query.createTime = null;
-        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
@@ -478,52 +403,6 @@
             this.onLoad(this.page);
           })
         });
-      },
-      updateStatusNew() {
-        if (this.selectionList.length >1 ){
-          return this.$message.error("选中一行数据");
-        }
-        if (this.selectionList[0].status != 0){
-          return this.$message.error("该任务已经完成");
-        }
-        var id= this.selectionList[0].id;
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-          })
-          .catch(() => {
-            status = 3;
-          }).finally(() => {
-          updateStatus(id, status).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
-      submit(form,done){
-        add(form).then( res => {
-          done();
-          if(res.data.success){
-            this.$refs.form.resetForm();
-            this.$message.success(res.data.msg);
-            this.dialogVisible = false;
-            this.onLoad(this.page, this.query);
-          }else {
-            this.$message.error(res.data.msg);
-          }
-        }).catch(() => {
-          done();
-        })
       },
     }
   };
