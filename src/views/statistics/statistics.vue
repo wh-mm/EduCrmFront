@@ -109,7 +109,7 @@ export default {
             this.orderList.push(item);
             this.nameList.push(value.hospital_name);
           });
-          res.data.data.orderQuantityHospital.forEach(value => {
+          res.data.data.orderTotalHospital.forEach(value => {
             let item = {
               name: value.hospital_name,
               value: value.prices,
@@ -152,7 +152,7 @@ export default {
             // 设置成相对的百分比
             center: ["40%", 160],
             radius: 120,
-            data: this.orderList,
+            data: this.pricesList,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -162,6 +162,7 @@ export default {
             },
           },
         ],
+        color:['#37A2DA','#32C5E9','#67E0E3','#FFDB5C','#FF9F7F','#FB7293','#E062AE','#E690D1','#E7BCF3','#9D96F5','#67E0E3','#96BFFF',]
       });
       // statisticsNumber
       statisticsNumber.setOption({
@@ -188,6 +189,7 @@ export default {
             },
           },
         ],
+        color:['#37A2DA','#32C5E9','#67E0E3','#FFDB5C','#FF9F7F','#FB7293','#E062AE','#E690D1','#E7BCF3','#9D96F5','#67E0E3','#96BFFF',]
       });
       // 双统计
       statistics.setOption({
@@ -236,7 +238,7 @@ export default {
             itemStyle: {
               //柱体的颜色
               //右，下，左，上（1，0，0，0）表示从正右开始向左渐变
-              color: "#FF6666",
+              color: "#00C9FF",
             },
             data: this.orderList,
           },
@@ -246,7 +248,7 @@ export default {
             itemStyle: {
               //柱体的颜色
               //右，下，左，上（1，0，0，0）表示从正右开始向左渐变
-              color: "#99CC66",
+              color: "#409EFF",
             },
             data: this.orderList,
           },
