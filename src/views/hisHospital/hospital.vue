@@ -37,7 +37,7 @@
 
 <script>
   import {getList, getDetail, add, update, remove,
-	selectHosptalByHospintl,receiveDecocting} from "@/api/hishospital/hospital";
+	selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
   import {mapGetters} from "vuex";
   export default {
     data() {

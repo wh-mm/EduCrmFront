@@ -8,8 +8,8 @@
         <div class="login-time">
           {{time}}
         </div>
-        <img class="img" src="/img/logo.png" alt="">
-        <p class="title">{{ $t('login.info') }}</p>
+        <img class="img" src="/img/logo1.png" alt="">
+        <!--<p class="title">{{ $t('login.info') }}</p>-->
       </div>
       <div class="login-border">
         <div class="login-main">

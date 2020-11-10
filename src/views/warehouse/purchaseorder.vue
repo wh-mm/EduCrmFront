@@ -19,21 +19,6 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot-scope=""  slot="menuLeft">
-<!--        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.purchaseorder_delete"
-                   @click="handleDelete">删 除
-        </el-button>-->
-<!--        <el-button type="primary"-->
-<!--                   size="small"-->
-<!--                   v-if="permission.purchaseorder_add"-->
-<!--                   icon="el-icon-plus"-->
-<!--                   plain-->
-<!--                   @click="dialogVisible = true,title = '入 库' ">创 建-->
-<!--        </el-button>-->
-
         <el-button type="button"
                    size="small"
                    v-if="permission.purchaseorder_approval"
@@ -41,11 +26,7 @@
         </el-button>
 
       </template>
-<!--      <template slot-scope="{type,size,row}" slot="menu">-->
-<!--        <el-button v-if="row.status == 0 " icon="el-icon-check" :size="size" :type="type"-->
-<!--                   @click="updateStatus(row.id,row.status,)">审批-->
-<!--        </el-button>-->
-<!--      </template>-->
+
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
@@ -65,7 +46,7 @@
 
 <script>
   import {getList, add, getDetail, update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
-  import {getGoodsDetail, dropDowns,selecListGoodsName} from "@/api/warehouse/goods";
+  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   export default {
 
@@ -500,9 +481,16 @@
             {
               label: "状态",
               prop: "statusName",
+              type:'select',
               addDisplay: false,
               editDisplay: false,
               viewDisplay:false,
+              search: true,
+              dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
             },
             {
               label: "采购员",
@@ -513,7 +501,7 @@
             },
             {
               label:"创建时间",
-              prop:"createTime",
+              prop:"updateTime",
               dateDefault: true,
               addDisplay: false,
               viewDisplay: false,
@@ -582,6 +570,7 @@
                     prop: "goodsQuantity",
                     type: "number",
                     width: 180,
+
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -606,7 +595,6 @@
                     prop: "money",
                     disabled: false,
                     placeholder: " ",
-                    width: 110,
                     change: ({value}) => {
                       this.form.sumMoney = 0;
                       this.form.purchaseOrderDetailList.forEach(val => {
@@ -826,16 +814,6 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
-      // onLoad(page, params = {}) {
-      //   this.loading = true;
-      //   getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-      //     const data = res.data.data;
-      //     this.page.total = data.total;
-      //     this.data = data.records;
-      //     this.loading = false;
-      //     this.selectionClear();
-      //   });
-      // },
       onLoad(page, params = {}) {
         const {createTime} = params;
         let values = {
@@ -903,7 +881,7 @@
             status = 2;
           })
           .catch(() => {
-            status = 3;
+            status = 7;
           }).finally(() => {
           updateStatus(id, status).then(res => {
             if (res.data.success) {
