@@ -30,6 +30,7 @@
 </template>
 <script>
   import {getList, add, getDetail,update, remove, updateStatus} from "@/api/warehouse/outputorder";
+  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   export default {
 
@@ -94,6 +95,11 @@
               addDisplay:false,
               editDisplay:false,
               viewDisplay:false,
+              dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
             },
             {
               label:"创建时间",
@@ -144,6 +150,22 @@
                     },
                     dicMethod: "post",
                     dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+                    change: ({value}) => {
+                      if (value) {
+                        getGoodsDetail(value).then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outputOrderDetailList.forEach(val => {
+                            if (val.goodsId == value) {
+                              var detail = res.data.data;
+                              val.unit = detail.unitName;
+                              val.specification = detail.goodsSpecification;
+                              // val.money = detail.money;
+                            }
+                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                          });
+                        });
+                      }
+                    },
                   },{
                     label: '*数量',
                     prop: "goodsQuantity",
@@ -153,6 +175,20 @@
                       validator: validateQuantity,
                       trigger: 'blur' ,
                     }],
+                  },
+                  {
+                    label: '单位',
+                    prop: "unit",
+                    disabled: true,
+                    placeholder: " ",
+                    width: 100,
+                  },
+                  {
+                    label: '规格',
+                    prop: "specification",
+                    disabled: true,
+                    placeholder: " ",
+                    width: 100,
                   },
                   {
                   label: '*出货仓库',
