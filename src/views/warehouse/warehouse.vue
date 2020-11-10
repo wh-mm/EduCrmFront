@@ -156,7 +156,9 @@
             },
             {
               label:"创建时间",
-              prop:"updateTime"
+              prop:"updateTime",
+              editDisplay: false,
+              addDisplay: false,
             },
           ]
         },
