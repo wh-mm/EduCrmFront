@@ -17,7 +17,8 @@
                @current-change="currentChange"
                @size-change="sizeChange"
                @refresh-change="refreshChange"
-               @on-load="onLoad">
+               @on-load="onLoad"
+               @tree-load="treeLoad">
       <template slot="menuLeft">
         <el-button type="danger"
                    size="small"
@@ -27,12 +28,28 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+      <template slot-scope="scope" slot="menu">
+        <el-button
+          type="text"
+          icon="el-icon-circle-plus-outline"
+          size="small"
+          @click.stop="handleAdd(scope.row,scope.index)"
+        >新增子项
+        </el-button>
+      </template>
+      <template slot-scope="{row}"
+                slot="source">
+        <div style="text-align:center">
+          <i :class="row.source"/>
+        </div>
+      </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,testingOnlyCode,selectName} from "@/api/warehouse/warehouse";
+  import {getList,getLazyList, getDetail, add, update, remove,testingOnlyCode,selectName,
+    getWarehouseTree} from "@/api/warehouse/warehouse";
   import {mapGetters} from "vuex";
 
   export default {
@@ -67,21 +84,6 @@
           })
         }
       }
-      // var warehousename = (rule, value, callback)=>{
-      //   console.log(value.length);
-      //   if (value.length >= 20) {
-      //     callback(new Error('货物名称不能超过20个字'));
-      //   } else {
-      //     selectWarehouseName(value).then((res) => {
-      //       console.log(res);
-      //       if(res.data.code != 200){
-      //         callback(new Error('货物名称重复,请从新输入!'));
-      //       } else{
-      //         callback();
-      //       }
-      //     })
-      //   }};
-
       return {
         form: {},
         query: {},
@@ -91,6 +93,7 @@
           currentPage: 1,
           total: 0
         },
+        parentId: 0,
         selectionList: [],
         option: {
           height:'auto',
@@ -100,6 +103,8 @@
           searchMenuSpan: 6,
           border: true,
           index: true,
+          tree: true,
+          lazy: true,
           viewBtn: true,
           selection: true,
           dialogClickModal: false,
@@ -114,6 +119,24 @@
                 trigger: "blur"
               },
               { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+              ]
+            },
+            {
+              label: "上级菜单",
+              prop: "parentId",
+              type: "tree",
+              dicData: [],
+              hide: true,
+              props: {
+                label: "title",
+                value: "id"
+              },
+              rules: [
+                {
+                  required: false,
+                  message: "请选择上级菜单",
+                  trigger: "click"
+                }
               ]
             },
             {
@@ -184,6 +207,12 @@
       }
     },
     methods: {
+      initData() {
+        getWarehouseTree().then(res => {
+          const column = this.findObject(this.option.column, "parentId");
+          column.dicData = res.data.data;
+        });
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -250,6 +279,9 @@
           });
       },
       beforeOpen(done, type) {
+        if (["add", "edit"].includes(type)) {
+          this.initData();
+        }
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
             this.form = res.data.data;
@@ -285,14 +317,19 @@
       },
       onLoad(page, params = {}) {
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-          const data = res.data.data;
-          this.page.total = data.total;
-          this.data = data.records;
+        getLazyList(this.parentId, Object.assign(params, this.query)).then(res => {
+          this.data = res.data.data;
           this.loading = false;
           this.selectionClear();
         });
+      },
+      treeLoad(tree, treeNode, resolve) {
+        const parentId = tree.id;
+        getLazyList(parentId).then(res => {
+          resolve(res.data.data);
+        });
       }
+
     }
   };
 </script>

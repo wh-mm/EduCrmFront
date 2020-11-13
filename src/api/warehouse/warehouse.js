@@ -1,8 +1,9 @@
 import request from '@/router/axios';
+import {ERP_WMS_NAME} from '@/const/YueConst';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/list',
+    url: ERP_WMS_NAME + '/warehouse/list',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +15,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/detail',
+    url: ERP_WMS_NAME + '/warehouse/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +25,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/remove',
+    url: ERP_WMS_NAME + '/warehouse/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +35,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/submit',
+    url: ERP_WMS_NAME + '/warehouse/submit',
     method: 'post',
     data: row
   })
@@ -42,7 +43,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/submit',
+    url: ERP_WMS_NAME + '/warehouse/submit',
     method: 'post',
     data: row
   })
@@ -50,7 +51,7 @@ export const update = (row) => {
 
 export const  testingOnlyCode = (id,code) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/testingOnlyCode',
+    url: ERP_WMS_NAME + '/warehouse/testingOnlyCode',
     method: 'get',
     params: {
       id,
@@ -60,7 +61,7 @@ export const  testingOnlyCode = (id,code) => {
 }
 export const selectName = (id,name) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/selectName',
+    url: ERP_WMS_NAME + '/warehouse/selectName',
     method: 'get',
     params: {
       id,
@@ -70,10 +71,38 @@ export const selectName = (id,name) => {
 }
 export const warehousename = (name) => {
   return request({
-    url: '/api/taocao-warehouse/warehouse/selectName',
+    url: ERP_WMS_NAME + '/warehouse/selectName',
     method: 'get',
     params: {
       name,
     }
   })
 }
+export const getLazyList = (parentId, params) => {
+  return request({
+    url: ERP_WMS_NAME + '/warehouse/lazy-list',
+    method: 'get',
+    params: {
+      ...params,
+      parentId
+    }
+  })
+}
+export const getWarehouseTree = (parentId) => {
+  return request({
+    url: ERP_WMS_NAME + '/warehouse/tree',
+    method: 'get',
+    params: {
+      parentId,
+    }
+  })
+}
+export const getWarehouseLazyTree = (parentId) => {
+  return request({
+    url: '/api/yue-wms/warehouse/lazy-tree',
+    method: 'get',
+    params: {
+      parentId
+    }
+  })
+};
