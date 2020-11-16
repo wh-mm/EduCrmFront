@@ -32,38 +32,38 @@
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove,selectGoodsName,selectGoodsCode} from "@/api/warehouse/goods";
+  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 
 
   export default {
     data() {
-      var selectName = (rule, value, callback)=>{
-        if (value === ''){
+      var selectName = (rule, value, callback) => {
+        if (value === '') {
           callback(new Error("请输入商品名称！"))
-        }else {
-          selectGoodsName(this.form.id,value).then( res => {
-            if(res.data.success){
+        } else {
+          selectGoodsName(this.form.id, value).then(res => {
+            if (res.data.success) {
               callback();
-            }else{
+            } else {
               callback(new Error(res.data.msg));
             }
-          },err =>{
+          }, err => {
             callback(new Error(err.data.msg));
           })
         }
       }
-      var selectCode = (rule,value,callback) =>{
-        if (value === ''){
+      var selectCode = (rule, value, callback) => {
+        if (value === '') {
           callback(new Error("请输入编码！"))
-        }else {
-          selectGoodsCode(this.form.id,value).then( res => {
-            if(res.data.success){
+        } else {
+          selectGoodsCode(this.form.id, value).then(res => {
+            if (res.data.success) {
               callback();
-            }else{
+            } else {
               callback(new Error(res.data.msg));
             }
-          },err =>{
+          }, err => {
             callback(new Error(err.data.msg));
           })
         }
@@ -91,47 +91,34 @@
           dialogClickModal: false,
           column: [
             {
-              label: "货物大类别",
-              prop: "parentId",
-              type: "tree",
-              props: {
-                label: 'dictValue',
-                value: 'id'
-              },
-              cascaderItem: ['goodsCategory'],
-              search: true,
-              dicUrl: '/api/blade-system/dictCategory/dictionaryByParentId?parentId=0'
-            },
-            {
-              label: "货物小类别",
-              prop: "goodsCategory",
-              type: "tree",
-              props: {
-                label: 'dictValue',
-                value: 'id'
-              },
-              //cascaderItem: ['goodsName'],
-              search: true,
-              dicUrl: "/api/blade-system/dictCategory/dictionaryByParentId?parentId={{key}}"
-            },
-            {
               label: "商品名称",
               prop: "goodsName",
               rules: [{
                 required: true,
-                validator:selectName,
+                validator: selectName,
                 trigger: 'blur',
               }],
             },
             {
-               label: "货品编码",
-               prop: "goodsCode",
-                    rules: [{
-                    required: true,
-                     validator:selectCode,
-                    trigger: "blur"
+              label: "货物类型",
+              prop: "goodsType",
+              type: "tree",
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              search: true,
+              dicUrl: "/api/erp-wms/goods-type/tree"
+            },
+            {
+              label: "货品编码",
+              prop: "goodsCode",
+              rules: [{
+                required: true,
+                validator: selectCode,
+                trigger: "blur"
               }]
-            },{
+            }, {
               label: "规格",
               prop: "goodsSpecification",
               type: "select",
@@ -146,7 +133,7 @@
               label: "单位",
               prop: "unit",
               type: "select",
-              searchSpan:7,
+              searchSpan: 7,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
