@@ -19,11 +19,11 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <el-button type="button"
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.outputorderdetail_delete"
+                   v-if="permission.approvalprocess_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,20 +32,11 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/outputorderdetail";
+  import {getList, getDetail, add, update, remove} from "@/api/approval/approvalprocess";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var validateQuantity = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入数量'));
-        } else if (value <= 0) {
-          callback(new Error('数量不能小于0'));
-        } else {
-          callback();
-        }
-      };
       return {
         form: {},
         query: {},
@@ -69,37 +60,55 @@
           dialogClickModal: false,
           column: [
             {
-              label: "出库id",
-              prop: "outputId",
+              label: "审批单号",
+              prop: "approvalOrderNumber",
               rules: [{
                 required: true,
-                message: "请输入采购id",
+                message: "请输入审批类型",
                 trigger: "blur"
               }]
             },
             {
-              label: "商品id",
-              prop: "goodsId",
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              search:true,
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
-            },
-            {
-              label: "数量",
-              prop: "goodsQuantity",
+              label: "审批状态",
+              prop: "approvalStatusName",
+              type:"select",
               rules: [{
                 required: true,
-                message: "请输入数量",
-                trigger: "blur",
-                validator: validateQuantity,
-
+                message: "请输入审批状态",
+                trigger: "blur"
+              }],
+            },
+            {
+              label: "审批人员",
+              prop: "userId",
+              rules: [{
+                required: true,
+                message: "请输入审批人员",
+                trigger: "blur"
               }]
             },
-
+            {
+              label:"创建时间",
+              prop:"updateTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+            },
+            {
+              label: "备注",
+              prop: "remark",
+              rules: [{
+                required: true,
+                message: "请输入备注",
+                trigger: "blur"
+              }]
+            },
           ]
         },
         data: []
@@ -109,10 +118,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.outputorderdetail_add, false),
-          viewBtn: this.vaildData(this.permission.outputorderdetail_view, false),
-          delBtn: this.vaildData(this.permission.outputorderdetail_delete, false),
-          editBtn: this.vaildData(this.permission.outputorderdetail_edit, false)
+          addBtn: this.vaildData(this.permission.approvalprocess_add, false),
+          viewBtn: this.vaildData(this.permission.approvalprocess_view, false),
+          delBtn: this.vaildData(this.permission.approvalprocess_delete, false),
+          editBtn: this.vaildData(this.permission.approvalprocess_edit, false)
         };
       },
       ids() {
@@ -224,15 +233,28 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
+        const {updateTime} = params;
+        let values = {
+          ...params,
+        };
+        if (updateTime) {
+          values = {
+            ...params,
+            start_time: updateTime[0],
+            end_time: updateTime[1],
+          };
+          values.updateTime = null;
+          this.query.updateTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
     }
   };
 </script>

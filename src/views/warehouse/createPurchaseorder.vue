@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  import { add }  from "@/api/warehouse/purchaseorder";
+  import { add }  from "@/api/purchase/purchaseorder";
   import { getGoodsDetail } from "@/api/warehouse/goods";
 
   export default {

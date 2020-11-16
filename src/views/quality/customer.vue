@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.purchaseorderdetail_delete"
+                   v-if="permission.customer_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,20 +32,11 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/purchaseorderdetail";
+  import {getList, getDetail, add, update, remove} from "@/api/quality/customer";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var validateQuantity = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入数量'));
-        } else if (value <= 0) {
-          callback(new Error('数量不能小于0'));
-        } else {
-          callback();
-        }
-      };
       return {
         form: {},
         query: {},
@@ -69,47 +60,185 @@
           dialogClickModal: false,
           column: [
             {
-              label: "采购id",
-              prop: "purchaseId",
+              label: "客户名称",
+              prop: "customerName",
               rules: [{
                 required: true,
-                message: "请输入采购id",
-                trigger: "blur"
-              }]
-            },
-            // {
-            //   label: "商品id",
-            //   prop: "goodsId",
-            //   type:"select",
-            //   props: {
-            //     label: 'goodsName',
-            //     value: 'id'
-            //   },
-            //   search:true,
-            //   dicMethod:"post",
-            //   dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
-            // },
-            {
-              label: "商品id",
-              prop: "goodsId",
-              rules: [{
-                required: true,
-                message: "请输入商品id",
+                message: "请输入客户名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "数量",
-              prop: "goodsQuantity",
+              label: "客户性质",
+              prop: "customerNature",
               rules: [{
                 required: true,
-                message: "请输入数量",
-                trigger: "blur",
-                validator: validateQuantity,
-
+                message: "请输入客户性质",
+                trigger: "blur"
               }]
             },
-
+            {
+              label: "组织代码",
+              prop: "organizationCode",
+              rules: [{
+                required: true,
+                message: "请输入组织代码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "医疗机构",
+              prop: "medicalInstitution",
+              rules: [{
+                required: true,
+                message: "请输入医疗机构",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "税号",
+              prop: "dutyParagraph",
+              rules: [{
+                required: true,
+                message: "请输入税号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "法人代表",
+              prop: "legalRepresentative",
+              rules: [{
+                required: true,
+                message: "请输入法人代表",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "供应商证件照",
+              prop: "supplierCertificatePhoto",
+              rules: [{
+                required: true,
+                message: "请输入供应商证件照",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "社会统一信用码",
+              prop: "socialUniformCreditCode",
+              rules: [{
+                required: true,
+                message: "请输入社会统一信用码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "注册地址",
+              prop: "registeredAddress",
+              rules: [{
+                required: true,
+                message: "请输入注册地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "生产或仓库地址",
+              prop: "productionOrWarehouseAddress",
+              rules: [{
+                required: true,
+                message: "请输入生产或仓库地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "质量负责人",
+              prop: "qualityPrincipal",
+              rules: [{
+                required: true,
+                message: "请输入质量负责人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "企业负责人",
+              prop: "enterprisePrincipal",
+              rules: [{
+                required: true,
+                message: "请输入企业负责人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "国家",
+              prop: "country",
+              rules: [{
+                required: true,
+                message: "请输入国家",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "省地区",
+              prop: "regionArea",
+              rules: [{
+                required: true,
+                message: "请输入省地区",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "市地区",
+              prop: "metropolitanArea",
+              rules: [{
+                required: true,
+                message: "请输入市地区",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "县地区",
+              prop: "countyArea",
+              rules: [{
+                required: true,
+                message: "请输入县地区",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "使用状态",
+              prop: "useState",
+              rules: [{
+                required: true,
+                message: "请输入使用状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "审核状态",
+              prop: "stateExamine",
+              rules: [{
+                required: true,
+                message: "请输入审核状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "有效开始时间",
+              prop: "effectiveStart",
+              rules: [{
+                required: true,
+                message: "请输入有效开始时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "有效结束时间",
+              prop: "effectiveEnd",
+              rules: [{
+                required: true,
+                message: "请输入有效结束时间",
+                trigger: "blur"
+              }]
+            },
           ]
         },
         data: []
@@ -119,10 +248,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.purchaseorderdetail_add, false),
-          viewBtn: this.vaildData(this.permission.purchaseorderdetail_view, false),
-          delBtn: this.vaildData(this.permission.purchaseorderdetail_delete, false),
-          editBtn: this.vaildData(this.permission.purchaseorderdetail_edit, false)
+          addBtn: this.vaildData(this.permission.customer_add, false),
+          viewBtn: this.vaildData(this.permission.customer_view, false),
+          delBtn: this.vaildData(this.permission.customer_delete, false),
+          editBtn: this.vaildData(this.permission.customer_edit, false)
         };
       },
       ids() {

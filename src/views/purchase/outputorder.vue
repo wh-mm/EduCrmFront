@@ -29,7 +29,7 @@
   </basic-container>
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus} from "@/api/warehouse/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   export default {

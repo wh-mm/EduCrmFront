@@ -1,8 +1,9 @@
 import request from '@/router/axios';
+import {ERP_BASE_NAME} from "@/const/YueConst";
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/purchase/outputorder/page',
+    url: ERP_BASE_NAME + '/scope/list',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +15,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/purchase/outputorder/detail',
+    url: ERP_BASE_NAME + '/scope/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +25,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/purchase/outputorder/remove',
+    url: ERP_BASE_NAME + '/scope/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +35,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/purchase/outputorder/submit',
+    url: ERP_BASE_NAME + '/scope/submit',
     method: 'post',
     data: row
   })
@@ -42,21 +43,30 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/purchase/outputorder/submit',
+    url: ERP_BASE_NAME + '/scope/submit',
     method: 'post',
     data: row
   })
 }
 
-export const updateStatus = (id, status) => {
+export const getLazyList = (parentId, params) => {
   return request({
-    url: '/api/purchase/outputorder/updateStatus',
-    method: 'post',
-    params:{
-      id,
-      status
+    url: ERP_BASE_NAME + '/scope/lazy-list',
+    method: 'get',
+    params: {
+      ...params,
+      parentId
     }
   })
 }
 
+export const getScopeTree = (parentId) => {
+  return request({
+    url: ERP_BASE_NAME + '/scope/tree',
+    method: 'get',
+    params: {
+      parentId,
+    }
+  })
+}
 

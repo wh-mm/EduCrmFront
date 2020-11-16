@@ -99,7 +99,7 @@ export const getWarehouseTree = (parentId) => {
 }
 export const getWarehouseLazyTree = (parentId) => {
   return request({
-    url: '/api/yue-wms/warehouse/lazy-tree',
+    url: ERP_WMS_NAME + '/warehouse/lazy-tree',
     method: 'get',
     params: {
       parentId

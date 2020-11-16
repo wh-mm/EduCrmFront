@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/purchaseorderdetail";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/purchaseorderdetail";
   import {mapGetters} from "vuex";
 
   export default {
@@ -77,17 +77,24 @@
                 trigger: "blur"
               }]
             },
+
             {
               label: "商品id",
               prop: "goodsId",
-              type:"select",
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              search:true,
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
+              rules: [{
+                required: true,
+                message: "请输入商品id",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "供应商id",
+              prop: "informationId",
+              rules: [{
+                required: true,
+                message: "请输入供应商id",
+                trigger: "blur"
+              }]
             },
             {
               label: "数量",

@@ -1,8 +1,9 @@
 import request from '@/router/axios';
+import {ERP_BASE_NAME} from "@/const/YueConst";
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/purchase/purchaseorderdetail/list',
+    url: ERP_BASE_NAME + '/specification/page',
     method: 'get',
     params: {
       ...params,
@@ -12,9 +13,16 @@ export const getList = (current, size, params) => {
   })
 }
 
+export const getSpecificationListAll = () => {
+  return request({
+    url: ERP_BASE_NAME + '/specification/list-all',
+    method: 'get',
+  })
+}
+
 export const getDetail = (id) => {
   return request({
-    url: '/api/purchase/purchaseorderdetail/detail',
+    url: ERP_BASE_NAME + '/specification/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +32,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/purchase/purchaseorderdetail/remove',
+    url: ERP_BASE_NAME + '/specification/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +42,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/purchase/purchaseorderdetail/submit',
+    url: ERP_BASE_NAME + '/specification/submit',
     method: 'post',
     data: row
   })
@@ -42,7 +50,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/purchase/purchaseorderdetail/submit',
+    url: ERP_BASE_NAME + '/specification/submit',
     method: 'post',
     data: row
   })

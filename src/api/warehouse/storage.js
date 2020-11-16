@@ -1,8 +1,9 @@
 import request from '@/router/axios';
+import {ERP_WMS_NAME} from '@/const/YueConst';
 
 export const getList = (current, size, params,warehouseId) => {
   return request({
-    url: '/api/taocao-warehouse/storage/list',
+    url: ERP_WMS_NAME + '/storage/list',
     method: 'get',
     params: {
       ...params,
@@ -15,7 +16,7 @@ export const getList = (current, size, params,warehouseId) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-warehouse/storage/detail',
+    url: ERP_WMS_NAME + '/storage/detail',
     method: 'get',
     params: {
       id
@@ -25,7 +26,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-warehouse/storage/remove',
+    url: ERP_WMS_NAME + '/storage/remove',
     method: 'post',
     params: {
       ids,
@@ -35,7 +36,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-warehouse/storage/submit',
+    url: ERP_WMS_NAME + '/storage/submit',
     method: 'post',
     data: row
   })
@@ -43,7 +44,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-warehouse/storage/submit',
+    url: ERP_WMS_NAME + '/storage/submit',
     method: 'post',
     data: row
   })
@@ -51,7 +52,7 @@ export const update = (row) => {
 
 export const getLazyList = (parentId,warehouseId, params) => {
   return request({
-    url: '/api/taocao-warehouse/storage/lazy-list',
+    url: ERP_WMS_NAME + '/storage/lazy-list',
     method: 'get',
     params: {
       ...params,
@@ -62,10 +63,21 @@ export const getLazyList = (parentId,warehouseId, params) => {
 }
 export const getStorageTree = (warehouseId) => {
   return request({
-    url: '/api/taocao-warehouse/storage/tree',
+    url: ERP_WMS_NAME + '/storage/tree',
     method: 'get',
     params: {
       warehouseId
+    }
+  })
+}
+
+export const dropDown = (warehouseId,type) => {
+  return request({
+    url: ERP_WMS_NAME + '/storage/dropDown',
+    method: 'post',
+    params: {
+      warehouseId,
+      type
     }
   })
 }
