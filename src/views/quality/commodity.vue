@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.information_delete"
+                   v-if="permission.commodity_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/quality/information";
+  import {getList, getDetail, add, update, remove} from "@/api/quality/commodity";
   import {mapGetters} from "vuex";
 
   export default {
@@ -60,187 +60,218 @@
           dialogClickModal: false,
           column: [
             {
-              label: "供应商名称",
-              prop: "supplierName",
-              labelWidth: 110,
+              label: "公司id",
+              prop: "companyId",
               rules: [{
                 required: true,
-                message: "供应商名称",
+                message: "请输入公司id",
                 trigger: "blur"
               }]
             },
             {
-              label: "承付模式",
-              prop: "commitmentModel",
+              label: "公司名称",
+              prop: "corporateName",
               rules: [{
                 required: true,
-                message: "承付模式",
+                message: "请输入公司名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "组织代码",
-              prop: "organizationCode",
+              label: "商品名称",
+              prop: "tradeName",
               rules: [{
                 required: true,
-                message: "请输入组织代码",
+                message: "请输入商品名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "税号",
-              prop: "dutyParagraph",
+              label: "规格(型号)",
+              prop: "specifications",
               rules: [{
                 required: true,
-                message: "请输入税号",
+                message: "请输入规格(型号)",
                 trigger: "blur"
               }]
             },
             {
-              label: "法人代表",
-              prop: "legalRepresentative",
+              label: "打印规格",
+              prop: "printSpecifications",
               rules: [{
                 required: true,
-                message: "请输入法人代表",
+                message: "请输入打印规格",
                 trigger: "blur"
               }]
             },
             {
-              label: "供应商证件照",
-              prop: "supplierCertificatePhoto",
-              labelWidth: 110,
+              label: "生产厂家",
+              prop: "manufacturer",
               rules: [{
                 required: true,
-                message: "请输入供应商证件照",
+                message: "请输入生产厂家",
                 trigger: "blur"
               }]
             },
             {
-              label: "社会统一信用码",
-              prop: "socialUniformCreditCode",
-              labelWidth: 130,
+              label: "进项税",
+              prop: "inputTax",
               rules: [{
                 required: true,
-                message: "请输入社会统一信用码",
+                message: "请输入进项税",
                 trigger: "blur"
               }]
             },
             {
-              label: "注册地址",
-              prop: "registeredAddress",
+              label: "销项税",
+              prop: "outputTax",
               rules: [{
                 required: true,
-                message: "请输入注册地址",
+                message: "请输入销项税",
                 trigger: "blur"
               }]
             },
             {
-              label: "生产或仓库地址",
-              labelWidth: 130,
-              prop: "productionOrWarehouseAddress",
+              label: "采购状态",
+              prop: "purchasingStatus",
               rules: [{
                 required: true,
-                message: "请输入生产或仓库地址",
+                message: "请输入采购状态",
                 trigger: "blur"
               }]
             },
             {
-              label: "质量负责人",
-              prop: "qualityPrincipal",
-              labelWidth: 110,
+              label: "产品分类",
+              prop: "productClassification",
               rules: [{
                 required: true,
-                message: "请输入质量负责人",
+                message: "请输入产品分类",
                 trigger: "blur"
               }]
             },
             {
-              label: "企业负责人",
-              prop: "enterprisePrincipal",
-              labelWidth: 110,
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
               rules: [{
                 required: true,
-                message: "请输入企业负责人",
-                trigger: "blur"
-              }]
-            },
-            /*{
-              label: "国家",
-              prop: "country",
-              rules: [{
-                required: true,
-                message: "请输入国家",
-                trigger: "blur"
-              }]
-            },*/
-            {
-              label: "省份",
-              prop: "regionArea",
-              type: 'select',
-              props: {
-                label: 'name',
-                value: 'code'
-              },
-              cascaderItem: ['metropolitanArea', 'countyArea'],
-              dicUrl: '/api/blade-system/region/select',
-            },
-            {
-              label: "地市",
-              prop: "metropolitanArea",
-              type: 'select',
-              props: {
-                label: 'name',
-                value: 'code'
-              },
-              dicFlag: false,
-              dicUrl: '/api/blade-system/region/select?code={{key}}',
-            },
-            {
-              label: "区县",
-              prop: "countyArea",
-              type: 'select',
-              props: {
-                label: 'name',
-                value: 'code'
-              },
-              dicFlag: false,
-              dicUrl: '/api/blade-system/region/select?code={{key}}',
-            },
-            {
-              label: "使用状态",
-              prop: "useState",
-              rules: [{
-                required: true,
-                message: "请输入使用状态",
+                message: "请输入分包装企业",
                 trigger: "blur"
               }]
             },
             {
-              label: "审核状态",
-              prop: "stateExamine",
+              label: "剂型",
+              prop: "dosageForm",
               rules: [{
                 required: true,
-                message: "请输入审核状态",
+                message: "请输入剂型",
                 trigger: "blur"
               }]
             },
             {
-              label: "有效开始时间",
-              prop: "effectiveStart",
-              labelWidth: 130,
+              label: "经营范围",
+              prop: "natureOfBusiness",
               rules: [{
                 required: true,
-                message: "请输入有效开始时间",
+                message: "请输入经营范围",
                 trigger: "blur"
               }]
             },
             {
-              label: "有效结束时间",
-              prop: "effectiveEnd",
-              labelWidth: 130,
+              label: "存储期限",
+              prop: "storageLife",
               rules: [{
                 required: true,
-                message: "请输入有效结束时间",
+                message: "请输入存储期限",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "存储期限类型",
+              prop: "storagePeriodType",
+              rules: [{
+                required: true,
+                message: "请输入存储期限类型",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "特管药品",
+              prop: "specialDrugs",
+              rules: [{
+                required: true,
+                message: "请输入特管药品",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "特殊药品",
+              prop: "specialDrug",
+              rules: [{
+                required: true,
+                message: "请输入特殊药品",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "otc标志",
+              prop: "sign",
+              rules: [{
+                required: true,
+                message: "请输入otc标志",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "国产/进口标示",
+              prop: "domesticImportIndication",
+              rules: [{
+                required: true,
+                message: "请输入国产/进口标示",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "产品二级分类",
+              prop: "secondaryProductClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品二级分类",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "存储条件",
+              prop: "storageConditions",
+              rules: [{
+                required: true,
+                message: "请输入存储条件",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+              rules: [{
+                required: true,
+                message: "请输入批准文号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "税收分类",
+              prop: "taxClassification",
+              rules: [{
+                required: true,
+                message: "请输入税收分类",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "公司ID",
+              prop: "corporateId",
+              rules: [{
+                required: true,
+                message: "请输入公司ID",
                 trigger: "blur"
               }]
             },
@@ -253,10 +284,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.information_add, false),
-          viewBtn: this.vaildData(this.permission.information_view, false),
-          delBtn: this.vaildData(this.permission.information_delete, false),
-          editBtn: this.vaildData(this.permission.information_edit, false)
+          addBtn: this.vaildData(this.permission.commodity_add, false),
+          viewBtn: this.vaildData(this.permission.commodity_view, false),
+          delBtn: this.vaildData(this.permission.commodity_delete, false),
+          editBtn: this.vaildData(this.permission.commodity_edit, false)
         };
       },
       ids() {

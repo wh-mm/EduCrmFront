@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.information_delete"
+                   v-if="permission.customer_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/quality/information";
+  import {getList, getDetail, add, update, remove} from "@/api/quality/customer";
   import {mapGetters} from "vuex";
 
   export default {
@@ -60,21 +60,20 @@
           dialogClickModal: false,
           column: [
             {
-              label: "供应商名称",
-              prop: "supplierName",
-              labelWidth: 110,
+              label: "客户名称",
+              prop: "customerName",
               rules: [{
                 required: true,
-                message: "供应商名称",
+                message: "请输入客户名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "承付模式",
-              prop: "commitmentModel",
+              label: "客户性质",
+              prop: "customerNature",
               rules: [{
                 required: true,
-                message: "承付模式",
+                message: "请输入客户性质",
                 trigger: "blur"
               }]
             },
@@ -84,6 +83,15 @@
               rules: [{
                 required: true,
                 message: "请输入组织代码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "医疗机构",
+              prop: "medicalInstitution",
+              rules: [{
+                required: true,
+                message: "请输入医疗机构",
                 trigger: "blur"
               }]
             },
@@ -108,7 +116,6 @@
             {
               label: "供应商证件照",
               prop: "supplierCertificatePhoto",
-              labelWidth: 110,
               rules: [{
                 required: true,
                 message: "请输入供应商证件照",
@@ -118,7 +125,6 @@
             {
               label: "社会统一信用码",
               prop: "socialUniformCreditCode",
-              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入社会统一信用码",
@@ -136,7 +142,6 @@
             },
             {
               label: "生产或仓库地址",
-              labelWidth: 130,
               prop: "productionOrWarehouseAddress",
               rules: [{
                 required: true,
@@ -147,7 +152,6 @@
             {
               label: "质量负责人",
               prop: "qualityPrincipal",
-              labelWidth: 110,
               rules: [{
                 required: true,
                 message: "请输入质量负责人",
@@ -157,14 +161,13 @@
             {
               label: "企业负责人",
               prop: "enterprisePrincipal",
-              labelWidth: 110,
               rules: [{
                 required: true,
                 message: "请输入企业负责人",
                 trigger: "blur"
               }]
             },
-            /*{
+            {
               label: "国家",
               prop: "country",
               rules: [{
@@ -172,39 +175,33 @@
                 message: "请输入国家",
                 trigger: "blur"
               }]
-            },*/
+            },
             {
-              label: "省份",
+              label: "省地区",
               prop: "regionArea",
-              type: 'select',
-              props: {
-                label: 'name',
-                value: 'code'
-              },
-              cascaderItem: ['metropolitanArea', 'countyArea'],
-              dicUrl: '/api/blade-system/region/select',
+              rules: [{
+                required: true,
+                message: "请输入省地区",
+                trigger: "blur"
+              }]
             },
             {
-              label: "地市",
+              label: "市地区",
               prop: "metropolitanArea",
-              type: 'select',
-              props: {
-                label: 'name',
-                value: 'code'
-              },
-              dicFlag: false,
-              dicUrl: '/api/blade-system/region/select?code={{key}}',
+              rules: [{
+                required: true,
+                message: "请输入市地区",
+                trigger: "blur"
+              }]
             },
             {
-              label: "区县",
+              label: "县地区",
               prop: "countyArea",
-              type: 'select',
-              props: {
-                label: 'name',
-                value: 'code'
-              },
-              dicFlag: false,
-              dicUrl: '/api/blade-system/region/select?code={{key}}',
+              rules: [{
+                required: true,
+                message: "请输入县地区",
+                trigger: "blur"
+              }]
             },
             {
               label: "使用状态",
@@ -227,7 +224,6 @@
             {
               label: "有效开始时间",
               prop: "effectiveStart",
-              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入有效开始时间",
@@ -237,7 +233,6 @@
             {
               label: "有效结束时间",
               prop: "effectiveEnd",
-              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入有效结束时间",
@@ -253,10 +248,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.information_add, false),
-          viewBtn: this.vaildData(this.permission.information_view, false),
-          delBtn: this.vaildData(this.permission.information_delete, false),
-          editBtn: this.vaildData(this.permission.information_edit, false)
+          addBtn: this.vaildData(this.permission.customer_add, false),
+          viewBtn: this.vaildData(this.permission.customer_view, false),
+          delBtn: this.vaildData(this.permission.customer_delete, false),
+          editBtn: this.vaildData(this.permission.customer_edit, false)
         };
       },
       ids() {
