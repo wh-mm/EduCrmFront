@@ -26,7 +26,7 @@
                    @tree-load="treeLoad">
           <template slot="menuLeft" slot-scope="scope">
             <el-button type="primary" icon="el-icon-plus" size="small" plain
-                       v-if="permission.storage_add" @click.stop="handleAdd()">添 加 货 架</el-button>
+                       v-if="permission.storage_add" @click.stop="handleAdd()">新 增</el-button>
 <!--            <el-button type="danger"-->
 <!--                       size="small"-->
 <!--                       icon="el-icon-delete"-->
@@ -64,7 +64,7 @@ import {
   add,
   update,
   remove,
-  getStorageTree,
+  dropDown
 } from "@/api/warehouse/storage";
 import { getWarehouseLazyTree } from "@/api/warehouse/warehouse";
 import { mapGetters } from "vuex";
@@ -145,14 +145,39 @@ export default {
             dataType: "number",
             dicData: [
               {
-                label: "货架",
+                label: "区",
                 value: 1,
               },
               {
-                label: "格子",
+                label: "货架",
                 value: 2,
               },
+              {
+                label: "格子",
+                value: 3,
+              },
             ],
+          },
+          {
+            label: "区类型",
+            prop: "areaType",
+            type: "select",
+            dicData: [],
+            display: true,
+            //hide: true,
+            rules: [
+              {
+                required: true,
+                message: "请选择区类型",
+                trigger: "click",
+              },
+            ],
+            props: {
+              label: 'dictValue',
+              value: 'dictKey'
+            },
+            search: true,
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=area_type"
           },
           {
             label: "层",
@@ -160,6 +185,7 @@ export default {
             type: "number",
             value: 1,
             precision: 0,
+            hide:true,
             display: true,
             disabled: false,
             placeholder: "仓库架子层数",
@@ -177,6 +203,7 @@ export default {
             type: "number",
             value: 1,
             precision: 0,
+            hide:true,
             display: true,
             disabled: false,
             placeholder: "仓库一层格子多少",
@@ -189,14 +216,14 @@ export default {
             ],
           },
           {
-            label: "上级菜单",
+            label: "上级",
             prop: "parentId",
-            type: "tree",
+            type: "select",
             dicData: [],
             display: true,
             hide: true,
             props: {
-              label: "title",
+              label: "name",
               value: "id",
             },
             rules: [
@@ -218,14 +245,24 @@ export default {
         const layer = this.findObject(this.option.column, "layer");
         const lattice = this.findObject(this.option.column, "lattice");
         const parentId = this.findObject(this.option.column, "parentId");
-        if (val === 1) {
+        const areaType = this.findObject(this.option.column, "areaType");
+        if(val === 1){
+          parentId.display = false;
+          layer.display = false;
+          lattice.display = false;
+          areaType.display = true;
+        } else if (val === 2) {
           layer.display = true;
           lattice.display = true;
-          parentId.display = false;
-        } else if (val === 2) {
+          parentId.display = true;
+          areaType.display = false;
+          this.initData(1);
+        } else if (val === 3) {
           parentId.display = true;
           layer.display = false;
           lattice.display = false;
+          areaType.display = false;
+          this.initData(2);
         }
       },
       immediate: true,
@@ -250,8 +287,8 @@ export default {
     },
   },
   methods: {
-    initData() {
-      getStorageTree(this.treeId).then(res => {
+    initData(type) {
+      dropDown(this.treeId,type).then(res => {
         const column = this.findObject(this.option.column, "parentId");
         column.dicData = res.data.data;
       });
@@ -262,6 +299,12 @@ export default {
         return;
       }
       this.$refs.crud.rowAdd();
+      this.$refs.crud.option.column.filter(item => {
+        if (item.prop === "type") {
+          item.value = 1;
+          item.disabled = false;
+        }
+      });
       setTimeout(() => {
         this.form.type = 1;
       }, 10);
@@ -275,7 +318,7 @@ export default {
           item.addDisabled = true;
         }
         if (item.prop === "type") {
-          item.value = 2;
+          item.value = row.type + 1;
           item.disabled = true;
         }
       });
@@ -309,11 +352,12 @@ export default {
           }
         },
         error => {
+          loading();
+          console.log(error);
           this.$message({
             type: "error",
             message: error.data.msg
           });
-          loading();
         }
       );
     },
@@ -329,11 +373,12 @@ export default {
           this.refreshChange();
         },
         error => {
+          loading();
+          console.log(error);
           this.$message({
             type: "error",
             message: error.data.msg
           });
-          loading();
         }
       );
     },
@@ -356,9 +401,6 @@ export default {
         });
     },
     beforeOpen(done, type) {
-      if (["add", "edit"].includes(type)) {
-        this.initData();
-      }
       if (["edit", "view"].includes(type)) {
         getDetail(this.form.id).then(res => {
           this.form = res.data.data;
