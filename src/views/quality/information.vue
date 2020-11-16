@@ -26,6 +26,12 @@
                    v-if="permission.information_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="button"
+                   size="small"
+                   v-if="permission.inspector_approval"
+                   @click="updateInspectorNew()">审 批
+        </el-button>
+
       </template>
     </avue-crud>
   </basic-container>
@@ -34,6 +40,7 @@
 <script>
   import {getList, getDetail, add, update, remove} from "@/api/quality/information";
   import {mapGetters} from "vuex";
+  import {updateInspector} from "@/api/purchase/purchaseorder";
 
   export default {
     data() {
@@ -108,12 +115,18 @@
             {
               label: "供应商证件照",
               prop: "supplierCertificatePhoto",
+              dataType: 'supplierCertificatePhoto',
               labelWidth: 110,
-              rules: [{
-                required: true,
-                message: "请输入供应商证件照",
-                trigger: "blur"
-              }]
+              type: 'upload',
+              propsHttp: {
+                res: 'data',
+                url: 'link',
+                name:'link'
+              },
+              span: 12,
+              listType: 'picture-card',
+              tip: '只能上传jpg/png文件，且不超过500kb',
+              action: "/api/oss/goods/imgUpload"
             },
             {
               label: "社会统一信用码",
@@ -218,15 +231,21 @@
             {
               label: "审核状态",
               prop: "stateExamine",
-              rules: [{
-                required: true,
-                message: "请输入审核状态",
-                trigger: "blur"
-              }]
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit"
             },
+
             {
               label: "有效开始时间",
               prop: "effectiveStart",
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              type: "date",
               labelWidth: 130,
               rules: [{
                 required: true,
@@ -237,6 +256,9 @@
             {
               label: "有效结束时间",
               prop: "effectiveEnd",
+              type: "date",
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
               labelWidth: 130,
               rules: [{
                 required: true,
@@ -310,6 +332,38 @@
               message: "操作成功!"
             });
           });
+      },
+      //审批
+      updateInspectorNew() {
+        if (this.selectionList.length >1 ){
+          return this.$message.error("选中一行数据");
+        }
+        if (this.selectionList[0].status != 1){
+          return this.$message.error("该任务已经完成");
+        }
+        var id= this.selectionList[0].id;
+        let status;
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
+          type: "warning"
+        })
+          .then(() => {
+            status = 0;
+          })
+          .catch(() => {
+            status = 3;
+          }).finally(() => {
+          updateInspector(id, status).then(res => {
+            if (res.data.success) {
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+            this.refreshChange();
+            this.onLoad(this.page);
+          })
+        });
       },
       handleDelete() {
         if (this.selectionList.length === 0) {

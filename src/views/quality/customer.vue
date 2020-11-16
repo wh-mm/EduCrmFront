@@ -114,13 +114,18 @@
               }]
             },
             {
-              label: "供应商证件照",
+              label: "客户商证件照",
               prop: "supplierCertificatePhoto",
-              rules: [{
-                required: true,
-                message: "请输入供应商证件照",
-                trigger: "blur"
-              }]
+              dataType: 'string',
+              labelWidth: 110,
+              type: 'upload',
+              propsHttp: {
+                res: 'data'
+              },
+              span: 12,
+              listType: 'picture-card',
+              tip: '只能上传jpg/png文件，且不超过500kb',
+              action: "/api/oss/goods/imgUpload"
             },
             {
               label: "社会统一信用码",
@@ -215,11 +220,13 @@
             {
               label: "审核状态",
               prop: "stateExamine",
-              rules: [{
-                required: true,
-                message: "请输入审核状态",
-                trigger: "blur"
-              }]
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit"
             },
             {
               label: "有效开始时间",
