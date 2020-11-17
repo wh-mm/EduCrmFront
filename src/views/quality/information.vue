@@ -114,14 +114,13 @@
             },
             {
               label: "供应商证件照",
-              prop: "supplierCertificatePhoto",
-              dataType: 'supplierCertificatePhoto',
+              prop: "supplierCertificatePhotos",
+              dataType: 'array',
               labelWidth: 110,
               type: 'upload',
               propsHttp: {
                 res: 'data',
                 url: 'link',
-                name:'link'
               },
               span: 12,
               listType: 'picture-card',
