@@ -48,3 +48,19 @@ export const update = (row) => {
   })
 }
 
+/**
+ * 审核
+ * @param id
+ * @param operation
+ */
+export const updateInspector = (ids,operation) => {
+  return request({
+    url: '/api/quality/commodity/updateInspector',
+    method: 'post',
+    params:{
+      ids,
+      operation
+    }
+  })
+}
+

@@ -38,9 +38,8 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/quality/commodity";
+  import {getList, getDetail, add, update, remove,updateInspector} from "@/api/quality/commodity";
   import {mapGetters} from "vuex";
-  import {updateInspector} from "@/api/purchase/purchaseorder";
 
   export default {
     data() {
@@ -77,7 +76,21 @@
               prop: "tradeName",
               search: true,
               display: false
-            }
+            },
+            {
+              label: "采购状态",
+              prop: "purchasingStatus",
+              type: 'select',
+              addDisplay:false,
+              editDisplay:false,
+              viewDisplay:false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
+            },
           ],
           group: [
             {
@@ -142,39 +155,15 @@
                 {
                   label: "打印规格",
                   prop: "printSpecifications",
-                  rules: [{
-                    required: true,
-                    message: "请输入打印规格",
-                    trigger: "blur"
-                  }]
                 },
 
                 {
                   label: "进项税",
                   prop: "inputTax",
-                  rules: [{
-                    required: true,
-                    message: "请输入进项税",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "销项税",
                   prop: "outputTax",
-                  rules: [{
-                    required: true,
-                    message: "请输入销项税",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "采购状态",
-                  prop: "purchasingStatus",
-                  rules: [{
-                    required: true,
-                    message: "请输入采购状态",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "产品分类",
@@ -197,11 +186,6 @@
                 {
                   label: "剂型",
                   prop: "dosageForm",
-                  rules: [{
-                    required: true,
-                    message: "请输入剂型",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "经营范围",
@@ -215,58 +199,28 @@
                 {
                   label: "存储期限",
                   prop: "storageLife",
-                  rules: [{
-                    required: true,
-                    message: "请输入存储期限",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "存储期限类型",
                   prop: "storagePeriodType",
-                  rules: [{
-                    required: true,
-                    message: "请输入存储期限类型",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "特管药品",
                   prop: "specialDrugs",
-                  rules: [{
-                    required: true,
-                    message: "请输入特管药品",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "特殊药品",
                   prop: "specialDrug",
-                  rules: [{
-                    required: true,
-                    message: "请输入特殊药品",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "otc标志",
                   prop: "sign",
-                  rules: [{
-                    required: true,
-                    message: "请输入otc标志",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "国产/进口标示",
                   prop: "domesticImportIndication",
-                  rules: [{
-                    required: true,
-                    message: "请输入国产/进口标示",
-                    trigger: "blur"
-                  }]
                 },
-                {
+                /*{
                   label: "产品二级分类",
                   prop: "secondaryProductClassification",
                   rules: [{
@@ -274,44 +228,19 @@
                     message: "请输入产品二级分类",
                     trigger: "blur"
                   }]
-                },
+                },*/
                 {
                   label: "存储条件",
                   prop: "storageConditions",
-                  rules: [{
-                    required: true,
-                    message: "请输入存储条件",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "批准文号",
                   prop: "approvalNumber",
-                  rules: [{
-                    required: true,
-                    message: "请输入批准文号",
-                    trigger: "blur"
-                  }]
                 },
                 {
                   label: "税收分类",
                   prop: "taxClassification",
-                  rules: [{
-                    required: true,
-                    message: "请输入税收分类",
-                    trigger: "blur"
-                  }]
                 },
-                {
-                  label: "公司ID",
-                  prop: "corporateId",
-                  rules: [{
-                    required: true,
-                    message: "请输入公司ID",
-                    trigger: "blur"
-                  }]
-                },
-
               ]
             },
           ]
@@ -383,33 +312,29 @@
       },
       //审批
       updateInspectorNew() {
-        if (this.selectionList.length > 1) {
-          return this.$message.error("选中一行数据");
+        if (this.selectionList.length === 0) {
+          return this.$message.error("请选择需要的商品");
         }
-        if (this.selectionList[0].status != 1) {
-          return this.$message.error("该任务已经完成");
-        }
-        var id = this.selectionList[0].id;
-        let status;
+        var ids =this.ids;
+        let operation;
         this.$confirm("请确认是否审批?", {
           confirmButtonText: "确认",
           cancelButtonText: "驳回",
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            operation = 1;
           })
           .catch(() => {
-            status = 3;
+            operation = 2;
           }).finally(() => {
-          updateInspector(id, status).then(res => {
+          updateInspector(ids, operation).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
             this.refreshChange();
-            this.onLoad(this.page);
           })
         });
       },
