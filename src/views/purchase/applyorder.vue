@@ -43,6 +43,7 @@
       </template>
 
     </avue-crud>
+
   </basic-container>
 </template>
 
@@ -877,7 +878,7 @@
           return this.$message.error("选中一行数据");
         }
         if (this.selectionList[0].status != 1){
-          return this.$message.error("该任务已经完成");
+          return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;
         let status;
@@ -887,10 +888,10 @@
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            status = 4;
           })
           .catch(() => {
-            status = 3;
+            status = 103;
           }).finally(() => {
           updateApply(id, status).then(res => {
             if (res.data.success) {

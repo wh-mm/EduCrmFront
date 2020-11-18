@@ -842,8 +842,8 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 1){
-          return this.$message.error("该任务已经完成");
+        if (this.selectionList[0].status != 5){
+          return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;
         let status;
@@ -853,10 +853,10 @@
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            status = 6;
           })
           .catch(() => {
-            status = 3;
+            status = 105;
           }).finally(() => {
           updateManager(id, status).then(res => {
             if (res.data.success) {

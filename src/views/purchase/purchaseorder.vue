@@ -488,7 +488,7 @@
               editDisplay: false,
               viewDisplay:false,
               search: true,
-              dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_status",
               props: {
                 label: "dictValue",
                 value: "dictKey"
@@ -569,14 +569,17 @@
                   },
                   {
                     label:'供应商',
-                    prop:'supplier',
+                    prop:'informationId',
                     type:'select',
-                    proprs:{
-                      label:'supplierName',
-                      value:'id'
+                    filterable: true,
+                    remote: true,
+                    display:false,
+                    props: {
+                      label: 'supplierName',
+                      value: 'id'
                     },
-                    dicMethod: 'post',
-                    dicUrl: '/quality/information/dropDowns?name={{key}}',
+                    dicMethod: "post",
+                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
                   },
                   {
                     label: '*数量',
@@ -633,7 +636,7 @@
                       value: 'id'
                     },
                     dicMethod: "post",
-                    dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
+                    dicUrl: '/api/erp-wms/warehouse/dropDown'
                   },
                   {
                     label: "采购额",
@@ -779,7 +782,6 @@
           this.option.column[6].children.column[0] = sp;
         }
         if(["view"].includes(type)){
-          // eslint-disable-next-line no-undef
           let sp = {
               label: '*商品',
               prop: "goodsName",
@@ -880,8 +882,8 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 0){
-          return this.$message.error("该任务已经完成");
+        if (this.selectionList[0].status != 8){
+          return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;
         let status;
@@ -891,10 +893,10 @@
           type: "warning"
         })
           .then(() => {
-            status = 2;
+            status = 9;
           })
           .catch(() => {
-            status = 7;
+            status = 108;
           }).finally(() => {
           updateStatus(id, status).then(res => {
             if (res.data.success) {
