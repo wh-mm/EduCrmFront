@@ -79,7 +79,20 @@
               search: true,
               display: false
             },
-
+            {
+              label: "采购状态",
+              prop: "stateExamine",
+              type: 'select',
+              addDisplay:false,
+              editDisplay:false,
+              viewDisplay:false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
+            },
             /*{
               label: "生产或仓库地址",
               prop: "productionOrWarehouseAddress",
@@ -249,26 +262,14 @@
                 {
                   label: "使用状态",
                   prop: "useState",
+                  row: true,
                   rules: [{
                     required: true,
                     message: "请输入使用状态",
                     trigger: "blur"
                   }]
                 },
-                {
-                  label: "审核状态",
-                  prop: "stateExamine",
-                  type: 'select',
-                  row: true,
-                  props: {
-                    label: 'dictValue',
-                    value: 'dictKey'
-                  },
-                  search: true,
-                  required: true,
-                  dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
-                  trigger: "blur"
-                },
+
                /* {
                   label: "有效开始时间",
                   prop: "effectiveStart",
@@ -382,33 +383,29 @@
       },
       //审批
       updateInspectorNew() {
-        if (this.selectionList.length > 1) {
-          return this.$message.error("选中一行数据");
+        if (this.selectionList.length === 0) {
+          return this.$message.error("请选择需要的商品");
         }
-        if (this.selectionList[0].status != 1) {
-          return this.$message.error("该任务已经完成");
-        }
-        var id = this.selectionList[0].id;
-        let status;
+        var ids =this.ids;
+        let operation;
         this.$confirm("请确认是否审批?", {
           confirmButtonText: "确认",
           cancelButtonText: "驳回",
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            operation = 1;
           })
           .catch(() => {
-            status = 3;
+            operation = 2;
           }).finally(() => {
-          updateInspector(id, status).then(res => {
+          updateInspector(ids, operation).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
             this.refreshChange();
-            this.onLoad(this.page);
           })
         });
       },
