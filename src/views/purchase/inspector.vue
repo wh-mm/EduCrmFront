@@ -867,9 +867,10 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 1){
+        if (this.selectionList[0].status != 7){
           return this.$message.error("该任务已经完成");
         }
+
         var id= this.selectionList[0].id;
         let status;
         this.$confirm("请确认是否审批?", {
@@ -878,10 +879,10 @@
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            status = 8;
           })
           .catch(() => {
-            status = 3;
+            status = 107;
           }).finally(() => {
           updateInspector(id, status).then(res => {
             if (res.data.success) {

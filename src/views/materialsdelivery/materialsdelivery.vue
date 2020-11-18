@@ -11,7 +11,6 @@
                @row-update="rowUpdate"
                @row-save="rowSave"
                @row-del="rowDel"
-               @row-click="handleRowClick"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -24,39 +23,32 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospital_delete"
+                   v-if="permission.materialsdelivery_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-      <template slot="hospitalSwitch" slot-scope="scope">
-        <el-switch v-model="scope.row.hospitalSwitch" disabled @click="(scope.row)"> </el-switch>
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button icon="el-icon-plus" :size="size" option="optionForm" :type="text" @click="viewPurchaseOrder(row.purchaseId)">查看采购单</el-button>
       </template>
     </avue-crud>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="35%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-crud :data="datas" :option="option0"></avue-crud>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,
-	selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
-  import {mapGetters} from "vuex";
+  import {getList, getDetails, add, update, remove} from "@/api/materialsdelivery/materialsdelivery";
+  import { getDetail } from "@/api/purchase/purchaseorder"
+  import {mapGetters} from "vuex"
+
   export default {
     data() {
-      var hospitalName = (rule, value, callback)=>{
-        if (value === ''){
-          callback(new Error("医院名称重复,请从新输入!"))
-        }else {
-          selectHosptalByHospintl(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-
       return {
         form: {},
         query: {},
@@ -66,6 +58,9 @@
           currentPage: 1,
           total: 0
         },
+        obj:{},
+        title: '' ,
+        dialogVisible:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -80,43 +75,115 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院名字",
-              prop: "hospitalName",
+              label: "采购订单号",
+              prop: "orderNumber",
               rules: [{
                 required: true,
-                message: "请输入医院名字",
-                validator:hospitalName,
-                trigger: 'blur' }],
+                message: "请输入采购订单号",
+                trigger: "blur"
+              }]
             },
-
+            // {
+            //   label: "采购id",
+            //   prop: "purchaseId",
+            //   editDisplay: false,
+            //   addDisplay: false,
+            //   rules: [{
+            //     required: true,
+            //     message: "请输入采购id",
+            //     trigger: "blur"
+            //   }]
+            // },
             {
-              label: "医院地址",
-              prop: "hospitalProfile",
+              label: "商品",
+              prop: "goodsName",
+              editDisplay: false,
+              addDisplay: false,
               rules: [{
                 required: true,
-                message: "请输入医院地址",
+                message: "请输入商品id",
                 trigger: "blur"
               }]
             },
             {
-              label: "医院接口开关",
-              prop: "hospitalSwitch",
-              slot: true,
+              label: "商品资质",
+              prop: "goodsQuality",
+              rules: [{
+                required: true,
+                message: "请输入商品资质",
+                trigger: "blur"
+              }]
             },
+            {
+              label: "商品数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入商品数量",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收货状态",
+              prop: "asReceivedConditionName",
+              editDisplay: false,
+              addDisplay: false,
+            },
+            {
+              label: "收货员",
+              prop: "name",
+              editDisplay: false,
+              addDisplay: false,
+            },
+            {
+              label:"创建时间",
+              prop:"createTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+            },
+
 
           ]
         },
-        data: []
+        data: [],
+        datas:[],
+        option0 : {
+          border:true,
+          index:true,
+          size:true,
+          selection:true,
+          page:true,
+          menu:false,
+          align:'center',
+          menuAlign:'center',
+          column:[
+            {
+              label: '*商品',
+              prop: "goodsId",
+              filterable: true,
+              remote: true,
+              display: false,
+            }
+          ]
+        }
+
       };
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.hospital_add, false),
-          viewBtn: this.vaildData(this.permission.hospital_view, false),
-          delBtn: this.vaildData(this.permission.hospital_delete, false),
-          editBtn: this.vaildData(this.permission.hospital_edit, false)
+          addBtn: this.vaildData(this.permission.materialsdelivery_add, false),
+          viewBtn: this.vaildData(this.permission.materialsdelivery_view, false),
+          delBtn: this.vaildData(this.permission.materialsdelivery_delete, false),
+          editBtn: this.vaildData(this.permission.materialsdelivery_edit, false)
         };
       },
       ids() {
@@ -127,31 +194,7 @@
         return ids.join(",");
       }
     },
-    //医院开关
     methods: {
-      handleRowClick(row) {
-        console.log(row.hospitalSwitch);
-        console.log(row.id);
-        let params = {
-          hospitalSwitch: !row.hospitalSwitch,
-          id: row.id
-        }
-        add(params).then((res)=>{
-          console.log(res)
-          if (res.data.code == 200){
-            this.$message({
-              type: "success",
-              message: res.data.msg
-            });
-            this.refreshChange();
-          }else{
-            this.$message({
-              type: "error",
-              message: res.data.msg
-            });
-          }
-        })
-      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -219,7 +262,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
+          getDetails(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -252,27 +295,43 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            start_time: createTime[0],
+            end_time: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
-          data.records.forEach((value)=>{
-            value.$cellEdit = true
-          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
+      },
+      viewPurchaseOrder(id){
+        console.log(id)
+        this.dialogVisible = true;
+        getDetail(id).then(res=>{
+          if (res.data.success) {
+            this.obj = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
       }
     }
   };
 </script>
 
 <style>
-  .el-switch.is-disabled {
-    opacity: 1;
-  }
-  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
-    cursor: pointer !important;;
-  }
 </style>

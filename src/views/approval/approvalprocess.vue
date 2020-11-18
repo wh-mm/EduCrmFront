@@ -80,7 +80,7 @@
             },
             {
               label: "审批人员",
-              prop: "userId",
+              prop: "approver",
               rules: [{
                 required: true,
                 message: "请输入审批人员",
@@ -99,15 +99,6 @@
               search:true,
               format: "yyyy-MM-dd hh:mm:ss",
               valueFormat: "yyyy-MM-dd hh:mm:ss",
-            },
-            {
-              label: "备注",
-              prop: "remark",
-              rules: [{
-                required: true,
-                message: "请输入备注",
-                trigger: "blur"
-              }]
             },
           ]
         },

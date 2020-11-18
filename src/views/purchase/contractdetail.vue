@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.matching_delete"
+                   v-if="permission.purchaseorderdetail_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,11 +32,20 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/codematching/matching";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/purchaseorderdetail";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
+        }
+      };
       return {
         form: {},
         query: {},
@@ -60,50 +69,45 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院名称",
-              prop: "hospitalId",
-              type: "select",
-              props: {
-                label: "hospitalName",
-                value: "id"
-              },
-              search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+              label: "采购id",
+              prop: "purchaseId",
+              rules: [{
+                required: true,
+                message: "请输入采购id",
+                trigger: "blur"
+              }]
             },
+
             {
-              label: "商品名称",
+              label: "商品id",
               prop: "goodsId",
-              type:"tree",
               rules: [{
                 required: true,
-                message: "请输入商品名称",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/dropDown',
-            },
-            {
-              label: "货品名称",
-              prop: "goodsName",
-              rules: [{
-                required: true,
-                message: "请输入医院药品编号",
+                message: "请输入商品id",
                 trigger: "blur"
               }]
             },
             {
-              label: "医院药品编号",
-              prop: "hospitalGoodsUmber",
+              label: "供应商id",
+              prop: "informationId",
               rules: [{
                 required: true,
-                message: "请输入医院药品编号",
+                message: "请输入供应商id",
                 trigger: "blur"
               }]
             },
+            {
+              label: "数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
+              }]
+            },
+
           ]
         },
         data: []
@@ -113,10 +117,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.matching_add, false),
-          viewBtn: this.vaildData(this.permission.matching_view, false),
-          delBtn: this.vaildData(this.permission.matching_delete, false),
-          editBtn: this.vaildData(this.permission.matching_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.purchaseorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseorderdetail_edit, false)
         };
       },
       ids() {

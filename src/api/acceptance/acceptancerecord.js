@@ -1,24 +1,20 @@
 import request from '@/router/axios';
-import {ERP_BAP_NAME}  from '@/const/YueConst'
 
-export const getList = (current, size, params,userId) => {
+export const getList = (current, size, params) => {
   return request({
-    url: ERP_BAP_NAME + '/approvalprocess/page',
+    url: '/api/acceptance/acceptancerecord/page',
     method: 'get',
     params: {
       ...params,
       current,
       size,
-      userId
-
-
     }
   })
 }
 
 export const getDetail = (id) => {
   return request({
-    url: ERP_BAP_NAME + '/approvalprocess/detail',
+    url: '/api/acceptance/acceptancerecord/detail',
     method: 'get',
     params: {
       id
@@ -28,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: ERP_BAP_NAME + '/approvalprocess/remove',
+    url: '/api/acceptance/acceptancerecord/remove',
     method: 'post',
     params: {
       ids,
@@ -38,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: ERP_BAP_NAME + '/approvalprocess/submit',
+    url: '/api/acceptance/acceptancerecord/submit',
     method: 'post',
     data: row
   })
@@ -46,10 +42,9 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: ERP_BAP_NAME + '/approvalprocess/submit',
+    url: '/api/acceptance/acceptancerecord/submit',
     method: 'post',
     data: row
   })
 }
-
 

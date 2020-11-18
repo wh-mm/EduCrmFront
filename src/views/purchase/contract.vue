@@ -18,14 +18,12 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-
-        <template slot-scope=""  slot="menuLeft">
-
-          <el-button type="button"
-                     size="small"
-                     v-if="permission.financing_approval"
-                     @click="updateFinancingNew()">审批
-          </el-button>
+      <template slot-scope=""  slot="menuLeft">
+        <el-button type="button"
+                   size="small"
+                   v-if="permission.contract_approval"
+                   @click="updateContract()">审批
+        </el-button>
 
       </template>
 
@@ -38,7 +36,7 @@
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateFinancing} from "@/api/purchase/purchaseorder";
+  import {getList, add, getDetail, update, remove, updateContract} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   export default {
@@ -62,6 +60,7 @@
       //   border: true,
       //   index: true,
       //   viewBtn: true,
+      //   menu:false,
       //   selection: true,
       //   dialogClickModal: false,
       //   dialogWidth: '80%',
@@ -465,6 +464,7 @@
                 value: "dictKey"
               }
             },
+
             {
               label: "总价",
               prop: "sumMoney",
@@ -474,9 +474,16 @@
             {
               label: "状态",
               prop: "statusName",
+              type:'select',
               addDisplay: false,
               editDisplay: false,
               viewDisplay:false,
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_status",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
             },
             {
               label: "采购员",
@@ -487,7 +494,7 @@
             },
             {
               label:"创建时间",
-              prop:"createTime",
+              prop:"updateTime",
               dateDefault: true,
               addDisplay: false,
               viewDisplay: false,
@@ -520,7 +527,7 @@
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 180,
+                    width: 130,
                     filterable: true,
                     remote: true,
                     display:false,
@@ -551,11 +558,39 @@
                       }
                     },
                   },
+                  // {
+                  //   label:'商品资质',
+                  //   prop:'informationId',
+                  //   type:'select',
+                  //   filterable: true,
+                  //   remote: true,
+                  //   display:false,
+                  //   props: {
+                  //     label: 'supplierName',
+                  //     value: 'id'
+                  //   },
+                  //   dicMethod: "post",
+                  //   dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                  // },
+                  {
+                    label:'供应商',
+                    prop:'informationId',
+                    type:'select',
+                    filterable: true,
+                    remote: true,
+                    display:false,
+                    props: {
+                      label: 'supplierName',
+                      value: 'id'
+                    },
+                    dicMethod: "post",
+                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                  },
                   {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 180,
+                    width: 130,
 
                     rules: [{
                       validator: validateQuantity,
@@ -606,7 +641,13 @@
                       value: 'id'
                     },
                     dicMethod: "post",
-                    dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
+                    dicUrl: '/api/erp-wms/warehouse/dropDown'
+                  },
+                  {
+                    label: "预付款",
+                    prop: "advancePayment",
+                    // disabled: true,
+                    placeholder: " ",
                   },
                   {
                     label: "采购额",
@@ -717,7 +758,7 @@
               label: '*商品',
               prop: "goodsId",
               type: 'select',
-              width: 250,
+              width: 130,
               filterable: true,
               remote: true,
               display:false,
@@ -752,7 +793,6 @@
           this.option.column[6].children.column[0] = sp;
         }
         if(["view"].includes(type)){
-          // eslint-disable-next-line no-undef
           let sp = {
               label: '*商品',
               prop: "goodsName",
@@ -823,21 +863,27 @@
           this.selectionClear();
         });
       },
-
-      updateFinancing(id) {
+      updateContract() {
+        if (this.selectionList.length >1 ){
+          return this.$message.error("选中一行数据");
+        }
+        if (this.selectionList[0].status != 2){
+          return this.$message.error("状态已经完成");
+        }
+        var id= this.selectionList[0].id;
         let status;
-        this.$confirm("请确认是否通过申请?", {
-          confirmButtonText: "审批通过",
-          cancelButtonText: "驳回申请",
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            status = 4;
           })
           .catch(() => {
-            status = 3;
+            status = 102;
           }).finally(() => {
-          updateFinancing(id, status).then(res => {
+          updateContract(id, status).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {
@@ -862,37 +908,6 @@
         }).catch(() => {
           done();
         })
-      },
-      updateFinancingNew() {
-        if (this.selectionList.length >1 ){
-          return this.$message.error("选中一行数据");
-        }
-        if (this.selectionList[0].status != 4){
-          return this.$message.error("状态已经完成");
-        }
-        var id= this.selectionList[0].id;
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 5;
-          })
-          .catch(() => {
-            status = 104;
-          }).finally(() => {
-          updateFinancing(id, status).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
       },
     }
   };

@@ -488,7 +488,7 @@
               editDisplay: false,
               viewDisplay:false,
               search: true,
-              dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_status",
               props: {
                 label: "dictValue",
                 value: "dictKey"
@@ -533,10 +533,25 @@
                 },
                 column: [
                   {
+                    label:'供应商',
+                    prop:'informationId',
+                    type:'select',
+                    filterable: true,
+                    remote: true,
+                    display:false,
+                    props: {
+                      label: 'supplierName',
+                      value: 'id'
+                    },
+                    // cascaderItem: ['goosId'],
+                    dicMethod: "post",
+                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                  },
+                  {
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
-                    width: 180,
+                    width: 130,
                     filterable: true,
                     remote: true,
                     display:false,
@@ -567,22 +582,26 @@
                       }
                     },
                   },
-                  {
-                    label:'供应商',
-                    prop:'supplier',
-                    type:'select',
-                    proprs:{
-                      label:'supplierName',
-                      value:'id'
-                    },
-                    dicMethod: 'post',
-                    dicUrl: '/quality/information/dropDowns?name={{key}}',
-                  },
+                  // {
+                  //   label:'商品资质',
+                  //   prop:'informationId',
+                  //   type:'select',
+                  //   filterable: true,
+                  //   remote: true,
+                  //   display:false,
+                  //   props: {
+                  //     label: 'supplierName',
+                  //     value: 'id'
+                  //   },
+                  //   dicMethod: "post",
+                  //   dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                  // },
+
                   {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 180,
+                    width: 130,
 
                     rules: [{
                       validator: validateQuantity,
@@ -633,7 +652,13 @@
                       value: 'id'
                     },
                     dicMethod: "post",
-                    dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
+                    dicUrl: '/api/erp-wms/warehouse/dropDown'
+                  },
+                  {
+                    label: "预付款",
+                    prop: "advancePayment",
+                    // disabled: true,
+                    placeholder: " ",
                   },
                   {
                     label: "采购额",
@@ -744,7 +769,7 @@
               label: '*商品',
               prop: "goodsId",
               type: 'select',
-              width: 250,
+              width: 130,
               filterable: true,
               remote: true,
               display:false,
@@ -775,17 +800,16 @@
                 }
               },
             };
-            console.log(this.option.column[6].children.column[0]);
-          this.option.column[6].children.column[0] = sp;
+          console.log(this.option.column[6].children.column[0]);
+         this.option.column[6].children.column[1] = sp;
         }
         if(["view"].includes(type)){
-          // eslint-disable-next-line no-undef
           let sp = {
               label: '*商品',
               prop: "goodsName",
             };
-          console.log(this.option.column[6].children.column[0]);
-          this.option.column[6].children.column[0] = sp;
+         console.log(this.option.column[6].children.column[0]);
+         this.option.column[6].children.column[1] = sp;
           getDetail(this.form.id).then(res => {
             let form  = res.data.data;
             form.purchaseOrderDetailList.forEach((value,index) => {
@@ -880,8 +904,8 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 0){
-          return this.$message.error("该任务已经完成");
+        if (this.selectionList[0].status != 8){
+          return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;
         let status;
@@ -891,10 +915,10 @@
           type: "warning"
         })
           .then(() => {
-            status = 2;
+            status = 9;
           })
           .catch(() => {
-            status = 7;
+            status = 108;
           }).finally(() => {
           updateStatus(id, status).then(res => {
             if (res.data.success) {

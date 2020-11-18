@@ -4,13 +4,13 @@
                :table-loading="loading"
                :data="data"
                :page.sync="page"
-               ref="crud"
-               @row-del="rowDel"
-               v-model="form"
                :permission="permissionList"
+               :before-open="beforeOpen"
+               v-model="form"
+               ref="crud"
                @row-update="rowUpdate"
                @row-save="rowSave"
-               :before-open="beforeOpen"
+               @row-del="rowDel"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -23,20 +23,16 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.notice_delete"
+                   v-if="permission.acceptancerecord_delete"
                    @click="handleDelete">删 除
         </el-button>
-      </template>
-      <template slot-scope="{row}"
-                slot="category">
-        <el-tag>{{row.categoryName}}</el-tag>
       </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, remove, update, add, getNotice} from "@/api/desk/notice";
+  import {getList, getDetail, add, update, remove} from "@/api/acceptance/acceptancerecord";
   import {mapGetters} from "vuex";
 
   export default {
@@ -52,9 +48,8 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
-          dialogWidth: 950,
           tip: false,
           searchShow: true,
           searchMenuSpan: 6,
@@ -62,83 +57,65 @@
           index: true,
           viewBtn: true,
           selection: true,
-          excelBtn: true,
           dialogClickModal: false,
           column: [
             {
-              label: "通知标题",
-              prop: "title",
-              span: 24,
-              row: true,
-              search: true,
+              label: "采购订单号",
+              prop: "orderNumber",
               rules: [{
                 required: true,
-                message: "请输入通知标题",
+                message: "请输入采购订单号",
                 trigger: "blur"
               }]
             },
             {
-              label: "通知类型",
-              type: "select",
-              dicUrl: "/api/blade-system/dict/dictionary?code=notice",
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dataType: "number",
-              slot: true,
-              prop: "category",
-              search: true,
+              label: "商品id",
+              prop: "goodsName",
               rules: [{
                 required: true,
-                message: "请输入通知类型",
+                message: "请输入商品id",
                 trigger: "blur"
               }]
             },
             {
-              label: "通知时间",
-              prop: "releaseTimeRange",
-              type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
-              searchRange: true,
-              hide: true,
+              label: "商品数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入商品数量",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "验收员",
+              prop: "acceptanceName",
+              rules: [{
+                required: true,
+                message: "请输入验收员",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "验收状态",
+              prop: "statusName",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label:"创建时间",
+              prop:"createTime",
+              dateDefault: true,
               addDisplay: false,
-              editDisplay: false,
               viewDisplay: false,
-              search: true,
-              rules: [{
-                required: true,
-                message: "请输入通知时间",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "通知日期",
-              prop: "releaseTime",
-              type: "date",
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
               format: "yyyy-MM-dd hh:mm:ss",
               valueFormat: "yyyy-MM-dd hh:mm:ss",
-              rules: [{
-                required: true,
-                message: "请输入通知日期",
-                trigger: "click"
-              }]
-            },
-            {
-              label: "通知内容",
-              prop: "content",
-              component: 'AvueUeditor',
-              options: {
-                action: '/api/blade-resource/oss/endpoint/put-file',
-                props: {
-                  res: "data",
-                  url: "link",
-                }
-              },
-              hide: true,
-              minRows: 6,
-              span: 24,
             }
           ]
         },
@@ -149,10 +126,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.notice_add, false),
-          viewBtn: this.vaildData(this.permission.notice_view, false),
-          delBtn: this.vaildData(this.permission.notice_delete, false),
-          editBtn: this.vaildData(this.permission.notice_edit, false)
+          addBtn: this.vaildData(this.permission.acceptancerecord_add, false),
+          viewBtn: this.vaildData(this.permission.acceptancerecord_view, false),
+          delBtn: this.vaildData(this.permission.acceptancerecord_delete, false),
+          editBtn: this.vaildData(this.permission.acceptancerecord_edit, false)
         };
       },
       ids() {
@@ -173,8 +150,8 @@
           });
           done();
         }, error => {
-          window.console.log(error);
           loading();
+          window.console.log(error);
         });
       },
       rowUpdate(row, index, done, loading) {
@@ -186,8 +163,8 @@
           });
           done();
         }, error => {
-          window.console.log(error);
           loading();
+          console.log(error);
         });
       },
       rowDel(row) {
@@ -206,23 +183,6 @@
               message: "操作成功!"
             });
           });
-      },
-      searchReset() {
-        this.query = {};
-        this.onLoad(this.page);
-      },
-      searchChange(params, done) {
-        this.query = params;
-        this.page.currentPage = 1;
-        this.onLoad(this.page, params);
-        done();
-      },
-      selectionChange(list) {
-        this.selectionList = list;
-      },
-      selectionClear() {
-        this.selectionList = [];
-        this.$refs.crud.toggleSelection();
       },
       handleDelete() {
         if (this.selectionList.length === 0) {
@@ -248,34 +208,51 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getNotice(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
         done();
       },
-      currentChange(currentPage) {
+      searchReset() {
+        this.query = {};
+        this.onLoad(this.page);
+      },
+      searchChange(params, done) {
+        this.query = params;
+        this.page.currentPage = 1;
+        this.onLoad(this.page, params);
+        done();
+      },
+      selectionChange(list) {
+        this.selectionList = list;
+      },
+      selectionClear() {
+        this.selectionList = [];
+        this.$refs.crud.toggleSelection();
+      },
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        const {releaseTimeRange} = params;
+        const {createTime} = params;
         let values = {
           ...params,
         };
-        if (releaseTimeRange) {
+        if (createTime) {
           values = {
             ...params,
-            releaseTime_datege: releaseTimeRange[0],
-            releaseTime_datelt: releaseTimeRange[1],
+            start_time: createTime[0],
+            end_time: createTime[1],
           };
-          values.releaseTimeRange = null;
-          this.query.releaseTimeRange = null;
+          values.createTime = null;
+          this.query.createTime = null;
         }
         this.loading = true;
         getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
@@ -285,7 +262,7 @@
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
     }
   };
 </script>
