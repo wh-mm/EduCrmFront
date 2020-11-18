@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/quality/information/list',
+    url: '/api/quality/information/page',
     method: 'get',
     params: {
       ...params,
@@ -45,6 +45,21 @@ export const update = (row) => {
     url: '/api/quality/information/submit',
     method: 'post',
     data: row
+  })
+}
+/**
+ * 审核
+ * @param id
+ * @param operation
+ */
+export const updateInspector = (ids,operation) => {
+  return request({
+    url: '/api/quality/commodity/updateInspector',
+    method: 'post',
+    params:{
+      ids,
+      operation
+    }
   })
 }
 

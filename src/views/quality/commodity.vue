@@ -29,7 +29,7 @@
         <el-button type="button"
                    size="small"
                    icon="el-icon-mouse"
-                   v-if="permission.inspector_approval"
+                   v-if="permission.commodity_button"
                    @click="updateInspectorNew()">审 批
         </el-button>
       </template>

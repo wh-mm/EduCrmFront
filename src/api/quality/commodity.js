@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/quality/commodity/list',
+    url: '/api/quality/commodity/page',
     method: 'get',
     params: {
       ...params,
