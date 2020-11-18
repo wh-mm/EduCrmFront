@@ -11,7 +11,6 @@
                @row-update="rowUpdate"
                @row-save="rowSave"
                @row-del="rowDel"
-               @row-click="handleRowClick"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -24,39 +23,29 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospital_delete"
+                   v-if="permission.purchaseorderdetail_delete"
                    @click="handleDelete">删 除
         </el-button>
-      </template>
-      <template slot="hospitalSwitch" slot-scope="scope">
-        <el-switch v-model="scope.row.hospitalSwitch" disabled @click="(scope.row)"> </el-switch>
       </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,
-	selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/purchaseorderdetail";
   import {mapGetters} from "vuex";
+
   export default {
     data() {
-      var hospitalName = (rule, value, callback)=>{
-        if (value === ''){
-          callback(new Error("医院名称重复,请从新输入!"))
-        }else {
-          selectHosptalByHospintl(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
         }
-      }
-
+      };
       return {
         form: {},
         query: {},
@@ -80,28 +69,43 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院名字",
-              prop: "hospitalName",
+              label: "采购id",
+              prop: "purchaseId",
               rules: [{
                 required: true,
-                message: "请输入医院名字",
-                validator:hospitalName,
-                trigger: 'blur' }],
+                message: "请输入采购id",
+                trigger: "blur"
+              }]
             },
 
             {
-              label: "医院地址",
-              prop: "hospitalProfile",
+              label: "商品id",
+              prop: "goodsId",
               rules: [{
                 required: true,
-                message: "请输入医院地址",
+                message: "请输入商品id",
                 trigger: "blur"
               }]
             },
             {
-              label: "医院接口开关",
-              prop: "hospitalSwitch",
-              slot: true,
+              label: "供应商id",
+              prop: "informationId",
+              rules: [{
+                required: true,
+                message: "请输入供应商id",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
+              }]
             },
 
           ]
@@ -113,10 +117,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.hospital_add, false),
-          viewBtn: this.vaildData(this.permission.hospital_view, false),
-          delBtn: this.vaildData(this.permission.hospital_delete, false),
-          editBtn: this.vaildData(this.permission.hospital_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.purchaseorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseorderdetail_edit, false)
         };
       },
       ids() {
@@ -127,31 +131,7 @@
         return ids.join(",");
       }
     },
-    //医院开关
     methods: {
-      handleRowClick(row) {
-        console.log(row.hospitalSwitch);
-        console.log(row.id);
-        let params = {
-          hospitalSwitch: !row.hospitalSwitch,
-          id: row.id
-        }
-        add(params).then((res)=>{
-          console.log(res)
-          if (res.data.code == 200){
-            this.$message({
-              type: "success",
-              message: res.data.msg
-            });
-            this.refreshChange();
-          }else{
-            this.$message({
-              type: "error",
-              message: res.data.msg
-            });
-          }
-        })
-      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -256,9 +236,6 @@
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
-          data.records.forEach((value)=>{
-            value.$cellEdit = true
-          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
@@ -269,10 +246,4 @@
 </script>
 
 <style>
-  .el-switch.is-disabled {
-    opacity: 1;
-  }
-  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
-    cursor: pointer !important;;
-  }
 </style>

@@ -63,7 +63,22 @@ export const updateApply = (id, status) => {
   })
 }
 /**
- * 2.财务部修改状态
+ * 2.合同主管修改状态
+ * @param id
+ * @param status
+ */
+export const updateContract = (id, status) => {
+  return request({
+    url: '/api/purchase/purchaseorder/updateContract',
+    method: 'post',
+    params:{
+      id,
+      status
+    }
+  })
+}
+/**
+ * 3.财务部修改状态
  * @param id
  * @param status
  */
@@ -78,7 +93,7 @@ export const updateFinancing = (id, status) => {
   })
 }
 /**
- * 3.经理修改状态
+ * 4.经理修改状态
  * @param id
  * @param status
  */
@@ -93,7 +108,7 @@ export const updateManager = (id, status) => {
   })
 }
 /**
- * 4.仓储运输部收货员修改状态
+ * 5.仓储运输部收货员修改状态
  * @param id
  * @param status
  */
@@ -108,7 +123,7 @@ export const updateGoodsClerk = (id, status) => {
   })
 }
 /**
- * 5.验收员修改状态
+ * 6.验收员修改状态
  * @param id
  * @param status
  */
@@ -124,7 +139,7 @@ export const updateInspector = (id, status) => {
 }
 
 /**
- * 6.保管员修改状态入库
+ * 7.保管员修改状态入库
  * @param id
  * @param status
  */

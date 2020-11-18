@@ -21,8 +21,8 @@
       <template slot-scope=""  slot="menuLeft">
         <el-button type="button"
                    size="small"
-                   v-if="permission.purchaseorder_approval"
-                   @click="updateStatusNew()">审批
+                   v-if="permission.contract_approval"
+                   @click="updateContract()">审批
         </el-button>
 
       </template>
@@ -32,21 +32,11 @@
       </template>
 
     </avue-crud>
-    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :modal="false"
-      :before-close="handleClose">
-      <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
-      </avue-form>
-
-    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateStatus} from "@/api/purchase/purchaseorder";
+  import {getList, add, getDetail, update, remove, updateContract} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   export default {
@@ -474,6 +464,7 @@
                 value: "dictKey"
               }
             },
+
             {
               label: "总价",
               prop: "sumMoney",
@@ -533,21 +524,6 @@
                 },
                 column: [
                   {
-                    label:'供应商',
-                    prop:'informationId',
-                    type:'select',
-                    filterable: true,
-                    remote: true,
-                    display:false,
-                    props: {
-                      label: 'supplierName',
-                      value: 'id'
-                    },
-                    // cascaderItem: ['goosId'],
-                    dicMethod: "post",
-                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
-                  },
-                  {
                     label: '*商品',
                     prop: "goodsId",
                     type: 'select',
@@ -596,7 +572,20 @@
                   //   dicMethod: "post",
                   //   dicUrl: '/api/quality/information/dropDowns?name={{key}}',
                   // },
-
+                  {
+                    label:'供应商',
+                    prop:'informationId',
+                    type:'select',
+                    filterable: true,
+                    remote: true,
+                    display:false,
+                    props: {
+                      label: 'supplierName',
+                      value: 'id'
+                    },
+                    dicMethod: "post",
+                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                  },
                   {
                     label: '*数量',
                     prop: "goodsQuantity",
@@ -800,16 +789,16 @@
                 }
               },
             };
-          console.log(this.option.column[6].children.column[0]);
-         this.option.column[6].children.column[1] = sp;
+            console.log(this.option.column[6].children.column[0]);
+          this.option.column[6].children.column[0] = sp;
         }
         if(["view"].includes(type)){
           let sp = {
               label: '*商品',
               prop: "goodsName",
             };
-         console.log(this.option.column[6].children.column[0]);
-         this.option.column[6].children.column[1] = sp;
+          console.log(this.option.column[6].children.column[0]);
+          this.option.column[6].children.column[0] = sp;
           getDetail(this.form.id).then(res => {
             let form  = res.data.data;
             form.purchaseOrderDetailList.forEach((value,index) => {
@@ -874,37 +863,11 @@
           this.selectionClear();
         });
       },
-      updateStatus(id) {
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-
-          })
-          .catch(() => {
-            status = 3;
-
-          }).finally(() => {
-          updateStatus(id, status).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
-      updateStatusNew() {
+      updateContract() {
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 8){
+        if (this.selectionList[0].status != 2){
           return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;
@@ -915,12 +878,12 @@
           type: "warning"
         })
           .then(() => {
-            status = 9;
+            status = 4;
           })
           .catch(() => {
-            status = 108;
+            status = 102;
           }).finally(() => {
-          updateStatus(id, status).then(res => {
+          updateContract(id, status).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {

@@ -160,8 +160,7 @@
           size:true,
           selection:true,
           page:true,
-          width:150,
-
+          menu:false,
           align:'center',
           menuAlign:'center',
           column:[

@@ -888,7 +888,7 @@
           type: "warning"
         })
           .then(() => {
-            status = 4;
+            status = 2;
           })
           .catch(() => {
             status = 103;
