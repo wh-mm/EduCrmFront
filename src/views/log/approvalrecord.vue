@@ -23,14 +23,8 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.commodity_delete"
+                   v-if="permission.approvalrecord_delete"
                    @click="handleDelete">删 除
-        </el-button>
-        <el-button type="button"
-                   size="small"
-                   icon="el-icon-mouse"
-                   v-if="permission.commodity_button"
-                   @click="updateInspectorNew()">审 批
         </el-button>
       </template>
     </avue-crud>
@@ -38,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,updateInspector} from "@/api/quality/commodity";
+  import {getList, getDetail, add, update, remove} from "@/api/log/approvalrecord";
   import {mapGetters} from "vuex";
 
   export default {
@@ -54,7 +48,7 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -66,176 +60,60 @@
           dialogClickModal: false,
           column: [
             {
-              label: "公司名称",
-              prop: "corporateName",
-              type:'select',
+              label: "审核id",
+              prop: "auditId",
               rules: [{
                 required: true,
-                message: "请输入公司名称",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'supplierName',
-                value: 'id'
-              },
-              dicMethod: "post",
-              dicUrl: '/api/quality/information/dropDowns?name={{key}}',
-            },
-            {
-              label: "商品名称",
-              prop: "tradeName",
-              rules: [{
-                required: true,
-                message: "请输入商品名称",
+                message: "请输入审核id",
                 trigger: "blur"
               }]
             },
             {
-              label: "生产厂家",
-              prop: "manufacturer",
+              label: "审核人",
+              prop: "reviewer",
               rules: [{
                 required: true,
-                message: "请输入生产厂家",
+                message: "请输入审核人",
                 trigger: "blur"
               }]
             },
             {
-              label: "规格(型号)",
-              prop: "specifications",
+              label: "旧审批状态",
+              prop: "oldStatus",
               rules: [{
                 required: true,
-                message: "请输入规格(型号)",
+                message: "请输入旧审批状态",
                 trigger: "blur"
               }]
             },
             {
-              label: "采购状态",
-              prop: "purchasingStatus",
-              type: 'select',
-              addDisplay:false,
-              editDisplay:false,
-              viewDisplay:false,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
-            },
-            {
-              label: "公司id",
-              prop: "companyId",
+              label: "新审核状态",
+              prop: "newStatus",
               rules: [{
                 required: true,
-                message: "请输入公司id",
+                message: "请输入新审核状态",
                 trigger: "blur"
               }]
             },
             {
-              label: "打印规格",
-              prop: "printSpecifications",
-            },
-
-            {
-              label: "进项税",
-              prop: "inputTax",
-            },
-            {
-              label: "销项税",
-              prop: "outputTax",
-            },
-            {
-              label: "分包装企业",
-              prop: "subPackagingEnterprises",
+              label: "类型",
+              prop: "type",
               rules: [{
                 required: true,
-                message: "请输入分包装企业",
+                message: "请输入类型",
                 trigger: "blur"
               }]
             },
             {
-              label: "剂型",
-              prop: "dosageForm",
-            },
-            {
-              label: "产品分类",
-              prop: "productClassification",
+              label: "表名",
+              prop: "auditTableName",
               rules: [{
                 required: true,
-                message: "请输入产品分类",
-                trigger: "blur"
-              }],
-              type: 'tree',
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: "/api/erp-wms/goods-type/tree",
-            },
-            {
-              label: "经营范围",
-              prop: "natureOfBusiness",
-              rules: [{
-                required: true,
-                message: "请输入经营范围",
-                trigger: "blur"
-              }],
-              type: 'tree',
-              multiple:true,
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: "/api/erp-base/scope/tree",
-            },
-            {
-              label: "存储期限",
-              prop: "storageLife",
-            },
-            {
-              label: "存储期限类型",
-              prop: "storagePeriodType",
-            },
-            {
-              label: "特管药品",
-              prop: "specialDrugs",
-            },
-            {
-              label: "特殊药品",
-              prop: "specialDrug",
-            },
-            {
-              label: "otc标志",
-              prop: "sign",
-            },
-            {
-              label: "国产/进口标示",
-              prop: "domesticImportIndication",
-            },
-            /*{
-              label: "产品二级分类",
-              prop: "secondaryProductClassification",
-              rules: [{
-                required: true,
-                message: "请输入产品二级分类",
+                message: "请输入表名",
                 trigger: "blur"
               }]
-            },*/
-            {
-              label: "存储条件",
-              prop: "storageConditions",
             },
-            {
-              label: "批准文号",
-              prop: "approvalNumber",
-            },
-            {
-              label: "税收分类",
-              prop: "taxClassification",
-            },
-          ],
+          ]
         },
         data: []
       };
@@ -244,10 +122,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.commodity_add, false),
-          viewBtn: this.vaildData(this.permission.commodity_view, false),
-          delBtn: this.vaildData(this.permission.commodity_delete, false),
-          editBtn: this.vaildData(this.permission.commodity_edit, false)
+          addBtn: this.vaildData(this.permission.approvalrecord_add, false),
+          viewBtn: this.vaildData(this.permission.approvalrecord_view, false),
+          delBtn: this.vaildData(this.permission.approvalrecord_delete, false),
+          editBtn: this.vaildData(this.permission.approvalrecord_edit, false)
         };
       },
       ids() {
@@ -302,34 +180,6 @@
             });
           });
       },
-      //审批
-      updateInspectorNew() {
-        if (this.selectionList.length === 0) {
-          return this.$message.error("请选择需要的商品");
-        }
-        var ids =this.ids;
-        let operation;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            operation = 1;
-          })
-          .catch(() => {
-            operation = 2;
-          }).finally(() => {
-          updateInspector(ids, operation).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-          })
-        });
-      },
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -377,10 +227,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
