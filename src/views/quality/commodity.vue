@@ -102,11 +102,18 @@
                 {
                   label: "公司名称",
                   prop: "corporateName",
+                  type:'select',
                   rules: [{
                     required: true,
                     message: "请输入公司名称",
                     trigger: "blur"
-                  }]
+                  }],
+                  props: {
+                    label: 'supplierName',
+                    value: 'id'
+                  },
+                  dicMethod: "post",
+                  dicUrl: '/api/quality/information/dropDowns?name={{key}}',
                 },
                 {
                   label: "商品名称",
