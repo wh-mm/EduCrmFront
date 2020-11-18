@@ -62,4 +62,3 @@ export const updateInspector = (ids,operation) => {
     }
   })
 }
-

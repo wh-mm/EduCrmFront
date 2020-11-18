@@ -404,6 +404,7 @@ export const newAddGrainOption = {
           search: true,
           dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
         },
+
         {
           label: "收件人",
           prop: "addressee",
