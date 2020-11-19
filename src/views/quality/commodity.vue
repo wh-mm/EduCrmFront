@@ -67,18 +67,17 @@
           column: [
             {
               label: "公司名称",
-              prop: "corporateName",
+              prop: "companyId",
               type:'select',
-              rules: [{
+/*              rules: [{
                 required: true,
                 message: "请输入公司名称",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'supplierName',
                 value: 'id'
               },
-              dicMethod: "post",
               dicUrl: '/api/quality/information/dropDowns?name={{key}}',
             },
             {
@@ -121,15 +120,6 @@
               },
               search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
-            },
-            {
-              label: "公司id",
-              prop: "companyId",
-              rules: [{
-                required: true,
-                message: "请输入公司id",
-                trigger: "blur"
-              }]
             },
             {
               label: "打印规格",
@@ -175,7 +165,7 @@
             },
             {
               label: "经营范围",
-              prop: "natureOfBusiness",
+              prop: "natureOfBusinesss",
               rules: [{
                 required: true,
                 message: "请输入经营范围",
