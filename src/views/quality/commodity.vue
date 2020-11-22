@@ -84,7 +84,7 @@
             },
             {
               label: "通用名",
-              prop: "tradeName",
+              prop: "commonName",
               tip: '通用名',
               rules: [{
                 required: true,
@@ -96,7 +96,7 @@
             },
             {
               label: "商品名",
-              prop: "commonName",
+              prop: "tradeName",
               tip: '商品名',
               rules: [{
                 required: true,
