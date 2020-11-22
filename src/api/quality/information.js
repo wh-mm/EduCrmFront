@@ -54,11 +54,24 @@ export const update = (row) => {
  */
 export const updateInspector = (ids,operation) => {
   return request({
-    url: '/api/quality/commodity/updateInspector',
+    url: '/api/quality/information/updateInspector',
     method: 'post',
     params:{
       ids,
       operation
     }
   })
+}
+
+export function shenfen (rule, value,callback) {
+  const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+  if(value==''||value==undefined||value==null){
+    callback();
+  }else {
+    if ((!reg.test(value)) && value != '') {
+      callback(new Error('请输入正确的身份证号码'));
+    } else {
+      callback();
+    }
+  }
 }

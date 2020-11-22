@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,updateInspector} from "@/api/quality/commodity";
+  import {getList, getDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
   import {mapGetters} from "vuex";
 
   export default {
@@ -61,6 +61,7 @@
           searchMenuSpan: 6,
           border: true,
           index: true,
+          indexLabel: '序号',
           viewBtn: true,
           selection: true,
           dialogClickModal: false,
@@ -68,8 +69,9 @@
             {
               label: "公司名称",
               prop: "companyId",
-              type:'select',
-/*              rules: [{
+              type: 'select',
+              /*
+                rules: [{
                 required: true,
                 message: "请输入公司名称",
                 trigger: "blur"
@@ -81,13 +83,28 @@
               dicUrl: '/api/quality/information/dropDowns?name={{key}}',
             },
             {
-              label: "商品名称",
+              label: "通用名",
               prop: "tradeName",
+              tip: '通用名',
               rules: [{
                 required: true,
-                message: "请输入商品名称",
+                message: "通用名",
                 trigger: "blur"
-              }]
+              }],
+              maxlength: 10,
+              showWordLimit: true
+            },
+            {
+              label: "商品名",
+              prop: "commonName",
+              tip: '商品名',
+              rules: [{
+                required: true,
+                message: "商品名",
+                trigger: "blur"
+              }],
+              maxlength: 10,
+              showWordLimit: true
             },
             {
               label: "生产厂家",
@@ -111,9 +128,9 @@
               label: "采购状态",
               prop: "purchasingStatus",
               type: 'select',
-              addDisplay:false,
-              editDisplay:false,
-              viewDisplay:false,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -121,10 +138,10 @@
               search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
-            {
+            /*{
               label: "打印规格",
               prop: "printSpecifications",
-            },
+            },*/
 
             {
               label: "进项税",
@@ -137,6 +154,7 @@
             {
               label: "分包装企业",
               prop: "subPackagingEnterprises",
+              labelWidth: 110,
               rules: [{
                 required: true,
                 message: "请输入分包装企业",
@@ -144,9 +162,37 @@
               }]
             },
             {
+              label: "OTC标志",
+              prop: "sign",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '有',
+                value: 0
+              }, {
+                label: '无',
+                value: 1,
+              }]
+
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              rules: [],
+            },
+            {
               label: "剂型",
               prop: "dosageForm",
+              type: 'tree',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+
             },
+
             {
               label: "产品分类",
               prop: "productClassification",
@@ -164,29 +210,19 @@
               dicUrl: "/api/erp-wms/goods-type/tree",
             },
             {
-              label: "经营范围",
-              prop: "natureOfBusinesss",
-              rules: [{
-                required: true,
-                message: "请输入经营范围",
-                trigger: "blur"
-              }],
-              type: 'tree',
-              multiple:true,
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: "/api/erp-base/scope/tree",
+              label: "产品二级分类",
+              prop: "productClassificationTow",
+              labelWidth: 110,
             },
             {
               label: "存储期限",
               prop: "storageLife",
+              tip: '按每月',
             },
             {
               label: "存储期限类型",
               prop: "storagePeriodType",
+              labelWidth: 110,
             },
             {
               label: "特管药品",
@@ -196,12 +232,10 @@
               label: "特殊药品",
               prop: "specialDrug",
             },
-            {
-              label: "otc标志",
-              prop: "sign",
-            },
+
             {
               label: "国产/进口标示",
+              labelWidth: 110,
               prop: "domesticImportIndication",
             },
             /*{
@@ -229,6 +263,25 @@
         },
         data: []
       };
+    },
+    watch:{
+      //otc 事件
+      'form.sign': {
+        handler(val) {
+          var text2 = this.findObject(this.option.column, 'signTow')
+          if (val === 0) {
+            text2.display = true
+            text2.rules = [{
+              required: true,
+              message: "请输入内容2",
+              trigger: "blur"
+            }]
+          } else {
+            text2.display = false
+            text2.rules = []
+          }
+        },
+      },
     },
     computed: {
       ...mapGetters(["permission"]),
@@ -292,17 +345,19 @@
             });
           });
       },
+
       //审批
       updateInspectorNew() {
         if (this.selectionList.length === 0) {
           return this.$message.error("请选择需要的商品");
         }
-        var ids =this.ids;
+        var ids = this.ids;
         let operation;
         this.$confirm("请确认是否审批?", {
           confirmButtonText: "确认",
           cancelButtonText: "驳回",
-          type: "warning"
+          type: "warning",
+
         })
           .then(() => {
             operation = 1;
