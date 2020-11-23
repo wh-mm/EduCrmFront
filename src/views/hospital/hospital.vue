@@ -1,4 +1,5 @@
 <template>
+  <!--医院接口-->
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
