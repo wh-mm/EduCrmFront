@@ -1,8 +1,8 @@
 import request from '@/router/axios';
-
+import {ERP_WMS_NAME} from "@/const/YueConst"
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/goods/list',
+    url: ERP_WMS_NAME + '/goods/list',
     method: 'get',
     params: {
       ...params,
@@ -13,7 +13,7 @@ export const getList = (current, size, params) => {
 }
 export const getPage = (parentId) => {
   return request({
-    url: '/api/taocao-warehouse/goods/page',
+    url: ERP_WMS_NAME + '/goods/page',
     method: 'get',
     params: {
      data: parentId
@@ -23,7 +23,7 @@ export const getPage = (parentId) => {
 
 export const getGoodsDetail = (id) => {
   return request({
-    url: '/api/taocao-warehouse/goods/detail',
+    url: ERP_WMS_NAME + '/goods/detail',
     method: 'get',
     params: {
       id
@@ -33,7 +33,7 @@ export const getGoodsDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-warehouse/goods/remove',
+    url: ERP_WMS_NAME + '/goods/remove',
     method: 'post',
     params: {
       ids,
@@ -43,7 +43,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-warehouse/goods/submit',
+    url: ERP_WMS_NAME + '/goods/submit',
     method: 'post',
     data: row
   })
@@ -51,7 +51,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-warehouse/goods/submit',
+    url: ERP_WMS_NAME + '/goods/submit',
     method: 'post',
     data: row
   })
@@ -60,7 +60,7 @@ export const update = (row) => {
 
 export const selectGoodsName = (id,name) => {
   return request({
-    url: '/api/taocao-warehouse/goods/selectName',
+    url: ERP_WMS_NAME + '/goods/selectName',
     method: 'get',
     params: {
       id,
@@ -71,7 +71,7 @@ export const selectGoodsName = (id,name) => {
 
 export const  selectGoodsCode = (id,code) => {
   return request({
-    url: '/api/taocao-warehouse/goods/selectCode',
+    url: ERP_WMS_NAME + '/goods/selectCode',
     method: 'get',
     params: {
       id,
@@ -81,7 +81,7 @@ export const  selectGoodsCode = (id,code) => {
 }
 export const dropDowns = (name) => {
   return request({
-    url: '/api/taocao-warehouse/goods/dropDowns',
+    url: ERP_WMS_NAME + '/goods/dropDowns',
     method: 'post',
     params: {
       name
@@ -91,7 +91,7 @@ export const dropDowns = (name) => {
 
 export const  selecListGoodsName = (id) => {
   return request({
-    url: '/api/taocao-warehouse/goods/selecListGoodsName',
+    url: ERP_WMS_NAME + '/goods/selecListGoodsName',
     method: 'get',
     params: {
       id

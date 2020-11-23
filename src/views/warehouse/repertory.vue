@@ -89,7 +89,19 @@
               // cascaderItem: ['storageId'],
               search:true,
               dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+              dicUrl:this.ERP_WMS_NAME + '/warehouse/dropDown'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              search:true,
+              dicMethod:"post",
+              dicUrl:this.ERP_WMS_NAME + '/warehouse/dropDown'
             },
             {
               label: "商品",
@@ -102,7 +114,7 @@
                 value: 'id'
               },
               dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/dropDown',
+              dicUrl:this.ERP_WMS_NAME + '/goods/dropDown',
             },
             {
               label: "库存数量",

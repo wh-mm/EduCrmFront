@@ -14,3 +14,9 @@ export const ERP_WMS_NAME = "/api/erp-wms";
  */
 export const ERP_BAP_NAME = "/api/erp-bap";
 
+/**
+ * 系统
+ * @type {string}
+ */
+export const ERP_SYSTEM_NAME = "/api/blade-system";
+

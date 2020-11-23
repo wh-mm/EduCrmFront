@@ -23,6 +23,11 @@ import avueUeditor from 'avue-plugin-ueditor';
 import website from '@/config/website';
 import echarts from 'echarts';
 
+import {ERP_SYSTEM_NAME,ERP_WMS_NAME,ERP_BASE_NAME} from '@/const/YueConst'
+Vue.prototype.ERP_WMS_NAME = ERP_WMS_NAME;
+Vue.prototype.ERP_BASE_NAME = ERP_BASE_NAME;
+Vue.prototype.ERP_SYSTEM_NAME = ERP_SYSTEM_NAME;
+
 Vue.prototype.$echarts = echarts;
 Vue.use(router);
 Vue.use(VueAxios, axios);
