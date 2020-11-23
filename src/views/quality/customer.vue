@@ -29,7 +29,7 @@
         <el-button type="button"
                    size="small"
                    icon="el-icon-mouse"
-                   v-if="permission.inspector_approval"
+                   v-if="permission.customer_button"
                    @click="updateInspectorNew()">审 批
         </el-button>
       </template>
@@ -38,9 +38,9 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/quality/customer";
+  import {getList, getDetail, add, update, remove,updateInspector} from "@/api/quality/customer";
   import {mapGetters} from "vuex";
-  import {updateInspector} from "@/api/purchase/purchaseorder";
+
 
   export default {
     data() {

@@ -23,7 +23,7 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.approvalrecord_delete"
+                   v-if="permission.certificates_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/log/approvalrecord";
+  import {getList, getDetail, add, update, remove} from "@/api/quality/certificates";
   import {mapGetters} from "vuex";
 
   export default {
@@ -60,62 +60,49 @@
           dialogClickModal: false,
           column: [
             {
-              label: "审核id",
-              prop: "auditId",
+              label: "证件照名称",
+              prop: "nameOfCertificatePhoto",
               rules: [{
                 required: true,
-                message: "请输入审核id",
+                message: "请输入证件照名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "审核人",
-              prop: "reviewer",
+              label: "签发日期",
+              prop: "dateOfIssue",
               rules: [{
                 required: true,
-                message: "请输入审核人",
+                message: "请输入签发日期",
                 trigger: "blur"
               }]
             },
             {
-              label: "旧审批状态",
-              prop: "oldStatus",
+              label: "期限",
+              prop: "term",
               rules: [{
                 required: true,
-                message: "请输入旧审批状态",
+                message: "请输入期限",
                 trigger: "blur"
               }]
             },
             {
-              label: "新审核状态",
-              prop: "newStatus",
+              label: "期限至",
+              prop: "termTo",
               rules: [{
                 required: true,
-                message: "请输入新审核状态",
+                message: "请输入期限至",
                 trigger: "blur"
               }]
             },
             {
-              label: "类型",
-              prop: "type",
+              label: "经营范围",
+              prop: "natureOfBusiness",
               rules: [{
                 required: true,
-                message: "请输入类型",
+                message: "请输入经营范围",
                 trigger: "blur"
               }]
-            },
-            /*{
-              label: "表名",
-              prop: "auditTableName",
-              rules: [{
-                required: true,
-                message: "请输入表名",
-                trigger: "blur"
-              }]
-            },*/
-            {
-              label: "创建时间",
-              prop: "createTime",
             },
           ]
         },
@@ -126,10 +113,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.approvalrecord_add, false),
-          viewBtn: this.vaildData(this.permission.approvalrecord_view, false),
-          delBtn: this.vaildData(this.permission.approvalrecord_delete, false),
-          editBtn: this.vaildData(this.permission.approvalrecord_edit, false)
+          addBtn: this.vaildData(this.permission.certificates_add, false),
+          viewBtn: this.vaildData(this.permission.certificates_view, false),
+          delBtn: this.vaildData(this.permission.certificates_delete, false),
+          editBtn: this.vaildData(this.permission.certificates_edit, false)
         };
       },
       ids() {

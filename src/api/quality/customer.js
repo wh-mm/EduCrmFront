@@ -54,7 +54,7 @@ export const update = (row) => {
  */
 export const updateInspector = (ids,operation) => {
   return request({
-    url: '/api/quality/commodity/updateInspector',
+    url: '/api/quality/customer/updateInspector',
     method: 'post',
     params:{
       ids,
