@@ -265,7 +265,6 @@
               children: {
                 align: 'center',
                 type: 'form',
-                indexLabel: '序号',
                 headerAlign: 'center',
                 rowAdd: (done) => {
                   /* this.$message.success('新增回调');*/
@@ -302,11 +301,6 @@
                     prop: "natureOfBusiness",
                     hide: true,
                     row: true,
-                    rules: [{
-                      required: true,
-                      message: "请输入经营范围",
-                      trigger: "blur"
-                    }],
                     type: 'tree',
                     multiple: true,
                     props: {
@@ -407,6 +401,9 @@
     },
     methods: {
       rowSave(row, done, loading) {
+        for (let i = 0; i < row.dynamic.length; i++) {
+          row.dynamic[i].natureOfBusiness=row.dynamic[i].natureOfBusiness.join(",");
+        }
         add(row).then(() => {
           this.onLoad(this.page);
           this.$message({
@@ -421,6 +418,9 @@
       },
 
       rowUpdate(row, index, done, loading) {
+        for (let i = 0; i < row.dynamic.length; i++) {
+          row.dynamic[i].natureOfBusiness=row.dynamic[i].natureOfBusiness.join(",");
+        }
         update(row).then(() => {
           this.onLoad(this.page);
           this.$message({
