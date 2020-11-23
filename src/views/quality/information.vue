@@ -238,6 +238,8 @@
             {
               label: "联系人电话",
               prop: "contactPhoneNumber",
+              maxlength:11,
+              showWordLimit:true
             },
             {
               label: "联系人身份证",
@@ -289,7 +291,7 @@
                   {
                     label: "期限",
                     prop: "term",
-                    type: "date",
+                    type: "month",
                   },
                   {
                     label: "期限至",
@@ -329,7 +331,6 @@
             },
           ],
         },
-
         /* infoOption: {
            calcHeight: 200,
            border: true,

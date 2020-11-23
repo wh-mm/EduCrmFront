@@ -38,8 +38,9 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,updateInspector} from "@/api/quality/customer";
+  import {getList, getDetail, add, update, remove, updateInspector} from "@/api/quality/customer";
   import {mapGetters} from "vuex";
+  import {shenfen} from "@/api/quality/information";
 
 
   export default {
@@ -69,22 +70,29 @@
             {
               label: "客户名称",
               prop: "customerName",
-              search: true,
-              display: false
+              rules: [{
+                required: true,
+                message: "请输入客户名称",
+                trigger: "blur"
+              }]
             },
             {
               label: "客户性质",
               prop: "customerNature",
-              search: true,
-              display: false
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入客户性质",
+                trigger: "blur"
+              }]
             },
             {
               label: "审批状态",
               prop: "stateExamine",
               type: 'select',
-              addDisplay:false,
-              editDisplay:false,
-              viewDisplay:false,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -92,210 +100,258 @@
               search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
-
-          ],
-          group: [
             {
-              icon: 'el-icon-info',
-              label: '基本信息',
-              collapse: true,
-              prop: 'group1',
-              column: [
-                {
-                  label: "客户名称",
-                  prop: "customerName",
-                  rules: [{
-                    required: true,
-                    message: "请输入客户名称",
-                    trigger: "blur"
-                  }]
+              label: "社会统一信用码",
+              prop: "socialUniformCreditCode",
+              labelWidth: 130,
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入社会统一信用码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "税号",
+              hide: true,
+              prop: "dutyParagraph",
+              rules: [{
+                required: true,
+                message: "请输入税号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "组织代码",
+              prop: "organizationCode",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入组织代码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "医疗机构",
+              prop: "medicalInstitution",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入医疗机构",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "法人代表",
+              prop: "legalRepresentative",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入法人代表",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "注册地址",
+              prop: "registeredAddress",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入注册地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "生产或仓库地址",
+              prop: "productionOrWarehouseAddress",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入生产或仓库地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "质量负责人",
+              prop: "qualityPrincipal",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入质量负责人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "企业负责人",
+              prop: "enterprisePrincipal",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入企业负责人",
+                trigger: "blur"
+              }]
+            },
+            /*{
+              label: "国家",
+              prop: "country",
+              rules: [{
+                required: true,
+                message: "请输入国家",
+                trigger: "blur"
+              }]
+            },*/
+            {
+              label: "省份",
+              prop: "regionArea",
+              type: 'select',
+              hide: true,
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              cascaderItem: ['metropolitanArea', 'countyArea'],
+              dicUrl: '/api/blade-system/region/select',
+            },
+            {
+              label: "地市",
+              prop: "metropolitanArea",
+              type: 'select',
+              hide: true,
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              dicFlag: false,
+              dicUrl: '/api/blade-system/region/select?code={{key}}',
+            },
+            {
+              label: "区县",
+              prop: "countyArea",
+              type: 'select',
+              hide: true,
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              dicFlag: false,
+              dicUrl: '/api/blade-system/region/select?code={{key}}',
+            },
+            /*{
+              label: "使用状态",
+              prop: "useState",
+              hide: true,
+              rules: [{
+                required: true,
+                message: "请输入使用状态",
+                trigger: "blur"
+              }]
+            },*/
+            /*{
+              label: "有效开始时间",
+              prop: "effectiveStart",
+              rules: [{
+                required: true,
+                message: "请输入有效开始时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "有效结束时间",
+              prop: "effectiveEnd",
+              rules: [{
+                required: true,
+                message: "请输入有效结束时间",
+                trigger: "blur"
+              }]
+            },*/
+            {
+              label: "联系人",
+              prop: "contacts",
+            },
+            {
+              label: "联系人电话",
+              prop: "contactPhoneNumber",
+              maxlength:11,
+              showWordLimit:true
+            },
+            {
+              label: "联系人身份证",
+              prop: "contactIdCard",
+              validator: shenfen,
+              labelWidth: 110,
+            },
+            {
+              label: '证件照',
+              prop: 'dynamic',
+              type: 'dynamic',
+              indexLabel: '序号',
+              span: 24,
+              children: {
+                align: 'center',
+                type: 'form',
+                headerAlign: 'center',
+                rowAdd: (done) => {
+                  /* this.$message.success('新增回调');*/
+                  done({
+                    input: '默认值'
+                  });
                 },
-                {
-                  label: "客户性质",
-                  prop: "customerNature",
-                  rules: [{
-                    required: true,
-                    message: "请输入客户性质",
-                    trigger: "blur"
-                  }]
+                rowDel: (row, done) => {
+                  /*this.$message.success('删除回调' + JSON.stringify(row));*/
+                  done();
                 },
-                {
-                  label: "社会统一信用码",
-                  prop: "socialUniformCreditCode",
+                column: [{
+                  label: "供应商证件照名称",
+                  prop: "nameOfCertificatePhoto",
                   labelWidth: 130,
-                  rules: [{
-                    required: true,
-                    message: "请输入社会统一信用码",
-                    trigger: "blur"
-                  }]
                 },
-                {
-                  label: "税号",
-                  prop: "dutyParagraph",
-                  rules: [{
-                    required: true,
-                    message: "请输入税号",
-                    trigger: "blur"
-                  }]
-                },
-              ]
+                  {
+                    label: "签发日期",
+                    prop: "dateOfIssue",
+                    type: "date",
+                  },
+                  {
+                    label: "期限",
+                    prop: "term",
+                    type: "month",
+                  },
+                  {
+                    label: "期限至",
+                    prop: "termTo",
+                    type: "date",
+                  },
+                  {
+                    label: "经营范围",
+                    prop: "natureOfBusiness",
+                    hide: true,
+                    row: true,
+                    type: 'tree',
+                    multiple: true,
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl: "/api/erp-base/scope/tree",
+                  },
+                  {
+                    label: "客户证件照",
+                    prop: "supplierCertificatePhotos",
+                    dataType: 'array',
+                    labelWidth: 110,
+                    type: 'upload',
+                    propsHttp: {
+                      res: 'data',
+                      url: 'link',
+                    },
+                    span: 12,
+                    listType: 'picture-card',
+                    tip: '只能上传jpg/png文件，且不超过500kb',
+                    action: "/api/oss/goods/imgUpload"
+                  },
+                ],
+              },
             },
-            {
-              icon: 'el-icon-info',
-              label: '质量填报信息',
-              collapse: true,
-              prop: 'group1',
-              column: [
-                {
-                  label: "组织代码",
-                  prop: "organizationCode",
-                  rules: [{
-                    required: true,
-                    message: "请输入组织代码",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "医疗机构",
-                  prop: "medicalInstitution",
-                  rules: [{
-                    required: true,
-                    message: "请输入医疗机构",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "法人代表",
-                  prop: "legalRepresentative",
-                  rules: [{
-                    required: true,
-                    message: "请输入法人代表",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "注册地址",
-                  prop: "registeredAddress",
-                  rules: [{
-                    required: true,
-                    message: "请输入注册地址",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "生产或仓库地址",
-                  prop: "productionOrWarehouseAddress",
-                  rules: [{
-                    required: true,
-                    message: "请输入生产或仓库地址",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "质量负责人",
-                  prop: "qualityPrincipal",
-                  rules: [{
-                    required: true,
-                    message: "请输入质量负责人",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "企业负责人",
-                  prop: "enterprisePrincipal",
-                  rules: [{
-                    required: true,
-                    message: "请输入企业负责人",
-                    trigger: "blur"
-                  }]
-                },
-                /*{
-                  label: "国家",
-                  prop: "country",
-                  rules: [{
-                    required: true,
-                    message: "请输入国家",
-                    trigger: "blur"
-                  }]
-                },*/
-                {
-                  label: "省份",
-                  prop: "regionArea",
-                  type: 'select',
-                  props: {
-                    label: 'name',
-                    value: 'code'
-                  },
-                  cascaderItem: ['metropolitanArea', 'countyArea'],
-                  dicUrl: '/api/blade-system/region/select',
-                },
-                {
-                  label: "地市",
-                  prop: "metropolitanArea",
-                  type: 'select',
-                  props: {
-                    label: 'name',
-                    value: 'code'
-                  },
-                  dicFlag: false,
-                  dicUrl: '/api/blade-system/region/select?code={{key}}',
-                },
-                {
-                  label: "区县",
-                  prop: "countyArea",
-                  type: 'select',
-                  props: {
-                    label: 'name',
-                    value: 'code'
-                  },
-                  dicFlag: false,
-                  dicUrl: '/api/blade-system/region/select?code={{key}}',
-                },
-                {
-                  label: "使用状态",
-                  prop: "useState",
-                  rules: [{
-                    required: true,
-                    message: "请输入使用状态",
-                    trigger: "blur"
-                  }]
-                },
-                /*{
-                  label: "有效开始时间",
-                  prop: "effectiveStart",
-                  rules: [{
-                    required: true,
-                    message: "请输入有效开始时间",
-                    trigger: "blur"
-                  }]
-                },
-                {
-                  label: "有效结束时间",
-                  prop: "effectiveEnd",
-                  rules: [{
-                    required: true,
-                    message: "请输入有效结束时间",
-                    trigger: "blur"
-                  }]
-                },*/
-                {
-                  label: "供应商证件照",
-                  prop: "supplierCertificatePhotos",
-                  dataType: 'array',
-                  labelWidth: 110,
-                  type: 'upload',
-                  propsHttp: {
-                    res: 'data',
-                    url: 'link',
-                  },
-                  span: 12,
-                  listType: 'picture-card',
-                  tip: '只能上传jpg/png文件，且不超过500kb',
-                  action: "/api/oss/goods/imgUpload"
-                },
-              ],
-            },
-          ]
+          ],
         },
         data: []
       };
@@ -337,7 +393,7 @@
         if (this.selectionList.length === 0) {
           return this.$message.error("请选择需要的商品");
         }
-        var ids =this.ids;
+        var ids = this.ids;
         let operation;
         this.$confirm("请确认是否审批?", {
           confirmButtonText: "确认",
