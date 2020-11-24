@@ -260,7 +260,7 @@
             },*/
             {
               label: '证件照',
-              prop: 'dynamic',
+              prop: 'certificates',
               type: 'dynamic',
               indexLabel: '序号',
               span: 24,
@@ -402,8 +402,8 @@
     },
     methods: {
       rowSave(row, done, loading) {
-        for (let i = 0; i < row.dynamic.length; i++) {
-          row.dynamic[i].natureOfBusiness=row.dynamic[i].natureOfBusiness.join(",");
+        for (let i = 0; i < row.certificates.length; i++) {
+          row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
         }
         add(row).then(() => {
           this.onLoad(this.page);
@@ -419,8 +419,8 @@
       },
 
       rowUpdate(row, index, done, loading) {
-        for (let i = 0; i < row.dynamic.length; i++) {
-          row.dynamic[i].natureOfBusiness=row.dynamic[i].natureOfBusiness.join(",");
+        for (let i = 0; i < row.certificates.length; i++) {
+          row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
         }
         update(row).then(() => {
           this.onLoad(this.page);
