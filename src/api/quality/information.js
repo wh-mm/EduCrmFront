@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/quality/information/submit',
+    url: '/api/quality/information/submitAll',
     method: 'post',
     data: row
   })
@@ -42,7 +42,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/quality/information/submit',
+    url: '/api/quality/information/submitAll',
     method: 'post',
     data: row
   })

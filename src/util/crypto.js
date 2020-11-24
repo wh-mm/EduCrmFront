@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js'
 
 export default class crypto {
   // 使用AesUtil.genAesKey()生成,需和后端配置保持一致
-  static aesKey = "O2BEeIv399qHQNhD6aGW8R8DEj4bqHXm";
+  static aesKey = "qCpXrPcMntymFUSLzxZElEjJGTKgzE8N";
 
   // 使用DesUtil.genDesKey()生成,需和后端配置保持一致
   static desKey = "jMVCBsFGDQr1USHo";

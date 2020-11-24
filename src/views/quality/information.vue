@@ -238,6 +238,8 @@
             {
               label: "联系人电话",
               prop: "contactPhoneNumber",
+              maxlength:11,
+              showWordLimit:true
             },
             {
               label: "联系人身份证",
@@ -258,14 +260,13 @@
             },*/
             {
               label: '证件照',
-              prop: 'dynamic',
+              prop: 'certificates',
               type: 'dynamic',
               indexLabel: '序号',
               span: 24,
               children: {
                 align: 'center',
                 type: 'form',
-                indexLabel: '序号',
                 headerAlign: 'center',
                 rowAdd: (done) => {
                   /* this.$message.success('新增回调');*/
@@ -290,7 +291,7 @@
                   {
                     label: "期限",
                     prop: "term",
-                    type: "date",
+                    type: "month",
                   },
                   {
                     label: "期限至",
@@ -302,11 +303,6 @@
                     prop: "natureOfBusiness",
                     hide: true,
                     row: true,
-                    rules: [{
-                      required: true,
-                      message: "请输入经营范围",
-                      trigger: "blur"
-                    }],
                     type: 'tree',
                     multiple: true,
                     props: {
@@ -335,7 +331,6 @@
             },
           ],
         },
-
         /* infoOption: {
            calcHeight: 200,
            border: true,
@@ -407,6 +402,9 @@
     },
     methods: {
       rowSave(row, done, loading) {
+        for (let i = 0; i < row.certificates.length; i++) {
+          row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
+        }
         add(row).then(() => {
           this.onLoad(this.page);
           this.$message({
@@ -421,6 +419,9 @@
       },
 
       rowUpdate(row, index, done, loading) {
+        for (let i = 0; i < row.certificates.length; i++) {
+          row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
+        }
         update(row).then(() => {
           this.onLoad(this.page);
           this.$message({

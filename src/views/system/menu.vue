@@ -263,6 +263,7 @@
             type: "success",
             message: "操作成功!"
           });
+          this.form = {};
           // 数据回调进行刷新
           done(row);
         }, error => {
@@ -276,6 +277,7 @@
             type: "success",
             message: "操作成功!"
           });
+          this.form = {};
           // 数据回调进行刷新
           done(row);
         }, error => {

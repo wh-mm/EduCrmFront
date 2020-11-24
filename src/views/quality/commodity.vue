@@ -107,6 +107,10 @@
               showWordLimit: true
             },
             {
+              label: "基本单位",
+              prop: "basicUnit",
+            },
+            {
               label: "生产厂家",
               prop: "manufacturer",
               rules: [{
@@ -142,7 +146,6 @@
               label: "打印规格",
               prop: "printSpecifications",
             },*/
-
             {
               label: "进项税",
               prop: "inputTax",
@@ -160,6 +163,17 @@
                 message: "请输入分包装企业",
                 trigger: "blur"
               }]
+            },
+            {
+              label: "剂型",
+              prop: "dosageForm",
+              type: 'tree',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+
             },
             {
               label: "OTC标志",
@@ -181,18 +195,6 @@
               display: true,
               rules: [],
             },
-            {
-              label: "剂型",
-              prop: "dosageForm",
-              type: 'tree',
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
-
-            },
-
             {
               label: "产品分类",
               prop: "productClassification",
@@ -264,7 +266,7 @@
         data: []
       };
     },
-    watch:{
+    watch: {
       //otc 事件
       'form.sign': {
         handler(val) {

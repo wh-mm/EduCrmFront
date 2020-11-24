@@ -1,4 +1,5 @@
 <template>
+  <!--医院接口-->
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
@@ -11,6 +12,7 @@
                @row-update="rowUpdate"
                @row-save="rowSave"
                @row-del="rowDel"
+               @row-click="handleRowClick"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -19,55 +21,43 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <!--<el-button type="danger"
+        <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.hospital_delete"
                    @click="handleDelete">删 除
-        </el-button>-->
+        </el-button>
+      </template>
+      <template slot="hospitalSwitch" slot-scope="scope">
+        <el-switch v-model="scope.row.hospitalSwitch" disabled @click="(scope.row)"> </el-switch>
       </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
+  import {getList, getDetail, add, update, remove,
+    selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
   import {mapGetters} from "vuex";
-
-
   export default {
     data() {
-      var selectName = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入商品名称！"))
-        } else {
-          selectGoodsName(this.form.id, value).then(res => {
-            if (res.data.success) {
+      var hospitalName = (rule, value, callback)=>{
+        if (value === ''){
+          callback(new Error("医院名称重复,请从新输入!"))
+        }else {
+          selectHosptalByHospintl(this.form.id,value).then( res => {
+            if(res.data.success){
               callback();
-            } else {
+            }else{
               callback(new Error(res.data.msg));
             }
-          }, err => {
+          },err =>{
             callback(new Error(err.data.msg));
           })
         }
       }
-      var selectCode = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入编码！"))
-        } else {
-          selectGoodsCode(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
+
       return {
         form: {},
         query: {},
@@ -79,7 +69,7 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -91,82 +81,30 @@
           dialogClickModal: false,
           column: [
             {
-              label: "商品名称",
-              prop: "goodsName",
+              label: "医院名字",
+              prop: "hospitalName",
               rules: [{
                 required: true,
-                validator: selectName,
-                trigger: 'blur',
-              }],
+                message: "请输入医院名字",
+                validator:hospitalName,
+                trigger: 'blur' }],
             },
+
             {
-              label: "货物类型",
-              prop: "goodsType",
-              type: "tree",
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/api/erp-wms/goods-type/tree"
-            },
-            {
-              label: "货品编码",
-              prop: "goodsCode",
+              label: "医院地址",
+              prop: "hospitalProfile",
               rules: [{
                 required: true,
-                validator: selectCode,
-                trigger: "blur"
-              }]
-            }, {
-              label: "规格",
-              prop: "goodsSpecification",
-              type: "select",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
-            },
-            {
-              label: "单位",
-              prop: "unit",
-              type: "select",
-              searchSpan: 7,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
-            },
-            {
-              label: "货品价格",
-              prop: "unitPrice",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
+                message: "请输入医院地址",
                 trigger: "blur"
               }]
             },
-            /*
             {
-              label: "货品产地",
-              prop: "goodsRegion",
-              type: "cascader",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
-                trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
+              label: "医院接口开关",
+              prop: "hospitalSwitch",
+              slot: true,
             },
-             */
+
           ]
         },
         data: []
@@ -176,10 +114,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.hospital_add, false),
+          viewBtn: this.vaildData(this.permission.hospital_view, false),
+          delBtn: this.vaildData(this.permission.hospital_delete, false),
+          editBtn: this.vaildData(this.permission.hospital_edit, false)
         };
       },
       ids() {
@@ -190,7 +128,31 @@
         return ids.join(",");
       }
     },
+    //医院开关
     methods: {
+      handleRowClick(row) {
+        console.log(row.hospitalSwitch);
+        console.log(row.id);
+        let params = {
+          hospitalSwitch: !row.hospitalSwitch,
+          id: row.id
+        }
+        add(params).then((res)=>{
+          console.log(res)
+          if (res.data.code == 200){
+            this.$message({
+              type: "success",
+              message: res.data.msg
+            });
+            this.refreshChange();
+          }else{
+            this.$message({
+              type: "error",
+              message: res.data.msg
+            });
+          }
+        })
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -258,7 +220,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getGoodsDetail(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -281,10 +243,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -295,15 +257,23 @@
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
+          data.records.forEach((value)=>{
+            value.$cellEdit = true
+          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
       }
-
     }
   };
 </script>
 
 <style>
+  .el-switch.is-disabled {
+    opacity: 1;
+  }
+  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
+    cursor: pointer !important;;
+  }
 </style>
