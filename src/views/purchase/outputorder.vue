@@ -203,11 +203,10 @@
                     }
                     ],
                   props: {
-                    label: 'name',
+                    label: 'title',
                     value: 'id'
                   },
-                  dicMethod:"post",
-                  dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+                    dicUrl: '/api/erp-wms/warehouse/tree'
                 },
                   {
                   label: '备注',
@@ -410,7 +409,7 @@
             status = 2;
           })
           .catch(() => {
-            status = 3;
+            status = 101;
           }).finally(() => {
           updateStatus(id, status).then(res => {
             if (res.data.success) {

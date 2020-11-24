@@ -43,8 +43,7 @@
 </template>
 
 <script>
-  import {getList, getDetails, add, update, remove} from "@/api/materialsdelivery/materialsdelivery";
-  import { getDetail } from "@/api/purchase/purchaseorder"
+  import {getList, getDetails, add, update, remove,viewPurchaseOrder} from "@/api/materialsdelivery/materialsdelivery";
   import {mapGetters} from "vuex"
 
   export default {
@@ -155,18 +154,51 @@
         data: [],
         datas:[],
         option0 : {
-          border:true,
-          index:true,
-          size:true,
-          selection:true,
-          page:true,
+          // border:true,
+          // index:true,
+          // size:true,
+          // selection:true,
+          // page:true,
+          addBtn: false,
           menu:false,
           align:'center',
-          menuAlign:'center',
+          // menuAlign:'center',
           column:[
             {
+              label: '采购单号',
+              prop: "number",
+              filterable: true,
+              remote: true,
+              display: false,
+            },{
               label: '*商品',
-              prop: "goodsId",
+              prop: "goodsName",
+              filterable: true,
+              remote: true,
+              display: false,
+            } ,{
+              label: '数量',
+              prop: "goodsQuantity",
+              filterable: true,
+              remote: true,
+              display: false,
+            } , {
+              label: '单位',
+              prop: "unit",
+              filterable: true,
+              remote: true,
+              display: false,
+            } ,
+            {
+              label: '仓库',
+              prop: "warehouseName",
+              filterable: true,
+              remote: true,
+              display: false,
+            },
+            {
+              label: '储位',
+              prop: "storageName",
               filterable: true,
               remote: true,
               display: false,
@@ -317,12 +349,11 @@
           this.selectionClear();
         });
       },
-      viewPurchaseOrder(id){
-        console.log(id)
+      viewPurchaseOrder(purchaseId){
         this.dialogVisible = true;
-        getDetail(id).then(res=>{
+        viewPurchaseOrder(purchaseId).then(res=>{
           if (res.data.success) {
-            this.obj = res.data.data;
+            this.datas = res.data.data;
             this.$message.success(res.data.msg);
           } else {
             this.$message.error(res.data.msg);

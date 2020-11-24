@@ -82,12 +82,12 @@
               label: "仓库",
               prop: "warehouseId",
               type:'tree',
+              search:true,
               props: {
-                label: 'name',
+                label: 'title',
                 value: 'id'
               },
               // cascaderItem: ['storageId'],
-              search:true,
               dicMethod:"post",
               dicUrl:this.ERP_WMS_NAME + '/warehouse/dropDown'
             },

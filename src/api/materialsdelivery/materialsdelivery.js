@@ -47,12 +47,12 @@ export const update = (row) => {
     data: row
   })
 }
-export const viewPurchaseOrder = (id) => {
+export const viewPurchaseOrder = (purchaseId) => {
   return request({
     url: '/api/materialsDelivery/materialsdelivery/viewPurchaseOrder',
     method: 'post',
     params:{
-      id
+      purchaseId
     }
   })
 }

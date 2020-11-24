@@ -21,8 +21,8 @@
       <template slot-scope=""  slot="menuLeft">
         <el-button type="button"
                    size="small"
-                   v-if="permission.contract_approval"
-                   @click="updateContract()">审批
+                   v-if="permission.purchaseinwarehouseorder_approval"
+                   @click="updateStatusNew()">审批
         </el-button>
 
       </template>
@@ -30,17 +30,43 @@
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button icon="el-icon-plus" :size="size" option="option0"  :type="type" @click="viewAcceptanceRecord(row.id)">查看验收记录</el-button>
+      </template>
+
+      <template slot-scope="scope" slot="unitForm">
+        <el-button :size="scope.size" option = "commoditydataoption" @click="viewCommodity(scope.row.commodityId)">查询</el-button>
+      </template>
 
     </avue-crud>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="35%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-crud v-model="form" :data="datas" :option="option0" >
+      </avue-crud>
+    </el-dialog>
+
+    <el-dialog
+      :title="title"
+      :visible.sync="commoditydialogVisible"
+      width="35%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
+
   </basic-container>
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateContract} from "@/api/purchase/purchaseorder";
+  import {getList, add, getDetail, update, remove, updateStatus,viewAcceptanceRecord,viewCommodity} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   export default {
-
     data() {
       var validateQuantity = (rule, value, callback) => {
         if (value === '') {
@@ -63,6 +89,7 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        commoditydialogVisible:false,
         selectionList: [],
         option: {
           height: 'auto',
@@ -73,6 +100,7 @@
           border: true,
           index: true,
           viewBtn: true,
+          editBtn: true,
           selection: true,
           dialogClickModal: false,
           dialogWidth: '80%',
@@ -96,6 +124,8 @@
               type: "select",
               rules: [{
                 required: true,
+                editDisplay: false,
+                disabled: true,
                 message: "请输入类型",
                 trigger: "blur"
               }],
@@ -112,6 +142,7 @@
               type: "select",
               rules: [{
                 required: true,
+                editDisplay: false,
                 message: "请输入类型",
                 trigger: "blur"
               }],
@@ -130,6 +161,48 @@
               disabled: true,
             },
             {
+              label: '采购合同',
+              prop: 'dynamic',
+              type: 'dynamic',
+              editDisplay: false,
+              indexLabel: '序号',
+              span: 24,
+              children: {
+                align: 'center',
+                type: 'form',
+                indexLabel: '序号',
+                headerAlign: 'center',
+                rowAdd: (done) => {
+                  /* this.$message.success('新增回调');*/
+                  done({
+                    input: '默认值'
+                  });
+                },
+                rowDel: (row, done) => {
+                  /*this.$message.success('删除回调' + JSON.stringify(row));*/
+                  done();
+                },
+                column: [
+                  {
+                    label: "采购合同照片",
+                    prop: "purchaseContractPhotos",
+                    editDisplay: false,
+                    dataType: 'array',
+                    labelWidth: 110,
+                    type: 'upload',
+                    propsHttp: {
+                      res: 'data',
+                      url: 'link',
+                    },
+                    span: 12,
+                    listType: 'picture-card',
+                    tip: '只能上传jpg/png文件，且不超过500kb',
+                    action: "/api/oss/goods/imgUpload"
+                  },
+                ],
+              },
+            },
+            {
               label: "状态",
               prop: "statusName",
               type:'select',
@@ -146,16 +219,16 @@
             {
               label: "采购员",
               prop:"name",
+              editDisplay: false,
               addDisplay: false,
-              viewDisplay: false
 
             },
             {
               label:"创建时间",
               prop:"updateTime",
               dateDefault: true,
+              editDisplay: false,
               addDisplay: false,
-              viewDisplay: false,
               type: "datetime",
               searchSpan:12,
               searchRange:true,
@@ -188,6 +261,7 @@
                     filterable: true,
                     remote: true,
                     display:false,
+                    editDisplay: false,
                     props: {
                       label: 'supplierName',
                       value: 'id'
@@ -205,17 +279,18 @@
                     filterable: true,
                     remote: true,
                     display:false,
+                    editDisplay: false,
                     rules: [{
                       type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
                     props: {
-                      label: 'tradeName',
-                      value: 'id'
-                    },
-                    // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-                    dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                               label: 'tradeName',
+                               value: 'id'
+                              },
+                      // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+                      dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -235,6 +310,7 @@
                   {
                     label: '*数量',
                     prop: "goodsQuantity",
+                    editDisplay: false,
                     type: "number",
                     width: 130,
 
@@ -252,69 +328,66 @@
                     },
                   },
                   {
+                    label: '实际数量',
+                    prop: "realQuantity",
+                    type: "number",
+                    editDisplay: false,
+                    disabled: true,
+                  },
+                  {
                     label: '商品资质',
                     prop: "unit",
-                    disabled: true,
-                    type:'button',
+                    type:'input',
                     placeholder: " ",
+                    formslot:true,
+                    editDisplay: false,
                     width: 100,
                   }, {
                     label: '单价(元)',
                     prop: "money",
                     disabled: false,
+                    editDisplay: false,
                     placeholder: " ",
-                    change: () => {
-                      this.form.sumMoney = 0;
-                      this.form.purchaseOrderDetailList.forEach(val => {
-                        if (val.goodsId != "") {
-                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                        }
 
-                      });
-                    }
                   },
-                  // {
-                  //   label: '*采购仓库(必选)',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
+                  {
+                    label: '*采购仓库(必选)',
+                    prop: "warehouseId",
+                    type: "tree",
+                    rsearch: true,
+                    rules: [{
+                      required: true,
+                      message: "请输入类型",
+                      trigger: "blur"
+                    }],
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    cascaderItem: ['storageId'],
+                    dicUrl: '/api/erp-wms/warehouse/tree'
+                  },
+                  {
+                    label: "储位",
+                    prop: "storageId",
+                    type:'tree',
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                  },
                   {
                     label: "预付款",
                     prop: "advancePayment",
+                    editDisplay: false,
                     // disabled: true,
                     placeholder: " ",
-                    watch:{
-                      handler(){
-
-                      }
-
-                    }
                   },
                   {
                     label: "采购额",
                     prop: "totalPrice",
+                    editDisplay: false,
                     formslot: true,
                   },
                   {
@@ -328,17 +401,64 @@
             },
           ]
         },
-        data: []
+        data: [],
+        datas:[],
+        commoditydata:[],
+        option0 : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label: '*商品',
+              prop: "goodsName",
+              filterable: true,
+              remote: true,
+              display: false,
+            },
+            {
+              label:'数量',
+              prop:"goodsQuantity"
+            },
+            {
+              label:'验收状态',
+              prop:"acceptanceStatusName"
+            },
+            {
+              label:'验收员',
+              prop:"acceptanceName"
+            }
+          ]
+        },
+        commoditydataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label:'商品名称',
+              prop:'tradeName'
+            },{
+              label:'通用名称',
+              prop:'commonName'
+            },
+            {
+              label:'规格(型号)',
+              prop:'specifications'
+            },
+          ]
+        },
+
       };
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.contract_add, false),
-          viewBtn: this.vaildData(this.permission.contract_view, false),
-          delBtn: this.vaildData(this.permission.contract_delete, false),
-          editBtn: this.vaildData(this.permission.contract_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseinwarehouseorder_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseinwarehouseorder_view, false),
+          delBtn: this.vaildData(this.permission.purchaseinwarehouseorder_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseinwarehouseorder_edit, false)
         };
       },
       ids() {
@@ -423,6 +543,76 @@
         }
         done();
       },
+      // beforeOpen(done, type) {
+      //
+      //
+      //
+      //   if(["add"].includes(type)){
+      //     let sp = {
+      //         label: '*商品',
+      //         prop: "commodityId",
+      //         type: 'select',
+      //         width: 130,
+      //         filterable: true,
+      //         remote: true,
+      //         display:false,
+      //         rules: [{
+      //           require: true,
+      //           message: '请选择商品',
+      //         }],
+      //         props: {
+      //           label: 'tradeName',
+      //           value: 'id'
+      //         },
+      //         // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+      //         dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+      //         change: ({value}) => {
+      //           if (value) {
+      //             getGoodsDetail(value).then(res => {
+      //               this.form.sumMoney = 0;
+      //               this.form.purchaseOrderDetailList.forEach(val => {
+      //                 if (val.goodsId == value) {
+      //                   var detail = res.data.data;
+      //                   val.unit = detail.unitName;
+      //                   // val.money = detail.money;
+      //                 }
+      //                 this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+      //               });
+      //             });
+      //           }
+      //         },
+      //       };
+      //     console.log(this.option.column[7].children.column[0]);
+      //    this.option.column[7].children.column[1] = sp;
+      //   }
+      //   if(["view"].includes(type)){
+      //     let sp = {
+      //         label: '*商品',
+      //         prop: "goodsName",
+      //       props: {
+      //         label: 'tradeName',
+      //         value: 'id'
+      //       },
+      //       // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+      //       dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+      //       };
+      //    console.log(this.option.column[7].children.column[1]);
+      //    this.option.column[7].children.column[1] = sp;
+      //     getDetail(this.form.id).then(res => {
+      //       let form  = res.data.data;
+      //       form.purchaseOrderDetailList.forEach((value,index) => {
+      //         getGoodsDetail(value.goodsId).then( res =>{
+      //           value.goodsName = res.data.data.goodsName;
+      //           if(index == (form.purchaseOrderDetailList.length-1)){
+      //             this.form = form
+      //
+      //           }
+      //         })
+      //       })
+      //     });
+      //   }
+      //   done();
+      // },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
@@ -472,11 +662,39 @@
           this.selectionClear();
         });
       },
-      updateContract() {
+      updateStatus(id) {
+        let status;
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
+          type: "warning"
+        })
+          .then(() => {
+            status = 2;
+
+          })
+          .catch(() => {
+            status = 3;
+
+          }).finally(() => {
+          updateStatus(id, status).then(res => {
+            if (res.data.success) {
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+            this.refreshChange();
+            this.onLoad(this.page);
+          })
+        });
+      },
+      updateStatusNew() {
+
+
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 2){
+        if (this.selectionList[0].status != 8){
           return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;
@@ -487,12 +705,12 @@
           type: "warning"
         })
           .then(() => {
-            status = 4;
+            status = 9;
           })
           .catch(() => {
-            status = 102;
+            status = 108;
           }).finally(() => {
-          updateContract(id, status).then(res => {
+          updateStatus(id, status).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {
@@ -518,6 +736,30 @@
           done();
         })
       },
+      viewAcceptanceRecord(id){
+        console.log(id)
+        this.dialogVisible = true;
+        viewAcceptanceRecord(id).then(res=>{
+          if (res.data.success) {
+            this.datas = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      viewCommodity(commodityId){
+        console.log(commodityId)
+        this.dialogVisible = true;
+        viewCommodity(commodityId).then(res=>{
+          if (res.data.success) {
+            this.commoditydata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      }
     }
   };
 </script>
