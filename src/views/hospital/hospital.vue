@@ -131,27 +131,47 @@
     //医院开关
     methods: {
       handleRowClick(row) {
-        console.log(row.hospitalSwitch);
-        console.log(row.id);
-        let params = {
-          hospitalSwitch: !row.hospitalSwitch,
-          id: row.id
-        }
-        add(params).then((res)=>{
-          console.log(res)
-          if (res.data.code == 200){
+
+
+        this.$confirm("请在此确认?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+           // return remove(row.id);
+
+            let params = {
+              hospitalSwitch: !row.hospitalSwitch,
+              id: row.id
+            }
+            add(params).then((res)=>{
+              console.log(res)
+              if (res.data.code == 200){
+                this.$message({
+                  type: "success",
+                  message: res.data.msg
+                });
+                this.refreshChange();
+              }else{
+                this.$message({
+                  type: "error",
+                  message: res.data.msg
+                });
+              }
+            })
+          })
+          .then(() => {
+            this.onLoad(this.page);
             this.$message({
               type: "success",
-              message: res.data.msg
+              message: "操作成功!"
             });
-            this.refreshChange();
-          }else{
-            this.$message({
-              type: "error",
-              message: res.data.msg
-            });
-          }
-        })
+          });
+
+/*        console.log(row.hospitalSwitch);
+        console.log(row.id);*/
+
       },
       rowSave(row, done, loading) {
         add(row).then(() => {
