@@ -23,32 +23,29 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.acceptancerecord_delete"
+                   v-if="permission.purchaseorderdetail_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-      <template slot-scope="{type,size,row}" slot="menu">
-        <el-button icon="el-icon-plus" :size="size" option="option0" :type="text" @click="viewMaterialsDelivery(row.purchaseId)">查看收货记录</el-button>
-      </template>
     </avue-crud>
-    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisible"
-      width="35%"
-      :modal="false"
-      :before-close="handleClose">
-      <avue-crud v-model="form" :data="datas" :option="option0" @click="viewMaterialsDelivery">
-      </avue-crud>
-    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,viewMaterialsDelivery} from "@/api/acceptance/acceptancerecord";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/purchaseorderdetail";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
+        }
+      };
       return {
         form: {},
         query: {},
@@ -58,9 +55,6 @@
           currentPage: 1,
           total: 0
         },
-        obj:{},
-        title: '' ,
-        dialogVisible:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -75,17 +69,18 @@
           dialogClickModal: false,
           column: [
             {
-              label: "采购订单号",
-              prop: "orderNumber",
+              label: "采购id",
+              prop: "purchaseId",
               rules: [{
                 required: true,
-                message: "请输入采购订单号",
+                message: "请输入采购id",
                 trigger: "blur"
               }]
             },
+
             {
               label: "商品id",
-              prop: "goodsName",
+              prop: "goodsId",
               rules: [{
                 required: true,
                 message: "请输入商品id",
@@ -93,91 +88,39 @@
               }]
             },
             {
-              label: "商品数量",
+              label: "供应商id",
+              prop: "informationId",
+              rules: [{
+                required: true,
+                message: "请输入供应商id",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "数量",
               prop: "goodsQuantity",
               rules: [{
                 required: true,
-                message: "请输入商品数量",
-                trigger: "blur"
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
               }]
             },
-            {
-              label: "验收员",
-              prop: "acceptanceName",
-              rules: [{
-                required: true,
-                message: "请输入验收员",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "验收状态",
-              prop: "statusName",
-              rules: [{
-                required: true,
-                message: "请输入验收状态",
-                trigger: "blur"
-              }]
-            },
-            {
-              label:"创建时间",
-              prop:"createTime",
-              dateDefault: true,
-              addDisplay: false,
-              viewDisplay: false,
-              type: "datetime",
-              searchSpan:12,
-              searchRange:true,
-              search:true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
-            }
+
           ]
         },
-        data: [],
-        option0 : {
-          // border:true,
-          // index:true,
-          // size:true,
-          // selection:true,
-          // page:true,
-          addBtn: false,
-          menu:false,
-          align:'center',
-          // menuAlign:'center',
-          column:[
-            {
-              label: '*商品',
-              prop: "goodsName",
-              filterable: true,
-              remote: true,
-              display: false,
-            },
-            {
-             label:'数量',
-             prop:"goodsQuantity"
-            },
-            {
-             label:'收货状态',
-             prop:"asReceivedConditionName"
-            },
-            {
-             label:'收货员',
-             prop:"name"
-            }
-          ]
-        },
-        datas:[],
+        data: []
       };
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.acceptancerecord_add, false),
-          viewBtn: this.vaildData(this.permission.acceptancerecord_view, false),
-          delBtn: this.vaildData(this.permission.acceptancerecord_delete, false),
-          editBtn: this.vaildData(this.permission.acceptancerecord_edit, false)
+          addBtn: this.vaildData(this.permission.purchaseorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.purchaseorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.purchaseorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.purchaseorderdetail_edit, false)
         };
       },
       ids() {
@@ -289,39 +232,14 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        const {createTime} = params;
-        let values = {
-          ...params,
-        };
-        if (createTime) {
-          values = {
-            ...params,
-            start_time: createTime[0],
-            end_time: createTime[1],
-          };
-          values.createTime = null;
-          this.query.createTime = null;
-        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      },
-      viewMaterialsDelivery(purchaseid){
-        console.log(purchaseid)
-        this.dialogVisible = true;
-        viewMaterialsDelivery(purchaseid).then(res=>{
-          if (res.data.success) {
-            this.datas = res.data.data;
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
       }
     }
   };

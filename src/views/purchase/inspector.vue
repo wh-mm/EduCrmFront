@@ -53,364 +53,7 @@
           callback();
         }
       };
-      // const addOption = {
-      //   height: 'auto',
-      //   calcHeight: 30,
-      //   tip: false,
-      //   searchShow: true,
-      //   searchMenuSpan: 6,
-      //   border: true,
-      //   index: true,
-      //   viewBtn: true,
-      //   selection: true,
-      //   dialogClickModal: false,
-      //   dialogWidth: '80%',
-      //   column: [
-      //     {
-      //       label: "采购订单号",
-      //       prop: "orderNumber",
-      //       editDisplay: false,
-      //       addDisplay: false,
-      //       search: true,
-      //       rules: [{
-      //         required: true,
-      //         message: "请输入采购订单号",
-      //         trigger: "blur"
-      //       }]
-      //     },
-      //     {
-      //       label: "类型",
-      //       prop: "type",
-      //       search: true,
-      //       type: "select",
-      //       rules: [{
-      //         required: true,
-      //         message: "请输入类型",
-      //         trigger: "blur"
-      //       }],
-      //       dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
-      //       props: {
-      //         label: "dictValue",
-      //         value: "dictKey"
-      //       }
-      //     },
-      //     {
-      //       label: "总价",
-      //       prop: "sumMoney",
-      //       editDisplay: false,
-      //       disabled: true,
-      //     },
-      //     {
-      //       label: "状态",
-      //       prop: "statusName",
-      //       addDisplay: false,
-      //       editDisplay: false,
-      //       viewDisplay:false,
-      //     },
-      //     {
-      //       label: "采购员",
-      //       prop:"name",
-      //       addDisplay: false,
-      //       viewDisplay: false
-      //
-      //     },
-      //     {
-      //       label:"创建时间",
-      //       prop:"createTime",
-      //       dateDefault: true,
-      //       addDisplay: false,
-      //       viewDisplay: false,
-      //       type: "datetime",
-      //       searchSpan:12,
-      //       searchRange:true,
-      //       search:true,
-      //       format: "yyyy-MM-dd hh:mm:ss",
-      //       valueFormat: "yyyy-MM-dd hh:mm:ss",
-      //     },
-      //     {
-      //       label: '商品列表',
-      //       prop: 'purchaseOrderDetailList',
-      //       type: 'dynamic',
-      //       span: 24,
-      //       children: {
-      //         align: 'center',
-      //         headerAlign: 'center',
-      //         rowAdd: (done) => {
-      //           done({
-      //             goodsQuantity: 1,
-      //             discountPercentage: 0,
-      //           });
-      //         },
-      //         rowDel: (row, done) => {
-      //           done();
-      //         },
-      //         column: [
-      //           {
-      //             label: '*商品',
-      //             prop: "goodsId",
-      //             type: 'select',
-      //             width: 250,
-      //             filterable: true,
-      //             remote: true,
-      //             display:false,
-      //             rules: [{
-      //               type: 'select',
-      //               require: true,
-      //               message: '请选择商品',
-      //             }],
-      //             props: {
-      //               label: 'goodsName',
-      //               value: 'id'
-      //             },
-      //             dicMethod: "post",
-      //             dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-      //             change: ({value}) => {
-      //               if (value) {
-      //                 getGoodsDetail(value).then(res => {
-      //                   this.form.sumMoney = 0;
-      //                   this.form.purchaseOrderDetailList.forEach(val => {
-      //                     if (val.goodsId == value) {
-      //                       var detail = res.data.data;
-      //                       val.unit = detail.unitName;
-      //                       // val.money = detail.money;
-      //                     }
-      //                     this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-      //                   });
-      //                 });
-      //               }
-      //             },
-      //           },
-      //           {
-      //             label: '*商品',
-      //             prop: "goodsName",
-      //             display:false,
-      //           },
-      //           {
-      //             label: '*数量',
-      //             prop: "goodsQuantity",
-      //             type: "number",
-      //             width: 200,
-      //             rules: [{
-      //               validator: validateQuantity,
-      //               trigger: 'blur'
-      //             }],
-      //             change: () => {
-      //               this.form.sumMoney = 0;
-      //               this.form.purchaseOrderDetailList.forEach(val => {
-      //                 if (val.goodsId != "") {
-      //                   this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-      //                 }
-      //               });
-      //             },
-      //           },
-      //           {
-      //             label: '单位',
-      //             prop: "unit",
-      //             disabled: true,
-      //             placeholder: " ",
-      //             width: 100,
-      //           }, {
-      //             label: '单价(元)',
-      //             prop: "money",
-      //             disabled: false,
-      //             placeholder: " ",
-      //             width: 100,
-      //             change: () => {
-      //               this.form.sumMoney = 0;
-      //               this.form.purchaseOrderDetailList.forEach(val => {
-      //                 if (val.goodsId != "") {
-      //                   this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-      //                 }
-      //
-      //               });
-      //             }
-      //           },
-      //           {
-      //             label: '*采购仓库(必选)',
-      //             prop: "warehouseId",
-      //             type: "tree",
-      //             rsearch: true,
-      //             rules: [{
-      //               required: true,
-      //               message: "请输入类型",
-      //               trigger: "blur"
-      //             }],
-      //             props: {
-      //               label: 'name',
-      //               value: 'id'
-      //             },
-      //             dicMethod: "post",
-      //             dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
-      //           },
-      //           {
-      //             label: "采购额",
-      //             prop: "totalPrice",
-      //             formslot: true,
-      //           },
-      //           {
-      //             label: '备注',
-      //             prop: "remark",
-      //             type: "textarea",
-      //             width: 100,
-      //           }
-      //         ],
-      //       }
-      //     },
-      //   ]
-      // };
-      // const viewOption = {
-      //   height: 'auto',
-      //   calcHeight: 30,
-      //   tip: false,
-      //   searchShow: true,
-      //   searchMenuSpan: 6,
-      //   border: true,
-      //   index: true,
-      //   viewBtn: true,
-      //   selection: true,
-      //   dialogClickModal: false,
-      //   dialogWidth: '80%',
-      //   column: [
-      //     {
-      //       label: "采购订单号",
-      //       prop: "orderNumber",
-      //       editDisplay: false,
-      //       addDisplay: false,
-      //       search: true,
-      //       rules: [{
-      //         required: true,
-      //         message: "请输入采购订单号",
-      //         trigger: "blur"
-      //       }]
-      //     },
-      //     {
-      //       label: "类型",
-      //       prop: "type",
-      //       search: true,
-      //       type: "select",
-      //       rules: [{
-      //         required: true,
-      //         message: "请输入类型",
-      //         trigger: "blur"
-      //       }],
-      //       dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
-      //       props: {
-      //         label: "dictValue",
-      //         value: "dictKey"
-      //       }
-      //     },
-      //     {
-      //       label: "总价",
-      //       prop: "sumMoney",
-      //       editDisplay: false,
-      //       disabled: true,
-      //     },
-      //     {
-      //       label: "状态",
-      //       prop: "statusName",
-      //       addDisplay: false,
-      //       editDisplay: false,
-      //       viewDisplay:false,
-      //     },
-      //     {
-      //       label: "采购员",
-      //       prop:"name",
-      //       addDisplay: false,
-      //       viewDisplay: false
-      //
-      //     },
-      //     {
-      //       label:"创建时间",
-      //       prop:"createTime",
-      //       dateDefault: true,
-      //       addDisplay: false,
-      //       viewDisplay: false,
-      //       type: "datetime",
-      //       searchSpan:12,
-      //       searchRange:true,
-      //       search:true,
-      //       format: "yyyy-MM-dd hh:mm:ss",
-      //       valueFormat: "yyyy-MM-dd hh:mm:ss",
-      //     },
-      //     {
-      //       label: '商品列表',
-      //       prop: 'purchaseOrderDetailList',
-      //       type: 'dynamic',
-      //       span: 24,
-      //       children: {
-      //         align: 'center',
-      //         headerAlign: 'center',
-      //         rowAdd: (done) => {
-      //           done({
-      //             goodsQuantity: 1,
-      //             discountPercentage: 0,
-      //           });
-      //         },
-      //         rowDel: (row, done) => {
-      //           done();
-      //         },
-      //         column: [
-      //           {
-      //             label: '*商品',
-      //             prop: "goodsName",
-      //             display:false,
-      //           },
-      //           {
-      //             label: '*数量',
-      //             prop: "goodsQuantity",
-      //             type: "number",
-      //             width: 200,
-      //             rules: [{
-      //               validator: validateQuantity,
-      //               trigger: 'blur'
-      //             }],
-      //           },
-      //           {
-      //             label: '单位',
-      //             prop: "unit",
-      //             disabled: true,
-      //             placeholder: " ",
-      //             width: 100,
-      //           }, {
-      //             label: '单价(元)',
-      //             prop: "money",
-      //             disabled: false,
-      //             placeholder: " ",
-      //             width: 100,
-      //           },
-      //           {
-      //             label: '*采购仓库(必选)',
-      //             prop: "warehouseId",
-      //             type: "tree",
-      //             rsearch: true,
-      //             rules: [{
-      //               required: true,
-      //               message: "请输入类型",
-      //               trigger: "blur"
-      //             }],
-      //             props: {
-      //               label: 'name',
-      //               value: 'id'
-      //             },
-      //             dicMethod: "post",
-      //             dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
-      //           },
-      //           {
-      //             label: "采购额",
-      //             prop: "totalPrice",
-      //             formslot: true,
-      //           },
-      //           {
-      //             label: '备注',
-      //             prop: "remark",
-      //             type: "textarea",
-      //             width: 100,
-      //           }
-      //         ],
-      //       }
-      //     },
-      //   ]
-      // };
+
       return {
         form: {},
         query: {},
@@ -459,11 +102,29 @@
                 message: "请输入类型",
                 trigger: "blur"
               }],
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type",
               props: {
                 label: "dictValue",
                 value: "dictKey"
-              }
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type"
+            },
+            {
+              label: "预付款状态",
+              prop: "advanceStatus",
+              search: true,
+              type: "select",
+              rules: [{
+                required: true,
+                message: "请输入类型",
+                trigger: "blur"
+              }],
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=advance",
+
+
             },
             {
               label: "总价",
@@ -474,9 +135,16 @@
             {
               label: "状态",
               prop: "statusName",
+              type:'select',
               addDisplay: false,
               editDisplay: false,
               viewDisplay:false,
+              search: true,
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_status"
             },
             {
               label: "采购员",
@@ -487,7 +155,7 @@
             },
             {
               label:"创建时间",
-              prop:"createTime",
+              prop:"updateTime",
               dateDefault: true,
               addDisplay: false,
               viewDisplay: false,
@@ -517,24 +185,40 @@
                 },
                 column: [
                   {
+                    label:'供应商',
+                    prop:'informationId',
+                    type:'select',
+                    filterable: true,
+                    remote: true,
+                    display:false,
+                    props: {
+                      label: 'supplierName',
+                      value: 'id'
+                    },
+                    cascaderItem: ['goodsId'],
+                    // cascaderItem: ['goosId'],
+                    // dicMethod: "post",
+                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                  },
+                  {
                     label: '*商品',
-                    prop: "goodsId",
-                    type: 'select',
-                    width: 180,
+                    prop: "commodityId",
+                    type: 'tree',
+                    width: 130,
                     filterable: true,
                     remote: true,
                     display:false,
                     rules: [{
-                      type: 'select',
+                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
                     props: {
-                      label: 'goodsName',
+                      label: 'tradeName',
                       value: 'id'
                     },
-                    dicMethod: "post",
-                    dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+                    // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+                    dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -555,7 +239,7 @@
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 180,
+                    width: 130,
 
                     rules: [{
                       validator: validateQuantity,
@@ -571,9 +255,15 @@
                     },
                   },
                   {
-                    label: '单位',
+                    label: '实际数量',
+                    prop: "realQuantity",
+                    type: "number",
+                  },
+                  {
+                    label: '商品资质',
                     prop: "unit",
                     disabled: true,
+                    type:'button',
                     placeholder: " ",
                     width: 100,
                   }, {
@@ -591,22 +281,44 @@
                       });
                     }
                   },
+                  // {
+                  //   label: '*采购仓库(必选)',
+                  //   prop: "warehouseId",
+                  //   type: "tree",
+                  //   rsearch: true,
+                  //   rules: [{
+                  //     required: true,
+                  //     message: "请输入类型",
+                  //     trigger: "blur"
+                  //   }],
+                  //   props: {
+                  //     label: 'title',
+                  //     value: 'id'
+                  //   },
+                  //   cascaderItem: ['storageId'],
+                  //   dicUrl: '/api/erp-wms/warehouse/tree'
+                  // },
+                  // {
+                  //   label: "储位",
+                  //   prop: "storageId",
+                  //   type:'tree',
+                  //   props: {
+                  //     label: 'title',
+                  //     value: 'id'
+                  //   },
+                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                  // },
                   {
-                    label: '*采购仓库(必选)',
-                    prop: "warehouseId",
-                    type: "tree",
-                    rsearch: true,
-                    rules: [{
-                      required: true,
-                      message: "请输入类型",
-                      trigger: "blur"
-                    }],
-                    props: {
-                      label: 'name',
-                      value: 'id'
-                    },
-                    dicMethod: "post",
-                    dicUrl: '/api/taocao-warehouse/warehouse/dropDown'
+                    label: "预付款",
+                    prop: "advancePayment",
+                    // disabled: true,
+                    placeholder: " ",
+                    watch:{
+                      handler(){
+
+                      }
+
+                    }
                   },
                   {
                     label: "采购额",
@@ -631,10 +343,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.purchaseorder_add, false),
-          viewBtn: this.vaildData(this.permission.purchaseorder_view, false),
-          delBtn: this.vaildData(this.permission.purchaseorder_delete, false),
-          editBtn: this.vaildData(this.permission.purchaseorder_edit, false)
+          addBtn: this.vaildData(this.permission.inspector_add, false),
+          viewBtn: this.vaildData(this.permission.inspector_view, false),
+          delBtn: this.vaildData(this.permission.inspector_delete, false),
+          editBtn: this.vaildData(this.permission.inspector_edit, false)
         };
       },
       ids() {
@@ -712,64 +424,9 @@
           });
       },
       beforeOpen(done, type) {
-        if(["add"].includes(type)){
-          let sp = {
-              label: '*商品',
-              prop: "goodsId",
-              type: 'select',
-              width: 250,
-              filterable: true,
-              remote: true,
-              display:false,
-              rules: [{
-                type: 'select',
-                require: true,
-                message: '请选择商品',
-              }],
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              dicMethod: "post",
-              dicUrl: '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-              change: ({value}) => {
-                if (value) {
-                  getGoodsDetail(value).then(res => {
-                    this.form.sumMoney = 0;
-                    this.form.purchaseOrderDetailList.forEach(val => {
-                      if (val.goodsId == value) {
-                        var detail = res.data.data;
-                        val.unit = detail.unitName;
-                        // val.money = detail.money;
-                      }
-                      this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                    });
-                  });
-                }
-              },
-            };
-            console.log(this.option.column[6].children.column[0]);
-          this.option.column[6].children.column[0] = sp;
-        }
-        if(["view"].includes(type)){
-          // eslint-disable-next-line no-undef
-          let sp = {
-              label: '*商品',
-              prop: "goodsName",
-            };
-          console.log(this.option.column[6].children.column[0]);
-          this.option.column[6].children.column[0] = sp;
+        if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
-            let form  = res.data.data;
-            form.purchaseOrderDetailList.forEach((value,index) => {
-              getGoodsDetail(value.goodsId).then( res =>{
-                value.goodsName = res.data.data.goodsName;
-                if(index == (form.purchaseOrderDetailList.length-1)){
-                  this.form = form
-
-                }
-              })
-            })
+            this.form = res.data.data;
           });
         }
         done();

@@ -82,14 +82,13 @@
               label: "仓库",
               prop: "warehouseId",
               type:'tree',
+              search:true,
               props: {
-                label: 'name',
+                label: 'title',
                 value: 'id'
               },
               // cascaderItem: ['storageId'],
-              search:true,
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+              dicUrl: '/api/erp-wms/warehouse/tree'
             },
             {
               label: "商品",

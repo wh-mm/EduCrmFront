@@ -28,6 +28,7 @@
         </el-button>
       </template>
     </avue-crud>
+
   </basic-container>
 </template>
 
@@ -102,7 +103,8 @@
             },
           ]
         },
-        data: []
+        data: [],
+
       };
     },
     computed: {
@@ -246,6 +248,7 @@
           this.selectionClear();
         });
       },
+
     }
   };
 </script>

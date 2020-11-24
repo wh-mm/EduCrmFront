@@ -153,5 +153,24 @@ export const updateStatus = (id, status) => {
     }
   })
 }
+export const viewAcceptanceRecord = (id) => {
+  return request({
+    url: '/api/purchase/purchaseorder/viewAcceptanceRecord',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}
+
+export const viewCommodity = (commodityId) => {
+  return request({
+    url: '/api/purchase/purchaseorder/viewCommodity',
+    method: 'post',
+    params:{
+      commodityId
+    }
+  })
+}
 
 
