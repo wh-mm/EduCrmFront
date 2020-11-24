@@ -80,7 +80,7 @@
                 label: 'supplierName',
                 value: 'id'
               },
-              dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+              dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
             },
             {
               label: "通用名",
@@ -275,7 +275,7 @@
             text2.display = true
             text2.rules = [{
               required: true,
-              message: "请输入内容2",
+              message: "请输入",
               trigger: "blur"
             }]
           } else {

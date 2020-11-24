@@ -42,7 +42,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/quality/information/submitAll',
+    url: '/api/quality/information/submit',
     method: 'post',
     data: row
   })
@@ -74,4 +74,34 @@ export function shenfen (rule, value,callback) {
       callback();
     }
   }
+}
+
+export const validateContacts = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请输入中文'))
+  }
+  if (!/^[\u0391-\uFFE5A-Za-z]+$/.test(value)) {
+    callback(new Error('不可输入特殊字符'))
+  } else {
+    callback()
+  }
+}
+
+export function isInteger(rule, value, callback) {
+  if (!value) {
+    return callback(new Error('输入不可以为空'));
+  }
+  setTimeout(() => {
+    if (!Number(value)) {
+      callback(new Error('请输入正整数'));
+    } else {
+      const re = /^[0-9]*[1-9][0-9]*$/;
+      const rsCheck = re.test(value);
+      if (!rsCheck) {
+        callback(new Error('请输入正整数'));
+      } else {
+        callback();
+      }
+    }
+  }, 0);
 }

@@ -38,9 +38,9 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove, updateInspector,shenfen} from "@/api/quality/information";
+  import {getList, getDetail, add, update, remove, updateInspector,shenfen,validateContacts,isInteger} from "@/api/quality/information";
   import {mapGetters} from "vuex";
-
+/*
     const validateIdNo  =(rule, value, callback) => {
     const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
     if (value == '' || value == undefined || value == null) {
@@ -52,7 +52,8 @@
         callback();
       }
     }
-  };
+  };*/
+
   export default {
     data() {
 
@@ -74,9 +75,11 @@
               label: "供应商名称",
               prop: "supplierName",
               labelWidth: 110,
+              maxlength:20,
+              showWordLimit:true,
               rules: [{
                 required: true,
-                message: "供应商名称",
+                validator:validateContacts,
                 trigger: "blur"
               }]
             },
@@ -108,9 +111,11 @@
               label: "组织代码",
               prop: "organizationCode",
               hide: true,
+              maxlength:18,
+              showWordLimit:true,
               rules: [{
                 required: true,
-                message: "请输入组织代码",
+                message:"组织代码",
                 trigger: "blur"
               }]
             },
@@ -118,9 +123,11 @@
               label: "税号",
               prop: "dutyParagraph",
               hide: true,
+              maxlength:18,
+              showWordLimit:true,
               rules: [{
                 required: true,
-                message: "请输入税号",
+                message: "税号",
                 trigger: "blur"
               }]
             },
@@ -130,7 +137,7 @@
               hide: true,
               rules: [{
                 required: true,
-                message: "请输入法人代表",
+                validator:validateContacts,
                 trigger: "blur"
               }]
             },
@@ -138,6 +145,8 @@
               label: "社会统一信用码",
               prop: "socialUniformCreditCode",
               labelWidth: 130,
+              maxlength:18,
+              showWordLimit:true,
               rules: [{
                 required: true,
                 message: "请输入社会统一信用码",
@@ -150,7 +159,7 @@
               hide: true,
               rules: [{
                 required: true,
-                message: "请输入注册地址",
+                validator:validateContacts,
                 trigger: "blur"
               }]
             },
@@ -161,7 +170,7 @@
               prop: "productionOrWarehouseAddress",
               rules: [{
                 required: true,
-                message: "请输入生产或仓库地址",
+                validator:validateContacts,
                 trigger: "blur"
               }]
             },
@@ -172,7 +181,7 @@
               labelWidth: 110,
               rules: [{
                 required: true,
-                message: "请输入质量负责人",
+                validator:validateContacts,
                 trigger: "blur"
               }]
             },
@@ -182,7 +191,7 @@
               labelWidth: 110,
               rules: [{
                 required: true,
-                message: "请输入企业负责人",
+                validator:validateContacts,
                 trigger: "blur"
               }]
             },
@@ -234,18 +243,31 @@
             {
               label: "联系人",
               prop: "contacts",
+              validator:validateContacts,
             },
             {
               label: "联系人电话",
               prop: "contactPhoneNumber",
+              labelWidth: 120,
               maxlength:11,
-              showWordLimit:true
+              showWordLimit:true,
+              rules: [{
+                required: true,
+                validator:isInteger,
+                trigger: "blur"
+              }]
             },
             {
               label: "联系人身份证",
               prop: "contactIdCard",
-              validator: shenfen,
-              labelWidth: 110,
+              labelWidth: 120,
+              maxlength:18,
+              showWordLimit:true,
+              rules: [{
+                required: true,
+                validator: shenfen,
+                trigger: "blur"
+              }]
             },
             /*{
               label: "使用状态",
@@ -281,7 +303,12 @@
                 column: [{
                   label: "供应商证件照名称",
                   prop: "nameOfCertificatePhoto",
-                  labelWidth: 130,
+                  labelWidth: 140,
+                  rules: [{
+                    required: true,
+                    validator:validateContacts,
+                    trigger: "blur"
+                  }]
                 },
                   {
                     label: "签发日期",
@@ -313,7 +340,7 @@
                   },
                   {
                     label: "供应商证件照",
-                    prop: "supplierCertificatePhotos",
+                    prop: "supplierCertificatePhoto",
                     dataType: 'array',
                     labelWidth: 110,
                     type: 'upload',
@@ -344,9 +371,7 @@
 
            column: [
              {
-
              },
-
              /!*{
                label: "有效结束时间",
                prop: "effectiveEnd",
@@ -377,8 +402,6 @@
 
            ]
          },*/
-
-
         data: []
       };
     },
@@ -404,6 +427,7 @@
       rowSave(row, done, loading) {
         for (let i = 0; i < row.certificates.length; i++) {
           row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
+          row.certificates[i].supplierCertificatePhoto=row.certificates[i].supplierCertificatePhoto.join(",");
         }
         add(row).then(() => {
           this.onLoad(this.page);
@@ -421,6 +445,7 @@
       rowUpdate(row, index, done, loading) {
         for (let i = 0; i < row.certificates.length; i++) {
           row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
+          row.certificates[i].supplierCertificatePhoto=row.certificates[i].supplierCertificatePhoto.join(",");
         }
         update(row).then(() => {
           this.onLoad(this.page);
