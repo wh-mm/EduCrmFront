@@ -71,7 +71,7 @@
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
             {
-              label: "商品id",
+              label: "商品名称",
               prop: "goodsId",
               type:"select",
               props: {
@@ -88,6 +88,24 @@
               rules: [{
                 required: true,
                 message: "请输入医院药品编号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "中药编码",
+              prop: "traditionalChineseMedicineCode",
+              rules: [{
+                required: true,
+                message: "请输入中药编码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label:"HIS码",
+              prop: "hisCode",
+              rules: [{
+                required: true,
+                message: "请输入HIS码",
                 trigger: "blur"
               }]
             },
