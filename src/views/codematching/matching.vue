@@ -26,8 +26,26 @@
                    v-if="permission.matching_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button v-if="permission.region_import"
+                   type="primary"
+                   size="small"
+                   icon="el-icon-upload2"
+                   @click="handleImport">导 入
+        </el-button>
       </template>
     </avue-crud>
+    <el-dialog title="行政区划数据导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
@@ -38,6 +56,59 @@
   export default {
     data() {
       return {
+        excelBox: false,
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: "/api/blade-system/region/import-region"
+            },
+            {
+              label: "数据覆盖",
+              prop: "isCovered",
+              type: "switch",
+              align: "center",
+              width: 80,
+              dicData: [
+                {
+                  label: "否",
+                  value: 0
+                },
+                {
+                  label: "是",
+                  value: 1
+                }
+              ],
+              value: 0,
+              slot: true,
+              rules: [
+                {
+                  required: true,
+                  message: "请选择是否覆盖",
+                  trigger: "blur"
+                }
+              ]
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
+          ]
+        },
         form: {},
         query: {},
         loading: true,
@@ -48,7 +119,7 @@
         },
         selectionList: [],
         option: {
-          height:'auto',
+          height: 'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -73,14 +144,14 @@
             {
               label: "商品名称",
               prop: "goodsId",
-              type:"select",
+              type: "select",
               props: {
                 label: 'goodsName',
                 value: 'id'
               },
-              search:true,
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
+              search: true,
+              dicMethod: "post",
+              dicUrl: '/api/taocao-warehouse/goods/selecListGoods'
             },
             {
               label: "货品名称",
@@ -101,7 +172,7 @@
               }]
             },
             {
-              label:"HIS码",
+              label: "HIS码",
               prop: "hisCode",
               rules: [{
                 required: true,
@@ -120,8 +191,21 @@
             },
           ]
         },
-        data: []
+        data: [],
       };
+    },
+    watch: {
+      'form.tenantId'() {
+        if (this.form.tenantId !== '' && this.initFlag) {
+          this.initData(this.form.tenantId);
+        }
+      },
+      'excelForm.isCovered'() {
+        if (this.excelForm.isCovered !== '') {
+          const column = this.findObject(this.excelOption.column, "excelFile");
+          column.action = `/api/blade-user/import-user?isCovered=${this.excelForm.isCovered}`;
+        }
+      }
     },
     computed: {
       ...mapGetters(["permission"]),
@@ -154,6 +238,18 @@
           loading();
           window.console.log(error);
         });
+      },
+
+      //导入
+      handleImport() {
+        this.excelBox = true;
+      },
+      //导入
+      uploadAfter(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBox = false;
+        this.initTree();
+        done();
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
@@ -232,10 +328,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
