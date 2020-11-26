@@ -108,7 +108,7 @@
                 value: 'id'
               },
               search: true,
-              dicUrl: this.ERP_WMS_NAME + "/api/erp-wms/goods-type/tree"
+              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
             {
               label: "货品编码",

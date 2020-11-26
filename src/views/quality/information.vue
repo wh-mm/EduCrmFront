@@ -443,6 +443,7 @@
       },
 
       rowUpdate(row, index, done, loading) {
+
         for (let i = 0; i < row.certificates.length; i++) {
           row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
           row.certificates[i].supplierCertificatePhoto=row.certificates[i].supplierCertificatePhoto.join(",");

@@ -24,7 +24,6 @@ export const getPage = (parentId) => {
 export const getGoodsDetail = (id) => {
   return request({
     url: ERP_WMS_NAME + '/goods/detail',
-    method: 'get',
     params: {
       id
     }

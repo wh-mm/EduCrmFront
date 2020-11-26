@@ -25,6 +25,11 @@
                    @click="updateStatusNew()">审批
         </el-button>
 
+        <el-button type="button"
+                   size="small"
+                   v-if="status1 == '108'"
+                   @click="dialogFormVisible = true">填写驳回理由
+        </el-button>
       </template>
 
       <template slot-scope="{row}" slot="totalPriceForm">
@@ -42,6 +47,7 @@
     <el-dialog
       :title="title"
       :visible.sync="dialogVisible"
+      :append-to-body="true"
       width="35%"
       :modal="false"
       :before-close="handleClose">
@@ -50,22 +56,45 @@
     </el-dialog>
 
     <el-dialog
-      :title="title"
+      :title="商品资质"
       :visible.sync="commoditydialogVisible"
+      :append-to-body="true"
       width="35%"
       :modal="false"
-      :before-close="handleClose">
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag>
       <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
       </avue-crud>
+    </el-dialog>
+
+    <el-dialog title="驳回理由" :visible.sync="dialogFormVisible">
+      <avue-form ref="form" v-model="obj0Reason" :option="option0Reason">
+      </avue-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updaterejectTextNew">提 交</el-button>
+      </div>
     </el-dialog>
 
   </basic-container>
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateStatus,viewAcceptanceRecord,viewCommodity} from "@/api/purchase/purchaseorder";
+  import {
+    getList,
+    add,
+    getDetail,
+    update,
+    remove,
+    updateStatus,
+    viewAcceptanceRecord,
+    viewCommodity,
+    updaterejectText
+  } from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
+  import '@/views/purchase/dialogdrag.ts'
   export default {
     data() {
       var validateQuantity = (rule, value, callback) => {
@@ -90,6 +119,7 @@
         title: '' ,
         dialogVisible:false,
         commoditydialogVisible:false,
+        dialogFormVisible: false,
         selectionList: [],
         option: {
           height: 'auto',
@@ -101,6 +131,7 @@
           index: true,
           viewBtn: true,
           editBtn: true,
+          editBtnText:'复核选库',
           selection: true,
           dialogClickModal: false,
           dialogWidth: '80%',
@@ -124,8 +155,6 @@
               type: "select",
               rules: [{
                 required: true,
-                editDisplay: false,
-                disabled: true,
                 message: "请输入类型",
                 trigger: "blur"
               }],
@@ -161,46 +190,37 @@
               disabled: true,
             },
             {
-              label: '采购合同',
-              prop: 'dynamic',
-              type: 'dynamic',
-              editDisplay: false,
-              indexLabel: '序号',
-              span: 24,
-              children: {
-                align: 'center',
-                type: 'form',
-                indexLabel: '序号',
-                headerAlign: 'center',
-                rowAdd: (done) => {
-                  /* this.$message.success('新增回调');*/
-                  done({
-                    input: '默认值'
-                  });
-                },
-                rowDel: (row, done) => {
-                  /*this.$message.success('删除回调' + JSON.stringify(row));*/
-                  done();
-                },
-                column: [
-                  {
-                    label: "采购合同照片",
-                    prop: "purchaseContractPhotos",
-                    editDisplay: false,
-                    dataType: 'array',
-                    labelWidth: 110,
-                    type: 'upload',
-                    propsHttp: {
-                      res: 'data',
-                      url: 'link',
-                    },
-                    span: 12,
-                    listType: 'picture-card',
-                    tip: '只能上传jpg/png文件，且不超过500kb',
-                    action: "/api/oss/goods/imgUpload"
-                  },
-                ],
+              label: "采购合同照片",
+              prop: "purchaseContractPhotos",
+              dataType: 'array',
+              labelWidth: 110,
+              type: 'upload',
+              hide: true,
+              editDisplay: true,
+              propsHttp: {
+                res: 'data',
+                url: 'link',
               },
+              span: 12,
+              listType: 'picture-card',
+              tip: '只能上传jpg/png文件，且不超过500kb',
+              action: "/api/oss/goods/imgUpload"
+            },
+            {
+              label: "随货同行单",
+              prop: "shippingListPhotos",
+              dataType: 'array',
+              labelWidth: 110,
+              type: 'upload',
+              hide: true,
+              propsHttp: {
+                res: 'data',
+                url: 'link',
+              },
+              span: 12,
+              listType: 'picture-card',
+              tip: '只能上传jpg/png文件，且不超过500kb',
+              action: "/api/oss/goods/imgUpload"
             },
             {
               label: "状态",
@@ -258,18 +278,19 @@
                     label:'供应商',
                     prop:'informationId',
                     type:'select',
+                    editDisplay: false,
+                    disabled: true,
                     filterable: true,
                     remote: true,
-                    display:false,
-                    editDisplay: false,
                     props: {
+
                       label: 'supplierName',
                       value: 'id'
                     },
                     cascaderItem: ['goodsId'],
                     // cascaderItem: ['goosId'],
                     // dicMethod: "post",
-                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                    dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
                   },
                   {
                     label: '*商品',
@@ -278,8 +299,8 @@
                     width: 130,
                     filterable: true,
                     remote: true,
-                    display:false,
                     editDisplay: false,
+                    disabled: true,
                     rules: [{
                       type: 'tree',
                       require: true,
@@ -310,13 +331,13 @@
                   {
                     label: '*数量',
                     prop: "goodsQuantity",
-                    editDisplay: false,
                     type: "number",
                     width: 130,
-
+                    editDisplay: false,
+                    disabled: true,
                     rules: [{
                       validator: validateQuantity,
-                      trigger: 'blur'
+                      trigger: 'blur',
                     }],
                     change: () => {
                       this.form.sumMoney = 0;
@@ -328,11 +349,16 @@
                     },
                   },
                   {
-                    label: '实际数量',
+                    label: '收货数量',
                     prop: "realQuantity",
                     type: "number",
                     editDisplay: false,
                     disabled: true,
+                  },
+                  {
+                    label: '验收合格数量',
+                    prop: "qualifiedQuantity",
+                    type: "number",
                   },
                   {
                     label: '商品资质',
@@ -345,8 +371,8 @@
                   }, {
                     label: '单价(元)',
                     prop: "money",
-                    disabled: false,
                     editDisplay: false,
+                    disabled: true,
                     placeholder: " ",
 
                   },
@@ -381,6 +407,7 @@
                     label: "预付款",
                     prop: "advancePayment",
                     editDisplay: false,
+                    disabled: true,
                     // disabled: true,
                     placeholder: " ",
                   },
@@ -431,22 +458,143 @@
           ]
         },
         commoditydataoption : {
-          addBtn: false,
+        addBtn: false,
           menu:false,
           align:'center',
           column:[
-            {
-              label:'商品名称',
-              prop:'tradeName'
-            },{
-              label:'通用名称',
-              prop:'commonName'
+          {
+            label:'商品名称',
+            prop:'tradeName'
+          },{
+            label:'通用名称',
+            prop:'commonName'
+          },
+          {
+            label: "基本单位",
+            prop: "basicUnit",
+          },
+          {
+            label:'规格(型号)',
+            prop:'specifications'
+          },
+          {
+            label: "生产厂家",
+            prop: "manufacturer",
+          },
+          {
+            label: "进项税",
+            prop: "inputTax",
+          },
+          {
+            label: "销项税",
+            prop: "outputTax",
+          },
+          {
+            label: "分包装企业",
+            prop: "subPackagingEnterprises",
+            labelWidth: 110,
+            rules: [{
+              required: true,
+              message: "请输入分包装企业",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "剂型",
+            prop: "dosageForm",
+            type: 'tree',
+            props: {
+              label: 'dictValue',
+              value: 'dictKey'
             },
-            {
-              label:'规格(型号)',
-              prop:'specifications'
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+
+          },
+          {
+            label: 'OTC标志',
+            prop: 'signTow',
+            display: true,
+            rules: [],
+          },
+          {
+            label: "产品分类",
+            prop: "productClassification",
+            rules: [{
+              required: true,
+              message: "请输入产品分类",
+              trigger: "blur"
+            }],
+            type: 'tree',
+            props: {
+              label: 'title',
+              value: 'id'
             },
-          ]
+            dicUrl: "/api/erp-wms/goods-type/tree",
+          },
+          {
+            label: "产品二级分类",
+            prop: "productClassificationTow",
+            labelWidth: 110,
+          },
+          {
+            label: "存储期限",
+            prop: "storageLife",
+            tip: '按每月',
+          },
+          {
+            label: "存储期限类型",
+            prop: "storagePeriodType",
+            labelWidth: 110,
+          },
+          {
+            label: "特管药品",
+            prop: "specialDrugs",
+          },
+          {
+            label: "特殊药品",
+            prop: "specialDrug",
+          },
+
+          {
+            label: "国产/进口标示",
+            labelWidth: 110,
+            prop: "domesticImportIndication",
+          },
+          /*{
+            label: "产品二级分类",
+            prop: "secondaryProductClassification",
+            rules: [{
+              required: true,
+              message: "请输入产品二级分类",
+              trigger: "blur"
+            }]
+          },*/
+          {
+            label: "存储条件",
+            prop: "storageConditions",
+          },
+          {
+            label: "批准文号",
+            prop: "approvalNumber",
+          },
+          {
+            label: "税收分类",
+            prop: "taxClassification",
+          },
+        ]
+      },
+        obj0Reason:{
+          rejectText:''
+        },
+        option0Reason:{
+          emptyBtn:false,
+          submitBtn:false,
+          column: [{
+            label: "驳回理由",
+            prop: "rejectText",
+            type:'textarea',
+            span: 24,
+          }]
         },
 
       };
@@ -467,6 +615,13 @@
           ids.push(ele.id);
         });
         return ids.join(",");
+      },
+      status1() {
+        let status1 = [];
+        this.selectionList.forEach(ele => {
+          status1.push(ele.status);
+        });
+        return status1.join(",");
       }
     },
     methods: {
@@ -662,35 +817,7 @@
           this.selectionClear();
         });
       },
-      updateStatus(id) {
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-
-          })
-          .catch(() => {
-            status = 3;
-
-          }).finally(() => {
-          updateStatus(id, status).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
       updateStatusNew() {
-
-
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
@@ -721,6 +848,20 @@
           })
         });
       },
+      updaterejectTextNew() {
+        if(this.status1 === 108 && this.obj0Reason.rejectText === '' ){
+          return this.$message.error("请输入驳回理由!");
+        }
+        updaterejectText(this.ids, this.obj0Reason.rejectText).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+            this.dialogFormVisible =false;
+            this.refreshChange();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
       submit(form,done){
         add(form).then( res => {
           done();
@@ -750,7 +891,7 @@
       },
       viewCommodity(commodityId){
         console.log(commodityId)
-        this.dialogVisible = true;
+        this.commoditydialogVisible = true;
         viewCommodity(commodityId).then(res=>{
           if (res.data.success) {
             this.commoditydata = res.data.data;

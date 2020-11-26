@@ -89,7 +89,7 @@
               }]
             },
             {
-              label:"创建时间",
+              label:"记录创建时间",
               prop:"updateTime",
               dateDefault: true,
               addDisplay: false,

@@ -172,5 +172,15 @@ export const viewCommodity = (commodityId) => {
     }
   })
 }
+export const updaterejectText = (ids,rejectText) => {
+  return request({
+    url: '/api/purchase/purchaseorder/updaterejectText',
+    method: 'post',
+    params:{
+      ids,
+      rejectText
+    }
+  })
+}
 
 
