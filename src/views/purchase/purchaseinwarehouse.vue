@@ -22,7 +22,7 @@
         <el-button type="button"
                    size="small"
                    v-if="permission.purchaseinwarehouseorder_approval"
-                   @click="updateStatusNew()">审批
+                   @click="updateStatusNew()">审 批 入 库
         </el-button>
 
         <el-button type="button"
@@ -152,6 +152,7 @@
               label: "类型",
               prop: "type",
               search: true,
+              disabled: true,
               type: "select",
               rules: [{
                 required: true,
@@ -168,6 +169,7 @@
               label: "预付款状态",
               prop: "advanceStatus",
               search: true,
+              disabled: true,
               type: "select",
               rules: [{
                 required: true,
@@ -189,39 +191,23 @@
               editDisplay: false,
               disabled: true,
             },
-            {
-              label: "采购合同照片",
-              prop: "purchaseContractPhotos",
-              dataType: 'array',
-              labelWidth: 110,
-              type: 'upload',
-              hide: true,
-              editDisplay: true,
-              propsHttp: {
-                res: 'data',
-                url: 'link',
-              },
-              span: 12,
-              listType: 'picture-card',
-              tip: '只能上传jpg/png文件，且不超过500kb',
-              action: "/api/oss/goods/imgUpload"
-            },
-            {
-              label: "随货同行单",
-              prop: "shippingListPhotos",
-              dataType: 'array',
-              labelWidth: 110,
-              type: 'upload',
-              hide: true,
-              propsHttp: {
-                res: 'data',
-                url: 'link',
-              },
-              span: 12,
-              listType: 'picture-card',
-              tip: '只能上传jpg/png文件，且不超过500kb',
-              action: "/api/oss/goods/imgUpload"
-            },
+            // {
+            //   label: "单据上传",
+            //   prop: "shippingListPhotos",
+            //   dataType: 'array',
+            //   labelWidth: 110,
+            //   type: 'upload',
+            //   hide: true,
+            //   disabled: true,
+            //   propsHttp: {
+            //     res: 'data',
+            //     url: 'link',
+            //   },
+            //   span: 12,
+            //   listType: 'picture-card',
+            //   tip: '只能上传jpg/png文件，且不超过500kb',
+            //   action: "/api/oss/goods/imgUpload"
+            // },
             {
               label: "状态",
               prop: "statusName",
@@ -299,19 +285,20 @@
                     width: 130,
                     filterable: true,
                     remote: true,
-                    editDisplay: false,
+                    display:false,
                     disabled: true,
                     rules: [{
-                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
                     props: {
-                               label: 'tradeName',
-                               value: 'id'
-                              },
-                      // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-                      dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                      label: 'tradeName',
+                      value: 'id'
+                    },
+                    // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
+                    dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    // dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -358,6 +345,7 @@
                   {
                     label: '验收合格数量',
                     prop: "qualifiedQuantity",
+                    disabled: true,
                     type: "number",
                   },
                   {
@@ -826,7 +814,7 @@
         }
         var id= this.selectionList[0].id;
         let status;
-        this.$confirm("请确认是否审批?", {
+        this.$confirm("请确认是否审批入库?", {
           confirmButtonText: "确认",
           cancelButtonText: "驳回",
           type: "warning"

@@ -254,7 +254,6 @@
                     remote: true,
                     display:false,
                     rules: [{
-                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
@@ -264,6 +263,8 @@
                     },
                     // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                     dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    // dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -687,7 +688,7 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 2){
+        if (this.selectionList[0].status != 2 && this.selectionList[0].status !=104){
           return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;

@@ -18,20 +18,20 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-<!--      <template slot="menuLeft">-->
-<!--        <el-button type="primary"-->
-<!--                   size="small"-->
-<!--                   icon="el-icon-plus"-->
-<!--                   plain-->
-<!--                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库-->
-<!--        </el-button>-->
+      <template slot="menuLeft">
+        <el-button type="primary"
+                   size="small"
+                   icon="el-icon-plus"
+                   plain
+                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
+        </el-button>
 <!--        <el-button type="primary"-->
 <!--                   size="small"-->
 <!--                   icon="el-icon-plus"-->
 <!--                   plain-->
 <!--                   @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库-->
 <!--        </el-button>-->
-<!--      </template>-->
+      </template>
     </avue-crud>
     <el-dialog
       :title="title"

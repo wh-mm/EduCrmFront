@@ -18,19 +18,31 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot-scope=""  slot="menuLeft">
-<!--        <el-button type="button"-->
+      <template slot-scope="scope"  slot="menuLeft">
+<!--        <el-button type="danger"-->
 <!--                   size="small"-->
-<!--                   v-if="permission.purchaseorder_approval"-->
-<!--                   @click="updateStatusNew()">审批-->
-<!--        </el-button>-->
+<!--                   icon="el-icon-edit"-->
+<!--                   plain-->
 
+<!--                   @click.stop="handleEdit()">编 辑-->
+<!--        </el-button>-->
+<!--        // v-if=" status1 == '201'"-->
       </template>
 
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
 
+
+      <template slot-scope="scope" slot="menu">
+        <el-button :size="scope.size"  v-if="scope.row.status==201" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
+        <el-button type="primary"
+                   icon="el-icon-check"
+                   size="small"
+                   v-if="scope.row.status==201"
+                   plain
+                   @click.stop="handleEdit(scope.row,scope.index)">编辑</el-button>
+      </template>
 
       <template slot-scope="scope" slot="unitForm">
         <el-button :size="scope.size"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>
@@ -64,11 +76,25 @@
       </avue-crud>
     </el-dialog>
 
+    <el-dialog
+      title="驳回理由"
+      :append-to-body="true"
+      :visible.sync="reasonialogVisible"
+       width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+      >
+      <avue-crud v-model="form" :data="reasondata" :option="reasondataoption"  >
+      </avue-crud>
+    </el-dialog>
+
   </basic-container>
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateStatus,viewCommodity} from "@/api/purchase/purchaseorder";
+  import {getList, add, getDetail, update, remove, updateStatus,viewCommodity,viewReason} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import '@/views/purchase/dialogdrag.ts'
@@ -96,6 +122,7 @@
         title: '' ,
         dialogVisible:false,
         commoditydialogVisible:false,
+        reasonialogVisible:false,
         selectionList: [],
         option: {
           height: 'auto',
@@ -196,6 +223,7 @@
               label: "采购员",
               prop:"name",
               addDisplay: false,
+              editDisplay: false,
               viewDisplay: false
 
             },
@@ -204,6 +232,7 @@
               prop:"updateTime",
               dateDefault: true,
               addDisplay: false,
+              editDisplay: false,
               viewDisplay: false,
               type: "datetime",
               searchSpan:12,
@@ -241,7 +270,7 @@
                       label: 'supplierName',
                       value: 'id'
                     },
-                    cascaderItem: ['goodsId'],
+                    cascaderItem: ['commodityId'],
                     // cascaderItem: ['goosId'],
                     // dicMethod: "post",
                     dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
@@ -255,7 +284,6 @@
                     remote: true,
                     display:false,
                     rules: [{
-                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
@@ -265,6 +293,8 @@
                               },
                       // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                       dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    // dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -301,24 +331,8 @@
                     },
                   },
                   {
-                    label: '收货数量',
-                    prop: "realQuantity",
-                    type: "number",
-                    width: 130,
-                    disabled: true,
-                    addDisplay: false,
-                    rules: [{
-                      validator: validateQuantity,
-                      trigger: 'blur'
-                    }],
-                    change: () => {
-                      this.form.sumMoney = 0;
-                      this.form.purchaseOrderDetailList.forEach(val => {
-                        if (val.goodsId != "") {
-                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                        }
-                      });
-                    },
+                    label: "基本单位",
+                    prop: "basicUnit",
                   },
                   {
                     label: '商品资质',
@@ -334,43 +348,10 @@
                     placeholder: " ",
 
                   },
-                  // {
-                  //   label: '*采购仓库(必选)',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
                   {
                     label: "预付款",
                     prop: "advancePayment",
-                    // disabled: true,
                     placeholder: " ",
-                   watch:{
-                     handler(){
-
-                     }
-                   }
                   },
                   {
                     label: "采购额",
@@ -516,6 +497,20 @@
             },
           ]
         },
+        reasondata:[],
+        reasondataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label:'驳回理由',
+              prop:'rejectText',
+              type: "textarea",
+
+            }
+          ]
+        },
 
       };
     },
@@ -535,6 +530,13 @@
           ids.push(ele.id);
         });
         return ids.join(",");
+      },
+      status1() {
+        let status1 = [];
+        this.selectionList.forEach(ele => {
+          status1.push(ele.status);
+        });
+        return status1.join(",");
       }
     },
     methods: {
@@ -758,7 +760,6 @@
       },
       updateStatusNew() {
 
-
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
@@ -805,7 +806,6 @@
         })
       },
       viewCommodity(commodityId){
-        console.log(commodityId)
         this.commoditydialogVisible = true;
         viewCommodity(commodityId).then(res=>{
           if (res.data.success) {
@@ -815,7 +815,21 @@
             this.$message.error(res.data.msg);
           }
         })
-      }
+      },
+      viewReason(id){
+        this.reasonialogVisible = true;
+        viewReason(id).then(res=>{
+          if (res.data.success) {
+            this.reasondata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      handleEdit (row, index) {
+        this.$refs.crud.rowEdit(row, index);
+      },
     }
   };
 </script>

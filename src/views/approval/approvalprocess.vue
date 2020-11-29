@@ -58,14 +58,24 @@
           index: true,
           viewBtn: true,
           selection: true,
+          menu: false,
           dialogClickModal: false,
           column: [
             {
-              label: "审批单号",
+              label: "审批采购单号",
               prop: "approvalOrderNumber",
               rules: [{
                 required: true,
                 message: "请输入审批类型",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "旧审核状态",
+              prop: "oldStatusName",
+              rules: [{
+                required: true,
+                message: "请输入新审核状态",
                 trigger: "blur"
               }]
             },

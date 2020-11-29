@@ -138,6 +138,7 @@
               prop: "type",
               search: true,
               type: "select",
+              disabled:true,
               rules: [{
                 required: true,
                 message: "请输入类型",
@@ -152,6 +153,7 @@
             {
               label: "预付款状态",
               prop: "advanceStatus",
+              disabled:true,
               search: true,
               type: "select",
               rules: [{
@@ -193,13 +195,13 @@
               }]
 
             },
-            {
-              label: '品名',
-              prop: 'conditions',
-              hide:true,
-              display: true,
-              rules: [],
-            },
+            // {
+            //   label: '品名',
+            //   prop: 'conditions',
+            //   hide:true,
+            //   display: true,
+            //   rules: [],
+            // },
             {
               label: '批号',
               prop: 'batchNumber',
@@ -207,13 +209,14 @@
               display: true,
               rules: [],
             },
+            // {
+            //   label: '产地',
+            //   prop: 'placeOfOrigin',
+            //   hide:true,
+            //   display: true,
+            //   rules: [],
+            // },
             {
-              label: '产地',
-              prop: 'placeOfOrigin',
-              hide:true,
-              display: true,
-              rules: [],
-            },{
               label: '生产日期',
               prop: 'dateInProduced',
               type:'datetime',
@@ -222,35 +225,42 @@
               format: "yyyy-MM-dd hh:mm:ss",
               valueFormat: "yyyy-MM-dd hh:mm:ss",
               rules: [],
-            },{
-              label: '生产厂商',
-              prop: 'manufacturer',
-              hide:true,
-              display: true,
-              rules: [],
-            },{
-              label: '供货单位',
-              prop: 'supplier',
-              hide:true,
-              display: true,
-              rules: [],
-            },{
-              label: '上市许可持有人',
-              prop: 'listingPermitHolder',
-              hide:true,
-              display: true,
-              rules: [],
-            },{
-              label: '批准文号',
-              prop: 'approvalNumber',
-              hide:true,
-              display: true,
-              rules: [],
             },
+            // {
+            //   label: '生产厂商',
+            //   prop: 'manufacturer',
+            //   hide:true,
+            //   display: true,
+            //   rules: [],
+            // },
+
+            // {
+            //   label: '供货单位',
+            //   prop: 'supplier',
+            //   hide:true,
+            //   display: true,
+            //   rules: [],
+            // },
+            // {
+            //   label: '上市许可持有人',
+            //   prop: 'listingPermitHolder',
+            //   hide:true,
+            //   display: true,
+            //   rules: [],
+            // },】
+
+            // {
+            //   label: '批准文号',
+            //   prop: 'approvalNumber',
+            //   hide:true,
+            //   display: true,
+            //   rules: [],
+            // },
             {
               label: "随货同行单",
               prop: "shippingListPhotos",
               dataType: 'array',
+              disabled: true,
               labelWidth: 110,
               type: 'upload',
               hide: true,
@@ -323,6 +333,7 @@
                     filterable: true,
                     remote: true,
                     display:false,
+                    disabled:true,
                     props: {
                       label: 'supplierName',
                       value: 'id'
@@ -341,7 +352,6 @@
                     remote: true,
                     display:false,
                     rules: [{
-                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
@@ -351,6 +361,8 @@
                     },
                     // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                     dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    // dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -370,6 +382,7 @@
                   {
                     label: '*数量',
                     prop: "goodsQuantity",
+                    disabled:true,
                     type: "number",
                     width: 130,
 
@@ -390,6 +403,7 @@
                     label: '收货数量',
                     prop: "realQuantity",
                     type: "number",
+                    disabled:true,
                   },
                   {
                     label: '验收合格数量',
@@ -407,7 +421,7 @@
                   {
                     label: '单价(元)',
                     prop: "money",
-                    disabled: false,
+                    disabled:true,
                     placeholder: " ",
                     change: () => {
                       this.form.sumMoney = 0;
@@ -449,7 +463,7 @@
                   {
                     label: "预付款",
                     prop: "advancePayment",
-                    // disabled: true,
+                    disabled:true,
                     placeholder: " ",
                     watch:{
                       handler(){
@@ -621,34 +635,34 @@
       //otc 事件
       'form.typeOfGoods': {
         handler(val) {
-          var text2 = this.findObject(this.option.column, 'conditions') //品名
+          // var text2 = this.findObject(this.option.column, 'conditions') //品名
           var text3 = this.findObject(this.option.column, 'batchNumber') //批号
-          var text4 = this.findObject(this.option.column, 'placeOfOrigin') //产地
+          // var text4 = this.findObject(this.option.column, 'placeOfOrigin') //产地
           var text5 = this.findObject(this.option.column, 'dateInProduced') //生产日期
-          var text6 = this.findObject(this.option.column, 'manufacturer') //生产厂商
-          var text7 = this.findObject(this.option.column, 'supplier') //供货单位
-          var text8 = this.findObject(this.option.column, 'listingPermitHolder') //上市许可持有人
-          var text9 = this.findObject(this.option.column, 'approvalNumber') //批准文号
+          // var text6 = this.findObject(this.option.column, 'manufacturer') //生产厂商
+          // var text7 = this.findObject(this.option.column, 'supplier') //供货单位
+          // var text8 = this.findObject(this.option.column, 'listingPermitHolder') //上市许可持有人
+          // var text9 = this.findObject(this.option.column, 'approvalNumber') //批准文号
           if (val === 1 || val ===2) {
-            text2.display = true
+            // text2.display = true
             text3.display = true
-            text4.display = true
+            // text4.display = true
             text5.display = true
-            text6.display = true
-            text7.display = true
-            text8.display = true
-            text9.display = true
+            // text6.display = true
+            // text7.display = true
+            // text8.display = true
+            // text9.display = true
           }
           else {
-            text2.display = false
+            // text2.display = false
             text3.display = false
-            text4.display = false
+            // text4.display = false
             text5.display = false
-            text6.display = false
-            text7.display = false
-            text8.display = false
-            text9.display = false
-            text2.rules = []
+            // text6.display = false
+            // text7.display = false
+            // text8.display = false
+            // text9.display = false
+            // text2.rules = []
           }
         },
       },
@@ -845,7 +859,7 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 7){
+        if (this.selectionList[0].status != 7  && this.selectionList[0].status !=108){
           return this.$message.error("该任务已经完成");
         }
 

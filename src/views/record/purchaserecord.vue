@@ -27,12 +27,31 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+
+      <template slot-scope="scope" slot="unitForm">
+        <el-button :size="scope.size"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>
+      </template>
     </avue-crud>
+
+    <el-dialog
+      title="商品资质"
+      :append-to-body="true"
+      :visible.sync="commoditydialogVisible"
+      width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+    >
+      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
   import {getList, getDetail, add, update, remove} from "@/api/record/purchaserecord";
+  import {viewCommodity} from "@/api/purchase/purchaseorder";
   import {mapGetters} from "vuex";
 
   export default {
@@ -78,7 +97,15 @@
                 trigger: "blur"
               }]
             },
-
+            {
+              label: '商品资质',
+              prop: "unit",
+              type:'input',
+              placeholder: " ",
+              formslot:true,
+              editDisplay: false,
+              width: 100,
+            },
             {
               label: "采购状态",
               prop: "purchaseStatus",
@@ -105,10 +132,146 @@
             {
               label: "创建时间",
               prop: "createTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
             },
           ]
         },
-        data: []
+        data: [],
+        commoditydata:[],
+        commoditydataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label:'商品名称',
+              prop:'tradeName'
+            },{
+              label:'通用名称',
+              prop:'commonName'
+            },
+            {
+              label: "基本单位",
+              prop: "basicUnit",
+            },
+            {
+              label:'规格(型号)',
+              prop:'specifications'
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "进项税",
+              prop: "inputTax",
+            },
+            {
+              label: "销项税",
+              prop: "outputTax",
+            },
+            {
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
+              labelWidth: 110,
+              rules: [{
+                required: true,
+                message: "请输入分包装企业",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "剂型",
+              prop: "dosageForm",
+              type: 'tree',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              rules: [],
+            },
+            {
+              label: "产品分类",
+              prop: "productClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品分类",
+                trigger: "blur"
+              }],
+              type: 'tree',
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl: "/api/erp-wms/goods-type/tree",
+            },
+            {
+              label: "产品二级分类",
+              prop: "productClassificationTow",
+              labelWidth: 110,
+            },
+            {
+              label: "存储期限",
+              prop: "storageLife",
+              tip: '按每月',
+            },
+            {
+              label: "存储期限类型",
+              prop: "storagePeriodType",
+              labelWidth: 110,
+            },
+            {
+              label: "特管药品",
+              prop: "specialDrugs",
+            },
+            {
+              label: "特殊药品",
+              prop: "specialDrug",
+            },
+
+            {
+              label: "国产/进口标示",
+              labelWidth: 110,
+              prop: "domesticImportIndication",
+            },
+            /*{
+              label: "产品二级分类",
+              prop: "secondaryProductClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品二级分类",
+                trigger: "blur"
+              }]
+            },*/
+            {
+              label: "存储条件",
+              prop: "storageConditions",
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+            },
+            {
+              label: "税收分类",
+              prop: "taxClassification",
+            },
+          ]
+        },
       };
     },
     computed: {
@@ -230,15 +393,39 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            start_time: createTime[0],
+            end_time: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
+      viewCommodity(commodityId){
+        this.commoditydialogVisible = true;
+        viewCommodity(commodityId).then(res=>{
+          if (res.data.success) {
+            this.commoditydata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
     }
   };
 </script>

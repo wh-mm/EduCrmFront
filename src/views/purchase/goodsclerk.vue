@@ -139,6 +139,7 @@
               prop: "type",
               search: true,
               type: "select",
+              disabled:true,
               rules: [{
                 required: true,
                 message: "请输入类型",
@@ -154,6 +155,7 @@
               label: "预付款状态",
               prop: "advanceStatus",
               search: true,
+              disabled:true,
               type: "select",
               rules: [{
                 required: true,
@@ -235,9 +237,14 @@
               format: "yyyy-MM-dd hh:mm:ss",
               valueFormat: "yyyy-MM-dd hh:mm:ss",
               rules: [],
+            },{
+              label: '温度℃',
+              prop: 'temperature',
+              hide:true,
+              display: true,
             },
             {
-              label: "随货同行单",
+              label: "单据上传",
               prop: "shippingListPhotos",
               dataType: 'array',
               labelWidth: 110,
@@ -329,10 +336,9 @@
                     width: 130,
                     filterable: true,
                     remote: true,
-                    editDisplay: false,
+                    display:false,
                     disabled: true,
                     rules: [{
-                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
@@ -342,6 +348,8 @@
                     },
                     // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                     dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    // dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -349,7 +357,7 @@
                           this.form.purchaseOrderDetailList.forEach(val => {
                             if (val.goodsId == value) {
                               var detail = res.data.data;
-                              val.unit = detail.unitName;
+                              val.unit = detail.basicUnit;
                               // val.money = detail.money;
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
@@ -384,6 +392,15 @@
                     type: "number",
                   },
                   {
+                    label: "基本单位",
+                    prop: "basicUnit",
+                  },
+                  {
+                    label: '到货日期',
+                    prop: "deliveryDate",
+                    type: "date",
+                  },
+                  {
                     label: '商品资质',
                     prop: "unit",
                     type:'input',
@@ -406,33 +423,6 @@
                       });
                     }
                   },
-                  // {
-                  //   label: '*采购仓库(必选)',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
                   {
                     label: "预付款",
                     prop: "advancePayment",
@@ -616,6 +606,7 @@
           var text5 = this.findObject(this.option.column, 'timeOfShipment') //启运时间
           var text6 = this.findObject(this.option.column, 'wayOfTemperatureControl') //温控方式
           var text7 = this.findObject(this.option.column, 'arrivalTime') //到货时间
+          var text8 = this.findObject(this.option.column, 'temperature') //到货时间
           if (val === 1) {
             text2.display = true
             text3.display = true
@@ -623,6 +614,7 @@
             text5.display = true
             text6.display = true
             text7.display = true
+            text8.display = true
             text2.rules = [{
               required: true,
               message: "请输入",
@@ -647,6 +639,10 @@
               required: true,
               message: "请输入",
               trigger: "blur"
+            }],text8.rules = [{
+              required: true,
+              message: "请输入",
+              trigger: "blur"
             }]
           }
           else {
@@ -656,6 +652,7 @@
             text5.display = false
             text6.display = false
             text7.display = false
+            text8.display = false
             text2.rules = []
           }
         },
@@ -853,7 +850,7 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 6){
+        if (this.selectionList[0].status != 6 && this.selectionList[0].status !=107){
           return this.$message.error("状态已经完成");
         }
         var id= this.selectionList[0].id;

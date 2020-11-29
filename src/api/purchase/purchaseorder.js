@@ -172,6 +172,15 @@ export const viewCommodity = (commodityId) => {
     }
   })
 }
+export const viewReason = (id) => {
+  return request({
+    url: '/api/purchase/purchaseorder/viewReason',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}
 export const updaterejectText = (ids,rejectText) => {
   return request({
     url: '/api/purchase/purchaseorder/updaterejectText',
