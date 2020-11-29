@@ -96,6 +96,7 @@
 <script>
   import {getList, add, getDetail, update, remove, updateStatus,viewCommodity,viewReason} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {getCommodityDetail} from "@/api/quality/commodity";
   import {mapGetters} from "vuex";
   import '@/views/purchase/dialogdrag.ts'
   export default {
@@ -291,19 +292,21 @@
                                label: 'tradeName',
                                value: 'id'
                               },
-                      // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                       dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
                     // dicMethod:'post',
                     // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
+                      console.log(value);
                       if (value) {
-                        getGoodsDetail(value).then(res => {
+                        getCommodityDetail(value).then(res => {
                           this.form.sumMoney = 0;
                           this.form.purchaseOrderDetailList.forEach(val => {
-                            if (val.goodsId == value) {
+                            console.log(val.commodityId)
+                            if (val.commodityId == value) {
                               var detail = res.data.data;
-                              val.unit = detail.unitName;
-                              // val.money = detail.money;
+                              console.log(detail.basicUnit)
+                              val.basicUnits = detail.basicUnit;
+
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });
@@ -332,7 +335,9 @@
                   },
                   {
                     label: "基本单位",
-                    prop: "basicUnit",
+                    prop: "basicUnits",
+                    editDisplay: false,
+                    disabled: true,
                   },
                   {
                     label: '商品资质',

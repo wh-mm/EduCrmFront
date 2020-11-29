@@ -12,7 +12,7 @@ export const getList = (current, size, params) => {
   })
 }
 
-export const getDetail = (id) => {
+export const getCommodityDetail = (id) => {
   return request({
     url: '/api/quality/commodity/detail',
     method: 'get',

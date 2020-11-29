@@ -97,7 +97,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove, updateInspector, isInteger} from "@/api/quality/commodity";
+  import {getList, getCommodityDetail, add, update, remove, updateInspector, isInteger} from "@/api/quality/commodity";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
 
@@ -293,6 +293,41 @@
                 value: 'dictKey'
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+
+            },
+            {
+              label: "OTC标志",
+              prop: "sign",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '有',
+                value: 0
+              }, {
+                label: '无',
+                value: 1,
+              }]
+
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              rules: [],
+            },
+            {
+              label: "是否可拆零",
+              prop: "scattered",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '是',
+                value: 0
+              }, {
+                label: '否',
+                value: 1,
+              }]
+
             },
             {
               label: "产品分类",
@@ -544,6 +579,10 @@
             }];
           }
         },
+      },
+      //拆零时间
+      'form.scattered': {
+
         immediate: true
       },
     },
@@ -663,7 +702,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
+          getCommodityDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
