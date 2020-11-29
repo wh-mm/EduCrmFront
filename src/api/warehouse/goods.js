@@ -24,7 +24,6 @@ export const getPage = (parentId) => {
 export const getGoodsDetail = (id) => {
   return request({
     url: ERP_WMS_NAME + '/goods/detail',
-    method: 'get',
     params: {
       id
     }
@@ -95,6 +94,29 @@ export const  selecListGoodsName = (id) => {
     method: 'get',
     params: {
       id
+    }
+  })
+}
+
+export const pageMaintenanceCycle = (current, size, params) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/pageMaintenanceCycle',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+}
+
+export const saveMaintenanceCycle = (id,maintenanceCycle) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/saveMaintenanceCycle',
+    method: 'post',
+    params: {
+      id,
+      maintenanceCycle
     }
   })
 }

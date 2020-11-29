@@ -18,6 +18,7 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
+
       <template slot="menuLeft">
         <el-button type="danger"
                    size="small"
@@ -27,9 +28,16 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+
       <template slot-scope="{type,size,row}" slot="menu">
         <el-button icon="el-icon-plus" :size="size" option="optionForm" :type="text" @click="viewPurchaseOrder(row.purchaseId)">查看采购单</el-button>
+        <el-button :size="size" :type="text"  @click="viewCommodity(row.commodityId)">查看资质</el-button>
       </template>
+
+<!--      <template slot-scope="scope" slot="unitForm">-->
+<!--        <el-button :size="scope.size" :type="text"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>-->
+<!--      </template>-->
+
     </avue-crud>
     <el-dialog
       :title="title"
@@ -39,12 +47,26 @@
       :before-close="handleClose">
       <avue-crud :data="datas" :option="option0"></avue-crud>
     </el-dialog>
+
+    <el-dialog
+      title="商品资质"
+      :append-to-body="true"
+      :visible.sync="commoditydialogVisible"
+      width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag >
+      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
   import {getList, getDetails, add, update, remove,viewPurchaseOrder} from "@/api/materialsdelivery/materialsdelivery";
   import {mapGetters} from "vuex"
+  import {viewCommodity} from "@/api/purchase/purchaseorder";
 
   export default {
     data() {
@@ -60,6 +82,7 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        commoditydialogVisible:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -105,13 +128,13 @@
               }]
             },
             {
-              label: "商品资质",
-              prop: "goodsQuality",
-              rules: [{
-                required: true,
-                message: "请输入商品资质",
-                trigger: "blur"
-              }]
+              label: '商品资质',
+              prop: "unit",
+              type:'input',
+              placeholder: " ",
+              formslot:true,
+              hide:true,
+              width: 100,
             },
             {
               label: "商品数量",
@@ -121,6 +144,52 @@
                 message: "请输入商品数量",
                 trigger: "blur"
               }]
+            },
+            {
+              label: "冷冻、冷藏",
+              prop: "freeze",
+              type: 'radio',
+              hide: true,
+            },
+            {
+              label: '生产企业',
+              prop: 'manufacturingEnterprise',
+              display: true,
+              rules: [],
+            },
+            {
+              label: '发货单位',
+              prop: 'forwardingUnit',
+              display: true,
+              rules: [],
+            },
+            {
+              label: '发运地点',
+              prop: 'deliveryPlace',
+              display: true,
+              rules: [],
+            },{
+              label: '启运时间',
+              prop: 'timeOfShipment',
+              type:'datetime',
+              display: true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              rules: [],
+            },{
+              label: '温控方式',
+              prop: 'wayOfTemperatureControl',
+              display: true,
+              rules: [],
+            },
+            {
+              label: '到货时间',
+              prop: 'arrivalTime',
+              type:'datetime',
+              display: true,
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              rules: [],
             },
             {
               label: "收货状态",
@@ -135,7 +204,7 @@
               addDisplay: false,
             },
             {
-              label:"创建时间",
+              label:"记录创建时间",
               prop:"createTime",
               dateDefault: true,
               addDisplay: false,
@@ -153,6 +222,7 @@
         },
         data: [],
         datas:[],
+        commoditydata:[],
         option0 : {
           // border:true,
           // index:true,
@@ -182,13 +252,7 @@
               filterable: true,
               remote: true,
               display: false,
-            } , {
-              label: '单位',
-              prop: "unit",
-              filterable: true,
-              remote: true,
-              display: false,
-            } ,
+            },
             {
               label: '仓库',
               prop: "warehouseName",
@@ -204,8 +268,133 @@
               display: false,
             }
           ]
-        }
+        },
+        commoditydataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label:'商品名称',
+              prop:'tradeName'
+            },{
+              label:'通用名称',
+              prop:'commonName'
+            },
+            {
+              label: "基本单位",
+              prop: "basicUnit",
+            },
+            {
+              label:'规格(型号)',
+              prop:'specifications'
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "进项税",
+              prop: "inputTax",
+            },
+            {
+              label: "销项税",
+              prop: "outputTax",
+            },
+            {
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
+              labelWidth: 110,
+              rules: [{
+                required: true,
+                message: "请输入分包装企业",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "剂型",
+              prop: "dosageForm",
+              type: 'tree',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
 
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              rules: [],
+            },
+            {
+              label: "产品分类",
+              prop: "productClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品分类",
+                trigger: "blur"
+              }],
+              type: 'tree',
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl: "/api/erp-wms/goods-type/tree",
+            },
+            {
+              label: "产品二级分类",
+              prop: "productClassificationTow",
+              labelWidth: 110,
+            },
+            {
+              label: "存储期限",
+              prop: "storageLife",
+              tip: '按每月',
+            },
+            {
+              label: "存储期限类型",
+              prop: "storagePeriodType",
+              labelWidth: 110,
+            },
+            {
+              label: "特管药品",
+              prop: "specialDrugs",
+            },
+            {
+              label: "特殊药品",
+              prop: "specialDrug",
+            },
+
+            {
+              label: "国产/进口标示",
+              labelWidth: 110,
+              prop: "domesticImportIndication",
+            },
+            /*{
+              label: "产品二级分类",
+              prop: "secondaryProductClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品二级分类",
+                trigger: "blur"
+              }]
+            },*/
+            {
+              label: "存储条件",
+              prop: "storageConditions",
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+            },
+            {
+              label: "税收分类",
+              prop: "taxClassification",
+            },
+          ]
+        },
       };
     },
     computed: {
@@ -354,6 +543,18 @@
         viewPurchaseOrder(purchaseId).then(res=>{
           if (res.data.success) {
             this.datas = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      viewCommodity(commodityId){
+        console.log(commodityId)
+        this.commoditydialogVisible = true;
+        viewCommodity(commodityId).then(res=>{
+          if (res.data.success) {
+            this.commoditydata = res.data.data;
             this.$message.success(res.data.msg);
           } else {
             this.$message.error(res.data.msg);

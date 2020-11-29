@@ -18,44 +18,75 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot-scope=""  slot="menuLeft">
-<!--        <el-button type="button"-->
+      <template slot-scope="scope"  slot="menuLeft">
+<!--        <el-button type="danger"-->
 <!--                   size="small"-->
-<!--                   v-if="permission.purchaseorder_approval"-->
-<!--                   @click="updateStatusNew()">审批-->
-<!--        </el-button>-->
+<!--                   icon="el-icon-edit"-->
+<!--                   plain-->
 
+<!--                   @click.stop="handleEdit()">编 辑-->
+<!--        </el-button>-->
+<!--        // v-if=" status1 == '201'"-->
       </template>
 
       <template slot-scope="{row}" slot="totalPriceForm">
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
-      <template slot-scope="{type,size,row}" slot="menu">
-        <el-button icon="el-icon-plus" :size="size" option="option0"  :type="type" @click="viewAcceptanceRecord(row.id)">查看验收记录</el-button>
+
+
+      <template slot-scope="scope" slot="menu">
+        <el-button :size="scope.size"  v-if="scope.row.status==201" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
+        <el-button type="primary"
+                   icon="el-icon-check"
+                   size="small"
+                   v-if="scope.row.status==201"
+                   plain
+                   @click.stop="handleEdit(scope.row,scope.index)">编辑</el-button>
       </template>
 
       <template slot-scope="scope" slot="unitForm">
-        <el-button :size="scope.size" option = "commoditydataoption" @click="viewCommodity(scope.row.commodityId)">查询</el-button>
+        <el-button :size="scope.size"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>
       </template>
 
     </avue-crud>
     <el-dialog
-      :title="title"
+      title="验收记录"
+      :append-to-body="true"
       :visible.sync="dialogVisible"
       width="35%"
       :modal="false"
-      :before-close="handleClose">
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag >
       <avue-crud v-model="form" :data="datas" :option="option0" >
       </avue-crud>
     </el-dialog>
 
     <el-dialog
-      :title="title"
+      title="商品资质"
+      :append-to-body="true"
       :visible.sync="commoditydialogVisible"
-      width="35%"
+       width="50%"
       :modal="false"
-      :before-close="handleClose">
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+      >
       <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
+
+    <el-dialog
+      title="驳回理由"
+      :append-to-body="true"
+      :visible.sync="reasonialogVisible"
+       width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+      >
+      <avue-crud v-model="form" :data="reasondata" :option="reasondataoption"  >
       </avue-crud>
     </el-dialog>
 
@@ -63,9 +94,10 @@
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateStatus,viewAcceptanceRecord,viewCommodity} from "@/api/purchase/purchaseorder";
+  import {getList, add, getDetail, update, remove, updateStatus,viewCommodity,viewReason} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
+  import '@/views/purchase/dialogdrag.ts'
   export default {
     data() {
       var validateQuantity = (rule, value, callback) => {
@@ -90,6 +122,7 @@
         title: '' ,
         dialogVisible:false,
         commoditydialogVisible:false,
+        reasonialogVisible:false,
         selectionList: [],
         option: {
           height: 'auto',
@@ -157,46 +190,22 @@
               disabled: true,
             },
             {
-              label: '采购合同',
-              prop: 'dynamic',
-              type: 'dynamic',
-              indexLabel: '序号',
-              span: 24,
-              children: {
-                align: 'center',
-                type: 'form',
-                indexLabel: '序号',
-                headerAlign: 'center',
-                rowAdd: (done) => {
-                  /* this.$message.success('新增回调');*/
-                  done({
-                    input: '默认值'
-                  });
-                },
-                rowDel: (row, done) => {
-                  /*this.$message.success('删除回调' + JSON.stringify(row));*/
-                  done();
-                },
-                column: [
-                  {
-                    label: "采购合同照片",
-                    prop: "purchaseContractPhotos",
-                    dataType: 'array',
-                    labelWidth: 110,
-                    type: 'upload',
-                    propsHttp: {
-                      res: 'data',
-                      url: 'link',
-                    },
-                    span: 12,
-                    listType: 'picture-card',
-                    tip: '只能上传jpg/png文件，且不超过500kb',
-                    action: "/api/oss/goods/imgUpload"
+                  label: "采购合同照片",
+                  prop: "purchaseContractPhotos",
+                  dataType: 'array',
+                  labelWidth: 110,
+                  type: 'upload',
+                  hide: true,
+                  propsHttp: {
+                    res: 'data',
+                    url: 'link',
                   },
-                ],
-              },
-            },
-            {
+                  span: 12,
+                  listType: 'picture-card',
+                  tip: '只能上传jpg/png文件，且不超过500kb',
+                  action: "/api/oss/goods/imgUpload"
+                },
+             {
               label: "状态",
               prop: "statusName",
               type:'select',
@@ -214,6 +223,7 @@
               label: "采购员",
               prop:"name",
               addDisplay: false,
+              editDisplay: false,
               viewDisplay: false
 
             },
@@ -222,6 +232,7 @@
               prop:"updateTime",
               dateDefault: true,
               addDisplay: false,
+              editDisplay: false,
               viewDisplay: false,
               type: "datetime",
               searchSpan:12,
@@ -259,10 +270,10 @@
                       label: 'supplierName',
                       value: 'id'
                     },
-                    cascaderItem: ['goodsId'],
+                    cascaderItem: ['commodityId'],
                     // cascaderItem: ['goosId'],
                     // dicMethod: "post",
-                    dicUrl: '/api/quality/information/dropDowns?name={{key}}',
+                    dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
                   },
                   {
                     label: '*商品',
@@ -273,7 +284,6 @@
                     remote: true,
                     display:false,
                     rules: [{
-                      type: 'tree',
                       require: true,
                       message: '请选择商品',
                     }],
@@ -283,6 +293,8 @@
                               },
                       // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
                       dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    // dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
@@ -319,23 +331,8 @@
                     },
                   },
                   {
-                    label: '实际数量',
-                    prop: "realQuantity",
-                    type: "number",
-                    // width: 130,
-                    //
-                    // rules: [{
-                    //   validator: validateQuantity,
-                    //   trigger: 'blur'
-                    // }],
-                    // change: () => {
-                    //   this.form.sumMoney = 0;
-                    //   this.form.purchaseOrderDetailList.forEach(val => {
-                    //     if (val.goodsId != "") {
-                    //       this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                    //     }
-                    //   });
-                    // },
+                    label: "基本单位",
+                    prop: "basicUnit",
                   },
                   {
                     label: '商品资质',
@@ -351,44 +348,10 @@
                     placeholder: " ",
 
                   },
-                  // {
-                  //   label: '*采购仓库(必选)',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
                   {
                     label: "预付款",
                     prop: "advancePayment",
-                    // disabled: true,
                     placeholder: " ",
-                   watch:{
-                     handler(){
-
-                     }
-
-                   }
                   },
                   {
                     label: "采购额",
@@ -407,34 +370,7 @@
           ]
         },
         data: [],
-        datas:[],
         commoditydata:[],
-        option0 : {
-          addBtn: false,
-          menu:false,
-          align:'center',
-          column:[
-            {
-              label: '*商品',
-              prop: "goodsName",
-              filterable: true,
-              remote: true,
-              display: false,
-            },
-            {
-              label:'数量',
-              prop:"goodsQuantity"
-            },
-            {
-              label:'验收状态',
-              prop:"acceptanceStatusName"
-            },
-            {
-              label:'验收员',
-              prop:"acceptanceName"
-            }
-          ]
-        },
         commoditydataoption : {
           addBtn: false,
           menu:false,
@@ -448,9 +384,131 @@
               prop:'commonName'
             },
             {
+              label: "基本单位",
+              prop: "basicUnit",
+            },
+            {
               label:'规格(型号)',
               prop:'specifications'
             },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "进项税",
+              prop: "inputTax",
+            },
+            {
+              label: "销项税",
+              prop: "outputTax",
+            },
+            {
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
+              labelWidth: 110,
+              rules: [{
+                required: true,
+                message: "请输入分包装企业",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "剂型",
+              prop: "dosageForm",
+              type: 'tree',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              rules: [],
+            },
+            {
+              label: "产品分类",
+              prop: "productClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品分类",
+                trigger: "blur"
+              }],
+              type: 'tree',
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl: "/api/erp-wms/goods-type/tree",
+            },
+            {
+              label: "产品二级分类",
+              prop: "productClassificationTow",
+              labelWidth: 110,
+            },
+            {
+              label: "存储期限",
+              prop: "storageLife",
+              tip: '按每月',
+            },
+            {
+              label: "存储期限类型",
+              prop: "storagePeriodType",
+              labelWidth: 110,
+            },
+            {
+              label: "特管药品",
+              prop: "specialDrugs",
+            },
+            {
+              label: "特殊药品",
+              prop: "specialDrug",
+            },
+
+            {
+              label: "国产/进口标示",
+              labelWidth: 110,
+              prop: "domesticImportIndication",
+            },
+            /*{
+              label: "产品二级分类",
+              prop: "secondaryProductClassification",
+              rules: [{
+                required: true,
+                message: "请输入产品二级分类",
+                trigger: "blur"
+              }]
+            },*/
+            {
+              label: "存储条件",
+              prop: "storageConditions",
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+            },
+            {
+              label: "税收分类",
+              prop: "taxClassification",
+            },
+          ]
+        },
+        reasondata:[],
+        reasondataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label:'驳回理由',
+              prop:'rejectText',
+              type: "textarea",
+
+            }
           ]
         },
 
@@ -472,6 +530,13 @@
           ids.push(ele.id);
         });
         return ids.join(",");
+      },
+      status1() {
+        let status1 = [];
+        this.selectionList.forEach(ele => {
+          status1.push(ele.status);
+        });
+        return status1.join(",");
       }
     },
     methods: {
@@ -695,7 +760,6 @@
       },
       updateStatusNew() {
 
-
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
@@ -741,21 +805,8 @@
           done();
         })
       },
-      viewAcceptanceRecord(id){
-        console.log(id)
-        this.dialogVisible = true;
-        viewAcceptanceRecord(id).then(res=>{
-          if (res.data.success) {
-            this.datas = res.data.data;
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
       viewCommodity(commodityId){
-        console.log(commodityId)
-        this.dialogVisible = true;
+        this.commoditydialogVisible = true;
         viewCommodity(commodityId).then(res=>{
           if (res.data.success) {
             this.commoditydata = res.data.data;
@@ -764,7 +815,21 @@
             this.$message.error(res.data.msg);
           }
         })
-      }
+      },
+      viewReason(id){
+        this.reasonialogVisible = true;
+        viewReason(id).then(res=>{
+          if (res.data.success) {
+            this.reasondata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      handleEdit (row, index) {
+        this.$refs.crud.rowEdit(row, index);
+      },
     }
   };
 </script>

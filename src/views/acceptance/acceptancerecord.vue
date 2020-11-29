@@ -84,7 +84,7 @@
               }]
             },
             {
-              label: "商品id",
+              label: "商品",
               prop: "goodsName",
               rules: [{
                 required: true,
@@ -120,7 +120,89 @@
               }]
             },
             {
-              label:"创建时间",
+              label: "商品类型",
+              prop: "typeOfGoods",
+              hide:true,
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "品名",
+              prop: "conditions",
+              rules: [{
+              required: true,
+              message: "请输入验收状态",
+              trigger: "blur"
+              }],
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "生产日期",
+              prop: "dateInProduced",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "生产厂商",
+              prop: "manufacturer",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "供货单位",
+              prop: "supplier",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "上市许可持有人",
+              prop: "listingPermitHolder",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+              rules: [{
+                required: true,
+                message: "请输入验收状态",
+                trigger: "blur"
+              }]
+            },
+            {
+              label:"记录创建时间",
               prop:"createTime",
               dateDefault: true,
               addDisplay: false,
@@ -170,6 +252,7 @@
         datas:[],
       };
     },
+
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
