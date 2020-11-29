@@ -166,6 +166,7 @@
             {
               label: "商品名",
               prop: "tradeName",
+
               tip: '商品名',
               rules: [{
                 message: "商品名",
@@ -189,6 +190,7 @@
                 value: 'dictKey'
               },
               required: true,
+
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
             },
             {
@@ -382,14 +384,15 @@
               label: "OTC标志",
               prop: "sign",
               type: 'radio',
+              viewDisplay: true,
               hide: true,
-              value: 1,
+              value: '1',
               dicData: [{
                 label: '有',
-                value: 1
+                value: '1'
               }, {
                 label: '无',
-                value: 2,
+                value: '2',
               }]
             },
             {
@@ -410,14 +413,15 @@
               prop: 'domesticImportIndication',
               type: 'radio',
               labelWidth: 110,
+              // viewDisplay: true,   true是可已查看
               hide: true,
-              value: 1,
+              value: '1',
               dicData: [{
                 label: '国产',
-                value: 1
+                value: '1'
               }, {
                 label: '进口',
-                value: 2
+                value: '2'
               }]
             },
             {
@@ -473,15 +477,24 @@
       'form.sign': {
         handler(val) {
           var signTow = this.findObject(this.option.column, 'signTow')
-          if (val === 1) {
+          var signs = this.findObject(this.option.column, 'sign')
+          if (val == 1) {
+            signs.viewDisplay = true
             signTow.display = true
+            // signTow.viewDisplay = true
             signTow.rules = [{
               required: true,
               message: "请选择OTC标志",
               trigger: "blur"
             }]
-          } else {
+          }
+
+          /*/
+
+           */
+          else {
             signTow.display = false
+            signs.viewDisplay = false
             signTow.rules = []
           }
         },
@@ -494,8 +507,9 @@
           var subPackagingEnterprises = this.findObject(this.option.column, 'subPackagingEnterprises')
           var approvalNumberOfSubPackage = this.findObject(this.option.column, 'approvalNumberOfSubPackage')
 
-          if (val === 1) {
+          if (val == 1) {
             approvalNumber.display = true
+            approvalNumberOfSubPackage.viewDisplay = false
             approvalNumber.rules = [{
               required: true,
               message: "请输入批准文号",
@@ -607,7 +621,7 @@
       },
       handleTimeline(id) {
         this.dialogVisibleTimeline = true;
-        timeLine(1, id).then(res => {
+        timeLine(3, id).then(res => {
           this.activities = res.data.data;
         })
       },

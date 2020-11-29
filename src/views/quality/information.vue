@@ -484,7 +484,7 @@
                       res: 'data',
                       url: 'link',
                     },
-                    span: 12,
+                    span: 24,
                     listType: 'picture-card',
                     tip: '只能上传jpg/png文件，且不超过500kb',
                     action: "/api/oss/goods/imgUpload"
