@@ -312,6 +312,8 @@
               label: '商品列表',
               prop: 'purchaseOrderDetailList',
               type: 'dynamic',
+              addDisplay: true,
+              editdisabled: true,
               span: 24,
               children: {
                 align: 'center',
@@ -351,6 +353,7 @@
                     filterable: true,
                     remote: true,
                     display:false,
+                    disabled: true,
                     rules: [{
                       require: true,
                       message: '请选择商品',

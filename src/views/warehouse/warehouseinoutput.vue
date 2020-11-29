@@ -96,7 +96,6 @@
               },
               // cascaderItem: ['storageId'],
              search:true,
-             dicMethod:"post",
              dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
             },
             {
@@ -108,7 +107,6 @@
                 value: 'id'
               },
               search:true,
-              dicMethod:"post",
               dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
 
             },
@@ -203,7 +201,6 @@
               prop: "type",
               type: "select",
               row: true,
-              disabled:true,
               span: 24,
 
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",

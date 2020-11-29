@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
+  import {getList, getCommodityDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
   import {mapGetters} from "vuex";
 
   export default {
@@ -196,6 +196,20 @@
               rules: [],
             },
             {
+              label: "是否可拆零",
+              prop: "scattered",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '是',
+                value: 0
+              }, {
+                label: '否',
+                value: 1,
+              }]
+
+            },
+            {
               label: "产品分类",
               prop: "productClassification",
               rules: [{
@@ -284,6 +298,10 @@
           }
         },
       },
+      //拆零时间
+      'form.scattered': {
+
+      },
     },
     computed: {
       ...mapGetters(["permission"]),
@@ -362,7 +380,7 @@
 
         })
           .then(() => {
-            operation = 1;
+            operation = 51;
           })
           .catch(() => {
             operation = 2;
@@ -401,7 +419,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
+          getCommodityDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
