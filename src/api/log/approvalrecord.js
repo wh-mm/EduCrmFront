@@ -47,4 +47,14 @@ export const update = (row) => {
     data: row
   })
 }
+export function timeLine(type,id) {
+  return request({
+    url: '/api/erp-log/approvalrecord/timeLine',
+    method: 'get',
+    params: {
+      type,
+      id
+    }
+  })
+}
 

@@ -1,4 +1,5 @@
 import request from '@/router/axios';
+import {ERP_WMS_NAME} from "@/const/YueConst";
 
 export const getList = (current, size, params) => {
   return request({
@@ -14,7 +15,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/quality/information/detail',
+    url: '/api/quality/information/getDetail',
     method: 'get',
     params: {
       id
@@ -42,7 +43,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/quality/information/submit',
+    url: '/api/quality/information/submitAll',
     method: 'post',
     data: row
   })
@@ -52,13 +53,25 @@ export const update = (row) => {
  * @param id
  * @param operation
  */
-export const updateInspector = (ids,operation) => {
+export const updateInspector = (ids,operation,rejectText) => {
   return request({
     url: '/api/quality/information/updateInspector',
     method: 'post',
     params:{
       ids,
-      operation
+      operation,
+      rejectText
+    }
+  })
+}
+
+export const  selectGoodsCode = (id,code) => {
+  return request({
+    url: '/api/quality/information/selectCode',
+    method: 'get',
+    params: {
+      id,
+      code
     }
   })
 }

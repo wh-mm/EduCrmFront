@@ -29,8 +29,8 @@
         <el-button v-if="permission.region_import"
                    type="primary"
                    size="small"
-                   icon="el-icon-upload2"
                    @click="handleImport">导 入
+          <i class="el-icon-upload el-icon--right"></i>
         </el-button>
       </template>
     </avue-crud>
@@ -239,7 +239,6 @@
           window.console.log(error);
         });
       },
-
       //导入
       handleImport() {
         this.excelBox = true;

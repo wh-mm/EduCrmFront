@@ -78,6 +78,24 @@
               }]
             },
             {
+              label: "操作 1.同意, 2.拒绝",
+              prop: "operation",
+              rules: [{
+                required: true,
+                message: "请输入操作 1.同意, 2.拒绝",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "驳回理由",
+              prop: "rejectText",
+              rules: [{
+                required: true,
+                message: "请输入驳回理由",
+                trigger: "blur"
+              }]
+            },
+            {
               label: "旧审批状态",
               prop: "oldStatus",
               rules: [{

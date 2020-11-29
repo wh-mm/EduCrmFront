@@ -57,16 +57,16 @@
           </el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0" ></el-input>
+          <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
         </template>
         <template slot="equivalent" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.equivalent" placeholder="请输入当量" min="0" ></el-input>
+          <el-input type="number" v-model="scope.row.equivalent" placeholder="请输入当量" min="0"></el-input>
         </template>
         <template slot="drugAllnum" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.drugAllnum"  min=0 placeholder="请输入单剂量"></el-input>
+          <el-input type="number" v-model="scope.row.drugAllnum" min=0 placeholder="请输入单剂量"></el-input>
         </template>
         <template slot="tienum" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.tienum"  min=0 placeholder="请输入贴数"></el-input>
+          <el-input type="number" v-model="scope.row.tienum" min=0 placeholder="请输入贴数"></el-input>
         </template>
         <template slot="drugweight" slot-scope="scope">
           {{scope.row.tienum * scope.row.drugAllnum}}
@@ -382,8 +382,8 @@
 
       },
       //推送
-      sendHttp(){
-        this.$alert("业务暂未对接", { },)
+      sendHttp() {
+        this.$alert("业务暂未对接", {},)
       },
 
 

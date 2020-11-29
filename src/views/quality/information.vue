@@ -30,34 +30,146 @@
                    size="small"
                    icon="el-icon-mouse"
                    v-if="permission.information_button"
-                   @click="updateInspectorNew()">审 批
+                   @click="openInspectorNew()">审 批
+        </el-button>
+      </template>
+      <template slot-scope="scope" slot="menu">
+        <el-button
+          :size="scope.size"
+          :type="scope.type"
+          icon="el-icon-delete"
+          v-if="permission.supQuality_delete  && scope.row.auditStatus === '1'"
+          @click="rowDel(scope.row)">删 除
+        </el-button>
+        <el-button icon="el-icon-check"
+                   :size="scope.size"
+                   :type="scope.type"
+                   v-if="permission.supQuality_edit  && scope.row.auditStatus === '1'"
+                   @click.stop="handleEdit(scope.row,scope.index)">编 辑
+        </el-button>
+        <el-button icon="el-icon-check"
+                   :size="scope.size"
+                   :type="scope.type"
+                   @click.stop="handleTimeline (scope.row.id)">审 批 查 看
         </el-button>
       </template>
     </avue-crud>
+    <el-dialog
+      title="审批"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj0" :option="option0">
+      </avue-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="updateInspectorNew(2)">驳 回</el-button>
+        <el-button type="primary" @click="updateInspectorNew(1)">同 意</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="审批过程"
+      :visible.sync="dialogVisibleTimeline"
+      width="30%"
+      :modal="false"
+    >
+      <div class="block">
+        <div class="radio">
+          排序：
+          <el-radio-group v-model="reverse">
+            <el-radio :label="true">倒序</el-radio>
+            <el-radio :label="false">正序</el-radio>
+          </el-radio-group>
+        </div>
+        <el-divider></el-divider>
+        <el-timeline :reverse="reverse">
+          <el-timeline-item
+            v-for="(activity, index) in activities"
+            :key="index"
+            :timestamp="activity.createTime">
+            {{activity.userName}} {{activity.operation === 1 ?'同意了您的申请':'驳回了您的申请,驳回理由:'}}
+            {{activity.operation === 2?activity.rejectText:''}}
+          </el-timeline-item>
+        </el-timeline>
+      </div>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove, updateInspector,shenfen,validateContacts,isInteger} from "@/api/quality/information";
+  import {
+    getList,
+    getDetail,
+    add,
+    update,
+    remove,
+    updateInspector,
+    shenfen,
+    validateContacts,
+    isInteger,
+    selectGoodsCode
+  } from "@/api/quality/information";
+  import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
-/*
-    const validateIdNo  =(rule, value, callback) => {
-    const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-    if (value == '' || value == undefined || value == null) {
-      callback();
-    } else {
-      if ((!reg.test(value)) && value != '') {
-        callback(new Error('请输入正确的身份证号码'));
-      } else {
-        callback();
-      }
-    }
-  };*/
+
 
   export default {
     data() {
+      const validlegalbizLicNum = (rule, value, callback) => {
+        let Ancode;//统一社会信用代码的每一个值
+        let Ancodevalue;//统一社会信用代码每一个值的权重
+        let total = 0;
+        let weightedfactors = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];//加权因子
+        //不用I、O、S、V、Z
+        let str = '0123456789ABCDEFGHJKLMNPQRTUWXY';
+        for (let i = 0; i < value.length - 1; i++) {
+          Ancode = value.substring(i, i + 1);
+          Ancodevalue = str.indexOf(Ancode);
+          total = total + Ancodevalue * weightedfactors[i];
+          //权重与加权因子相乘之和
+        }
+        let logiccheckcode = 31 - total % 31;
+        if (logiccheckcode == 31) {
+          logiccheckcode = 0;
+        }
+        let Str = "0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,T,U,W,X,Y";
+        let Array_Str = Str.split(',');
+        logiccheckcode = Array_Str[logiccheckcode];
 
+        let checkcode = value.substring(17, 18);
+        if (logiccheckcode != checkcode) {
+          return callback(new Error('请输入正确的统一社会信用代码！'));
+        }
+        return callback();
+      };
+
+      var selectCode = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error("请输入编码！"))
+        } else {
+          selectGoodsCode(this.form.id, value).then(res => {
+            if (res.data.success) {
+              callback();
+            } else {
+              callback(new Error(res.data.msg));
+            }
+          }, err => {
+            callback(new Error(err.data.msg));
+          })
+        }
+      }
       return {
+        form: {},
+        query: {},
+        loading: true,
+        page: {
+          pageSize: 10,
+          currentPage: 1,
+          total: 0
+        },
+        dialogVisible: false,
+        dialogVisibleTimeline: false,
+        selectionList: [],
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -72,62 +184,25 @@
           dialogClickModal: false,
           column: [
             {
-              label: "供应商名称",
+              label: "名称",
               prop: "supplierName",
               labelWidth: 110,
-              maxlength:20,
-              showWordLimit:true,
+              maxlength: 20,
+              showWordLimit: true,
               rules: [{
                 required: true,
-                validator:validateContacts,
+                validator: validateContacts,
                 trigger: "blur"
               }]
             },
             {
-              label: "采购状态",
-              prop: "stateExamine",
-              type: 'select',
-              addDisplay: false,
-              editDisplay: false,
-              viewDisplay: false,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
-            },
-            {
-              label: "承付模式",
-              prop: "commitmentModel",
+              label: "企业负责人",
+              prop: "enterprisePrincipal",
               hide: true,
+              labelWidth: 110,
               rules: [{
                 required: true,
-                message: "承付模式",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "组织代码",
-              prop: "organizationCode",
-              hide: true,
-              maxlength:18,
-              showWordLimit:true,
-              rules: [{
-                required: true,
-                message:"组织代码",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "税号",
-              prop: "dutyParagraph",
-              hide: true,
-              maxlength:18,
-              showWordLimit:true,
-              rules: [{
-                required: true,
-                message: "税号",
+                validator: validateContacts,
                 trigger: "blur"
               }]
             },
@@ -137,7 +212,90 @@
               hide: true,
               rules: [{
                 required: true,
-                validator:validateContacts,
+                validator: validateContacts,
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "质量负责人",
+              prop: "qualityPrincipal",
+              hide: true,
+              labelWidth: 110,
+              rules: [{
+                required: true,
+                validator: validateContacts,
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "编码",
+              prop: "id",
+              /*append: "供应商唯一编号",*/
+              labelWidth: 110,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              search: true,
+              rules: [{
+                required: true,
+                trigger: "blur"
+              }]
+            },
+
+            {
+              label: "联系人",
+              prop: "contacts",
+              validator: validateContacts,
+              rules: [{
+                required: true,
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "联系人电话",
+              prop: "contactPhoneNumber",
+              labelWidth: 120,
+              maxlength: 11,
+              showWordLimit: true,
+              rules: [{
+                required: true,
+                validator: isInteger,
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "联系人身份证",
+              prop: "contactIdCard",
+              labelWidth: 120,
+              maxlength: 18,
+              showWordLimit: true,
+              rules: [{
+                required: true,
+                validator: shenfen,
+                trigger: "blur"
+              }]
+            },
+
+            {
+              label: "组织代码",
+              prop: "organizationCode",
+              hide: true,
+              maxlength: 18,
+              showWordLimit: true,
+              rules: [{
+                required: true,
+                message: "组织代码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "税号",
+              prop: "dutyParagraph",
+              hide: true,
+              maxlength: 18,
+              showWordLimit: true,
+              rules: [{
+                message: "税号",
                 trigger: "blur"
               }]
             },
@@ -149,7 +307,7 @@
               showWordLimit:true,
               rules: [{
                 required: true,
-                message: "请输入社会统一信用码",
+                validator:validlegalbizLicNum,
                 trigger: "blur"
               }]
             },
@@ -159,7 +317,7 @@
               hide: true,
               rules: [{
                 required: true,
-                validator:validateContacts,
+                validator: validateContacts,
                 trigger: "blur"
               }]
             },
@@ -170,31 +328,21 @@
               prop: "productionOrWarehouseAddress",
               rules: [{
                 required: true,
-                validator:validateContacts,
+                validator: validateContacts,
                 trigger: "blur"
               }]
             },
             {
-              label: "质量负责人",
-              prop: "qualityPrincipal",
+              label: "承付模式",
+              prop: "commitmentModel",
               hide: true,
-              labelWidth: 110,
               rules: [{
                 required: true,
-                validator:validateContacts,
+                message: "承付模式",
                 trigger: "blur"
               }]
             },
-            {
-              label: "企业负责人",
-              prop: "enterprisePrincipal",
-              labelWidth: 110,
-              rules: [{
-                required: true,
-                validator:validateContacts,
-                trigger: "blur"
-              }]
-            },
+
             /*{
               label: "国家",
               prop: "country",
@@ -241,45 +389,33 @@
               dicUrl: '/api/blade-system/region/select?code={{key}}',
             },
             {
-              label: "联系人",
-              prop: "contacts",
-              validator:validateContacts,
+              label: "审核状态",
+              prop: "stateExamine",
+              type: 'select',
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
             {
-              label: "联系人电话",
-              prop: "contactPhoneNumber",
-              labelWidth: 120,
-              maxlength:11,
-              showWordLimit:true,
-              rules: [{
-                required: true,
-                validator:isInteger,
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "联系人身份证",
-              prop: "contactIdCard",
-              labelWidth: 120,
-              maxlength:18,
-              showWordLimit:true,
-              rules: [{
-                required: true,
-                validator: shenfen,
-                trigger: "blur"
-              }]
-            },
-            /*{
               label: "使用状态",
               prop: "useState",
-              hide:true,
-              row: true,
-              rules: [{
-                required: true,
-                message: "请输入使用状态",
-                trigger: "blur"
-              }]
-            },*/
+              type: 'select',
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=usage_status",
+            },
             {
               label: '证件照',
               prop: 'certificates',
@@ -291,13 +427,13 @@
                 type: 'form',
                 headerAlign: 'center',
                 rowAdd: (done) => {
-                  /* this.$message.success('新增回调');*/
+                  this.$message.success('新增成功');
                   done({
                     input: '默认值'
                   });
                 },
                 rowDel: (row, done) => {
-                  /*this.$message.success('删除回调' + JSON.stringify(row));*/
+                  this.$message.success('删除成功');
                   done();
                 },
                 column: [{
@@ -306,10 +442,23 @@
                   labelWidth: 140,
                   rules: [{
                     required: true,
-                    validator:validateContacts,
+                    validator: validateContacts,
                     trigger: "blur"
                   }]
                 },
+                  {
+                    label: "经营范围",
+                    prop: "natureOfBusiness",
+                    hide: true,
+                    row: true,
+                    type: 'tree',
+                    multiple: true,
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl: "/api/erp-base/scope/tree",
+                  },
                   {
                     label: "签发日期",
                     prop: "dateOfIssue",
@@ -324,19 +473,6 @@
                     label: "期限至",
                     prop: "termTo",
                     type: "date",
-                  },
-                  {
-                    label: "经营范围",
-                    prop: "natureOfBusiness",
-                    hide: true,
-                    row: true,
-                    type: 'tree',
-                    multiple: true,
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    dicUrl: "/api/erp-base/scope/tree",
                   },
                   {
                     label: "供应商证件照",
@@ -358,51 +494,22 @@
             },
           ],
         },
-        /* infoOption: {
-           calcHeight: 200,
-           border: true,
-           index: true,
-           viewBtn: true,
-           addBtn: true,
-           menu: false,
-           page: false,
-           dialogClickModal: false,
-           menuBtn: false,
-
-           column: [
-             {
-             },
-             /!*{
-               label: "有效结束时间",
-               prop: "effectiveEnd",
-               type: "date",
-               format: "yyyy-MM-dd hh:mm:ss",
-               valueFormat: "yyyy-MM-dd hh:mm:ss",
-               labelWidth: 130,
-               row: true,
-               rules: [{
-                 required: true,
-                 message: "请输入有效结束时间",
-                 trigger: "blur"
-               }]
-             },
-             {
-               label: "有效开始时间",
-               prop: "effectiveStart",
-               format: "yyyy-MM-dd hh:mm:ss",
-               valueFormat: "yyyy-MM-dd hh:mm:ss",
-               type: "date",
-               labelWidth: 130,
-               rules: [{
-                 required: true,
-                 message: "请输入有效开始时间",
-                 trigger: "blur"
-               }]
-             },*!/
-
-           ]
-         },*/
-        data: []
+        data: [],
+        obj0: {
+          rejectText: ''
+        },
+        option0: {
+          emptyBtn: false,
+          submitBtn: false,
+          column: [{
+            label: "驳回理由",
+            prop: "rejectText",
+            type: 'textarea',
+            span: 24,
+          }]
+        },
+        reverse: true,
+        activities: []
       };
     },
     computed: {
@@ -425,9 +532,14 @@
     },
     methods: {
       rowSave(row, done, loading) {
+        console.log(row.certificates);
         for (let i = 0; i < row.certificates.length; i++) {
-          row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
-          row.certificates[i].supplierCertificatePhoto=row.certificates[i].supplierCertificatePhoto.join(",");
+          if (row.certificates[i].supplierCertificatePhoto instanceof Array) {
+            row.certificates[i].supplierCertificatePhoto = row.certificates[i].supplierCertificatePhoto.join(",");
+          }
+          if (row.certificates[i].natureOfBusiness instanceof Array) {
+            row.certificates[i].natureOfBusiness = row.certificates[i].natureOfBusiness.join(",");
+          }
         }
         add(row).then(() => {
           this.onLoad(this.page);
@@ -441,11 +553,22 @@
           window.console.log(error);
         });
       },
-
+      //审批选择按钮
+      openInspectorNew() {
+        if (this.selectionList.length === 0) {
+          return this.$message.error("请选择需要的商品");
+        }
+        this.dialogVisible = true;
+      },
       rowUpdate(row, index, done, loading) {
-        for (let i = 0; i < row.certificates.length; i++) {
-          row.certificates[i].natureOfBusiness=row.certificates[i].natureOfBusiness.join(",");
-          row.certificates[i].supplierCertificatePhoto=row.certificates[i].supplierCertificatePhoto.join(",");
+        console.log(row.certificates);
+        for (let j = 0; j < row.certificates.length; j++) {
+          if (row.certificates[j].supplierCertificatePhoto instanceof Array) {
+            row.certificates[j].supplierCertificatePhoto = row.certificates[j].supplierCertificatePhoto.join(",");
+          }
+          if (row.certificates[j].natureOfBusiness instanceof Array) {
+            row.certificates[j].natureOfBusiness = row.certificates[j].natureOfBusiness.join(",");
+          }
         }
         update(row).then(() => {
           this.onLoad(this.page);
@@ -482,32 +605,28 @@
         }
       },
       //审批
-      updateInspectorNew() {
-        if (this.selectionList.length === 0) {
-          return this.$message.error("请选择需要的商品");
+      updateInspectorNew(operation) {
+        if (operation === 2 && this.obj0.rejectText === '') {
+          return this.$message.error("请输入驳回理由!");
         }
-        var ids = this.ids;
-        let operation;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            operation = 1;
-          })
-          .catch(() => {
-            operation = 2;
-          }).finally(() => {
-          updateInspector(ids, operation).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
+        updateInspector(this.ids, operation, this.obj0.rejectText).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+            this.dialogVisible = false;
             this.refreshChange();
-          })
-        });
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      handleEdit(row, index) {
+        this.$refs.crud.rowEdit(row, index);
+      },
+      handleTimeline(id) {
+        this.dialogVisibleTimeline = true;
+        timeLine(1, id).then(res => {
+          this.activities = res.data.data;
+        })
       },
       handleDelete() {
         if (this.selectionList.length === 0) {
