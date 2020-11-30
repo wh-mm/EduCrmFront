@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-codematching/matching/list',
+    url: '/api/taocao-codematching/matching/page',
     method: 'get',
     params: {
       ...params,
