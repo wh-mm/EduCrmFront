@@ -164,7 +164,7 @@
               },
               search: true,
               dicMethod: "post",
-              dicUrl: '/api/taocao-warehouse/goods/selecListGoods'
+              dicUrl: '/api/erp-wms/goods/selecListGoods'
             },
             {
               label: "货品名称",
@@ -178,6 +178,9 @@
             {
               label: "库房药编码",
               prop: "goodsCode",
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
               rules: [{
                 required: true,
                 message: "请输入中药编码",

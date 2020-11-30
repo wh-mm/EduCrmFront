@@ -97,7 +97,7 @@
 </template>
 
 <script>
-  import {getList, getCommodityDetail, add, update, remove, updateInspector, isInteger} from "@/api/quality/commodity";
+  import {getList, getCommodityDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
 
@@ -522,12 +522,7 @@
               message: "请选择OTC标志",
               trigger: "blur"
             }]
-          }
-
-          /*/
-
-           */
-          else {
+          }else {
             signTow.display = false
             signs.viewDisplay = false
             signTow.rules = []
