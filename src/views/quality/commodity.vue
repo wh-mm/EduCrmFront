@@ -296,26 +296,6 @@
 
             },
             {
-              label: "OTC标志",
-              prop: "sign",
-              type: 'radio',
-              value: 0,
-              dicData: [{
-                label: '有',
-                value: 0
-              }, {
-                label: '无',
-                value: 1,
-              }]
-
-            },
-            {
-              label: 'OTC标志',
-              prop: 'signTow',
-              display: true,
-              rules: [],
-            },
-            {
               label: "是否可拆零",
               prop: "scattered",
               type: 'radio',
