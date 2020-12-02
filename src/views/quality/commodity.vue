@@ -97,7 +97,7 @@
 </template>
 
 <script>
-  import {getList, getCommodityDetail, add, update, remove, updateInspector, isInteger} from "@/api/quality/commodity";
+  import {getList, getCommodityDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
 
@@ -166,7 +166,6 @@
             {
               label: "商品名",
               prop: "tradeName",
-
               tip: '商品名',
               rules: [{
                 message: "商品名",
@@ -293,41 +292,6 @@
                 value: 'dictKey'
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
-
-            },
-            {
-              label: "OTC标志",
-              prop: "sign",
-              type: 'radio',
-              value: 0,
-              dicData: [{
-                label: '有',
-                value: 0
-              }, {
-                label: '无',
-                value: 1,
-              }]
-
-            },
-            {
-              label: 'OTC标志',
-              prop: 'signTow',
-              display: true,
-              rules: [],
-            },
-            {
-              label: "是否可拆零",
-              prop: "scattered",
-              type: 'radio',
-              value: 0,
-              dicData: [{
-                label: '是',
-                value: 0
-              }, {
-                label: '否',
-                value: 1,
-              }]
-
             },
             {
               label: "产品分类",
@@ -345,18 +309,7 @@
               search: true,
               dicUrl: "/api/erp-wms/goods-type/tree",
             },
-            /*{
-              label: "产品二级分类",
-              prop: "productClassificationTow",
-              labelWidth: 110,
-              type: 'tree',
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicFlag: false,
-              dicUrl: "/api/erp-wms/goods-type/tree?id={{key}}"
-            },*/
+
             {
               label: "存储期限",
               prop: "storageLife",
@@ -391,15 +344,7 @@
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drugs",
             },
-            /*{
-              label: "产品二级分类",
-              prop: "secondaryProductClassification",
-              rules: [{
-                required: true,
-                message: "请输入产品二级分类",
-                trigger: "blur"
-              }]
-            },*/
+
             {
               label: "存储条件",
               prop: "storageConditions",
@@ -414,6 +359,19 @@
               label: "税收分类",
               prop: "taxClassification",
               hide: true,
+            },
+            {
+              label: "是否可拆零",
+              prop: "scattered",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '是',
+                value: 0
+              }, {
+                label: '否',
+                value: 1,
+              }]
             },
             {
               label: "OTC标志",
@@ -522,12 +480,7 @@
               message: "请选择OTC标志",
               trigger: "blur"
             }]
-          }
-
-          /*/
-
-           */
-          else {
+          }else {
             signTow.display = false
             signs.viewDisplay = false
             signTow.rules = []
@@ -580,11 +533,11 @@
           }
         },
       },
-      //拆零时间
+ /*     //拆零时间
       'form.scattered': {
 
         immediate: true
-      },
+      },*/
     },
     computed: {
       ...mapGetters(["permission"]),

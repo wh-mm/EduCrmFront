@@ -299,7 +299,7 @@
                 trigger: "blur"
               }]
             },
-            {
+/*            {
               label: "社会统一信用码",
               prop: "socialUniformCreditCode",
               labelWidth: 130,
@@ -310,7 +310,7 @@
                 validator:validlegalbizLicNum,
                 trigger: "blur"
               }]
-            },
+            },*/
             {
               label: "注册地址",
               prop: "registeredAddress",

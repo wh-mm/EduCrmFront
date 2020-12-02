@@ -43,9 +43,9 @@
                width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="煎药机" name="jianyao">
+        <el-tab-pane label="饮片" name="jianyao">
         </el-tab-pane>
-        <el-tab-pane label="调配机" name="tiaopei">
+        <el-tab-pane label="颗粒" name="tiaopei">
         </el-tab-pane>
       </el-tabs>
       <avue-form ref="addForm" v-model="addInfo.form" :option="addOption"></avue-form>

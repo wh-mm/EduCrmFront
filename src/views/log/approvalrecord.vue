@@ -98,20 +98,30 @@
             {
               label: "旧审批状态",
               prop: "oldStatus",
-              rules: [{
-                required: true,
-                message: "请输入旧审批状态",
-                trigger: "blur"
-              }]
+              type: 'select',
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
             {
               label: "新审核状态",
               prop: "newStatus",
-              rules: [{
-                required: true,
-                message: "请输入新审核状态",
-                trigger: "blur"
-              }]
+              type: 'select',
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
             {
               label: "类型",

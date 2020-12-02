@@ -34,7 +34,7 @@
         </el-button>
       </template>
     </avue-crud>
-    <el-dialog title="行政区划数据导入"
+    <el-dialog title="导入HIS编码"
                append-to-body
                :visible.sync="excelBox"
                width="555px">
@@ -52,6 +52,7 @@
 <script>
   import {getList, getDetail, add, update, remove} from "@/api/codematching/matching";
   import {mapGetters} from "vuex";
+  import {getToken} from '@/util/auth';
 
   export default {
     data() {
@@ -63,6 +64,18 @@
           emptyBtn: false,
           column: [
             {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              cascaderItem:['excelFile'],
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+            },
+            {
               label: '模板上传',
               prop: 'excelFile',
               type: 'upload',
@@ -73,7 +86,7 @@
                 res: 'data'
               },
               tip: '请上传 .xls,.xlsx 标准格式文件',
-              action: "/api/blade-system/region/import-region"
+              action: "/api/taocao-codematching/matching/import-region ?  hospitalId={{this}}"
             },
             {
               label: "数据覆盖",
@@ -151,7 +164,7 @@
               },
               search: true,
               dicMethod: "post",
-              dicUrl: '/api/taocao-warehouse/goods/selecListGoods'
+              dicUrl: '/api/erp-wms/goods/selecListGoods'
             },
             {
               label: "货品名称",
@@ -163,8 +176,11 @@
               }]
             },
             {
-              label: "中药编码",
-              prop: "traditionalChineseMedicineCode",
+              label: "库房药编码",
+              prop: "goodsCode",
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
               rules: [{
                 required: true,
                 message: "请输入中药编码",
@@ -172,16 +188,7 @@
               }]
             },
             {
-              label: "HIS码",
-              prop: "hisCode",
-              rules: [{
-                required: true,
-                message: "请输入HIS码",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "医院药品编号",
+              label: "HIS药品码",
               prop: "hospitalGoodsUmber",
               rules: [{
                 required: true,
@@ -201,9 +208,11 @@
         }
       },
       'excelForm.isCovered'() {
-        if (this.excelForm.isCovered !== '') {
+        alert(this.excelForm.hospitalId);
+        //if ()
+      if (this.excelForm.isCovered !== '') {
           const column = this.findObject(this.excelOption.column, "excelFile");
-          column.action = `/api/blade-user/import-user?isCovered=${this.excelForm.isCovered}`;
+          column.action = `/api/taocao-codematching/matching/import-matching?isCovered=${this.excelForm.isCovered}&hospitalId=${this.excelForm.hospitalId}`;
         }
       }
     },
@@ -279,6 +288,9 @@
               message: "操作成功!"
             });
           });
+      },
+      handleTemplate() {
+          window.open(`/api/taocao-codematching/matching/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
       handleDelete() {
         if (this.selectionList.length === 0) {
