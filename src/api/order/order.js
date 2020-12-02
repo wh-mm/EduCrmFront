@@ -1,4 +1,5 @@
 import request from '@/router/axios';
+import {ERP_WMS_NAME} from "@/const/YueConst";
 
 export const getList = (current, size, params) => {
   return request({
@@ -69,7 +70,8 @@ export const dictionaryByName = (name) => {
 
 export const selectListByDrugCategory = (current, size, params) => {
   return request({
-    url: '/api/taocao-warehouse/goods/selectListBydrugCategory',
+    url:  ERP_WMS_NAME + '/goods/selectListBydrugCategory',
+
     method: 'get',
     params: {
       ...params,
