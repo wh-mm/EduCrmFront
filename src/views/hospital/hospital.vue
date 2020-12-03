@@ -133,7 +133,7 @@
       handleRowClick(row) {
 
 
-        this.$confirm("请在此确认?", {
+        this.$confirm("请在此确认", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

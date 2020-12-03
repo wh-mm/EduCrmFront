@@ -20,6 +20,8 @@
         </el-button>
         <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
         </el-button>
+        <el-button type="primary" size="small" icon="el-icon-printer" plain @click="dayin()">打 印
+        </el-button>
       </template>
 
       <template slot-scope="scope" slot="menu">
@@ -157,11 +159,14 @@
           option: {
             height: 'auto',
             calcHeight: 30,
+            align:'center',
             tip: false,
             searchShow: true,
             searchMenuSpan: 6,
             border: true,
             index: false,
+            printBtn:true,
+            addBtn:false,
             menu: false,
             header: false,
             selection: true,
@@ -385,8 +390,10 @@
       sendHttp() {
         this.$alert("业务暂未对接", {},)
       },
-
-
+      //打印
+      dayin() {
+            this.$message('业务暂未开通');
+          },
       //新增 按钮
       newAdd() {
         this.addDialogVisible = true;

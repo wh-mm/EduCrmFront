@@ -19,13 +19,13 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <!--<el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.information_delete"
                    @click="handleDelete">删 除
-        </el-button>
+        </el-button>-->
         <el-button type="button"
                    size="small"
                    icon="el-icon-mouse"
@@ -38,14 +38,20 @@
           :size="scope.size"
           :type="scope.type"
           icon="el-icon-delete"
-          v-if="permission.supQuality_delete  && scope.row.auditStatus === '1'"
+          v-if="permission.information_delete  && scope.row.stateExamine === '1'"
           @click="rowDel(scope.row)">删 除
         </el-button>
         <el-button icon="el-icon-check"
                    :size="scope.size"
                    :type="scope.type"
-                   v-if="permission.supQuality_edit  && scope.row.auditStatus === '1'"
+                   v-if="permission.information_edit  && scope.row.stateExamine === '1'"
                    @click.stop="handleEdit(scope.row,scope.index)">编 辑
+        </el-button>
+        <el-button icon="el-icon-check"
+                   :size="scope.size"
+                   :type="scope.type"
+                   v-if="permission.information_edit && scope.row.stateExamine === '1'"
+                   @click.stop="handleStart(scope.row.id)">发 起
         </el-button>
         <el-button icon="el-icon-check"
                    :size="scope.size"
@@ -87,8 +93,10 @@
             v-for="(activity, index) in activities"
             :key="index"
             :timestamp="activity.createTime">
-            {{activity.userName}} {{activity.operation === 1 ?'同意了您的申请':'驳回了您的申请,驳回理由:'}}
-            {{activity.operation === 2?activity.rejectText:''}}
+            {{activity.userName}}
+            {{activity.operation === 0 ? activity.rejectText : ''}}
+            {{activity.operation === 1 ?'同意了您的申请':''}}
+            {{activity.operation === 2 ?'驳回了您的申请,驳回理由:' +activity.rejectText:''}}
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -107,7 +115,8 @@
     shenfen,
     validateContacts,
     isInteger,
-    selectGoodsCode
+    selectGoodsCode,
+    submitInspector
   } from "@/api/quality/information";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
@@ -269,13 +278,13 @@
               labelWidth: 120,
               maxlength: 18,
               showWordLimit: true,
+              hide: true,
               rules: [{
                 required: true,
                 validator: shenfen,
                 trigger: "blur"
               }]
             },
-
             {
               label: "组织代码",
               prop: "organizationCode",
@@ -299,7 +308,7 @@
                 trigger: "blur"
               }]
             },
-/*            {
+            {
               label: "社会统一信用码",
               prop: "socialUniformCreditCode",
               labelWidth: 130,
@@ -310,7 +319,7 @@
                 validator:validlegalbizLicNum,
                 trigger: "blur"
               }]
-            },*/
+            },
             {
               label: "注册地址",
               prop: "registeredAddress",
@@ -518,8 +527,8 @@
         return {
           addBtn: this.vaildData(this.permission.information_add, false),
           viewBtn: this.vaildData(this.permission.information_view, false),
-          delBtn: this.vaildData(this.permission.information_delete, false),
-          editBtn: this.vaildData(this.permission.information_edit, false)
+          delBtn: false,
+          editBtn: false,
         };
       },
       ids() {
@@ -626,6 +635,15 @@
         this.dialogVisibleTimeline = true;
         timeLine(1, id).then(res => {
           this.activities = res.data.data;
+        })
+      },
+      handleStart(id) {
+        submitInspector(id).then(res => {
+          this.$message({
+            type: 'info',
+            message: res.data.msg
+          })
+          this.refreshChange();
         })
       },
       handleDelete() {

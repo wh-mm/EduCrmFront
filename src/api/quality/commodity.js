@@ -47,6 +47,16 @@ export const update = (row) => {
     data: row
   })
 }
+//发起
+export const submitInspector = (id) => {
+  return request({
+    url: '/api/quality/commodity/submitInspector',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}
 
 /**
  * 审核
