@@ -71,8 +71,7 @@
       title="审批过程"
       :visible.sync="dialogVisibleTimeline"
       width="30%"
-      :modal="false"
-    >
+      :modal="false">
       <div class="block">
         <div class="radio">
           排序：
@@ -100,8 +99,6 @@
   import {getList, getCommodityDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
-
-
   export default {
     data() {
       return {

@@ -169,7 +169,7 @@
                 prop: "goodsName",
               },
               {
-                label: "货物小类别",
+                label: "货物类别",
                 prop: "goodsCategory",
                 type: "tree",
                 props: {
@@ -374,7 +374,6 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
-
       },
       //新增 按钮
       newAdd() {

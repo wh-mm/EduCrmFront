@@ -81,6 +81,21 @@
           dialogClickModal: false,
           column: [
             {
+              label: "key",
+              prop: "id",
+              /*append: "供应商唯一编号",*/
+              labelWidth: 110,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              search: true,
+              rules: [{
+                required: true,
+                trigger: "blur"
+              }]
+            },
+
+            {
               label: "医院名字",
               prop: "hospitalName",
               rules: [{

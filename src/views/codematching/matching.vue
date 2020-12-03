@@ -155,7 +155,7 @@
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
             {
-              label: "商品名称",
+              label: "货品名称",
               prop: "goodsId",
               type: "select",
               props: {
@@ -169,6 +169,7 @@
             {
               label: "货品名称",
               prop: "goodsName",
+
               rules: [{
                 required: true,
                 message: "请输入医院药品编号",
