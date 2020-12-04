@@ -1,5 +1,4 @@
 <template>
-  <!--医院接口-->
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
@@ -24,39 +23,29 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospital_delete"
+                   v-if="permission.outputorderdetail_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-     <!-- <template slot="hospitalSwitch" slot-scope="scope">
-        <el-switch v-model="scope.row.hospitalSwitch" disabled @click="(scope.row)"> </el-switch>
-      </template>-->
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,
-    selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/outputorderdetail";
   import {mapGetters} from "vuex";
+
   export default {
     data() {
-      var hospitalName = (rule, value, callback)=>{
-        if (value === ''){
-          callback(new Error("医院名称重复,请从新输入!"))
-        }else {
-          selectHosptalByHospintl(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
         }
-      }
-
+      };
       return {
         form: {},
         query: {},
@@ -77,52 +66,40 @@
           index: true,
           viewBtn: true,
           selection: true,
-          cancelBtn:false,
           dialogClickModal: false,
           column: [
             {
-              label: "医院名字",
-              prop: "hospitalName",
-              search: true,
+              label: "出库id",
+              prop: "outputId",
               rules: [{
                 required: true,
-                message: "请输入医院名字",
-                validator:hospitalName,
-                trigger: 'blur' }],
-            },
-            {
-              label: "key",
-              prop: "id",
-              /*append: "供应商唯一编号",*/
-              labelWidth: 110,
-              addDisplay: false,
-              editDisplay: false,
-              viewDisplay: false,
-              search: true,
-              rules: [{
-                required: true,
+                message: "请输入采购id",
                 trigger: "blur"
               }]
             },
             {
-              label: "医院地址",
-              prop: "hospitalProfile",
-              rules: [{
-                required: true,
-                message: "请输入医院地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "医院接口开关",
-              prop: "hospitalSwitch",
-              type: 'select',
+              label: "商品id",
+              prop: "goodsId",
               props: {
-                label: 'dictValue',
-                value: 'dictKey'
+                label: 'goodsName',
+                value: 'id'
               },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
+              search:true,
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
             },
+            {
+              label: "数量",
+              prop: "goodsQuantity",
+              rules: [{
+                required: true,
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
+              }]
+            },
+
           ]
         },
         data: []
@@ -132,10 +109,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.hospital_add, false),
-          viewBtn: this.vaildData(this.permission.hospital_view, false),
-          delBtn: this.vaildData(this.permission.hospital_delete, false),
-          editBtn: this.vaildData(this.permission.hospital_edit, false)
+          addBtn: this.vaildData(this.permission.outputorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.outputorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.outputorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.outputorderdetail_edit, false)
         };
       },
       ids() {
@@ -146,48 +123,7 @@
         return ids.join(",");
       }
     },
-    //医院开关
     methods: {
-/*      handleRowClick(row) {
-        this.$confirm("请在此确认", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-           // return remove(row.id);
-
-            let params = {
-              hospitalSwitch: !row.hospitalSwitch,
-              id: row.id
-            }
-            add(params).then((res)=>{
-              console.log(res)
-              if (res.data.code == 200){
-                this.$message({
-                  type: "success",
-                  message: res.data.msg
-                });
-                this.refreshChange();
-              }else{
-                this.$message({
-                  type: "error",
-                  message: res.data.msg
-                });
-              }
-            })
-          })
-          .then(() => {
-            this.onLoad(this.page);
-            this.$message({
-              type: "success",
-              message: "操作成功!"
-            });
-          });
-/!*        console.log(row.hospitalSwitch);
-        console.log(row.id);*!/
-
-      },*/
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -292,9 +228,6 @@
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
-          data.records.forEach((value)=>{
-            value.$cellEdit = true
-          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
@@ -305,10 +238,4 @@
 </script>
 
 <style>
- /* .el-switch.is-disabled {
-    opacity: 1;
-  }
-  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
-    cursor: pointer !important;;
-  }*/
 </style>

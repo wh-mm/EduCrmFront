@@ -75,6 +75,16 @@ export const  selectGoodsCode = (id,code) => {
     }
   })
 }
+export const submitInspector = (id) => {
+  return request({
+    url: '/api/quality/information/submitInspector',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}
+
 
 export function shenfen (rule, value,callback) {
   const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;

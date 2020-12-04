@@ -29,7 +29,7 @@
         return {
           //基础数据
           obj:{
-            purchaseOrderDetailList: [{
+            purchaseOrderDetailLists: [{
               goodsQuantity: 1,
               discountPercentage: 0,
               goodsPrice: 0

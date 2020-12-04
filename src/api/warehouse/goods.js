@@ -2,7 +2,7 @@ import request from '@/router/axios';
 import {ERP_WMS_NAME} from "@/const/YueConst"
 export const getList = (current, size, params) => {
   return request({
-    url: ERP_WMS_NAME + '/goods/list',
+    url: ERP_WMS_NAME + '/goods/page',
     method: 'get',
     params: {
       ...params,
@@ -91,7 +91,6 @@ export const dropDowns = (name) => {
 export const  selecListGoodsName = (id) => {
   return request({
     url: ERP_WMS_NAME + '/goods/selecListGoodsName',
-    method: 'get',
     params: {
       id
     }

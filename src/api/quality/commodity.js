@@ -12,12 +12,13 @@ export const getList = (current, size, params) => {
   })
 }
 
-export const getCommodityDetail = (id) => {
+export const getCommodityDetail = (id,goodsId) => {
   return request({
     url: '/api/quality/commodity/detail',
     method: 'get',
     params: {
-      id
+      id,
+      goodsId
     }
   })
 }
@@ -45,6 +46,16 @@ export const update = (row) => {
     url: '/api/quality/commodity/submit',
     method: 'post',
     data: row
+  })
+}
+//发起
+export const submitInspector = (id) => {
+  return request({
+    url: '/api/quality/commodity/submitInspector',
+    method: 'post',
+    params:{
+      id
+    }
   })
 }
 

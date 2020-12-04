@@ -60,12 +60,12 @@
           column: [
             {
               label: "名称",
-              prop: "name",
+              prop: "goodsName",
               search: true,
             },
             {
               label: "编码",
-              prop: "code",
+              prop: "goodsCode",
               search: true,
             },
             {
@@ -81,16 +81,15 @@
               dicUrl: this.ERP_WMS_NAME + '/goods-type/tree'
             },
             {
-              label: "单位",
-              prop: "unit",
+              label: "基本单位",
+              prop: "basicUnit",
               type: "select",
               searchSpan: 7,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
             },
             {
               label: "保质期(天)",
@@ -123,7 +122,7 @@
             },
             {
               label: "规格",
-              prop: "specifications",
+              prop: "goodsSpecification",
             },
             {
               label: "养护周期(天)",

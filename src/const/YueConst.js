@@ -3,6 +3,12 @@
  * @type {string}
  */
 export const ERP_BASE_NAME = "/api/erp-base";
+
+/**
+ * 订单
+ * @type {string}
+ */
+export const ERP_BASEE_NAME = "/api/yue-base";
 /**
  * 仓库
  * @type {string}

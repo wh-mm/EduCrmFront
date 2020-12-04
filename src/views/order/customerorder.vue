@@ -109,8 +109,8 @@
         </template>
       </avue-crud>
       <span slot="footer" class="dialog-footer">
-			  <el-button type="primary" @click="prescription()">抓 药</el-button>
-		  </span>
+        <el-button type="primary" @click="prescription()">抓 药</el-button>
+      </span>
     </el-dialog>
   </basic-container>
 </template>

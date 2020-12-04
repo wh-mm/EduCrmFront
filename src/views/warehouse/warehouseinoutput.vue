@@ -32,6 +32,11 @@
                    @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
         </el-button>
       </template>
+      <template slot-scope="scope" slot="menu">
+        <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
+      </template>
+
+
     </avue-crud>
     <el-dialog
       :title="title"
@@ -42,12 +47,27 @@
       <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
       </avue-form>
     </el-dialog>
+
+    <el-dialog
+      title="商品资质"
+      :append-to-body="true"
+      :visible.sync="commoditydialogVisible"
+      width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+    >
+      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
   import {getList,add,updateStatus} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
+  import {viewCommodity} from "@/api/purchase/purchaseorder";
 
   export default {
     data() {
@@ -72,6 +92,7 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        commoditydialogVisible:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -91,12 +112,29 @@
               prop: "warehouseId",
               type:"select",
               props: {
-                label: 'name',
+                label: 'title',
                 value: 'id'
               },
-              // cascaderItem: ['storageId'],
+              cascaderItem: ['storageId'],
              search:true,
-             dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+             dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
             {
               label: "商品",
@@ -107,7 +145,8 @@
                 value: 'id'
               },
               search:true,
-              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
+              dicMethod:'post',
+              dicUrl:'/api/erp-wms/goods/selecListGoods'
 
             },
             {
@@ -162,8 +201,8 @@
                 label: 'goodsName',
                 value: 'id'
               },
-              dicMethod: "post",
-              dicUrl: '/api/taocao-warehouse/goods/dropDown',
+              dicMethod:'post',
+              dicUrl:'/api/erp-wms/goods/selecListGoods'
             },
             {
               label: "仓库",
@@ -172,16 +211,33 @@
               row: true,
               span: 24,
               props: {
-                label: 'name',
-                value: 'id'
+                label: 'title',
+                value: 'value'
               },
+              cascaderItem: ['storageId'],
               rules: [{
                 required: true,
                 message: "请输入仓库",
                 trigger: "blur"
               }],
-             dicMethod:"post",
-             dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+             dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
             {
               label: "数量",
@@ -202,7 +258,7 @@
               type: "select",
               row: true,
               span: 24,
-
+              disabled:true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               props: {
                 label: "dictValue",
@@ -216,7 +272,209 @@
               span: 24,
             }
           ]
-        }
+        },
+        commoditydata:[],
+        commoditydataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          calcHeight: 30,
+          dialogWidth: '80%',
+          column: [
+
+            {
+              label: "公司名称",
+              prop: "companyId",
+              props: {
+                label: 'supplierName',
+                value: 'id'
+              },
+              dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
+            },
+            {
+              label: "通用名",
+              prop: "commonName",
+              tip: '通用名',
+            },
+            {
+              label: "商品名",
+              prop: "tradeName",
+            },
+            {
+              label: "基本单位",
+              prop: "basicUnit",
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin"
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer"
+            },
+
+            {
+              label: "规格(型号)",
+              prop: "specifications"
+            },
+            {
+              label: "最小销售包装规格",
+              prop: "minimumSalesSpecification",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",
+            },
+            {
+              label: "进项税",
+              prop: "inputTax",
+              type: 'number',
+            },
+            {
+              label: "销项税",
+              prop: "outputTax",
+              type: 'number',
+            },
+            {
+              label: "剂型",
+              prop: "dosageForm",
+              type: 'tree',
+              rules: [{
+                required: true,
+                message: "请选择剂型",
+                trigger: "blur",
+              }],
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+            },
+            {
+              label: "产品分类",
+              prop: "productClassification",
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl: "/api/erp-wms/goods-type/tree",
+            },
+
+            {
+              label: "存储期限",
+              prop: "storageLife",
+            },
+            {
+              label: "存储期限类型",
+              prop: "storagePeriodType",
+            },
+            {
+              label: "特管药品",
+              prop: "specialDrugs",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drug",
+            },
+            {
+              label: "特殊药品",
+              prop: "specialDrug",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drugs",
+            },
+
+            {
+              label: "存储条件",
+              prop: "storageConditions",
+            },
+            {
+              label: "税收分类",
+              prop: "taxClassification",
+            },
+            {
+              label: "是否可拆零",
+              prop: "scattered",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '是',
+                value: 0
+              }, {
+                label: '否',
+                value: 1,
+              }]
+            },
+            {
+              label: "OTC标志",
+              prop: "sign",
+              type: 'radio',
+              value: '1',
+              dicData: [{
+                label: '有',
+                value: '1'
+              }, {
+                label: '无',
+                value: '2',
+              }]
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=otc_sign",
+            },
+            {
+              label: '国产/进口标示',
+              prop: 'domesticImportIndication',
+              type: 'radio',
+              labelWidth: 110,
+              // viewDisplay: true,   true是可已查看
+              value: '1',
+              dicData: [{
+                label: '国产',
+                value: '1'
+              }, {
+                label: '进口',
+                value: '2'
+              }]
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+              display: true,
+              rules: [],
+            },
+            {
+              label: "进口注册证",
+              labelWidth: 110,
+              prop: "importRegistrationCertificate",
+              rules: [],
+            },
+            {
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
+              labelWidth: 110,
+              rules: [],
+            },
+            {
+              label: "分包装批准文号",
+              labelWidth: 130,
+              prop: "approvalNumberOfSubPackage",
+              rules: [],
+            },
+          ],
+        },
       };
     },
     computed: {
@@ -342,7 +600,18 @@
             this.onLoad(this.page);
           })
         });
-      }
+      },
+      viewCommodity(goodsId){
+        this.commoditydialogVisible = true;
+        viewCommodity(goodsId).then(res=>{
+          if (res.data.success) {
+            this.commoditydata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
     }
   };
 </script>

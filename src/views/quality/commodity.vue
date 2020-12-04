@@ -19,13 +19,13 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <!--<el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.commodity_delete"
                    @click="handleDelete">删 除
-        </el-button>
+        </el-button>-->
         <el-button type="button"
                    size="small"
                    icon="el-icon-mouse"
@@ -38,14 +38,20 @@
           :size="scope.size"
           :type="scope.type"
           icon="el-icon-delete"
-          v-if="permission.supQuality_delete  && scope.row.auditStatus === '1'"
+          v-if="permission.commodity_delete  && scope.row.purchasingStatus === '1'"
           @click="rowDel(scope.row)">删 除
         </el-button>
         <el-button icon="el-icon-check"
                    :size="scope.size"
                    :type="scope.type"
-                   v-if="permission.supQuality_edit  && scope.row.auditStatus === '1'"
+                   v-if="permission.commodity_edit  && scope.row.purchasingStatus === '1'"
                    @click.stop="handleEdit(scope.row,scope.index)">编 辑
+        </el-button>
+        <el-button icon="el-icon-check"
+                   :size="scope.size"
+                   :type="scope.type"
+                   v-if="permission.commodity_edit && scope.row.purchasingStatus === '1'"
+                   @click.stop="handleStart(scope.row.id)">发起
         </el-button>
         <el-button icon="el-icon-check"
                    :size="scope.size"
@@ -96,7 +102,15 @@
 </template>
 
 <script>
-  import {getList, getCommodityDetail, add, update, remove, updateInspector} from "@/api/quality/commodity";
+  import {
+    getList,
+    getCommodityDetail,
+    add,
+    update,
+    remove,
+    updateInspector,
+    submitInspector
+  } from "@/api/quality/commodity";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
   export default {
@@ -237,20 +251,7 @@
               required: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",
             },
-            {
-              label: "审批状态",
-              prop: "purchasingStatus",
-              type: 'select',
-              addDisplay: false,
-              editDisplay: false,
-              viewDisplay: false,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
-            },
+
             /*{
               label: "打印规格",
               prop: "printSpecifications",
@@ -306,7 +307,20 @@
               search: true,
               dicUrl: "/api/erp-wms/goods-type/tree",
             },
-
+            {
+              label: "审批状态",
+              prop: "purchasingStatus",
+              type: 'select',
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
+            },
             {
               label: "存储期限",
               prop: "storageLife",
@@ -361,6 +375,7 @@
               label: "是否可拆零",
               prop: "scattered",
               type: 'radio',
+              hide: true,
               value: 0,
               dicData: [{
                 label: '是',
@@ -477,7 +492,7 @@
               message: "请选择OTC标志",
               trigger: "blur"
             }]
-          }else {
+          } else {
             signTow.display = false
             signs.viewDisplay = false
             signTow.rules = []
@@ -530,11 +545,11 @@
           }
         },
       },
- /*     //拆零时间
-      'form.scattered': {
+      /*     //拆零时间
+           'form.scattered': {
 
-        immediate: true
-      },*/
+             immediate: true
+           },*/
     },
     computed: {
       ...mapGetters(["permission"]),
@@ -542,8 +557,8 @@
         return {
           addBtn: this.vaildData(this.permission.commodity_add, false),
           viewBtn: this.vaildData(this.permission.commodity_view, false),
-          delBtn: this.vaildData(this.permission.commodity_delete, false),
-          editBtn: this.vaildData(this.permission.commodity_edit, false)
+          delBtn: false,
+          editBtn: false,
         };
       },
       ids() {
@@ -608,6 +623,15 @@
       handleEdit(row, index) {
         this.$refs.crud.rowEdit(row, index);
       },
+      handleStart(id) {
+        submitInspector(id).then(res => {
+          this.$message({
+            type: 'info',
+            message: res.data.msg
+          })
+          this.refreshChange();
+        })
+      },
       handleTimeline(id) {
         this.dialogVisibleTimeline = true;
         timeLine(3, id).then(res => {
@@ -615,7 +639,7 @@
         })
       },
       updateInspectorNew(operation) {
-        if (operation === 2 && this.obj0.rejectText === '') {
+        if (operation === 3 && this.obj0.rejectText === '') {
           return this.$message.error("请输入驳回理由!");
         }
         updateInspector(this.ids, operation, this.obj0.rejectText).then(res => {

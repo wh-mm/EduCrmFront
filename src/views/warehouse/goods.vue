@@ -130,16 +130,16 @@
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
             },
             {
-              label: "单位",
-              prop: "unit",
+              label: "基本单位",
+              prop: "basicUnit",
               type: "select",
               searchSpan: 7,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
             },
             {
               label: "货品价格",
@@ -150,23 +150,6 @@
                 trigger: "blur"
               }]
             },
-            /*
-            {
-              label: "货品产地",
-              prop: "goodsRegion",
-              type: "cascader",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
-                trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
-            },
-             */
           ]
         },
         data: []
