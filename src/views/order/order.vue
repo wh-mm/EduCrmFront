@@ -20,7 +20,7 @@
         </el-button>
         <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
         </el-button>
-        <el-button type="primary" size="small" icon="el-icon-printer" plain @click="dayin()">打 印
+        <el-button type="primary" size="small" icon="el-icon-printer" plain  @click="dayin()">打 印
         </el-button>
       </template>
 
@@ -161,6 +161,7 @@
             calcHeight: 30,
             align:'center',
             tip: false,
+            printBtnText:'打印文案',
             searchShow: true,
             searchMenuSpan: 6,
             border: true,

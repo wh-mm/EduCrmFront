@@ -61,7 +61,11 @@
           column: [
             {
               label: "单号",
-              prop: "orderNumber",
+            /*  prop: "orderNumber",*/
+              prop: "id",
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
               rules: [{
                 required: true,
                 message: "请输入单号",
@@ -69,22 +73,34 @@
               }]
             },
             {
-              label: "车辆id",
+              label: "车辆名称",
               prop: "carId",
+              type: "select",
               rules: [{
                 required: true,
                 message: "请输入车辆id",
                 trigger: "blur"
-              }]
+              }],
+              props: {
+                label: "name",
+                value: "id"
+              },
+              dicUrl: "/api/logistics/taocar/selectTaoCar"
             },
             {
-              label: "司机id",
+              label: "司机名称",
               prop: "driverId",
+              type: "select",
               rules: [{
                 required: true,
                 message: "请输入司机id",
                 trigger: "blur"
-              }]
+              }],
+              props: {
+                label: "name",
+                value: "id"
+              },
+              dicUrl: "/api/logistics/taodriver/selectTaodriver"
             },
             {
               label: "类型",

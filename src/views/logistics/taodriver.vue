@@ -80,6 +80,8 @@
             {
               label: "驾驶证开始时间",
               prop: "driveStartTime",
+              type: "datetime",
+              format: "yyyy-MM-dd hh:mm:ss",
               rules: [{
                 required: true,
                 message: "请输入驾驶证开始时间",
@@ -89,6 +91,8 @@
             {
               label: "驾驶证结束时间",
               prop: "driveEndTime",
+              type: "datetime",
+              format: "yyyy-MM-dd hh:mm:ss",
               rules: [{
                 required: true,
                 message: "请输入驾驶证结束时间",
