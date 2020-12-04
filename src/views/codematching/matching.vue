@@ -66,7 +66,7 @@
             {
               label: "医院名称",
               prop: "hospitalId",
-              type: "select",
+              type: "tree",
               cascaderItem:['excelFile'],
               props: {
                 label: "hospitalName",
@@ -146,7 +146,7 @@
             {
               label: "医院名称",
               prop: "hospitalId",
-              type: "select",
+              type: "tree",
               props: {
                 label: "hospitalName",
                 value: "id"
@@ -154,10 +154,11 @@
               search: true,
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
+
             {
-              label: "货品名称",
+              label: "库房药编码",
               prop: "goodsId",
-              type: "select",
+              type: "tree",
               props: {
                 label: 'goodsName',
                 value: 'id'
@@ -166,37 +167,25 @@
               dicMethod: "post",
               dicUrl: '/api/erp-wms/goods/selecListGoods'
             },
-            {
-              label: "货品名称",
-              prop: "goodsName",
 
-              rules: [{
-                required: true,
-                message: "请输入医院药品编号",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "库房药编码",
-              prop: "goodsCode",
-              addDisplay: false,
-              editDisplay: false,
-              viewDisplay: false,
-              rules: [{
-                required: true,
-                message: "请输入中药编码",
-                trigger: "blur"
-              }]
-            },
             {
               label: "HIS药品码",
-              prop: "hospitalGoodsUmber",
+              prop: "hisDrugsUmber",
               rules: [{
                 required: true,
-                message: "请输入医院药品编号",
+                message: "HIS药品码",
                 trigger: "blur"
               }]
             },
+            {
+              label: "HIS药品名称",
+              prop: "hisDrugsName",
+              rules: [{
+                required: true,
+                message: "HIS药品名称",
+                trigger: "blur"
+              }]
+            }
           ]
         },
         data: [],
