@@ -19,55 +19,33 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <!--<el-button type="danger"
+        <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.outputorderdetail_delete"
                    @click="handleDelete">删 除
-        </el-button>-->
+        </el-button>
       </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/outputorderdetail";
   import {mapGetters} from "vuex";
-
 
   export default {
     data() {
-      var selectName = (rule, value, callback) => {
+      var validateQuantity = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error("请输入商品名称！"))
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
         } else {
-          selectGoodsName(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
+          callback();
         }
-      }
-      var selectCode = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入编码！"))
-        } else {
-          selectGoodsCode(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
+      };
       return {
         form: {},
         query: {},
@@ -79,7 +57,7 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -91,65 +69,37 @@
           dialogClickModal: false,
           column: [
             {
-              label: "商品名称",
-              prop: "goodsName",
+              label: "出库id",
+              prop: "outputId",
               rules: [{
                 required: true,
-                validator: selectName,
-                trigger: 'blur',
-              }],
+                message: "请输入采购id",
+                trigger: "blur"
+              }]
             },
             {
-              label: "货物类型",
-              prop: "goodsType",
-              type: "tree",
+              label: "商品id",
+              prop: "goodsId",
               props: {
-                label: 'title',
+                label: 'goodsName',
                 value: 'id'
               },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
+              search:true,
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
             },
             {
-              label: "货品编码",
-              prop: "goodsCode",
+              label: "数量",
+              prop: "goodsQuantity",
               rules: [{
                 required: true,
-                validator: selectCode,
-                trigger: "blur"
-              }]
-            }, {
-              label: "规格",
-              prop: "goodsSpecification",
-              type: "select",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
-            },
-            {
-              label: "基本单位",
-              prop: "basicUnit",
-              type: "select",
-              searchSpan: 7,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
-            },
-            {
-              label: "货品价格",
-              prop: "unitPrice",
-              rules: [{
-                required: true,
-                message: "请输入货品价格",
-                trigger: "blur"
+                message: "请输入数量",
+                trigger: "blur",
+                validator: validateQuantity,
+
               }]
             },
+
           ]
         },
         data: []
@@ -159,10 +109,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.outputorderdetail_add, false),
+          viewBtn: this.vaildData(this.permission.outputorderdetail_view, false),
+          delBtn: this.vaildData(this.permission.outputorderdetail_delete, false),
+          editBtn: this.vaildData(this.permission.outputorderdetail_edit, false)
         };
       },
       ids() {
@@ -241,7 +191,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getGoodsDetail(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -264,10 +214,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -283,7 +233,6 @@
           this.selectionClear();
         });
       }
-
     }
   };
 </script>

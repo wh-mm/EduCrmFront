@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/purchaseorderdetail";
+  import {getList, getDetail, add, update, remove} from "@/api/purchase/purchaseorderdetail";
   import {mapGetters} from "vuex";
 
   export default {

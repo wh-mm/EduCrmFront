@@ -36,7 +36,7 @@
         {{(row.money*row.goodsQuantity).toFixed(2)}}
       </template>
       <template slot-scope="scope" slot="unitForm">
-        <el-button :size="scope.size"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>
+        <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
       </template>
     </avue-crud>
     <el-dialog
@@ -66,9 +66,10 @@
 
 <script>
   import {getList, add, getDetail, update, remove, updateContract, viewCommodity, updaterejectText} from "@/api/purchase/purchaseorder";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import '@/views/purchase/dialogdrag.ts'
+  import {getCommodityDetail} from "@/api/quality/commodity";
+  import {getGoodsDetail} from "@/api/warehouse/goods";
   export default {
 
     data() {
@@ -247,8 +248,8 @@
                   },
                   {
                     label: '*商品',
-                    prop: "commodityId",
-                    type: 'tree',
+                    prop: "goodsId",
+                    type: 'select',
                     width: 130,
                     filterable: true,
                     remote: true,
@@ -258,22 +259,23 @@
                       message: '请选择商品',
                     }],
                     props: {
-                      label: 'tradeName',
+                      label: 'goodsName',
                       value: 'id'
                     },
-                    // : '/api/taocao-warehouse/goods/dropDowns?name={{key}}',
-                    dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
-                    // dicMethod:'post',
-                    // dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
+                    // dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+                    dicMethod:'post',
+                    dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
                           this.form.purchaseOrderDetailList.forEach(val => {
+                            console.log(val.goodsId)
                             if (val.goodsId == value) {
                               var detail = res.data.data;
-                              val.unit = detail.unitName;
-                              // val.money = detail.money;
+                              console.log(detail.basicUnit)
+                              val.basicUnit = detail.basicUnit;
+
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });
@@ -286,7 +288,6 @@
                     prop: "goodsQuantity",
                     type: "number",
                     width: 130,
-
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
@@ -299,6 +300,18 @@
                         }
                       });
                     },
+                  },
+                  {
+                    label: "基本单位",
+                    prop: "basicUnit",
+                    editDisplay: false,
+                    disabled: true,
+                    type:'select',
+                    props: {
+                      label: 'dictValue',
+                      value: 'dictKey'
+                    },
+                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
                   },
                   {
                     label: '商品资质',
@@ -384,127 +397,202 @@
           addBtn: false,
           menu:false,
           align:'center',
-          column:[
+          calcHeight: 30,
+          dialogWidth: '80%',
+          column: [
+
             {
-              label:'商品名称',
-              prop:'tradeName'
-            },{
-              label:'通用名称',
-              prop:'commonName'
+              label: "公司名称",
+              prop: "companyId",
+              props: {
+                label: 'supplierName',
+                value: 'id'
+              },
+              dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
+            },
+            {
+              label: "通用名",
+              prop: "commonName",
+              tip: '通用名',
+            },
+            {
+              label: "商品名",
+              prop: "tradeName",
             },
             {
               label: "基本单位",
               prop: "basicUnit",
             },
             {
-              label:'规格(型号)',
-              prop:'specifications'
+              label: "产地",
+              prop: "placeOfOrigin"
             },
             {
               label: "生产厂家",
-              prop: "manufacturer",
+              prop: "manufacturer"
+            },
+
+            {
+              label: "规格(型号)",
+              prop: "specifications"
+            },
+            {
+              label: "最小销售包装规格",
+              prop: "minimumSalesSpecification",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",
             },
             {
               label: "进项税",
               prop: "inputTax",
+              type: 'number',
             },
             {
               label: "销项税",
               prop: "outputTax",
-            },
-            {
-              label: "分包装企业",
-              prop: "subPackagingEnterprises",
-              labelWidth: 110,
-              rules: [{
-                required: true,
-                message: "请输入分包装企业",
-                trigger: "blur"
-              }]
+              type: 'number',
             },
             {
               label: "剂型",
               prop: "dosageForm",
               type: 'tree',
+              rules: [{
+                required: true,
+                message: "请选择剂型",
+                trigger: "blur",
+              }],
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
-
-            },
-            {
-              label: 'OTC标志',
-              prop: 'signTow',
-              display: true,
-              rules: [],
             },
             {
               label: "产品分类",
               prop: "productClassification",
-              rules: [{
-                required: true,
-                message: "请输入产品分类",
-                trigger: "blur"
-              }],
-              type: 'tree',
               props: {
                 label: 'title',
                 value: 'id'
               },
               dicUrl: "/api/erp-wms/goods-type/tree",
             },
-            {
-              label: "产品二级分类",
-              prop: "productClassificationTow",
-              labelWidth: 110,
-            },
+
             {
               label: "存储期限",
               prop: "storageLife",
-              tip: '按每月',
             },
             {
               label: "存储期限类型",
               prop: "storagePeriodType",
-              labelWidth: 110,
             },
             {
               label: "特管药品",
               prop: "specialDrugs",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drug",
             },
             {
               label: "特殊药品",
               prop: "specialDrug",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drugs",
             },
 
-            {
-              label: "国产/进口标示",
-              labelWidth: 110,
-              prop: "domesticImportIndication",
-            },
-            /*{
-              label: "产品二级分类",
-              prop: "secondaryProductClassification",
-              rules: [{
-                required: true,
-                message: "请输入产品二级分类",
-                trigger: "blur"
-              }]
-            },*/
             {
               label: "存储条件",
               prop: "storageConditions",
             },
             {
-              label: "批准文号",
-              prop: "approvalNumber",
-            },
-            {
               label: "税收分类",
               prop: "taxClassification",
             },
-          ]
+            {
+              label: "是否可拆零",
+              prop: "scattered",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '是',
+                value: 0
+              }, {
+                label: '否',
+                value: 1,
+              }]
+            },
+            {
+              label: "OTC标志",
+              prop: "sign",
+              type: 'radio',
+              value: '1',
+              dicData: [{
+                label: '有',
+                value: '1'
+              }, {
+                label: '无',
+                value: '2',
+              }]
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=otc_sign",
+            },
+            {
+              label: '国产/进口标示',
+              prop: 'domesticImportIndication',
+              type: 'radio',
+              labelWidth: 110,
+              // viewDisplay: true,   true是可已查看
+              value: '1',
+              dicData: [{
+                label: '国产',
+                value: '1'
+              }, {
+                label: '进口',
+                value: '2'
+              }]
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+              display: true,
+              rules: [],
+            },
+            {
+              label: "进口注册证",
+              labelWidth: 110,
+              prop: "importRegistrationCertificate",
+              rules: [],
+            },
+            {
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
+              labelWidth: 110,
+              rules: [],
+            },
+            {
+              label: "分包装批准文号",
+              labelWidth: 130,
+              prop: "approvalNumberOfSubPackage",
+              rules: [],
+            },
+          ],
         },
         obj0Reason:{
           rejectText:''

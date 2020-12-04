@@ -153,7 +153,7 @@ export const updateStatus = (id, status) => {
     }
   })
 }
-export const viewAcceptanceRecord = (id) => {
+export const viewAcceptanceRecord = (id) => { //查看验收记录
   return request({
     url: '/api/purchase/purchaseorder/viewAcceptanceRecord',
     method: 'post',
@@ -163,16 +163,16 @@ export const viewAcceptanceRecord = (id) => {
   })
 }
 
-export const viewCommodity = (commodityId) => {
+export const viewCommodity = (goodsId) => { //查看商品资质
   return request({
     url: '/api/purchase/purchaseorder/viewCommodity',
     method: 'post',
     params:{
-      commodityId
+      goodsId
     }
   })
 }
-export const viewReason = (id) => {
+export const viewReason = (id) => { //查看驳回理由
   return request({
     url: '/api/purchase/purchaseorder/viewReason',
     method: 'post',
@@ -181,7 +181,7 @@ export const viewReason = (id) => {
     }
   })
 }
-export const updaterejectText = (ids,rejectText) => {
+export const updaterejectText = (ids,rejectText) => { //填写驳回理由
   return request({
     url: '/api/purchase/purchaseorder/updaterejectText',
     method: 'post',
