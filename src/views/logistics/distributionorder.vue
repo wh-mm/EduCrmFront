@@ -1,0 +1,414 @@
+<template>
+  <basic-container>
+    <avue-crud :option="option"
+               :table-loading="loading"
+               :data="data"
+               :page.sync="page"
+               :permission="permissionList"
+               :before-open="beforeOpen"
+               v-model="form"
+               ref="crud"
+               @row-update="rowUpdate"
+               @row-save="rowSave"
+               @row-del="rowDel"
+               @search-change="searchChange"
+               @search-reset="searchReset"
+               @selection-change="selectionChange"
+               @current-change="currentChange"
+               @size-change="sizeChange"
+               @refresh-change="refreshChange"
+               @on-load="onLoad">
+      <template slot="menuLeft">
+      </template>
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button  :size="size"
+                    :type="type"
+                    icon="el-icon-delete"
+                    v-if="permission.distributionorder_delete  && row.distributionStatus === '1'"
+                    @click="rowDel(row)">删 除
+        </el-button>
+        <el-button icon="el-icon-check"
+                   :size="size"
+                   :type="type"
+                   v-if="permission.distributionorder_edit  && row.distributionStatus === '1'"
+                   @click.stop="handleEdit(row,index)">编辑
+        </el-button>
+        <el-button icon="el-icon-check"
+                   :size="size"
+                   :type="type"
+                   v-if="permission.distributionorder_edit && row.distributionStatus === '1'"
+                   @click.stop="handleStart(row.id)">发起
+        </el-button>
+        <el-button :type="type" :size="size" icon="el-icon-printer"
+                   v-if="row.distributionStatus === '2'"
+                   @click="doPrint1(row)">打 印
+        </el-button>
+      </template>
+      <template slot="distributionOrderNumber" slot-scope="{scope,row}">
+        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+      </template>
+    </avue-crud>
+    <div style="display: none;" id="print11">
+      <!-- 隐藏打印区域，避免用户看到 -->
+      <div style="padding: 10px;height: 500px;margin-top: 35px">
+        <div class="head">
+          淘草中医药厂内配送单
+        </div>
+        <div class="shou">
+          <div>
+            <div class="head" style="padding-left: 70px">
+              {{printData.hospitalName}}
+            </div>
+            <p>类型 : <span style="margin-left: 10px;">{{printData.orderType}}</span></p>
+            <p>处方号 : <span style="margin-left: 10px;">{{printData.pspnum}}</span></p>
+            <p>患者姓名:<span style="margin-left: 10px;">{{printData.addresseeName}}</span></p>
+            <p>手机号:<span style="margin-left: 10px;">{{printData.addresseePhone}}</span></p>
+            <p>地址:<span style="margin-left: 10px;">{{printData.addresseeAddress}}</span></p>
+            <p>接方时间:<span style="margin-left: 10px;">{{printData.receivingDate}}</span></p>
+            <p>配送类型:<span style="margin-left: 10px;">厂内配送</span></p>
+          </div>
+        </div>
+        <div class="tiaoxingma" style="padding: 10px;">
+          <svg id="bigcode"></svg>
+        </div>
+      </div>
+    </div>
+  </basic-container>
+</template>
+
+<script>
+  import {
+    getList, getDetail, add, update, remove,
+    updateStatus
+  } from "@/api/logistics/distributionorder";
+  import {mapGetters} from "vuex";
+  import JsBarcode from 'jsbarcode';
+  import './dayin.css'
+
+  export default {
+    data() {
+      return {
+        form: {},
+        query: {},
+        loading: true,
+        page: {
+          pageSize: 10,
+          currentPage: 1,
+          total: 0
+        },
+        printData: {
+          orderType: '',
+          pspnum: '',
+          receivingDate: '',
+          addresseeAddress: '',
+          hospitalName: '',
+          addresseeName: '',
+          addresseePhone: '',
+        },
+        dialogVisible: false,
+        selectionList: [],
+        option: {
+          height: 'auto',
+          calcHeight: 30,
+          tip: false,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: true,
+          selection: true,
+          dialogClickModal: false,
+          column: [
+            {
+              label: "单号",
+              prop: "distributionOrderNumber",
+              slot: true,
+              addDisplay: false,
+              editDisplay: false,
+              width: 180,
+              search: true,
+              rules: [{
+                required: true,
+                message: "请输入单号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "状态",
+              prop: "distributionStatus",
+              addDisplay: false,
+              editDisplay: false,
+              dicUrl: "/api/blade-system/dict/dictionary?code=distribution_status",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
+            },
+            {
+              label: "医院",
+              prop: "hospitalName",
+            },
+            {
+              label: "处方号",
+              prop: "pspnum",
+            },
+            {
+              label: "类型",
+              prop: "orderType",
+            },
+            {
+              label: "接方时间",
+              prop: "receivingDate",
+              type: "date",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "收件人",
+              prop: "addresseeName",
+              rules: [{
+                required: true,
+                message: "请输入收件人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人地址",
+              prop: "addresseeAddress",
+              width: 180,
+              rules: [{
+                required: true,
+                message: "请输入收件人地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人手机号",
+              prop: "addresseePhone",
+              width: 180,
+              rules: [{
+                required: true,
+                message: "请输入收件人手机号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "寄件时间",
+              prop: "senderTime",
+              type: "datetime",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              addDisplay: false,
+              editDisplay: false,
+            },
+            {
+              label: "收件时间",
+              prop: "addresseeTime",
+              type: "datetime",
+              addDisplay: false,
+              editDisplay: false,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "备注",
+              prop: "remark",
+            },
+          ]
+        },
+        data: []
+      };
+    },
+    computed: {
+      ...mapGetters(["permission"]),
+      permissionList() {
+        return {
+          addBtn: this.vaildData(this.permission.distributionorder_add, false),
+          viewBtn: this.vaildData(this.permission.distributionorder_view, false),
+          delBtn: false,
+          editBtn: false
+        };
+      },
+      ids() {
+        let ids = [];
+        this.selectionList.forEach(ele => {
+          ids.push(ele.id);
+        });
+        return ids.join(",");
+      }
+    },
+    methods: {
+      rowSave(row, done, loading) {
+        add(row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          done();
+        }, error => {
+          this.$message({
+            type: "error",
+            message: error.data.msg
+          });
+          loading();
+        });
+      },
+      rowUpdate(row, index, done, loading) {
+        update(row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          done();
+        }, error => {
+          this.$message({
+            type: "error",
+            message: error.data.msg
+          });
+          loading();
+        });
+      },
+      rowDel(row) {
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return remove(row.id);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          });
+      },
+      handleDelete() {
+        if (this.selectionList.length === 0) {
+          this.$message.warning("请选择至少一条数据");
+          return;
+        }
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return remove(this.ids);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+            this.$refs.crud.toggleSelection();
+          });
+      },
+      beforeOpen(done, type) {
+        if (["edit", "view"].includes(type)) {
+          getDetail(this.form.id).then(res => {
+            this.form = res.data.data;
+          });
+        }
+        done();
+      },
+      searchReset() {
+        this.query = {};
+        this.onLoad(this.page);
+      },
+      searchChange(params, done) {
+        this.query = params;
+        this.page.currentPage = 1;
+        this.onLoad(this.page, params);
+        done();
+      },
+      selectionChange(list) {
+        this.selectionList = list;
+      },
+      selectionClear() {
+        this.selectionList = [];
+        this.$refs.crud.toggleSelection();
+      },
+      currentChange(currentPage) {
+        this.page.currentPage = currentPage;
+      },
+      sizeChange(pageSize) {
+        this.page.pageSize = pageSize;
+      },
+      refreshChange() {
+        this.onLoad(this.page, this.query);
+      },
+      onLoad(page, params = {}) {
+        this.loading = true;
+        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
+      },
+      handleEdit(row, index) {
+        this.$refs.crud.rowEdit(row, index);
+      },
+      handleStart(id) {
+        updateStatus(id,2).then(res => {
+          this.$message({
+            type: 'info',
+            message: res.data.msg
+          })
+          this.refreshChange();
+        })
+      },
+      updateStatus(id, status) {
+        updateStatus(id, status).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+        }).catch(error =>{
+          this.$message.error(error.data.msg);
+        })
+      },
+      doPrint1(row) {
+        this.printData = row;
+        setTimeout(() => {
+          JsBarcode("#bigcode", row.distributionOrderNumberPrefix + row.distributionOrderNumber, {
+            width: 2,//设置条之间的宽度
+            height: 28,//高度
+            fontOptions: "bold",//使文字加粗体或变斜体
+            textAlign: "center",//设置文本的水平对齐方式
+            textMargin: 5,//设置条形码和文本之间的间距
+            fontSize: 26,//设置文本的大小
+            displayValue: true,//是否在条形码下方显示文字
+            margin: 2
+          });
+          var prnhtml = document.querySelector("#print11").innerHTML;
+          var iframe = document.createElement('IFRAME');
+          iframe.setAttribute('style', 'display:none;');
+          var doc = null;
+          var css = ".head{text-align:center;position:relative;font-size:32px}.head_l{position:absolute;bottom:0;left:0}.head_l img{width:32px;height:32px}.head_r{margin-right:10px;font-size:24px}.bottom{height:38%}.tiaoxingma{text-align:center;height:80px}.tiaoxingma svg{width:100%;height:99%}.tiaoxingma-sm{width:78%}.tiaoxingma-sm img{width:100%;height:99%}.shou{display:flex;border-top:1px solid black;border-bottom:1px solid black;height:380px;font-size:26px;margin-top:20px}p{margin:8px;padding:0}"
+          document.body.appendChild(iframe);
+          doc = iframe.contentWindow.document;
+          doc.write('<html><head><style>' + css + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
+          doc.close();
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+          if (navigator.userAgent.indexOf("MSIE") > 0) {
+            document.body.removeChild(iframe);
+          }
+        }, 100);
+      },
+    }
+  }
+</script>
+
+<style>
+</style>
