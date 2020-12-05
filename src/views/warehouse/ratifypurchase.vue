@@ -41,7 +41,7 @@
 </template>
 
 <script>
-  import {getList, add, getDetail, update, remove, updateStatus} from "@/api/warehouse/purchaseorder";
+  import {getList, add, getDetail, update, remove, updateStatus} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
 

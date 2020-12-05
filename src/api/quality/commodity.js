@@ -12,12 +12,13 @@ export const getList = (current, size, params) => {
   })
 }
 
-export const getCommodityDetail = (id) => {
+export const getCommodityDetail = (id,goodsId) => {
   return request({
     url: '/api/quality/commodity/detail',
     method: 'get',
     params: {
-      id
+      id,
+      goodsId
     }
   })
 }

@@ -639,7 +639,7 @@
         })
       },
       updateInspectorNew(operation) {
-        if (operation === 2 && this.obj0.rejectText === '') {
+        if (operation === 3 && this.obj0.rejectText === '') {
           return this.$message.error("请输入驳回理由!");
         }
         updateInspector(this.ids, operation, this.obj0.rejectText).then(res => {

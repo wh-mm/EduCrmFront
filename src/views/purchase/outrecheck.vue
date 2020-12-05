@@ -18,51 +18,64 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-
-        <template slot-scope=""  slot="menuLeft">
-
+      <template slot="menuLeft">
           <el-button type="button"
                      size="small"
-                     v-if="permission.goodsclerk_approval"
-                     @click="updateGoodsClerkNew()">审批
+                     v-if="permission.outrechek_approval"
+                     @click="updateStatusNew()">审 批
           </el-button>
-
-          <el-button type="button"
-                     size="small"
-                     v-if="status1 == '106'"
-                     @click="dialogFormVisible = true">填写驳回理由
-          </el-button>
+        <el-button type="button"
+                   size="small"
+                   v-if="status1 == '101'"
+                   @click="dialogFormVisible = true">填写驳回理由
+        </el-button>
       </template>
 
-      <template slot-scope="{row}" slot="totalPriceForm">
-        {{(row.money*row.goodsQuantity).toFixed(2)}}
+      <template slot-scope="scope" slot="inventoryToRetrieveForm">
+        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.warehouseId)">库 存 检 索</el-button>
       </template>
+
       <template slot-scope="scope" slot="unitForm">
-        <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
+        <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查 看 资 质</el-button>
+
       </template>
 
       <template slot-scope="scope" slot="menu">
-        <el-button icon="el-icon-check"
-                   :size="scope.size"
-                   :type="scope.type"
-                   v-if="scope.row.status==6"
-                   @click.stop="handleEdit(scope.row,scope.index)">复核|上传货单
-        </el-button>
+       <el-button icon="el-icon-check"
+                            :size="scope.size"
+                            :type="scope.type"
+                            v-if="scope.row.status==1"
+                            @click.stop="handleEdit(scope.row,scope.index)">复核数量
+      </el-button>
 
       </template>
 
-    </avue-crud>
-
+     </avue-crud>
     <el-dialog
       title="商品资质"
       :append-to-body="true"
       :visible.sync="commoditydialogVisible"
-      width="50%"
+       width="50%"
       :modal="false"
       :before-close="handleClose"
       :close-on-click-modal="false"
-      v-dialogDrag >
+      v-dialogDrag
+    >
       <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
+
+    <el-dialog
+      title="库存检索"
+      :append-to-body="true"
+      :visible.sync="dialogVisible"
+       width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+    >
+      <avue-crud v-model="form" :data="inventoryToRetrievedata" :option="inventoryToRetrievedataoption"  >
       </avue-crud>
     </el-dialog>
 
@@ -74,24 +87,16 @@
         <el-button type="primary" @click="updaterejectTextNew">提 交</el-button>
       </div>
     </el-dialog>
-  </basic-container>
-</template>
 
+  </basic-container>
+
+</template>
 <script>
-  import {
-    getList,
-    add,
-    getDetail,
-    update,
-    remove,
-    updateGoodsClerk,
-    viewCommodity,
-    updaterejectText
-  } from "@/api/purchase/purchaseorder";
-  import {mapGetters} from "vuex";
-  import '@/views/purchase/dialogdrag.ts'
-  import {getCommodityDetail} from "@/api/quality/commodity";
+  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieves,updaterejectText} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {mapGetters} from "vuex";
+  import {viewCommodity} from "@/api/purchase/purchaseorder";
+  import '@/views/purchase/dialogdrag.ts'
   export default {
 
     data() {
@@ -104,7 +109,6 @@
           callback();
         }
       };
-
       return {
         form: {},
         query: {},
@@ -121,184 +125,60 @@
         dialogFormVisible: false,
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
           index: true,
-          //editBtnText:'复核|上传货单',
-          editBtn: false,
           viewBtn: true,
           selection: true,
+          editBtn:false,
           dialogClickModal: false,
           dialogWidth: '80%',
           column: [
             {
-              label: "采购订单号",
+              label: "出库单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
-              search: true,
+              search:true,
               rules: [{
                 required: true,
-                message: "请输入采购订单号",
                 trigger: "blur"
               }]
             },
             {
               label: "类型",
               prop: "type",
-              search: true,
               type: "select",
-              disabled:true,
-              rules: [{
-                required: true,
-                message: "请输入类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_type"
-            },
-            {
-              label: "预付款状态",
-              prop: "advanceStatus",
-              search: true,
-              disabled:true,
-              type: "select",
-              rules: [{
-                required: true,
-                message: "请输入类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=advance",
-
-
-            },
-            {
-              label: "总价",
-              prop: "sumMoney",
-              editDisplay: false,
               disabled: true,
-            },
-            {
-              label: "冷冻、冷藏",
-              prop: "freeze",
-              type: 'radio',
-              hide: true,
-              dicData: [{
-                label: '是',
-                value: 1
-              },
-                {
-                  label: '否',
-                  value: 0,
-                }]
-
-            },
-            {
-              label: '生产企业',
-              prop: 'manufacturingEnterprise',
-              hide:true,
-              display: true,
-              rules: [],
-            },
-            {
-              label: '发货单位',
-              prop: 'forwardingUnit',
-              hide:true,
-              display: true,
-              rules: [],
-            },
-            {
-              label: '发运地点',
-              prop: 'deliveryPlace',
-              hide:true,
-              display: true,
-              rules: [],
-            },{
-              label: '启运时间',
-              prop: 'timeOfShipment',
-              type:'datetime',
-              hide:true,
-              display: true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
-              rules: [],
-            },{
-              label: '温控方式',
-              prop: 'wayOfTemperatureControl',
-              hide:true,
-              display: true,
-              rules: [],
-            },
-            {
-              label: '到货时间',
-              prop: 'arrivalTime',
-              type:'datetime',
-              hide:true,
-              display: true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
-              rules: [],
-            },{
-              label: '温度℃',
-              prop: 'temperature',
-              hide:true,
-              display: true,
-            },
-            {
-              label: "单据上传",
-              prop: "shippingListPhotos",
-              dataType: 'array',
-              labelWidth: 110,
-              type: 'upload',
-              hide: true,
-              propsHttp: {
-                res: 'data',
-                url: 'link',
-              },
-              span: 12,
-              listType: 'picture-card',
-              tip: '只能上传jpg/png文件，且不超过500kb',
-              action: "/api/oss/goods/imgUpload"
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
             },
             {
               label: "状态",
               prop: "statusName",
-              type:'select',
-              addDisplay: false,
-              editDisplay: false,
+              addDisplay:false,
+              editDisplay:false,
               viewDisplay:false,
-              search: true,
+              dicUrl: "/api/blade-system/dict/dictionary?code=output_status",
               props: {
                 label: "dictValue",
                 value: "dictKey"
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=purchase_status"
-            },
-            {
-              label: "采购员",
-              prop:"name",
-              addDisplay: false,
-              viewDisplay: false,
-              editDisplay: false,
+              }
             },
             {
               label:"创建时间",
               prop:"updateTime",
               dateDefault: true,
               addDisplay: false,
-              viewDisplay: false,
               editDisplay: false,
+              viewDisplay: false,
               type: "datetime",
               searchSpan:12,
               searchRange:true,
@@ -308,67 +188,89 @@
             },
             {
               label: '商品列表',
-              prop: 'purchaseOrderDetailList',
+              prop: 'outputOrderDetailList',
               type: 'dynamic',
-              span: 24,
+              span:24,
               children: {
                 align: 'center',
                 headerAlign: 'center',
-                rowAdd: (done) => {
-                  done({
+                 rowAdd:(done)=>{
+                   done({
                     goodsQuantity: 1,
                     discountPercentage: 0,
-                  });
-                },
-                rowDel: (row, done) => {
-                  done();
-                },
+                   });
+                 },
+                 rowDel:(row,done)=>{
+                     done();
+                 },
                 column: [
                   {
-                    label:'供应商',
-                    prop:'informationId',
-                    type:'select',
-                    filterable: true,
-                    remote: true,
-                    editDisplay: false,
-                    disabled: true,
+                    label: '*出货仓库',
+                    prop: "warehouseId",
+                    type: "tree",
+                    rsearch: true,
+                    rules: [{
+                      required: true,
+                      message: "请输入类型",
+                      trigger: "blur"
+                    }],
                     props: {
-                      label: 'supplierName',
+                      label: 'title',
+                      value: 'id'
+                    },
+                    cascaderItem: ['storageId'],
+                    dicUrl: '/api/erp-wms/warehouse/tree'
+                  },
+                  {
+                    label: "储位",
+                    prop: "storageId",
+                    type:'tree',
+                    props: {
+                      label: 'title',
                       value: 'id'
                     },
                     cascaderItem: ['goodsId'],
-                    // cascaderItem: ['goosId'],
-                    // dicMethod: "post",
-                    dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
+                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                  },
+                  {
+                    label: "库存检索",
+                    prop: "inventoryToRetrieve",
+                    type:'input',
+                    placeholder: " ",
+                    formslot:true,
+                    width: 100,
                   },
                   {
                     label: '*商品',
                     prop: "goodsId",
-                    type: 'select',
+                    type: 'tree',
                     width: 130,
                     filterable: true,
                     remote: true,
                     display:false,
-                    //disabled: true,
                     rules: [{
                       require: true,
                       message: '请选择商品',
                     }],
                     props: {
                       label: 'goodsName',
-                      value: 'id'
+                      value: 'goodsId'
                     },
-                    // dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
                     dicMethod:'post',
-                    dicUrl: '/api/erp-wms/goods/dropDowns?informationId={{key}}',
+                    dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
+                    // dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
                     change: ({value}) => {
                       if (value) {
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
-                          this.form.purchaseOrderDetailList.forEach(val => {
+                          this.form.outputOrderDetailList.forEach(val => {
+                            console.log(res.goodsSpecification)
                             if (val.goodsId == value) {
                               var detail = res.data.data;
                               val.basicUnit = detail.basicUnit;
+                              val.specification = detail.goodsSpecification;
+
+
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });
@@ -377,28 +279,32 @@
                     },
                   },
                   {
+                    label: '商品资质',
+                    prop: "unit",
+                    type:'input',
+                    placeholder: " ",
+                    formslot:true,
+                    width: 100,
+                  },
+                  {
                     label: '*数量',
                     prop: "goodsQuantity",
                     type: "number",
-                    disabled: true,
                     width: 130,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
-                    }],
-                    change: () => {
-                      this.form.sumMoney = 0;
-                      this.form.purchaseOrderDetailList.forEach(val => {
-                        if (val.goodsId != "") {
-                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                        }
-                      });
-                    },
+                    }]
                   },
                   {
-                    label: '收货数量',
-                    prop: "realQuantity",
+                    label: '复核数量',
+                    prop: "recheckGoodsQuantity",
                     type: "number",
+                    width: 130,
+                    rules: [{
+                      validator: validateQuantity,
+                      trigger: 'blur'
+                    }]
                   },
                   {
                     label: "基本单位",
@@ -413,55 +319,17 @@
                     dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
                   },
                   {
-                    label: '到货日期',
-                    prop: "deliveryDate",
-                    type: "datetime",
-                    format: "yyyy-MM-dd hh:mm:ss",
-                    valueFormat: "yyyy-MM-dd hh:mm:ss",
-                  },
-                  {
-                    label: '商品资质',
-                    prop: "unit",
-                    type:'input',
+                    label: '规格',
+                    prop: "specification",
+                    disabled: true,
                     placeholder: " ",
-                    formslot:true,
                     width: 100,
                   },
                   {
-                    label: '单价(元)',
-                    prop: "money",
-                    editDisplay: false,
-                    disabled: true,
-                    placeholder: " ",
-                    change: () => {
-                      this.form.sumMoney = 0;
-                      this.form.purchaseOrderDetailList.forEach(val => {
-                        if (val.goodsId != "") {
-                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                        }
-
-                      });
-                    }
-                  },
-                  {
-                    label: "预付款",
-                    prop: "advancePayment",
-                    editDisplay: false,
-                    disabled: true,
-                    placeholder: " ",
-                  },
-                  {
-                    label: "采购额",
-                    prop: "totalPrice",
-                    formslot: true,
-                  },
-                  {
-                    label: '备注',
-                    prop: "remark",
-                    type: "textarea",
-                    width: 100,
-                  }
-                ],
+                  label: '备注',
+                  prop: "remark",
+                  type:"textarea"
+                }],
               }
             },
           ]
@@ -669,6 +537,53 @@
             },
           ],
         },
+        inventoryToRetrievedata:[],
+        inventoryToRetrievedataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          column:[
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              // cascaderItem: ['storageId'],
+              dicUrl:this.ERP_WMS_NAME + '/warehouse/tree'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
+            },
+            {
+              label:'商品名称',
+              prop:'goodsId',
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod:"post",
+              dicUrl: 'api/erp-wms/goods/selecListGoods',
+            },
+            {
+              label: "库存数量",
+              prop: "repertoryQuantity",
+              rules: [{
+                trigger: "blur"
+              }]
+            },
+          ]
+        },
         obj0Reason:{
           rejectText:''
         },
@@ -684,77 +599,14 @@
         },
       };
     },
-    watch: {
-      //otc 事件
-      'form.freeze': {
-        handler(val) {
-          var text2 = this.findObject(this.option.column, 'manufacturingEnterprise') //生产企业
-          var text3 = this.findObject(this.option.column, 'forwardingUnit') //发货单位
-          var text4 = this.findObject(this.option.column, 'deliveryPlace') //发运地点
-          var text5 = this.findObject(this.option.column, 'timeOfShipment') //启运时间
-          var text6 = this.findObject(this.option.column, 'wayOfTemperatureControl') //温控方式
-          var text7 = this.findObject(this.option.column, 'arrivalTime') //到货时间
-          var text8 = this.findObject(this.option.column, 'temperature') //到货时间
-          if (val == 1) {
-            text2.display = true
-            text3.display = true
-            text4.display = true
-            text5.display = true
-            text6.display = true
-            text7.display = true
-            text8.display = true
-            text2.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }],text3.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }],text4.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }],text5.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }],text6.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }],text7.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }],text8.rules = [{
-              required: true,
-              message: "请输入",
-              trigger: "blur"
-            }]
-          }
-          else {
-            text2.display = false
-            text3.display = false
-            text4.display = false
-            text5.display = false
-            text6.display = false
-            text7.display = false
-            text8.display = false
-            text2.rules = []
-          }
-
-          },
-      },
-    },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goodsclerk_add, false),
-          viewBtn: this.vaildData(this.permission.goodsclerk_view, false),
-          delBtn: this.vaildData(this.permission.goodsclerk_delete, false),
-          editBtn: this.vaildData(this.permission.goodsclerk_edit, false)
+          addBtn: this.vaildData(this.permission.outrecheck_add, false),
+          viewBtn: this.vaildData(this.permission.outrecheck_view, false),
+          delBtn: this.vaildData(this.permission.outrecheck_delete, false),
+          editBtn: this.vaildData(this.permission.outrecheck_edit, false)
         };
       },
       ids() {
@@ -839,6 +691,11 @@
           });
       },
       beforeOpen(done, type) {
+        if (["add", "edit"].includes(type)) {
+          setTimeout(()=>{
+            this.form.type = 'out';
+          },10);
+        }
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {
             this.form = res.data.data;
@@ -863,28 +720,28 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        const {createTime} = params;
+        const {updateTime} = params;
         let values = {
           ...params,
         };
-        if (createTime) {
+        if (updateTime) {
           values = {
             ...params,
-            start_time: createTime[0],
-            end_time: createTime[1],
+            start_time: updateTime[0],
+            end_time: updateTime[1],
           };
-          values.createTime = null;
-          this.query.createTime = null;
+          values.updateTime = null;
+          this.query.updateTime = null;
         }
         this.loading = true;
         getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
@@ -895,24 +752,24 @@
           this.selectionClear();
         });
       },
-
-      updateGoodsClerk(id) {
+      updateStatus(id){
         let status;
-        this.$confirm("请确认是否通过申请?", {
-          confirmButtonText: "审批通过",
-          cancelButtonText: "驳回申请",
+        this.$confirm("请确认是否审批?", {
+          confirmButtonText: "确认",
+          cancelButtonText: "驳回",
           type: "warning"
         })
           .then(() => {
-            status = 0;
+            status = 2;
           })
           .catch(() => {
             status = 3;
-          }).finally(() => {
-          updateGoodsClerk(id, status).then(res => {
-            if (res.data.success) {
+          }).finally(()=>{
+            console.log(status);
+          updateStatus(id,status).then(res => {
+            if(res.data.success){
               this.$message.success(res.data.msg);
-            } else {
+            }else{
               this.$message.error(res.data.msg);
             }
             this.refreshChange();
@@ -920,28 +777,13 @@
           })
         });
       },
-      submit(form,done){
-        add(form).then( res => {
-          done();
-          if(res.data.success){
-            this.$refs.form.resetForm();
-            this.$message.success(res.data.msg);
-            this.dialogVisible = false;
-            this.onLoad(this.page, this.query);
-          }else {
-            this.$message.error(res.data.msg);
-          }
-        }).catch(() => {
-          done();
-        })
-      },
-      updateGoodsClerkNew() {
+      updateStatusNew() {
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        if (this.selectionList[0].status != 6 && this.selectionList[0].status !=107){
-          return this.$message.error("状态已经完成");
-        }
+        // if (this.selectionList[0].status != 1){
+        //   return this.$message.error("该任务已经完成");
+        // }
         var id= this.selectionList[0].id;
         let status;
         this.$confirm("请确认是否审批?", {
@@ -950,12 +792,12 @@
           type: "warning"
         })
           .then(() => {
-            status = 7;
+            status = 2;
           })
           .catch(() => {
-            status = 106;
+            status = 101;
           }).finally(() => {
-          updateGoodsClerk(id, status).then(res => {
+          updateStatus(id, status).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {
@@ -966,8 +808,33 @@
           })
         });
       },
+      viewCommodity(goodsId){
+        this.commoditydialogVisible = true;
+        viewCommodity(goodsId).then(res=>{
+          if (res.data.success) {
+            this.commoditydata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      inventoryToRetrieve(warehouseId){
+        this.dialogVisible = true;
+        inventoryToRetrieves(warehouseId).then(res=>{
+          if (res.data.success) {
+            this.inventoryToRetrievedata = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      handleEdit(row, index) {
+        this.$refs.crud.rowEdit(row, index);
+      },
       updaterejectTextNew() {
-        if(this.status1 === 106 && this.obj0Reason.rejectText === '' ){
+        if(this.status1 === 101 && this.obj0Reason.rejectText === '' ){
           return this.$message.error("请输入驳回理由!");
         }
         updaterejectText(this.ids, this.obj0Reason.rejectText).then(res => {
@@ -980,25 +847,9 @@
           }
         })
       },
-      viewCommodity(commodityId){
-        console.log(commodityId)
-        this.commoditydialogVisible = true;
-        viewCommodity(commodityId).then(res=>{
-          if (res.data.success) {
-            this.commoditydata = res.data.data;
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
-      handleEdit(row, index) {
-        this.$refs.crud.rowEdit(row, index);
-      },
     }
   };
 </script>
 
 <style>
-
 </style>

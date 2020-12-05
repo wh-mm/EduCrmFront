@@ -91,7 +91,6 @@ export const getLazyList = (parentId, params) => {
 export const getWarehouseTree = (parentId) => {
   return request({
     url: ERP_WMS_NAME + '/warehouse/tree',
-    method: 'get',
     params: {
       parentId,
     }
@@ -100,7 +99,6 @@ export const getWarehouseTree = (parentId) => {
 export const getWarehouseLazyTree = (parentId) => {
   return request({
     url: ERP_WMS_NAME + '/warehouse/lazy-tree',
-    method: 'get',
     params: {
       parentId
     }

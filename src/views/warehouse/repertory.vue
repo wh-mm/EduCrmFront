@@ -88,8 +88,7 @@
                 value: 'id'
               },
               // cascaderItem: ['storageId'],
-              dicMethod:"post",
-              dicUrl:this.ERP_WMS_NAME + '/warehouse/dropDown'
+              dicUrl:this.ERP_WMS_NAME + '/warehouse/tree'
             },
             {
               label: "储位",
@@ -100,8 +99,7 @@
                 value: 'id'
               },
               search:true,
-              dicMethod:"post",
-              dicUrl:this.ERP_WMS_NAME + '/warehouse/dropDown'
+              dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
             },
             {
               label: "商品",
@@ -114,7 +112,7 @@
                 value: 'id'
               },
               dicMethod:"post",
-              dicUrl:this.ERP_WMS_NAME + '/goods/dropDown',
+              dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
               label: "库存数量",

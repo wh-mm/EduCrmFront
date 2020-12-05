@@ -58,5 +58,34 @@ export const updateStatus = (id, status) => {
     }
   })
 }
+export const inventoryToRetrieves = (warehouseId) => { //库存检索
+  return request({
+    url: '/api/purchase/outputorder/inventoryToRetrieve',
+    method: 'post',
+    params:{
+      warehouseId
+    }
+  })
+}
+export const viewReason = (id) => {  //查看驳回理由
+  return request({
+    url: '/api/purchase/outputorder/viewReason',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}
+
+export const updaterejectText = (ids,rejectText) => { //填写驳回理由
+  return request({
+    url: '/api/purchase/outputorder/updaterejectText',
+    method: 'post',
+    params:{
+      ids,
+      rejectText
+    }
+  })
+}
 
 
