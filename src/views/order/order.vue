@@ -177,12 +177,10 @@
             <div class="shou" style="">
               <div>
 
-
-
                 <table   width="1000px" style="font-size:15px;margin-top: 20px;border: none;align-content: center;margin: auto"  >
                   <tr style="border-left: 50px;" calss="first">
                     <td  style="width:230px;">医院名称：</td>
-                    <td style="width:910px;"><span>吉林大学第二医院</span></td>
+                    <td style="width:910px;"><span>{{printData.hospitalName}}</span></td>
                     <td style="width:205px;"><b>姓名：</b> </td>
                     <td style="width:100px;"><span>尼古拉斯·艾尔</span></td>
                     <td style="width:160px;">性别：</td>
@@ -255,12 +253,57 @@
 <!--                  </tr>-->
 
 <!--                </table>-->
+<!--                <el-table-->
+<!--                  :data="tableData"-->
+<!--                  :row-style="{height: '0'}"-->
+<!--                  :cell-style="{padding: '0'}"-->
+<!--                  >-->
+<!--                  <el-table-column-->
+<!--                    label="序号"-->
+<!--                    type="index"-->
+<!--                    width="100"-->
+<!--                    >-->
+<!--                  </el-table-column>-->
+
+<!--                  <el-table-column-->
+<!--                    prop="name"-->
+<!--                    label="货位"-->
+<!--                    width="150">-->
+<!--                  </el-table-column>-->
+
+<!--                  <el-table-column-->
+<!--                    prop="address"-->
+<!--                    label="药品名称"-->
+<!--                    width="220">-->
+<!--                  </el-table-column>-->
+
+<!--                  <el-table-column-->
+<!--                    prop="footer"-->
+<!--                    label="脚注"-->
+<!--                    width="220">-->
+<!--                  </el-table-column>-->
+
+<!--                  <el-table-column-->
+<!--                    prop="danji"-->
+<!--                    label="单剂量"-->
+<!--                    width="160">-->
+<!--                  </el-table-column>-->
+
+<!--                  <el-table-column-->
+<!--                    prop="sum"-->
+<!--                    label="总量"-->
+<!--                    width="166">-->
+<!--                  </el-table-column>-->
+
+<!--                </el-table>-->
                 <el-table
-                  :data="tableData"
+                  float="right"
+                  :row-style="{height: '0'}"
+                  :cell-style="{padding: '0'}"
                   style="border-color: #000000;border-top: 1px solid">
                   <el-table-column
-                    prop="date"
                     label="序号"
+                    type="index"
                     width="165"
                     >
                   </el-table-column>
@@ -278,22 +321,23 @@
                   </el-table-column>
 
                   <el-table-column
-                    prop="address"
+                    prop="footer"
                     label="脚注"
                     width="168">
                   </el-table-column>
 
                   <el-table-column
-                    prop="address"
+                    prop="danji"
                     label="单剂量"
                     width="165">
                   </el-table-column>
 
                   <el-table-column
-                    prop="address"
+                    prop="sum"
                     label="总量"
                     width="166">
                   </el-table-column>
+
 
                 </el-table>
 
@@ -341,6 +385,30 @@
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'jianyao',
+        printData:[
+          {
+            hospitalName: '',
+            name:'',
+
+          }
+        ],
+        tableData:[
+        //     {
+        //   address:"枸杞",
+        //   name:"1-1-1",
+        //   footer:"脚注11111111111111111111111",
+        //   danji:"单剂量",
+        //   sum:"500"
+        // },
+          {
+          address:"枸杞",
+          name:"1-1-1",
+          footer:"脚注11111111111111111111111",
+          danji:"单剂量",
+          sum:"500"
+        },
+
+        ],
         drugList: {
           form: {},
           query: {},
