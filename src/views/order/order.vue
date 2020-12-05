@@ -155,62 +155,152 @@
     </el-dialog>
     <el-dialog title="打印格式"  :model="false" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <div style="" id="print11">
+        <div style="" id="print11" ref="print11">
           <!-- 隐藏打印区域，避免用户看到 -->
-          <div style="padding: 10px;height: 400px;margin-top: 35px">
-            <div class="head">
-              <h1 margin="auto" style="text-align: center" >调配单</h1>
-            <p style="line-height: 1px;display: inline-block">接方时间：<span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-              打印时间：<span style="margin-left: 10px;"></span>
-<!--              <svg id="bigcode" style="float: right"  width ="50px" height ="10px"  ></svg>--> </p>
-            </div>
-            <hr  align="center" width="100%" size="1" length="10" color="#A9A9A9"/>
-            <div class="shou">
-              <div>
-                <p >医院名称 : <span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  <b>姓名 : </b><span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  性别 : <span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  年龄 : <span style="margin-left: 10px;"></span>  &emsp;&emsp;&emsp;&emsp;
-                  科室 : <span style="margin-left: 10px;"></span> </p>
-                <p >临床诊断 : <span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  处方号 : <span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  <b>包装量 : </b><span style="margin-left: 10px;"></span>&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  <b>剂树 : </b><span style="margin-left: 10px;"></span>&emsp;&emsp;&emsp;&emsp;
-                  <b>次数 : </b><span style="margin-left: 10px;"></span> </p>
-                <p >浸泡加水量 : <span style="margin-left: 10px;"></span> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  煎药方案 : <span style="margin-left: 10px;"></span> &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  服用方式 : <span style="margin-left: 10px;"></span></p>
-                <p >快递类型 : <span style="margin-left: 10px;"></span> &nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                  药品总重量 : <span style="margin-left: 10px;"></span></p>
-                <hr  align="center" width="100%" size="1" length="10" color="#A9A9A9"/>
+          <div style="padding: 1px;height: 100px;">
+            <div class="head" >
+              <el-row>
+                <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
+                <el-col :span="5" :offset="4"><div class="grid-content bg-purple-light">
+                  <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
+              </el-row>
 
-              </div>
-              <div class="footer" style="height: 400px">
-                <table border="1px"  width="765" style="margin-top: 20px;border-left: none;border-right: none;text-align: center"  >
-                  <tr style="border-left: 150px">
-                    <td width="50">序号</td>
-                    <td width="50">货位</td>
-                    <td width="50">药品名称</td>
-                    <td width="50">脚注</td>
-                    <td width="50">单剂量</td>
-                    <td width="50">总量</td>
+            <div class="code" style="margin-left: 1000px;">
+            </div>
+              <el-row>
+                <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
+                <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
+              </el-row>
+            </div>
+            <hr  align="center" width="100%" size="1px" length="10" color="black"/>
+            <div class="shou" style="">
+              <div>
+
+
+
+                <table   width="1000px" style="font-size:15px;margin-top: 20px;border: none;align-content: center;margin: auto"  >
+                  <tr style="border-left: 50px;" calss="first">
+                    <td  style="width:230px;">医院名称：</td>
+                    <td style="width:910px;"><span>吉林大学第二医院</span></td>
+                    <td style="width:205px;"><b>姓名：</b> </td>
+                    <td style="width:100px;"><span>尼古拉斯·艾尔</span></td>
+                    <td style="width:160px;">性别：</td>
+                    <td style="width:100px;"><span>男</span></td>
+                    <td  style="width:100px;">年龄：</td>
+                    <td style="width:200px;"><span>48</span></td>
+
+
+                  </tr>
+                  <tr style="border-left: 50px" calss="second">
+                    <td >临床诊断：</td>
+                    <td ><span>患有严重的先天性心脏病，且血液浓度过高需要进行治疗患有严重的先天性心脏病，且血液浓度过高需要进行治疗</span></td>
+                    <td >处方号：</td>
+                    <td style="width:250px;"><span>ACT20201205123456</span></td>
+                    <td style="width:100px;"><b>包装量：</b></td>
+                    <td style="width:100px;"><span>40ml/包</span></td>
+                    <td style="width:100px;"><b>剂数：</b></td>
+                    <td><span>10剂</span></td>
+
 
                   </tr>
 
-                  <tr style="border-left: none">
-                    <td width="50">1</td>
-                    <td width="50">A2</td>
-                    <td width="50">干炒地龙（10g/包）</td>
-                    <td width="50">脚注</td>
-                    <td width="50">3</td>
-                    <td width="50">9</td>
+                  <tr style="border-left: 100px" calss="third">
+                    <td >浸泡加水量：</td>
+                    <td><span>每10g加10ml水</span></td>
+                    <td ><b>煎药方案：</b> </td>
+                    <td><span>先煎后熬</span></td>
+                    <td >服用方式：</td>
+                    <td><span>口服</span></td>
+                    <td >科室：</td>
+                    <td><span>心脏病科室</span></td>
 
+                  </tr>
+
+                  <tr style="border-left: 100px" calss="fourth">
+                    <td >快递类型：</td>
+                    <td><span>顺丰快递</span></td>
+                    <td >药品总重量： </td>
+                    <td><span>20mg</span></td>
+                    <td style="width:100px;" ><b>次数：</b></td>
+                    <td><span>10次</span></td>
 
                   </tr>
 
                 </table>
 
-                 <p align="center"><b>配方中药师 : </b><span style="margin-left: 10px;"></span> &nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>复核中药师 : </b><span style="margin-left: 10px;"></span></p>
+
+              </div>
+              <div class="footer" >
+
+<!--                <table  align="center" border="1" cellspacing="0" width="1050px" style="margin-top: 20px;margin: auto;border-left: none;border-right: none;"  >-->
+<!--                  <tr style="font-size: 15px;" align="center" >-->
+<!--                    <td width="50">序号</td>-->
+<!--                    <td width="50">货位</td>-->
+<!--                    <td width="50">药品名称</td>-->
+<!--                    <td width="50">脚注</td>-->
+<!--                    <td width="50">单剂量</td>-->
+<!--                    <td width="50">总量</td>-->
+
+<!--                  </tr>-->
+
+<!--                  <tr style="font-size: 20px;" align="center">-->
+<!--                    <td width="50">1</td>-->
+<!--                    <td width="50">A2</td>-->
+<!--                    <td width="50">干炒地龙（10g/包）</td>-->
+<!--                    <td width="50">脚注</td>-->
+<!--                    <td width="50">10ml</td>-->
+<!--                    <td width="50">20mg</td>-->
+
+<!--                  </tr>-->
+
+<!--                </table>-->
+                <el-table
+                  :data="tableData"
+                  style="border-color: #000000;border-top: 1px solid">
+                  <el-table-column
+                    prop="date"
+                    label="序号"
+                    width="165"
+                    >
+                  </el-table-column>
+
+                  <el-table-column
+                    prop="name"
+                    label="货位"
+                    width="165">
+                  </el-table-column>
+
+                  <el-table-column
+                    prop="address"
+                    label="药品名称"
+                    width="168">
+                  </el-table-column>
+
+                  <el-table-column
+                    prop="address"
+                    label="脚注"
+                    width="168">
+                  </el-table-column>
+
+                  <el-table-column
+                    prop="address"
+                    label="单剂量"
+                    width="165">
+                  </el-table-column>
+
+                  <el-table-column
+                    prop="address"
+                    label="总量"
+                    width="166">
+                  </el-table-column>
+
+                </el-table>
+
+                <el-row>
+                  <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">配方中药师：<span>吴彦祖</span></p></div></el-col>
+                  <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span>刘德华</span></p></div></el-col>
+                </el-row>
 
               </div>
             </div>
@@ -501,9 +591,9 @@
       dayin(row) {
         this.printData = row;
         setTimeout(() => {
-          JsBarcode("#bigcode", {
-            width: 2,//设置条之间的宽度
-            height: 28,//高度
+          JsBarcode("#bigcode", '11213456',{
+            width: 3,//设置条之间的宽度
+            height: 56,//高度
             fontOptions: "bold",//使文字加粗体或变斜体
             textAlign: "center",//设置文本的水平对齐方式
             textMargin: 5,//设置条形码和文本之间的间距
@@ -511,7 +601,8 @@
             displayValue: true,//是否在条形码下方显示文字
             margin: 2
           });
-          var prnhtml = document.querySelector("#print11").innerHTML;
+          this.$Print(this.$refs.print11);
+          /*var prnhtml = document.querySelector("#print11").innerHTML;
           var iframe = document.createElement('IFRAME');
           iframe.setAttribute('style', 'display:none;');
           var doc = null;
@@ -523,7 +614,7 @@
           iframe.contentWindow.print();
           if (navigator.userAgent.indexOf("MSIE") > 0) {
             document.body.removeChild(iframe);
-          }
+          }*/
         }, 100);
           },
       //新增 按钮
@@ -653,3 +744,22 @@
     }
   };
 </script>
+<!--<style lang="css" >-->
+<!--  .first.td{-->
+
+<!--    width: 50px;-->
+<!--    align: center;-->
+<!--  }-->
+<!--  .second{-->
+<!--    width: 50px;-->
+<!--  }  .third{-->
+<!--    width: 50px;-->
+<!--  }-->
+<!--  td{-->
+<!--    width: 50px;-->
+<!--  }-->
+<!--  .code{-->
+<!--    transform:translateX(50%);-->
+<!--  }-->
+
+<!--</style>-->
