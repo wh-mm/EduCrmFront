@@ -37,6 +37,70 @@
 
   export default {
     data() {
+      var validateIdCard = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入正确的驾驶证号或身份证号'));
+        } else {
+          if (value !== '') {
+            if (12 <= value.length && value.length <= 18) {
+              var card = /^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+              var drivercard = /^[1-8]\d{11}$/;
+              if (card.test(value) || drivercard.test(value)) {
+                callback();
+              } else {
+                callback(new Error('请输入有效的驾驶证号或身份证号'));
+              }
+            } else {
+              callback(new Error('请输入12位-18位的驾驶证号或者身份证号'))
+            }
+          }
+          callback();
+        }
+      };
+      var validateDriverYear = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入驾龄'));
+        } else {
+          if (value <= 0) {
+            callback(new Error('请输入正确的驾龄'));
+          } else if (value >= 52) {
+            callback(new Error('驾龄不能超过52年'));
+          } else {
+            callback();
+          }
+        }
+      };
+      var validateYear = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入年龄'));
+        } else {
+          if (value <= 18) {
+            callback(new Error('请输入18岁以上的年龄'));
+          } else if (value >= 70) {
+            callback(new Error('年龄不能超过70岁'));
+          } else {
+            callback();
+          }
+        }
+      };
+      var isInteger= (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('输入不可以为空'));
+        }
+        setTimeout(() => {
+          if (!Number(value)) {
+            callback(new Error('请输入正整数'));
+          } else {
+            const re = /^[0-9]*[1-9][0-9]*$/;
+            const rsCheck = re.test(value);
+            if (!rsCheck) {
+              callback(new Error('请输入正整数'));
+            } else {
+              callback();
+            }
+          }
+        }, 0);
+      };
       return {
         form: {},
         query: {},
@@ -69,19 +133,49 @@
               }]
             },
             {
+              label: "年龄",
+              prop: "age",
+              rules: [{
+                validator: validateYear,
+                trigger: "blur"
+              }]
+            },
+            {
               label: "驾驶证号,身份证",
               prop: "identityCard",
+              labelWidth: 140,
               rules: [{
                 required: true,
-                message: "请输入驾驶证号,身份证",
+                validator: validateIdCard,
+                trigger: "blur"
+              }]
+            },
+
+            {
+              label: "手机号",
+              prop: "phone",
+              maxlength:11,
+              showWordLimit:true,
+              rules: [{
+                validator: isInteger,
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "驾龄",
+              prop: "driveAge",
+              rules: [{
+                validator:validateDriverYear,
                 trigger: "blur"
               }]
             },
             {
               label: "驾驶证开始时间",
               prop: "driveStartTime",
+              labelWidth: 140,
               type: "datetime",
               format: "yyyy-MM-dd hh:mm:ss",
+
               rules: [{
                 required: true,
                 message: "请输入驾驶证开始时间",
@@ -91,38 +185,12 @@
             {
               label: "驾驶证结束时间",
               prop: "driveEndTime",
+              labelWidth: 140,
               type: "datetime",
               format: "yyyy-MM-dd hh:mm:ss",
               rules: [{
                 required: true,
                 message: "请输入驾驶证结束时间",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "年龄",
-              prop: "age",
-              rules: [{
-                required: true,
-                message: "请输入年龄",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "手机号",
-              prop: "phone",
-              rules: [{
-                required: true,
-                message: "请输入手机号",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "驾龄",
-              prop: "driveAge",
-              rules: [{
-                required: true,
-                message: "请输入驾龄",
                 trigger: "blur"
               }]
             },

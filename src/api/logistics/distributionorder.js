@@ -1,8 +1,9 @@
 import request from '@/router/axios';
+import {ERP_TMS_NAME} from '@/const/YueConst'
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-codematching/matching/list',
+    url:'/api/logistics/distribution-order/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +15,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-codematching/matching/detail',
+    url:'/api/logistics/distribution-order/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +25,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-codematching/matching/remove',
+    url:'/api/logistics/distribution-order/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +35,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-codematching/matching/submit',
+    url: '/api/logistics/distribution-order/submit',
     method: 'post',
     data: row
   })
@@ -42,9 +43,20 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-codematching/matching/submit',
+    url:'/api/logistics/distribution-order/submit',
     method: 'post',
     data: row
+  })
+}
+
+export const updateStatus = (id, status) => {
+  return request({
+    url: '/api/logistics/distribution-order/updateStatus',
+    method: 'post',
+    params:{
+      id,
+      status
+    }
   })
 }
 
