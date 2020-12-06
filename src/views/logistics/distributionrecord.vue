@@ -1,5 +1,6 @@
 <template>
   <basic-container>
+    <div style="" id="printMe" ref="print" >
     <avue-crud :option="option"
                :table-loading="loading"
                :data="data"
@@ -19,88 +20,55 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <el-button type="primary"
                    size="small"
-                   icon="el-icon-delete"
+                   icon="el-icon-plus"
                    plain
-                   v-if="permission.taodriver_delete"
-                   @click="handleDelete">删 除
+                   @click="print">打印交接单
         </el-button>
       </template>
+      <template slot="distributionOrderNumber" slot-scope="{scope,row}">
+        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+      </template>
     </avue-crud>
+    <!--<div style="" id="printMe" ref="print" >
+      <el-table
+        :data="data"
+        border
+        style="width: 90%;padding: 0px;margin: 0px;">
+        <el-table-column
+          label="单号"
+          width="180">
+          <template slot-scope="scope">
+            <span>{{ scope.row.distributionOrderNumberPrefix+scope.row.distributionOrderNumber }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="hospitalName"
+          label="医院"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="pspnum"
+          label="处方号"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="orderType"
+          label="类型"
+          width="180">
+        </el-table-column>
+      </el-table>-->
+    </div>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/logistics/taodriver";
+  import {getList} from "@/api/logistics/distributionorder";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var validateIdCard = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入正确的驾驶证号或身份证号'));
-        } else {
-          if (value !== '') {
-            if (12 <= value.length && value.length <= 18) {
-              var card = /^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
-              var drivercard = /^[1-8]\d{11}$/;
-              if (card.test(value) || drivercard.test(value)) {
-                callback();
-              } else {
-                callback(new Error('请输入有效的驾驶证号或身份证号'));
-              }
-            } else {
-              callback(new Error('请输入12位-18位的驾驶证号或者身份证号'))
-            }
-          }
-          callback();
-        }
-      };
-      var validateDriverYear = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入驾龄'));
-        } else {
-          if (value <= 0) {
-            callback(new Error('请输入正确的驾龄'));
-          } else if (value >= 52) {
-            callback(new Error('驾龄不能超过52年'));
-          } else {
-            callback();
-          }
-        }
-      };
-      var validateYear = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入年龄'));
-        } else {
-          if (value <= 18) {
-            callback(new Error('请输入18岁以上的年龄'));
-          } else if (value >= 70) {
-            callback(new Error('年龄不能超过70岁'));
-          } else {
-            callback();
-          }
-        }
-      };
-      var isInteger= (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('输入不可以为空'));
-        }
-        setTimeout(() => {
-          if (!Number(value)) {
-            callback(new Error('请输入正整数'));
-          } else {
-            const re = /^[0-9]*[1-9][0-9]*$/;
-            const rsCheck = re.test(value);
-            if (!rsCheck) {
-              callback(new Error('请输入正整数'));
-            } else {
-              callback();
-            }
-          }
-        }, 0);
-      };
       return {
         form: {},
         query: {},
@@ -110,87 +78,80 @@
           currentPage: 1,
           total: 0
         },
+        dialogVisible:false,
         selectionList: [],
         option: {
-          height:'auto',
+          height: 'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
-          index: true,
-          viewBtn: true,
+          index: false,
+          viewBtn: false,
           selection: true,
+          printBtn: true,
           dialogClickModal: false,
           column: [
             {
-              label: "名字",
-              prop: "name",
+              label: "单号",
+              prop: "distributionOrderNumber",
+              slot: true,
+              addDisplay: false,
+              editDisplay: false,
+              width: 180,
+              search: true,
               rules: [{
                 required: true,
-                message: "请输入名字",
+                message: "请输入单号",
                 trigger: "blur"
               }]
             },
             {
-              label: "年龄",
-              prop: "age",
-              rules: [{
-                validator: validateYear,
-                trigger: "blur"
-              }]
+              label: "医院",
+              prop: "hospitalName",
             },
             {
-              label: "驾驶证号,身份证",
-              prop: "identityCard",
-              labelWidth: 140,
-              rules: [{
-                required: true,
-                validator: validateIdCard,
-                trigger: "blur"
-              }]
-            },
-
-            {
-              label: "手机号",
-              prop: "phone",
-              maxlength:11,
-              showWordLimit:true,
-              rules: [{
-                validator: isInteger,
-                trigger: "blur"
-              }]
+              label: "处方号",
+              prop: "pspnum",
             },
             {
-              label: "驾龄",
-              prop: "driveAge",
-              rules: [{
-                validator:validateDriverYear,
-                trigger: "blur"
-              }]
+              label: "类型",
+              prop: "orderType",
             },
             {
-              label: "驾驶证开始时间",
-              prop: "driveStartTime",
-              labelWidth: 140,
-              type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
-
+              label: "接方时间",
+              prop: "receivingDate",
+              type: "date",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "收件人",
+              prop: "addresseeName",
               rules: [{
                 required: true,
-                message: "请输入驾驶证开始时间",
+                message: "请输入收件人",
                 trigger: "blur"
               }]
             },
             {
-              label: "驾驶证结束时间",
-              prop: "driveEndTime",
-              labelWidth: 140,
-              type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
+              label: "收件人地址",
+              prop: "addresseeAddress",
+              width: 180,
               rules: [{
                 required: true,
-                message: "请输入驾驶证结束时间",
+                message: "请输入收件人地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人手机号",
+              prop: "addresseePhone",
+              width: 180,
+              rules: [{
+                required: true,
+                message: "请输入收件人手机号",
                 trigger: "blur"
               }]
             },
@@ -203,10 +164,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.taodriver_add, false),
-          viewBtn: this.vaildData(this.permission.taodriver_view, false),
-          delBtn: this.vaildData(this.permission.taodriver_delete, false),
-          editBtn: this.vaildData(this.permission.taodriver_edit, false)
+          addBtn: this.vaildData(this.permission.distributionrecord_add, false),
+          viewBtn: this.vaildData(this.permission.distributionrecord_view, false),
+          delBtn: this.vaildData(this.permission.distributionrecord_delete, false),
+          editBtn: this.vaildData(this.permission.distributionrecord_edit, false)
         };
       },
       ids() {
@@ -308,10 +269,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -326,6 +287,9 @@
           this.loading = false;
           this.selectionClear();
         });
+      },
+      print(){
+        this.$Print(this.$refs.print);
       }
     }
   };
