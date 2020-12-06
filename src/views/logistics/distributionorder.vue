@@ -87,6 +87,24 @@
 
   export default {
     data() {
+      var isInteger= (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('输入不可以为空'));
+        }
+        setTimeout(() => {
+          if (!Number(value)) {
+            callback(new Error('请输入正整数'));
+          } else {
+            const re = /^[0-9]*[1-9][0-9]*$/;
+            const rsCheck = re.test(value);
+            if (!rsCheck) {
+              callback(new Error('请输入正整数'));
+            } else {
+              callback();
+            }
+          }
+        }, 0);
+      };
       return {
         form: {},
         query: {},
@@ -147,6 +165,18 @@
             {
               label: "医院",
               prop: "hospitalName",
+              type: "tree",
+              rules: [{
+                required: true,
+                message: "请选择医院",
+                trigger: "blur"
+              }],
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
             {
               label: "处方号",
@@ -155,6 +185,17 @@
             {
               label: "类型",
               prop: "orderType",
+              type: 'select',
+              rules: [{
+                required: true,
+                message: "请选择类型",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=isDaijian"
             },
             {
               label: "接方时间",
@@ -176,6 +217,7 @@
               label: "收件人地址",
               prop: "addresseeAddress",
               width: 180,
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入收件人地址",
@@ -185,10 +227,13 @@
             {
               label: "收件人手机号",
               prop: "addresseePhone",
+              maxlength:11,
+              showWordLimit:true,
               width: 180,
+              labelWidth: 140,
               rules: [{
                 required: true,
-                message: "请输入收件人手机号",
+                validator:isInteger,
                 trigger: "blur"
               }]
             },
