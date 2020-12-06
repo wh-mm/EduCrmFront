@@ -28,9 +28,15 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
-     <!-- <template slot="hospitalSwitch" slot-scope="scope">
-        <el-switch v-model="scope.row.hospitalSwitch" disabled @click="(scope.row)"> </el-switch>
+      <!--<template slot="hospitalSwitch" slot-scope="scope,row">
+        <el-tag>{{scope.row.hospitalSwitch}}
+        </el-tag>
       </template>-->
+     <template slot="hospitalSwitch" slot-scope="scope">
+       <div style="color: green" v-if="scope.row.hospitalSwitch=='true'?true:false">开</div>
+       <div style="color: red" v-else>关</div>
+      </template>
+
     </avue-crud>
   </basic-container>
 </template>
@@ -40,7 +46,9 @@
     selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
   import {mapGetters} from "vuex";
   export default {
+
     data() {
+
       var hospitalName = (rule, value, callback)=>{
         if (value === ''){
           callback(new Error("医院名称重复,请从新输入!"))
@@ -128,9 +136,11 @@
               label: "医院接口开关",
               prop: "hospitalSwitch",
               type: 'select',
+              slot: true,
+
               props: {
                 label: 'dictValue',
-                value: 'dictKey'
+                value: 'dictKey',
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
             },
