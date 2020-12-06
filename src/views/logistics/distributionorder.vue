@@ -145,8 +145,17 @@
               }
             },
             {
-              label: "医院",
-              prop: "hospitalName",
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              filterable:true,
+              remote: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
             },
             {
               label: "处方号",
