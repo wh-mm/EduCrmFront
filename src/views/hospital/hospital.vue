@@ -114,6 +114,17 @@
               }]
             },
             {
+              label: "医院联系方式",
+              prop: "hospitalTel",
+              rules: [{
+                required: true,
+                message: "医院联系方式",
+                trigger: "blur"
+              }]
+            },
+
+
+            {
               label: "医院接口开关",
               prop: "hospitalSwitch",
               type: 'select',
