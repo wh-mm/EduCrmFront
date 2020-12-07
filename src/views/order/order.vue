@@ -19,9 +19,7 @@
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
         <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
-
         </el-button>
-
         <el-button type="primary" size="small" icon="el-icon-printer" plain  @click="dayin()">打 印
         </el-button>
       </template>
