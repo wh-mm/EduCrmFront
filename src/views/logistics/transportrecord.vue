@@ -19,55 +19,24 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <!--<el-button type="danger"
+        <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.transportrecord_delete"
                    @click="handleDelete">删 除
-        </el-button>-->
+        </el-button>
       </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
+  import {getList, getDetail, add, update, remove} from "@/api/logistics/transportrecord";
   import {mapGetters} from "vuex";
-
 
   export default {
     data() {
-      var selectName = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入商品名称！"))
-        } else {
-          selectGoodsName(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-      var selectCode = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入编码！"))
-        } else {
-          selectGoodsCode(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
       return {
         form: {},
         query: {},
@@ -79,7 +48,7 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -91,73 +60,29 @@
           dialogClickModal: false,
           column: [
             {
-              label: "商品名称",
-              prop: "goodsName",
+              label: "运单号",
+              prop: "transportId",
               rules: [{
                 required: true,
-                validator: selectName,
-                trigger: 'blur',
-              }],
-            },
-            {
-              label: "货物类型",
-              prop: "goodsType",
-              type: "tree",
-              rules: [{
-                required: true,
-                message: "请选择货物类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
-            },
-            {
-              label: "货品编码",
-              prop: "goodsCode",
-              rules: [{
-                validator: selectCode,
-                trigger: "blur"
-              }]
-            }, {
-              label: "规格",
-              prop: "goodsSpecification",
-              type: "select",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
-            },
-            {
-              label: "基本单位",
-              prop: "basicUnit",
-              type: "select",
-              searchSpan: 7,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
-            },
-            {
-              label: "货品价格",
-              prop: "unitPrice",
-              rules: [{
-                message: "请输入货品价格",
+                message: "请输入快递id",
                 trigger: "blur"
               }]
             },
             {
-              label: "货架号",
-              prop: "shelfNumber",
+              label: "状态",
+              prop: "title",
               rules: [{
-                message: "请输入货品价格",
+                required: true,
+                message: "请输入头",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "消息",
+              prop: "message",
+              rules: [{
+                required: true,
+                message: "请输入消息",
                 trigger: "blur"
               }]
             },
@@ -170,10 +95,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: this.vaildData(this.permission.transportrecord_add, false),
+          viewBtn: this.vaildData(this.permission.transportrecord_view, false),
+          delBtn: this.vaildData(this.permission.transportrecord_delete, false),
+          editBtn: this.vaildData(this.permission.transportrecord_edit, false)
         };
       },
       ids() {
@@ -252,7 +177,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getGoodsDetail(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -275,10 +200,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -294,7 +219,6 @@
           this.selectionClear();
         });
       }
-
     }
   };
 </script>

@@ -153,6 +153,7 @@
         form: {},
         query: {},
         loading: true,
+
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -215,6 +216,7 @@
           searchMenuSpan: 6,
           border: true,
           index: false,
+          menu: false,
           viewBtn: false,
           selection: true,
           dialogClickModal: false,

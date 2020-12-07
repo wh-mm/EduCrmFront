@@ -12,6 +12,28 @@ export const getList = (current, size, params) => {
     }
   })
 };
+export const getLists = (current, size, params) => {
+  return request({
+    url: '/api/taocao-order/order/pageJianyao',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+export const getListd = (current, size, params) => {
+  return request({
+    url: '/api/taocao-order/order/pagetiaopei',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
 
 export const getDetail = (id) => {
   return request({
@@ -95,4 +117,5 @@ export const receiveBlenderSave = (row) => {
     data: row
   })
 };
+
 

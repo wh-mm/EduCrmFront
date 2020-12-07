@@ -532,13 +532,11 @@
             }];
             subPackagingEnterprises.display = true
             subPackagingEnterprises.rules = [{
-              required: true,
               message: "请输入分包装企业",
               trigger: "blur"
             }];
             approvalNumberOfSubPackage.display = true
             approvalNumberOfSubPackage.rules = [{
-              required: true,
               message: "请输入分包装批准文号",
               trigger: "blur"
             }];

@@ -217,7 +217,7 @@
               label: "收件人地址",
               prop: "addresseeAddress",
               width: 180,
-              labelWidth: 130,
+              labelWidth: 100,
               rules: [{
                 required: true,
                 message: "请输入收件人地址",
