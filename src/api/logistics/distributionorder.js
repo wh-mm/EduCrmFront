@@ -1,5 +1,4 @@
 import request from '@/router/axios';
-import {ERP_TMS_NAME} from '@/const/YueConst'
 
 export const getList = (current, size, params) => {
   return request({
