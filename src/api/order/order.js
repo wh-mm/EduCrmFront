@@ -117,5 +117,15 @@ export const receiveBlenderSave = (row) => {
     data: row
   })
 };
+export const selectByOrderId = (orderId) => {
+  return request({
+    url: '/api/taocao-order/order/selectByOrderId',
+    method: 'post',
+    params: {
+      orderId
+    }
+
+  })
+};
 
 
