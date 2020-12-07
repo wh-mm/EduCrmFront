@@ -164,7 +164,8 @@
               <el-row>
                 <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
                   <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
-                <el-col :span="5" :offset="4"><div class="grid-content bg-purple-light">
+
+                <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
                   <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
               </el-row>
 
@@ -186,13 +187,15 @@
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">性别：<span>{{printData.sex==1?'男':'女'}}</span></p></div></el-col>
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">年龄：<span>{{printData.age}}</span></p></div></el-col>
               </el-row>
+
               <el-row :gutter="5" style="margin-top:-200px;margin-bottom:-200px">
                 <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方号：<span>{{printData.delnum}}</span></p></div></el-col>
                 <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">包装量：<span>{{printData.packagenum}}</span></p></div></el-col>
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printData.dose}}</span></p></div></el-col>
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">次数：<span>{{printData.age}}</span></p></div></el-col>
               </el-row>
-              <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">
+
+                <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">
                 <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">浸泡加水量：<span>{{printData.soakwater}}</span></p></div></el-col>
                 <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">煎药方案：<span>{{printData.decscheme}}</span></p></div></el-col>
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printData.takemethod}}</span></p></div></el-col>
@@ -204,11 +207,17 @@
                   :data="printDrugData"
                   :row-style="{height: '1'}"
                   :cell-style="{padding: '0'}"
-                  style="border-color: #000000;border-top: 1px solid">
+                  style="border-color: #000000;border-top: 1px solid;font-size: 30px">
                   <el-table-column
                     label="序号"
                     type="index"
-                    width="165"
+                    width="90"
+                    align="center"
+                    >
+                  </el-table-column>
+                  <el-table-column
+                    label="货位号"
+                    width="80"
                     align="center"
                     >
                   </el-table-column>
@@ -277,10 +286,9 @@
             <el-row>
               <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
                 <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
-              <el-col :span="5" :offset="4"><div class="grid-content bg-purple-light">
-                <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
+              <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
+                <svg id="bigcode2" style="padding: 1px;" ></svg></div></el-col>
             </el-row>
-
             <div class="code" style="margin-left: 1000px;">
             </div>
             <el-row>
@@ -711,19 +719,20 @@
              this.$message.error(res.data.msg);
            }
          })
-         console.log(row.id);
-        console.log(row.orderType);
+        //  console.log(row.id);
+        // console.log(row.orderType);
          setTimeout(() => {
-           JsBarcode("#bigcode", '11213456',{
-             width: 3,//设置条之间的宽度
+           JsBarcode("#bigcode", row.id,{
+             width: 2,//设置条之间的宽度
              height: 56,//高度
              fontOptions: "bold",//使文字加粗体或变斜体
              textAlign: "center",//设置文本的水平对齐方式
              textMargin: 5,//设置条形码和文本之间的间距
-             fontSize: 26,//设置文本的大小
+             fontSize: 16,//设置文本的大小
              displayValue: true,//是否在条形码下方显示文字
              margin: 2
            });
+
 
            this.$Print(this.$refs.print11);
            /*var prnhtml = document.querySelector("#print11").innerHTML;
@@ -751,13 +760,13 @@
            }
          })
          setTimeout(() => {
-           JsBarcode("#bigcode", '11213456',{
-             width: 3,//设置条之间的宽度
+           JsBarcode("#bigcode2", row.id,{
+             width: 2,//设置条之间的宽度
              height: 56,//高度
              fontOptions: "bold",//使文字加粗体或变斜体
              textAlign: "center",//设置文本的水平对齐方式
              textMargin: 5,//设置条形码和文本之间的间距
-             fontSize: 26,//设置文本的大小
+             fontSize: 16,//设置文本的大小
              displayValue: true,//是否在条形码下方显示文字
              margin: 2
            });
