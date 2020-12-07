@@ -19,6 +19,11 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
+        <el-button icon="el-icon-check"
+                   size="small"
+                   :type="type"
+                   @click.stop="dialogVisible = true">扫描新增配送单
+        </el-button>
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
         <el-button  :size="size"
@@ -41,7 +46,7 @@
         </el-button>
         <el-button :type="type" :size="size" icon="el-icon-printer"
                    v-if="row.distributionStatus === '2'"
-                   @click="doPrint1(row)">打 印
+                   @click="doPrint1(row)">打印配送单
         </el-button>
       </template>
       <template slot="distributionOrderNumber" slot-scope="{scope,row}">
@@ -57,9 +62,9 @@
         <div class="shou">
           <div>
             <div class="head" style="padding-left: 70px">
-              {{printData.hospitalName}}
+              {{printData.$hospitalName}}
             </div>
-            <p>类型 : <span style="margin-left: 10px;">{{printData.orderType}}</span></p>
+            <p>类型 : <span style="margin-left: 10px;">{{printData.$orderType}}</span></p>
             <p>处方号 : <span style="margin-left: 10px;">{{printData.pspnum}}</span></p>
             <p>患者姓名:<span style="margin-left: 10px;">{{printData.addresseeName}}</span></p>
             <p>手机号:<span style="margin-left: 10px;">{{printData.addresseePhone}}</span></p>
@@ -73,6 +78,22 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      title="扫描新增配送单"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <el-form :model="numberValidateForm" ref="numberValidateForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item
+          label="调配单号"
+          prop="age"
+        >
+          <el-input ref="scanNumber" size="small" v-model="scanNumber" placeholder="请扫描调配单条码"
+                    @keyup.native="inputNum" @change="inputchange"></el-input>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </basic-container>
 </template>
 
@@ -124,6 +145,7 @@
           addresseePhone: '',
         },
         dialogVisible: false,
+        scanNumber:'',
         selectionList: [],
         option: {
           height: 'auto',
@@ -164,7 +186,7 @@
             },
             {
               label: "医院",
-              prop: "hospitalName",
+              prop: "hospitalId",
               type: "tree",
               rules: [{
                 required: true,
@@ -181,6 +203,10 @@
             {
               label: "处方号",
               prop: "pspnum",
+            },
+            {
+              label: "剂数",
+              prop: "dose",
             },
             {
               label: "类型",
@@ -205,7 +231,7 @@
               valueFormat: "yyyy-MM-dd",
             },
             {
-              label: "收件人",
+              label: "患者姓名",
               prop: "addresseeName",
               rules: [{
                 required: true,
@@ -214,10 +240,25 @@
               }]
             },
             {
-              label: "收件人地址",
+              label: "患者性别",
+              prop: "addresseeSex",
+              type: "radio",
+              dicData: [{
+                label: '男',
+                value: '男'
+              }, {
+                label: '女',
+                value: '女'
+              }],
+            },
+            {
+              label: "患者年龄",
+              prop: "addresseeAge",
+              type:'number'
+            },
+            {
+              label: "患者地址",
               prop: "addresseeAddress",
-              width: 180,
-              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入收件人地址",
@@ -225,12 +266,10 @@
               }]
             },
             {
-              label: "收件人手机号",
+              label: "患者手机号",
               prop: "addresseePhone",
               maxlength:11,
               showWordLimit:true,
-              width: 180,
-              labelWidth: 140,
               rules: [{
                 required: true,
                 validator:isInteger,
@@ -263,6 +302,15 @@
         },
         data: []
       };
+    },
+    watch:{
+      dialogVisible(newName){
+        if(newName){
+          setTimeout(()=>{
+            this.$refs['scanNumber'].focus();
+          },10)
+        }
+      }
     },
     computed: {
       ...mapGetters(["permission"]),
@@ -424,6 +472,7 @@
       },
       doPrint1(row) {
         this.printData = row;
+        console.log(this.printData)
         setTimeout(() => {
           JsBarcode("#bigcode", row.distributionOrderNumberPrefix + row.distributionOrderNumber, {
             width: 2,//设置条之间的宽度
@@ -451,6 +500,16 @@
           }
         }, 100);
       },
+      inputNum(target){
+        let timeout = target.timestamp;
+        let iscontu = true;
+        this.arr.push(timeout);
+        let i;
+        for (i in this.arr){
+
+        }
+
+      }
     }
   }
 </script>

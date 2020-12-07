@@ -21,6 +21,15 @@ export const getDetail = (id) => {
     }
   })
 }
+export const getHospitalDetail = (id) => {
+  return request({
+    url: '/api/taocao-hisHospital/hospital/detail',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
 
 export const remove = (ids) => {
   return request({
