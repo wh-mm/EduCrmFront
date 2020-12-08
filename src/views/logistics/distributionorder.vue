@@ -99,7 +99,7 @@
           label="调配单号"
           prop="age"
         >
-          <el-input ref="scanNumber" size="small" v-model="scanNumber" placeholder="请扫描调配单条码"
+          <el-input ref="scanNumber" maxlength="19"  show-word-limit size="small" v-model="scanNumber" placeholder="请扫描调配单条码"
                     :disabled="scanNumberDisabled" @keyup.native="inputNum" @change="inputchange"></el-input>
         </el-form-item>
       </el-form>
@@ -110,7 +110,7 @@
 <script>
   import {
     getList, getDetail, add, update, remove,
-    updateStatus
+    updateStatus,scanOrder
   } from "@/api/logistics/distributionorder";
   import {mapGetters} from "vuex";
   import JsBarcode from 'jsbarcode';
@@ -562,15 +562,17 @@
       inputchange(val){
         if(val.length === 19){
           this.scanNumberDisabled =true;
-
-          setTimeout(()=>{
+          scanOrder(val).then( res =>{
             this.scanNumberDisabled =false;
-            this.$message.success("扫描成功!");
+            this.$message.success(res.data.msg);
             this.scanNumber = '';
             setTimeout(()=>{
               this.$refs['scanNumber'].focus();
             },50);
-          },1000);
+          }).catch(err =>{
+            this.scanNumberDisabled =false;
+            this.$message.success(err.data.msg);
+          })
         }
       }
     }
