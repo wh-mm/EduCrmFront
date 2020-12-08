@@ -389,7 +389,7 @@
 </template>
 
 <script>
-  import {dictionaryByName, getInfo, getList, receiveBlenderSave, receiveDecoctingSave, selectListByDrugCategory,selectByOrderId} from "@/api/order/order";
+  import {dictionaryByName, getInfo, getList, receiveBlenderSave, receiveDecoctingSave, selectListByDrugCategory, selectByOrderId} from "@/api/order/order";
   import {mapGetters} from "vuex";
   import JsBarcode from 'jsbarcode';
   import {

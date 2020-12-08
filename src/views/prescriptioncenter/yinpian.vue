@@ -361,9 +361,10 @@
     getInfo,
     getLists,
     receiveBlenderSave,
-    receiveDecoctingSave, selectByOrderId,
+    receiveDecoctingSave,
+    selectByOrderId,
     selectListByDrugCategory
-  ,selectByOrderId} from "@/api/order/order";
+  } from "@/api/order/order";
   import {mapGetters} from "vuex";
   import JsBarcode from 'jsbarcode';
   import {
@@ -376,7 +377,7 @@
     viewAddBlenderListOption,
     viewDrugListOption
   } from "@/const/order/customerorder"
-  import JsBarcode from "jsbarcode";
+
 
   export default {
     data() {
