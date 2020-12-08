@@ -15,7 +15,7 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
 
-      <template slot="menuLeft">
+      <template  slot-scope="scope" slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
       </template>
@@ -46,6 +46,7 @@
                width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
       <el-tabs v-model="activeName" @tab-click="handleClick">
+
         <el-tab-pane label="颗粒" name="tiaopei">
         </el-tab-pane>
       </el-tabs>
@@ -56,25 +57,25 @@
           </el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0" ></el-input>
+          <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
         </template>
         <template slot="equivalent" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.equivalent" placeholder="请输入当量" min="0" ></el-input>
+          <el-input type="number" v-model="scope.row.equivalent" placeholder="请输入当量" min="0"></el-input>
         </template>
         <template slot="drugAllnum" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.drugAllnum"  min=0 placeholder="请输入单剂量"></el-input>
+          <el-input type="number" v-model="scope.row.drugAllnum" min=0 placeholder="请输入单剂量"></el-input>
         </template>
         <template slot="tienum" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.tienum"  min=0 placeholder="请输入贴数"></el-input>
+          <el-input type="number" v-model="scope.row.tienum" min=0 placeholder="请输入贴数"></el-input>
         </template>
         <template slot="drugweight" slot-scope="scope">
-          {{scope.row.drugAllnum * scope.row.tienum}}
+          {{scope.row.tienum * scope.row.drugAllnum}}
         </template>
         <template slot="drugDescription" slot-scope="scope">
-          <avue-input type="textarea" size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
+          <avue-input size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
         </template>
         <template slot="description" slot-scope="scope">
-          <avue-input type="textarea" size="mini" placeholder="说明" v-model="scope.row.description"></avue-input>
+          <avue-input size="mini" placeholder="说明" v-model="scope.row.description"></avue-input>
         </template>
       </avue-crud>
       <span slot="footer" class="dialog-footer">
@@ -354,13 +355,15 @@
     receiveBlenderSave,
     receiveDecoctingSave, selectByOrderId,
     selectListByDrugCategory,
-  } from "@/api/order/order";
+  selectByOrderId} from "@/api/order/order";
   import {mapGetters} from "vuex";
+  import JsBarcode from 'jsbarcode';
   import {
     newAddBlenderListOption,
     newAddDrugListOption,
     newAddDrugOption,
     newAddGrainOption,
+    newAddListOption,
     option,
     viewAddBlenderListOption,
     viewDrugListOption
@@ -371,6 +374,7 @@
     data() {
       return {
         selectDrugDialogVisible: false,
+        dialogFormVisible: false,
         activeName: 'jianyao',
         printJianYaoData:[
           {
@@ -470,11 +474,15 @@
           option: {
             height: 'auto',
             calcHeight: 30,
+            align:'center',
             tip: false,
+            printBtnText:'打印文案',
             searchShow: true,
             searchMenuSpan: 6,
             border: true,
             index: false,
+            printBtn:true,
+            addBtn:false,
             menu: false,
             header: false,
             selection: true,
@@ -529,6 +537,8 @@
         addCrudOption: '',
         viewOption: '',
         viewCrudOption: '',
+        newAddListOption: newAddListOption,
+        newAddDrugListOption: newAddDrugListOption,
         form: {},
         query: {},
         loading: true,
@@ -690,6 +700,82 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
+
+      },
+      //推送
+      sendHttp() {
+        this.$alert("业务暂未对接", {},)
+      },
+      //打印
+      dayin(row) {
+
+        if(row.orderType === "jianyao"){
+          selectByOrderId(row.id).then(res=>{
+            if (res.data.success) {
+              this.printData = res.data.data.form;
+              this.printDrugData = res.data.data.drugList;
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          })
+          //  console.log(row.id);
+          // console.log(row.orderType);
+          setTimeout(() => {
+            JsBarcode("#bigcode", row.id,{
+              width: 2,//设置条之间的宽度
+              height: 56,//高度
+              fontOptions: "bold",//使文字加粗体或变斜体
+              textAlign: "center",//设置文本的水平对齐方式
+              textMargin: 5,//设置条形码和文本之间的间距
+              fontSize: 16,//设置文本的大小
+              displayValue: true,//是否在条形码下方显示文字
+              margin: 2
+            });
+
+
+            this.$Print(this.$refs.print11);
+            /*var prnhtml = document.querySelector("#print11").innerHTML;
+            var iframe = document.createElement('IFRAME');
+            iframe.setAttribute('style', 'display:none;');
+            var doc = null;
+            document.body.appendChild(iframe);
+            doc = iframe.contentWindow.document;
+            doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
+            doc.close();
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+            if (navigator.userAgent.indexOf("MSIE") > 0) {
+              document.body.removeChild(iframe);
+            }*/
+          }, 100);
+        }else if(row.orderType === 'tiaopei'){
+          selectByOrderId(row.id).then(res=>{
+            if (res.data.success) {
+              this.printData = res.data.data.form;
+              this.printDrugData = res.data.data.drugList;
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          })
+          setTimeout(() => {
+            JsBarcode("#bigcode2", row.id,{
+              width: 2,//设置条之间的宽度
+              height: 56,//高度
+              fontOptions: "bold",//使文字加粗体或变斜体
+              textAlign: "center",//设置文本的水平对齐方式
+              textMargin: 5,//设置条形码和文本之间的间距
+              fontSize: 16,//设置文本的大小
+              displayValue: true,//是否在条形码下方显示文字
+              margin: 2
+            });
+
+            this.$Print(this.$refs.print12);
+
+          }, 100);
+        }
+
       },
 
       dayin(row) {
@@ -818,14 +904,11 @@
       //查看
       lockInfo(row) {
         let url = '';
-        this.dialogVisible = true;
         if (row.orderType === "jianyao") {
+
           this.viewOption = Object.assign({}, newAddDrugOption);
           this.viewCrudOption = Object.assign({}, viewDrugListOption);
-          url = "/api/taocao-order/order/decoctingSelectByOrderIds"
-          setTimeout(() => {
-            this.$refs.addForm.updateDic("decscheme");
-          }, 20);
+          url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = Object.assign({}, newAddGrainOption);
           this.viewCrudOption = Object.assign({}, viewAddBlenderListOption);
@@ -838,6 +921,7 @@
           return;
         }
         this.viewOption.detail = true;
+        this.dialogVisible = true;
         getInfo(url, row.id).then(res => {
           this.orderInfo = res.data.data;
         })
@@ -894,3 +978,22 @@
     }
   };
 </script>
+<!--<style lang="css" >-->
+<!--  .first.td{-->
+
+<!--    width: 50px;-->
+<!--    align: center;-->
+<!--  }-->
+<!--  .second{-->
+<!--    width: 50px;-->
+<!--  }  .third{-->
+<!--    width: 50px;-->
+<!--  }-->
+<!--  td{-->
+<!--    width: 50px;-->
+<!--  }-->
+<!--  .code{-->
+<!--    transform:translateX(50%);-->
+<!--  }-->
+
+<!--</style>-->

@@ -48,7 +48,7 @@
             <el-col :span="24">
               <div class="grid-content bg-purple-dark"
                    style="font-size: 24px;text-align: center;margin-bottom: 15px;">
-                代煎中药配送交接单
+                配送交接单
               </div>
             </el-col>
           </el-row>

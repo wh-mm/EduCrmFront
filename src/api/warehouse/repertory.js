@@ -12,5 +12,11 @@ export const getList = (current, size, params) => {
     }
   })
 }
-
+export const saveDate = (row) => {
+  return request({
+    url: ERP_WMS_NAME + '/repertory/saveDate',
+    method: 'post',
+    data:row
+  })
+}
 
