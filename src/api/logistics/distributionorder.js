@@ -59,3 +59,13 @@ export const updateStatus = (id, status) => {
   })
 }
 
+export const scanOrder = (orderId) => {
+  return request({
+    url: '/api/logistics/distribution-order/scanOrder',
+    method: 'post',
+    params:{
+      orderId
+    }
+  })
+}
+
