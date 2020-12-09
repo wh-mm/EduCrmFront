@@ -274,8 +274,8 @@
                /* {
                   label: "有效开始时间",
                   prop: "effectiveStart",
-                  format: "yyyy-MM-dd hh:mm:ss",
-                  valueFormat: "yyyy-MM-dd hh:mm:ss",
+                  format: "yyyy-MM-dd HH:mm:ss",
+                  valueFormat: "yyyy-MM-dd HH:mm:ss",
                   type: "date",
                   labelWidth: 130,
                   rules: [{
@@ -288,8 +288,8 @@
                   label: "有效结束时间",
                   prop: "effectiveEnd",
                   type: "date",
-                  format: "yyyy-MM-dd hh:mm:ss",
-                  valueFormat: "yyyy-MM-dd hh:mm:ss",
+                  format: "yyyy-MM-dd HH:mm:ss",
+                  valueFormat: "yyyy-MM-dd HH:mm:ss",
                   labelWidth: 130,
                   row: true,
                   rules: [{

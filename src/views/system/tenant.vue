@@ -194,8 +194,8 @@
               label: "过期时间",
               prop: "expireTime",
               type: "date",
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
               span: 24,
             },
           ]

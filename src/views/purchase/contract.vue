@@ -209,8 +209,8 @@
               searchSpan:12,
               searchRange:true,
               search:true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
             {
               label: '商品列表',
