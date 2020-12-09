@@ -25,11 +25,17 @@
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
+
+
+        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"  @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
 
 <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
 
+
+
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
       </template>
@@ -389,7 +395,15 @@
 </template>
 
 <script>
-  import {dictionaryByName, getInfo, getList, receiveBlenderSave, receiveDecoctingSave, selectListByDrugCategory, selectByOrderId} from "@/api/order/order";
+  import {dictionaryByName,
+    getInfo,
+    getList,
+    receiveBlenderSave,
+    receiveDecoctingSave,
+    selectListByDrugCategory,
+    selectByOrderId,
+    updateOrderStatic
+  } from "@/api/order/order";
   import {mapGetters} from "vuex";
   import JsBarcode from 'jsbarcode';
   import {
@@ -744,6 +758,21 @@
       sendHttp() {
         this.$alert("业务暂未对接", {},)
       },
+
+      //修改接单状态  //1 未接单  //2 已接单
+      updateOrderStatic(row) {
+        updateOrderStatic(row.id).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+          this.onLoad(this.page);
+        })
+
+      },
+
       //打印
       dayin(row) {
 

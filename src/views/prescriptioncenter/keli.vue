@@ -21,9 +21,13 @@
       </template>
 
       <template slot-scope="scope" slot="menu">
+
+        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"  @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
+
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
       </template>
@@ -355,7 +359,8 @@
     receiveBlenderSave,
     receiveDecoctingSave,
     selectByOrderId,
-    selectListByDrugCategory,} from "@/api/order/order";
+    selectListByDrugCategory, updateOrderStatic,
+  } from "@/api/order/order";
   import {mapGetters} from "vuex";
   import {
     newAddBlenderListOption,
@@ -705,78 +710,22 @@
       sendHttp() {
         this.$alert("业务暂未对接", {},)
       },
-      //打印
-      dayin(row) {
 
-        if(row.orderType === "jianyao"){
-          selectByOrderId(row.id).then(res=>{
-            if (res.data.success) {
-              this.printData = res.data.data.form;
-              this.printDrugData = res.data.data.drugList;
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          })
-          //  console.log(row.id);
-          // console.log(row.orderType);
-          setTimeout(() => {
-            JsBarcode("#bigcode", row.id,{
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 16,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-
-
-            this.$Print(this.$refs.print11);
-            /*var prnhtml = document.querySelector("#print11").innerHTML;
-            var iframe = document.createElement('IFRAME');
-            iframe.setAttribute('style', 'display:none;');
-            var doc = null;
-            document.body.appendChild(iframe);
-            doc = iframe.contentWindow.document;
-            doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
-            doc.close();
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-            if (navigator.userAgent.indexOf("MSIE") > 0) {
-              document.body.removeChild(iframe);
-            }*/
-          }, 100);
-        }else if(row.orderType === 'tiaopei'){
-          selectByOrderId(row.id).then(res=>{
-            if (res.data.success) {
-              this.printData = res.data.data.form;
-              this.printDrugData = res.data.data.drugList;
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          })
-          setTimeout(() => {
-            JsBarcode("#bigcode2", row.id,{
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 16,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-
-            this.$Print(this.$refs.print12);
-
-          }, 100);
-        }
+      //修改接单状态  //1 未接单  //2 已接单
+      updateOrderStatic(row) {
+        updateOrderStatic(row.id).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+          this.onLoad(this.page);
+        })
 
       },
 
+      //打印
       dayin(row) {
 
         if(row.orderType === "jianyao"){
