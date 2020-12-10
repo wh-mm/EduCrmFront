@@ -64,6 +64,11 @@
               prop: "serverIp"
             },
             {
+              label: "终端ip",
+              prop: "remoteIp",
+              width: '160'
+            },
+            {
               label: "软件环境",
               prop: "env",
               width: '80'
