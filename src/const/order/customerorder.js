@@ -875,8 +875,8 @@ export const option = {
       prop: "orderTime",
       type: "date",
       width: 150 ,
-      format: "yyyy-MM-dd hh:mm:ss",
-      valueFormat: "yyyy-MM-dd hh:mm:ss",
+      format: "yyyy-MM-dd HH:mm:ss",
+      valueFormat: "yyyy-MM-dd HH:mm:ss",
       rules: [{
         required: true,
         message: "请输入通知日期",

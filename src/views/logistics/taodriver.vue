@@ -174,7 +174,7 @@
               prop: "driveStartTime",
               labelWidth: 140,
               type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
 
               rules: [{
                 required: true,
@@ -187,7 +187,7 @@
               prop: "driveEndTime",
               labelWidth: 140,
               type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
               rules: [{
                 required: true,
                 message: "请输入驾驶证结束时间",

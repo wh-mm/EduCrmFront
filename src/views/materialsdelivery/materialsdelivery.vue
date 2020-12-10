@@ -173,8 +173,8 @@
               prop: 'timeOfShipment',
               type:'datetime',
               display: true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules: [],
             },{
               label: '温控方式',
@@ -187,8 +187,8 @@
               prop: 'arrivalTime',
               type:'datetime',
               display: true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules: [],
             },
             {
@@ -213,8 +213,8 @@
               searchSpan:12,
               searchRange:true,
               search:true,
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
 
 
