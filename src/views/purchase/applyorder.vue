@@ -63,7 +63,8 @@
     </el-dialog>
 
 
-    <el-dialog title="驳回理由" :visible.sync="dialogFormVisible">
+    <el-dialog title="驳回理由" :visible.sync="dialogFormVisible"
+               :modal="false">
       <avue-form ref="form" v-model="obj0Reason" :option="option0Reason">
       </avue-form>
       <div slot="footer" class="dialog-footer">

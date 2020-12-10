@@ -22,12 +22,14 @@
         <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
+                   v-if="permission.warehouseinoutput_in"
                    plain
                    @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
         </el-button>
         <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
+                   v-if="permission.warehouseinoutput_out"
                    plain
                    @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
         </el-button>
@@ -482,7 +484,7 @@
       permissionList() {
         return {
           addBtn: false,
-          viewBtn: true,
+          viewBtn: this.vaildData(this.permission.warehouseinoutput_view, false),
           delBtn: false,
           editBtn: false,
 

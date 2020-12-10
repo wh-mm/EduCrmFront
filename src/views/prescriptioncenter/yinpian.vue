@@ -29,10 +29,14 @@
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
 
-        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"  @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
+        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic==1"
+                   @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
+
 
 
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
       </template>

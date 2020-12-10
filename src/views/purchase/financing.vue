@@ -54,7 +54,7 @@
       </avue-crud>
     </el-dialog>
 
-    <el-dialog title="驳回理由" :visible.sync="dialogFormVisible">
+    <el-dialog title="驳回理由" :visible.sync="dialogFormVisible" :modal="false">
       <avue-form ref="form" v-model="obj0Reason" :option="option0Reason">
       </avue-form>
       <div slot="footer" class="dialog-footer">
@@ -70,7 +70,6 @@
   import {getList, add, getDetail, update, remove, updateFinancing, viewCommodity,updaterejectText} from "@/api/purchase/purchaseorder";
   import {mapGetters} from "vuex";
   import '@/views/purchase/dialogdrag.ts'
-  import {getCommodityDetail} from "@/api/quality/commodity";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   export default {
 

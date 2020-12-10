@@ -40,7 +40,7 @@
 
     </avue-crud>
     <el-dialog
-      :title="title"
+      title="查看采购单"
       :visible.sync="dialogVisible"
       width="35%"
       :modal="false"
@@ -67,7 +67,7 @@
   import {getList, getDetails, add, update, remove,viewPurchaseOrder} from "@/api/materialsdelivery/materialsdelivery";
   import {mapGetters} from "vuex"
   import {viewCommodity} from "@/api/purchase/purchaseorder";
-
+  import '@/views/purchase/dialogdrag.ts'
   export default {
     data() {
       return {
@@ -222,7 +222,6 @@
         },
         data: [],
         datas:[],
-        commoditydata:[],
         option0 : {
           // border:true,
           // index:true,
@@ -240,13 +239,28 @@
               filterable: true,
               remote: true,
               display: false,
-            },{
+            },
+            {
               label: '*商品',
-              prop: "goodsName",
+              prop: "goodsId",
+              type: 'tree',
+              width: 130,
               filterable: true,
               remote: true,
-              display: false,
-            } ,{
+              display:false,
+              rules: [{
+                require: true,
+                message: '请选择商品',
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              // dicUrl: '/api/quality/commodity/tree?informationId={{key}}',
+              dicMethod:'post',
+              dicUrl: '/api/erp-wms/goods/dropDown'
+            }
+            ,{
               label: '数量',
               prop: "goodsQuantity",
               filterable: true,
@@ -269,6 +283,7 @@
             }
           ]
         },
+        commoditydata:[],
         commoditydataoption : {
           addBtn: false,
           menu:false,

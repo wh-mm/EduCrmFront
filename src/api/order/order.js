@@ -127,5 +127,14 @@ export const selectByOrderId = (orderId) => {
 
   })
 };
+export const updateOrderStatic = (orderId) => {
+  return request({
+    url: '/api/taocao-order/order/updateOrderStatic',
+    params: {
+      orderId
+    }
+
+  })
+};
 
 

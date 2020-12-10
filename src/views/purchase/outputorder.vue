@@ -211,7 +211,7 @@
                     rsearch: true,
                     rules: [{
                       required: true,
-                      message: "请输入类型",
+                      message: "请选择仓库",
                       trigger: "blur"
                     }],
                     props: {
@@ -225,6 +225,11 @@
                     label: "储位",
                     prop: "storageId",
                     type:'tree',
+                    rules: [{
+                      required: true,
+                      message: "请选择储位",
+                      trigger: "blur"
+                    }],
                     props: {
                       label: 'title',
                       value: 'id'
@@ -292,17 +297,9 @@
                     type: "number",
                     width: 130,
                     rules: [{
+                      required: true,
                       validator: validateQuantity,
-                      trigger: 'blur'
-                    }],
-                    change: () => {
-                      this.form.sumMoney = 0;
-                      this.form.purchaseOrderDetailList.forEach(val => {
-                        if (val.goodsId != "") {
-                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                        }
-                      });
-                    },
+                    }]
                   },
                   {
                     label: "基本单位",

@@ -28,7 +28,7 @@
         </el-button>
       </template>
 
-      <template slot-scope="scope" slot="unitForm">
+      <template slot-scope="scope" slot="menu">
         <el-button :size="scope.size"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>
       </template>
     </avue-crud>
@@ -75,7 +75,6 @@
           border: true,
           index: true,
           viewBtn: true,
-          menu:false,
           selection: true,
           dialogClickModal: false,
           column: [
@@ -89,31 +88,18 @@
               }]
             },
             {
-              label: "商品",
+              label: '商品',
               prop: "goodsName",
-              rules: [{
-                required: true,
-                message: "请输入商品id(商品质检表)",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: '商品资质',
-              prop: "unit",
-              type:'input',
-              placeholder: " ",
-              formslot:true,
-              editDisplay: false,
-              width: 100,
+              type: 'tree',
+              width: 130,
+              filterable: true,
+              remote: true,
+              display:false,
+
             },
             {
               label: "采购状态",
               prop: "purchaseStatus",
-              rules: [{
-                required: true,
-                message: "请输入采购状态",
-                trigger: "blur"
-              }],
               props: {
                 label: "dictValue",
                 value: "dictKey"
@@ -122,12 +108,7 @@
             },
             {
               label: "采购员",
-              prop: "purchaseUser",
-              rules: [{
-                required: true,
-                message: "请输入采购员",
-                trigger: "blur"
-              }]
+              prop: "purchaseUserName",
             },
             {
               label: "创建时间",

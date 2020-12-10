@@ -29,10 +29,11 @@
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
         <el-button icon="el-icon-plus" :size="size" option="option0" :type="text" @click="viewMaterialsDelivery(row.purchaseId)">查看收货记录</el-button>
+        <el-button :size="size" :type="text"  @click="viewCommodity(row.goodsId)">查看资质</el-button>
       </template>
     </avue-crud>
     <el-dialog
-      :title="title"
+      title="收货记录"
       :visible.sync="dialogVisible"
       width="35%"
       :modal="false"
@@ -40,13 +41,28 @@
       <avue-crud v-model="form" :data="datas" :option="option0" @click="viewMaterialsDelivery">
       </avue-crud>
     </el-dialog>
+
+    <el-dialog
+      title="商品资质"
+      :append-to-body="true"
+      :visible.sync="commoditydialogVisible"
+      width="50%"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag >
+      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
+      </avue-crud>
+    </el-dialog>
+
   </basic-container>
 </template>
 
 <script>
   import {getList, getDetail, add, update, remove,viewMaterialsDelivery} from "@/api/acceptance/acceptancerecord";
   import {mapGetters} from "vuex";
-
+  import {viewCommodity} from "@/api/purchase/purchaseorder";
+  import '@/views/purchase/dialogdrag.ts'
   export default {
     data() {
       return {
@@ -61,6 +77,7 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        commoditydialogVisible:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -130,15 +147,6 @@
               }]
             },
             {
-              label: "品名",
-              prop: "conditions",
-              rules: [{
-              required: true,
-              message: "请输入验收状态",
-              trigger: "blur"
-              }],
-            },
-            {
               label: "批号",
               prop: "batchNumber",
               rules: [{
@@ -148,53 +156,8 @@
               }]
             },
             {
-              label: "产地",
-              prop: "placeOfOrigin",
-              rules: [{
-                required: true,
-                message: "请输入验收状态",
-                trigger: "blur"
-              }]
-            },
-            {
               label: "生产日期",
               prop: "dateInProduced",
-              rules: [{
-                required: true,
-                message: "请输入验收状态",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "生产厂商",
-              prop: "manufacturer",
-              rules: [{
-                required: true,
-                message: "请输入验收状态",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "供货单位",
-              prop: "supplier",
-              rules: [{
-                required: true,
-                message: "请输入验收状态",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "上市许可持有人",
-              prop: "listingPermitHolder",
-              rules: [{
-                required: true,
-                message: "请输入验收状态",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "批准文号",
-              prop: "approvalNumber",
               rules: [{
                 required: true,
                 message: "请输入验收状态",
@@ -250,6 +213,208 @@
           ]
         },
         datas:[],
+        commoditydata:[],
+        commoditydataoption : {
+          addBtn: false,
+          menu:false,
+          align:'center',
+          calcHeight: 30,
+          dialogWidth: '80%',
+          column: [
+
+            {
+              label: "公司名称",
+              prop: "companyId",
+              props: {
+                label: 'supplierName',
+                value: 'id'
+              },
+              dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
+            },
+            {
+              label: "通用名",
+              prop: "commonName",
+              tip: '通用名',
+            },
+            {
+              label: "商品名",
+              prop: "tradeName",
+            },
+            {
+              label: "基本单位",
+              prop: "basicUnit",
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin"
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer"
+            },
+
+            {
+              label: "规格(型号)",
+              prop: "specifications"
+            },
+            {
+              label: "最小销售包装规格",
+              prop: "minimumSalesSpecification",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",
+            },
+            {
+              label: "进项税",
+              prop: "inputTax",
+              type: 'number',
+            },
+            {
+              label: "销项税",
+              prop: "outputTax",
+              type: 'number',
+            },
+            {
+              label: "剂型",
+              prop: "dosageForm",
+              type: 'tree',
+              rules: [{
+                required: true,
+                message: "请选择剂型",
+                trigger: "blur",
+              }],
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
+            },
+            {
+              label: "产品分类",
+              prop: "productClassification",
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl: "/api/erp-wms/goods-type/tree",
+            },
+
+            {
+              label: "存储期限",
+              prop: "storageLife",
+            },
+            {
+              label: "存储期限类型",
+              prop: "storagePeriodType",
+            },
+            {
+              label: "特管药品",
+              prop: "specialDrugs",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drug",
+            },
+            {
+              label: "特殊药品",
+              prop: "specialDrug",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drugs",
+            },
+
+            {
+              label: "存储条件",
+              prop: "storageConditions",
+            },
+            {
+              label: "税收分类",
+              prop: "taxClassification",
+            },
+            {
+              label: "是否可拆零",
+              prop: "scattered",
+              type: 'radio',
+              value: 0,
+              dicData: [{
+                label: '是',
+                value: 0
+              }, {
+                label: '否',
+                value: 1,
+              }]
+            },
+            {
+              label: "OTC标志",
+              prop: "sign",
+              type: 'radio',
+              value: '1',
+              dicData: [{
+                label: '有',
+                value: '1'
+              }, {
+                label: '无',
+                value: '2',
+              }]
+            },
+            {
+              label: 'OTC标志',
+              prop: 'signTow',
+              display: true,
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=otc_sign",
+            },
+            {
+              label: '国产/进口标示',
+              prop: 'domesticImportIndication',
+              type: 'radio',
+              labelWidth: 110,
+              // viewDisplay: true,   true是可已查看
+              value: '1',
+              dicData: [{
+                label: '国产',
+                value: '1'
+              }, {
+                label: '进口',
+                value: '2'
+              }]
+            },
+            {
+              label: "批准文号",
+              prop: "approvalNumber",
+              display: true,
+              rules: [],
+            },
+            {
+              label: "进口注册证",
+              labelWidth: 110,
+              prop: "importRegistrationCertificate",
+              rules: [],
+            },
+            {
+              label: "分包装企业",
+              prop: "subPackagingEnterprises",
+              labelWidth: 110,
+              rules: [],
+            },
+            {
+              label: "分包装批准文号",
+              labelWidth: 130,
+              prop: "approvalNumberOfSubPackage",
+              rules: [],
+            },
+          ],
+        },
       };
     },
 
@@ -400,6 +565,17 @@
         viewMaterialsDelivery(purchaseid).then(res=>{
           if (res.data.success) {
             this.datas = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
+      viewCommodity(goodsId){
+        this.commoditydialogVisible = true;
+        viewCommodity(goodsId).then(res=>{
+          if (res.data.success) {
+            this.commoditydata = res.data.data;
             this.$message.success(res.data.msg);
           } else {
             this.$message.error(res.data.msg);
