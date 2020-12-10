@@ -472,16 +472,22 @@
                     label: "签发日期",
                     prop: "dateOfIssue",
                     type: "date",
+                    format: "yyyy-MM-dd HH:mm:ss",
+                    valueFormat: "yyyy-MM-dd HH:mm:ss",
                   },
                   {
                     label: "期限",
                     prop: "term",
                     type: "month",
+                    format: "yyyy-MM-dd HH:mm:ss",
+                    valueFormat: "yyyy-MM-dd HH:mm:ss",
                   },
                   {
                     label: "期限至",
                     prop: "termTo",
                     type: "date",
+                    format: "yyyy-MM-dd HH:mm:ss",
+                    valueFormat: "yyyy-MM-dd HH:mm:ss",
                   },
                   {
                     label: "供应商证件照",

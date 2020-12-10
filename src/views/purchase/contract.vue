@@ -423,6 +423,11 @@
             {
               label: "基本单位",
               prop: "basicUnit",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
             },
             {
               label: "产地",
