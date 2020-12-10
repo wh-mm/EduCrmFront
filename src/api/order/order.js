@@ -92,7 +92,7 @@ export const dictionaryByName = (name) => {
 
 export const selectListByDrugCategory = (current, size, params) => {
   return request({
-    url:  ERP_WMS_NAME + '/goods/selectListBydrugCategory',
+    url: ERP_WMS_NAME + '/goods/selectListBydrugCategory',
 
     method: 'get',
     params: {

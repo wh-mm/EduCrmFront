@@ -15,7 +15,7 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
 
-      <template  slot-scope="scope" slot="menuLeft">
+      <template slot-scope="scope" slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
       </template>
@@ -24,7 +24,8 @@
 
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
-                   @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
+                   @click.stop="updateOrderStatic(scope.row)">接 单
+        </el-button>
 
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
@@ -126,48 +127,95 @@
       <div style="display: none" id="print11" ref="print11">
         <!-- 隐藏打印区域，避免用户看到 -->
         <div style="padding: 1px;height: 100px;">
-          <div class="head" >
+          <div class="head">
             <el-row>
-              <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
-                <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
+              <el-col :span="5" :offset="9">
+                <div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
+              </el-col>
 
-              <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
-                <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
+              <el-col :span="5" :offset="1">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
             </el-row>
 
             <div class="code" style="margin-left: 1000px;">
             </div>
             <el-row>
-              <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printJianYaoData.createTime}}</span></p></div></el-col>
-              <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">接方时间：<span>{{printJianYaoData.createTime}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+              </el-col>
             </el-row>
           </div>
 
-          <hr  align="center" width="100%" size="1px" length="10" color="black"/>
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
 
           <div class="shou" style="">
 
             <el-row :gutter="5" style="">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printJianYaoData.hospitalName}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">姓名：<span>{{printJianYaoData.name}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">性别：<span>{{printJianYaoData.sex==1?'男':'女'}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">年龄：<span>{{printJianYaoData.age}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  医院名称：<span>{{printJianYaoData.hospitalName}}</span></p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  姓名：<span>{{printJianYaoData.name}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  性别：<span>{{printJianYaoData.sex==1?'男':'女'}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  年龄：<span>{{printJianYaoData.age}}</span></p></div>
+              </el-col>
             </el-row>
 
             <el-row :gutter="5" style="margin-top:-200px;margin-bottom:-200px">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方号：<span>{{printJianYaoData.delnum}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">包装量：<span>{{printJianYaoData.packagenum}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printJianYaoData.dose}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方号：<span>{{printJianYaoData.delnum}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">包装量：<span>{{printJianYaoData.packagenum}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printJianYaoData.dose}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span>
+                </p></div>
+              </el-col>
             </el-row>
 
             <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">浸泡加水量：<span>{{printJianYaoData.soakwater}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">煎药方案：<span>{{printJianYaoData.decscheme}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printJianYaoData.takemethod}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">浸泡加水量：<span>{{printJianYaoData.soakwater}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">煎药方案：<span>{{printJianYaoData.decscheme}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printJianYaoData.takemethod}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p>
+                </div>
+              </el-col>
             </el-row>
-            <div class="footer" >
+            <div class="footer">
 
               <el-table
                 :data="printJianYaoDrugData"
@@ -220,7 +268,7 @@
                   align="center"
 
                 >
-                  <template  slot-scope="scope">
+                  <template slot-scope="scope">
                     <span>{{scope.row.drug_allnum / 1 | rounding}}</span>
                   </template>
                 </el-table-column>
@@ -239,8 +287,12 @@
               </el-table>
 
               <el-row>
-                <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">配方中药师：<span></span></p></div></el-col>
-                <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div></el-col>
+                <el-col :span="10" :offset="3">
+                  <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
+                </el-col>
+                <el-col :span="8" :offset="3">
+                  <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
+                </el-col>
               </el-row>
 
             </div>
@@ -256,38 +308,73 @@
       <div style="display: none" id="print12" ref="print12">
         <!-- 隐藏打印区域，避免用户看到 -->
         <div style="padding: 1px;height: 100px;">
-          <div class="head" >
+          <div class="head">
             <el-row>
-              <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
-                <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
-              <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
-                <svg id="bigcode2" style="padding: 1px;" ></svg></div></el-col>
+              <el-col :span="5" :offset="9">
+                <div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
+              </el-col>
+              <el-col :span="5" :offset="1">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode2" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
             </el-row>
             <div class="code" style="margin-left: 1000px;">
             </div>
             <el-row>
-              <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printData.createTime}}</span></p></div></el-col>
-              <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">
+                  接方时间：<span>{{printData.createTime}}</span></p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+              </el-col>
             </el-row>
           </div>
 
-          <hr  align="center" width="100%" size="1px" length="10" color="black"/>
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
 
           <div class="shou" style="">
 
             <el-row :gutter="5" style="">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printData.hospitalName}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">姓名：<span>{{printData.name}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">性别：<span>{{printData.sex==1?'男':'女'}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">年龄：<span>{{printData.age}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  医院名称：<span>{{printData.hospitalName}}</span></p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  姓名：<span>{{printData.name}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  性别：<span>{{printData.sex==1?'男':'女'}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  年龄：<span>{{printData.age}}</span></p></div>
+              </el-col>
             </el-row>
             <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方号：<span>{{printData.presId}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方名称：<span>{{printData.presName}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方付数：<span>{{printData.quantity==1?'贴数':'剂数'}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">分服次数：<span>{{printData.separateFrequency}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方号：<span>{{printData.presId}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方名称：<span>{{printData.presName}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方付数：<span>{{printData.quantity==1?'贴数':'剂数'}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">分服次数：<span>{{printData.separateFrequency}}</span>
+                </p></div>
+              </el-col>
             </el-row>
-            <div class="footer" >
+            <div class="footer">
 
               <el-table
                 :data="printDrugData"
@@ -334,13 +421,15 @@
                 >
                 </el-table-column>
 
-
-
               </el-table>
 
               <el-row>
-                <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">配方中药师：<span></span></p></div></el-col>
-                <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div></el-col>
+                <el-col :span="10" :offset="3">
+                  <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
+                </el-col>
+                <el-col :span="8" :offset="3">
+                  <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
+                </el-col>
               </el-row>
 
             </div>
@@ -382,78 +471,78 @@
       return {
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
-        activeName: 'jianyao',
-        printJianYaoData:[
+        activeName: 'tiaopei',
+        printJianYaoData: [
           {
             /** 煎药**/
             hospitalName: '', //医院名称
-            name:'', //患者名称
-            sex:'', //性别
-            age:'', //年龄
-            packagenum:'', //包装量
-            takenum:'',//次数
-            soakwater:'',//加水量
-            delnum:'', //处方号
-            takemethod:'',//服用方式
-            decscheme:'',//煎药方案
-            dtbtype:'',//快递类型
-            dose:'',//贴数/处方付数(别名:贴数,剂数;必须填写)
-            createTime:'',//创建时间
-            doctor:'',//医生姓名
+            name: '', //患者名称
+            sex: '', //性别
+            age: '', //年龄
+            packagenum: '', //包装量
+            takenum: '',//次数
+            soakwater: '',//加水量
+            delnum: '', //处方号
+            takemethod: '',//服用方式
+            decscheme: '',//煎药方案
+            dtbtype: '',//快递类型
+            dose: '',//贴数/处方付数(别名:贴数,剂数;必须填写)
+            createTime: '',//创建时间
+            doctor: '',//医生姓名
           }
         ],
 
-        printJianYaoDrugData:[
+        printJianYaoDrugData: [
           {
             /** 煎药**/
             drug_name: '',   //药品名称
             // drug_allnum:'', //单剂量
-            drug_description:'',//药品脚注
-            drugweight:'',//药品总量
-            description:'',//药品说明
-            shelf_number:'',//货位号
+            drug_description: '',//药品脚注
+            drugweight: '',//药品总量
+            description: '',//药品说明
+            shelf_number: '',//货位号
 
           }
         ],
 
-        printData:[
+        printData: [
           {
 
             hospitalName: '', //医院名称
-            name:'', //患者名称
-            sex:'', //性别
-            age:'', //年龄
-            packagenum:'', //包装量
-            drugAllnum:'',
-            soakwater:'',//加水量
-            delnum:'', //处方号
-            takemethod:'',//服用方式
-            decscheme:'',//煎药方案
-            dtbtype:'',//快递类型
-            dose:'',//贴数/处方付数(别名:贴数,剂数;必须填写)
-            createTime:'',//创建时间
-            doctor:'',//医生姓名
+            name: '', //患者名称
+            sex: '', //性别
+            age: '', //年龄
+            packagenum: '', //包装量
+            drugAllnum: '',
+            soakwater: '',//加水量
+            delnum: '', //处方号
+            takemethod: '',//服用方式
+            decscheme: '',//煎药方案
+            dtbtype: '',//快递类型
+            dose: '',//贴数/处方付数(别名:贴数,剂数;必须填写)
+            createTime: '',//创建时间
+            doctor: '',//医生姓名
 
-            doctorName:'',//医生姓名
-            presName:'',//处方名称
-            quantity:'',//处方付数
-            separateFrequency:'',//分服次数
-            presId:'',//处方号
+            doctorName: '',//医生姓名
+            presName: '',//处方名称
+            quantity: '',//处方付数
+            separateFrequency: '',//分服次数
+            presId: '',//处方号
           }
         ],
 
-        printDrugData:[
+        printDrugData: [
           {
 
             drug_name: '',   //药品名称
-            drug_allnum:'', //单剂量
-            drug_description:'',//药品脚注
-            drugweight:'',//药品总量
-            description:'',//药品说明
-            shelf_number:'',//货位号
+            drug_allnum: '', //单剂量
+            drug_description: '',//药品脚注
+            drugweight: '',//药品总量
+            description: '',//药品说明
+            shelf_number: '',//货位号
 
-            dose_herb:'',//剂量
-            equivalent:'',//当量
+            dose_herb: '',//剂量
+            equivalent: '',//当量
 
 
             // name:'',
@@ -481,15 +570,15 @@
           option: {
             height: 'auto',
             calcHeight: 30,
-            align:'center',
+            align: 'center',
             tip: false,
-            printBtnText:'打印文案',
+            printBtnText: '打印文案',
             searchShow: true,
             searchMenuSpan: 6,
             border: true,
             index: false,
-            printBtn:true,
-            addBtn:false,
+            printBtn: true,
+            addBtn: false,
             menu: false,
             header: false,
             selection: true,
@@ -731,9 +820,9 @@
       //打印
       dayin(row) {
 
-        if(row.orderType === "jianyao"){
+        if (row.orderType === "jianyao") {
 
-          selectByOrderId(row.id).then(res=>{
+          selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
               this.printJianYaoDrugData = res.data.data.drugList;
@@ -745,7 +834,7 @@
           //  console.log(row.id);
           // console.log(row.orderType);
           setTimeout(() => {
-            JsBarcode("#bigcode", row.id,{
+            JsBarcode("#bigcode", row.id, {
               width: 2,//设置条之间的宽度
               height: 56,//高度
               fontOptions: "bold",//使文字加粗体或变斜体
@@ -770,8 +859,8 @@
               document.body.removeChild(iframe);
             }*/
           }, 100);
-        }else if(row.orderType === 'tiaopei'){
-          selectByOrderId(row.id).then(res=>{
+        } else if (row.orderType === 'tiaopei') {
+          selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printData = res.data.data.form;
               this.printDrugData = res.data.data.drugList;
@@ -781,7 +870,7 @@
             }
           })
           setTimeout(() => {
-            JsBarcode("#bigcode2", row.id,{
+            JsBarcode("#bigcode2", row.id, {
               width: 2,//设置条之间的宽度
               height: 56,//高度
               fontOptions: "bold",//使文字加粗体或变斜体
