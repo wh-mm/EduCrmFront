@@ -352,7 +352,7 @@
             {
               label: "规则类型",
               type: "select",
-              dicUrl: "/api/yue-system/dict/dictionary?code=data_scope_type",
+              dicUrl: this.ERP_SYSTEM_NAME +"/dict/dictionary?code=data_scope_type",
               props: {
                 label: "dictValue",
                 value: "dictKey"

@@ -59,10 +59,11 @@
         </div>
       </el-tooltip>-->
       <el-tooltip effect="dark"
-                  :content="$t('navbar.language')"
+                  :content="$t('tagsView.clearCache')"
                   placement="bottom">
         <div class="top-bar__item top-bar__item--show">
-          <top-lang></top-lang>
+          <i class="el-icon-delete"
+             @click="clearCacheTags"></i>
         </div>
       </el-tooltip>
       <el-tooltip v-if="showFullScren"
@@ -108,6 +109,7 @@
   import topColor from "./top-color";
   import topNotice from './top-notice'
   import topLang from "./top-lang";
+  import {clearCache} from "@/api/user";
 
   export default {
     components: {
@@ -172,6 +174,18 @@
             resetRouter();
             this.$router.push({path: "/login"});
           });
+        });
+      },
+      clearCacheTags() {
+        this.$confirm("是否需要清除缓存?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          clearCache().then(() => {
+            this.contextmenuFlag = false;
+            this.$message.success('清除完毕');
+          })
         });
       }
     }
