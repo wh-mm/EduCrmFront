@@ -347,14 +347,13 @@
                     type:'select',
                     filterable: true,
                     remote: true,
-                    display:false,
-                    disabled:true,
+                    editDisplay: false,
+                    disabled: true,
                     props: {
                       label: 'supplierName',
                       value: 'id'
                     },
-                    cascaderItem: ['goodsId'],
-                    // cascaderItem: ['goosId'],
+                    cascaderItem: ['goosId'],
                     // dicMethod: "post",
                     dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
                   },
@@ -366,6 +365,7 @@
                     filterable: true,
                     remote: true,
                     display:false,
+                    disabled: true,
                     rules: [{
                       require: true,
                       message: '请选择商品',
@@ -382,12 +382,9 @@
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
                           this.form.purchaseOrderDetailList.forEach(val => {
-                            console.log(val.goodsId)
                             if (val.goodsId == value) {
                               var detail = res.data.data;
-                              console.log(detail.basicUnit)
                               val.basicUnit = detail.basicUnit;
-
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });

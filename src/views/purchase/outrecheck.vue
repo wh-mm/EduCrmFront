@@ -209,6 +209,7 @@
                     prop: "warehouseId",
                     type: "tree",
                     rsearch: true,
+                    disabled: true,
                     rules: [{
                       required: true,
                       message: "请输入类型",
@@ -225,6 +226,7 @@
                     label: "储位",
                     prop: "storageId",
                     type:'tree',
+                    disabled: true,
                     props: {
                       label: 'title',
                       value: 'id'
@@ -248,6 +250,7 @@
                     filterable: true,
                     remote: true,
                     display:false,
+                    disabled: true,
                     rules: [{
                       require: true,
                       message: '请选择商品',
@@ -291,6 +294,7 @@
                     prop: "goodsQuantity",
                     type: "number",
                     width: 130,
+                    disabled: true,
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'

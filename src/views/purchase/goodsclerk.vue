@@ -336,8 +336,7 @@
                       label: 'supplierName',
                       value: 'id'
                     },
-                    cascaderItem: ['goodsId'],
-                    // cascaderItem: ['goosId'],
+                    cascaderItem: ['goosId'],
                     // dicMethod: "post",
                     dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
                   },
@@ -349,7 +348,7 @@
                     filterable: true,
                     remote: true,
                     display:false,
-                    //disabled: true,
+                    disabled: true,
                     rules: [{
                       require: true,
                       message: '请选择商品',

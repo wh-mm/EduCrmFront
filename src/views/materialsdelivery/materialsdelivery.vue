@@ -183,13 +183,26 @@
               rules: [],
             },
             {
-              label: '到货时间',
+              label: '冷冻/冷藏到货时间',
               prop: 'arrivalTime',
               type:'datetime',
               display: true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules: [],
+            },
+            {
+              label:"到货时间",
+              prop:"createTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
             {
               label: "收货状态",
@@ -280,7 +293,12 @@
               filterable: true,
               remote: true,
               display: false,
-            }
+            },
+            {
+              label: "采购员",
+              prop: "purchaseName",
+
+            },
           ]
         },
         commoditydata:[],
