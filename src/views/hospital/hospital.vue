@@ -136,8 +136,8 @@
               label: "医院接口开关",
               prop: "hospitalSwitch",
               type: 'select',
+              search: true,
               slot: true,
-
               props: {
                 label: 'dictValue',
                 value: 'dictKey',

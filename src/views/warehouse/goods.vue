@@ -19,6 +19,12 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
+        <el-button v-if="permission.region_import"
+                   type="primary"
+                   size="small"
+                   @click="handleImport">导 入
+          <i class="el-icon-upload el-icon--right"></i>
+        </el-button>
         <!--<el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
@@ -28,12 +34,25 @@
         </el-button>-->
       </template>
     </avue-crud>
+    <el-dialog title="商品名称导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
   import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
+  import {getToken} from "@/util/auth";
 
 
   export default {
@@ -69,6 +88,59 @@
         }
       }
       return {
+        excelBox: false,
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: "/api/taocao-codematching/matching/import-region ?  hospitalId={{this}}"
+            },
+            {
+              label: "数据覆盖",
+              prop: "isCovered",
+              type: "switch",
+              align: "center",
+              width: 80,
+              dicData: [
+                {
+                  label: "否",
+                  value: 0
+                },
+                {
+                  label: "是",
+                  value: 1
+                }
+              ],
+              value: 0,
+              slot: true,
+              rules: [
+                {
+                  required: true,
+                  message: "请选择是否覆盖",
+                  trigger: "blur"
+                }
+              ]
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
+          ]
+        },
         form: {},
         query: {},
         loading: true,
@@ -198,6 +270,9 @@
           window.console.log(error);
         });
       },
+      handleTemplate() {
+        window.open(`/api/taocao-codematching/matching/export-template?${this.website.tokenHeader}=${getToken()}`);
+      },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
           this.onLoad(this.page);
@@ -256,6 +331,17 @@
             this.form = res.data.data;
           });
         }
+        done();
+      },
+      //导入
+      handleImport() {
+        this.excelBox = true;
+      },
+      //导入
+      uploadAfter(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBox = false;
+        this.initTree();
         done();
       },
       searchReset() {

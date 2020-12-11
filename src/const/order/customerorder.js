@@ -436,6 +436,17 @@ export const newAddGrainOption = {
           },],
           span: 6,
         },
+        {
+          label: "快递类型",
+          prop: "dtbtype",
+          span: 6,
+          type: 'select',
+          props: {
+            label: 'dictValue',
+            value: 'dictKey'
+          },
+          dicUrl: "/api/blade-system/dict-biz/dictionary?code=dtbtype"
+        },
       ]
     },
     {
