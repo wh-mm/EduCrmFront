@@ -38,7 +38,7 @@
 
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==2"
-                   @click="dayin(scope.row)">打 印 调 配 单 子
+                   @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
       </template>
     </avue-crud>
@@ -163,10 +163,10 @@
 
 
       <el-form :model="form">
-        <div style="display: none" id="print11" ref="print11">
+        <div style="display: none" id="printyinpian" ref="printyinpian">
           <!-- 隐藏打印区域，避免用户看到 -->
-          <div style="padding: 1px;height: 100px;width: 100%">
-            <div class="head" >
+          <div style="padding: 1px;height: 100px;">
+            <div class="yinpianhead" style="width: 100%">
               <el-row>
                 <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
                   <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
@@ -175,8 +175,6 @@
                   <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
               </el-row>
 
-            <div class="code" style="margin-left: 1000px;width: 100%">
-            </div>
               <el-row>
                 <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printJianYaoData.createTime}}</span></p></div></el-col>
                 <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
@@ -185,7 +183,7 @@
 
             <hr  align="center" width="100%" size="1px" length="10" color="black"/>
 
-            <div class="shou" style="width: 100%">
+            <div class="yinpianshou" style="width: 100%">
 
               <el-row :gutter="5" style="">
                 <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printJianYaoData.hospitalName}}</span></p></div></el-col>
@@ -207,8 +205,10 @@
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printJianYaoData.takemethod}}</span></p></div></el-col>
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
               </el-row>
+            </div>
 
-              <div class="footer" style="width: 100%">
+
+              <div class="yinpianfooter" style="width: 100%">
                 <el-table
                   :data="printJianYaoDrugData"
                   :row-style="{height: '0'}"
@@ -254,11 +254,9 @@
                   </el-table-column>
 
                   <el-table-column
-
                   label="单剂量"
                   width="165"
                   align="center"
-
                   >
                     <template  slot-scope="scope">
                       <span>{{scope.row.drug_allnum / 1 | rounding}}</span>
@@ -284,7 +282,7 @@
                 </el-row>
 
               </div>
-            </div>
+
 
 
           </div>
@@ -293,18 +291,16 @@
       </el-form>
 
     <el-form :model="form">
-      <div style="display: none" id="print12" ref="print12">
+      <div style="display: none" id="printkeli" ref="printkeli">
         <!-- 隐藏打印区域，避免用户看到 -->
-        <div style="padding: 1px;height: 100px;">
-          <div class="head" >
+        <div style="padding: 1px;height: 100px;width: 100%">
+          <div class="kelihead" style="width: 100%" >
             <el-row>
               <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
                 <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
               <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
                 <svg id="bigcode2" style="padding: 1px;" ></svg></div></el-col>
             </el-row>
-            <div class="code" style="margin-left: 1000px;">
-            </div>
             <el-row>
               <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printData.createTime}}</span></p></div></el-col>
               <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
@@ -313,7 +309,7 @@
 
           <hr  align="center" width="100%" size="1px" length="10" color="black"/>
 
-          <div class="shou" style="">
+          <div class="kelishou"  style="width: 100%">
 
             <el-row :gutter="5" style="">
               <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printData.hospitalName}}</span></p></div></el-col>
@@ -330,7 +326,9 @@
             <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
               <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
             </el-row>
-            <div class="footer" >
+          </div>
+
+            <div class="kelifooter" style="width: 100%" >
 
               <el-table
                 :data="printDrugData"
@@ -377,8 +375,6 @@
                 >
                 </el-table-column>
 
-
-
               </el-table>
 
               <el-row>
@@ -387,7 +383,7 @@
               </el-row>
 
             </div>
-          </div>
+
 
 
         </div>
@@ -805,7 +801,7 @@
              displayValue: true,//是否在条形码下方显示文字
              margin: 2
            });
-           this.$Print(this.$refs.print11);
+           this.$Print(this.$refs.printyinpian);
            /*var prnhtml = document.querySelector("#print11").innerHTML;
            var iframe = document.createElement('IFRAME');
            iframe.setAttribute('style', 'display:none;');
@@ -842,7 +838,7 @@
              margin: 2
            });
 
-           this.$Print(this.$refs.print12);
+           this.$Print(this.$refs.printkeli);
 
          }, 100);
        }
