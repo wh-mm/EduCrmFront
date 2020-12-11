@@ -293,10 +293,8 @@
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
                           this.form.purchaseOrderDetailList.forEach(val => {
-                            console.log(val.goodsId)
                             if (val.goodsId == value) {
                               var detail = res.data.data;
-                              console.log(detail.basicUnit)
                               val.basicUnit = detail.basicUnit;
 
                             }
@@ -348,7 +346,14 @@
                     prop: "money",
                     disabled: false,
                     placeholder: " ",
-
+                    change: () => {
+                      this.form.sumMoney = 0;
+                      this.form.purchaseOrderDetailList.forEach(val => {
+                        if (val.goodsId != "") {
+                          this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                        }
+                      });
+                    },
                   },
                   {
                     label: "预付款",
@@ -402,6 +407,11 @@
             {
               label: "基本单位",
               prop: "basicUnit",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
             },
             {
               label: "产地",

@@ -26,7 +26,7 @@
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
-
+<!--处方中心打印功能-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
                    @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
