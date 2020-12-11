@@ -289,6 +289,16 @@
         }
         done();
       },
+      handleAdd(row) {
+        this.$refs.crud.value.parentId = row.id;
+        this.$refs.crud.option.column.filter(item => {
+          if (item.prop === "parentId") {
+            item.value = row.id;
+            item.addDisabled = true;
+          }
+        });
+        this.$refs.crud.rowAdd();
+      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
