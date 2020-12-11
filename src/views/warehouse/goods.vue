@@ -2,6 +2,7 @@
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
+               :search.sync="search"
                :data="data"
                :page.sync="page"
                :permission="permissionList"
@@ -19,22 +20,28 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button v-if="permission.region_import"
-                   type="primary"
-                   size="small"
-                   @click="handleImport">导 入
-          <i class="el-icon-upload el-icon--right"></i>
-        </el-button>
-        <!--<el-button type="danger"
+        <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.goods_delete"
                    @click="handleDelete">删 除
-        </el-button>-->
+        </el-button>
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   @click="handleImport">导入
+        </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExport">导出
+        </el-button>
       </template>
     </avue-crud>
-    <el-dialog title="商品名称导入"
+    <el-dialog title="货品数据导入"
                append-to-body
                :visible.sync="excelBox"
                width="555px">
@@ -88,61 +95,9 @@
         }
       }
       return {
-        excelBox: false,
-        excelForm: {},
-        excelOption: {
-          submitBtn: false,
-          emptyBtn: false,
-          column: [
-            {
-              label: '模板上传',
-              prop: 'excelFile',
-              type: 'upload',
-              drag: true,
-              loadText: '模板上传中，请稍等',
-              span: 24,
-              propsHttp: {
-                res: 'data'
-              },
-              tip: '请上传 .xls,.xlsx 标准格式文件',
-              action: "/api/taocao-codematching/matching/import-region ?  hospitalId={{this}}"
-            },
-            {
-              label: "数据覆盖",
-              prop: "isCovered",
-              type: "switch",
-              align: "center",
-              width: 80,
-              dicData: [
-                {
-                  label: "否",
-                  value: 0
-                },
-                {
-                  label: "是",
-                  value: 1
-                }
-              ],
-              value: 0,
-              slot: true,
-              rules: [
-                {
-                  required: true,
-                  message: "请选择是否覆盖",
-                  trigger: "blur"
-                }
-              ]
-            },
-            {
-              label: '模板下载',
-              prop: 'excelTemplate',
-              formslot: true,
-              span: 24,
-            }
-          ]
-        },
         form: {},
         query: {},
+        search: {},
         loading: true,
         page: {
           pageSize: 10,
@@ -150,6 +105,7 @@
           total: 0
         },
         selectionList: [],
+        excelBox: false,
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -236,7 +192,59 @@
             },
           ]
         },
-        data: []
+        data: [],
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: this.ERP_WMS_NAME + "/goods/import-goods"
+            },
+            {
+              label: "数据覆盖",
+              prop: "isCovered",
+              type: "switch",
+              align: "center",
+              width: 80,
+              dicData: [
+                {
+                  label: "否",
+                  value: 0
+                },
+                {
+                  label: "是",
+                  value: 1
+                }
+              ],
+              value: 0,
+              slot: true,
+              rules: [
+                {
+                  required: true,
+                  message: "请选择是否覆盖",
+                  trigger: "blur"
+                }
+              ]
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
+          ]
+        }
       };
     },
     computed: {
@@ -257,6 +265,14 @@
         return ids.join(",");
       }
     },
+    watch: {
+      'excelForm.isCovered'() {
+        if (this.excelForm.isCovered !== '') {
+          const column = this.findObject(this.excelOption.column, "excelFile");
+          column.action = this.ERP_WMS_NAME + `/goods/import-goods?isCovered=${this.excelForm.isCovered}`;
+        }
+      }
+    },
     methods: {
       rowSave(row, done, loading) {
         add(row).then(() => {
@@ -270,10 +286,6 @@
           loading();
           window.console.log(error);
         });
-      },
-      //商品导入
-      handleTemplate() {
-        window.open(`/api/taocao-codematching/matching/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
@@ -335,17 +347,6 @@
         }
         done();
       },
-      //导入
-      handleImport() {
-        this.excelBox = true;
-      },
-      //导入
-      uploadAfter(res, done, loading, column) {
-        window.console.log(column);
-        this.excelBox = false;
-        this.initTree();
-        done();
-      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
@@ -381,8 +382,28 @@
           this.loading = false;
           this.selectionClear();
         });
-      }
-
+      },
+      handleImport() {
+        this.excelBox = true;
+      },
+      uploadAfter(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBox = false;
+        this.refreshChange();
+        done();
+      },
+      handleExport() {
+        this.$confirm("是否导出货品数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( this.ERP_WMS_NAME + `/goods/export-goods?${this.website.tokenHeader}=${getToken()}&goodsType=${this.search.goodsType}`);
+        });
+      },
+      handleTemplate() {
+        window.open(this.ERP_WMS_NAME + `/goods/export-template?${this.website.tokenHeader}=${getToken()}`);
+      },
     }
   };
 </script>
