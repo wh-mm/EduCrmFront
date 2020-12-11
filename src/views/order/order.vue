@@ -38,7 +38,7 @@
 
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==2"
-                   @click="dayin(scope.row)">打 印 调 配 单
+                   @click="dayin(scope.row)">打 印 调 配 单 子
         </el-button>
       </template>
     </avue-crud>
@@ -165,7 +165,7 @@
       <el-form :model="form">
         <div style="display: none" id="print11" ref="print11">
           <!-- 隐藏打印区域，避免用户看到 -->
-          <div style="padding: 1px;height: 100px;">
+          <div style="padding: 1px;height: 100px;width: 100%">
             <div class="head" >
               <el-row>
                 <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
@@ -175,7 +175,7 @@
                   <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
               </el-row>
 
-            <div class="code" style="margin-left: 1000px;">
+            <div class="code" style="margin-left: 1000px;width: 100%">
             </div>
               <el-row>
                 <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printJianYaoData.createTime}}</span></p></div></el-col>
@@ -185,7 +185,7 @@
 
             <hr  align="center" width="100%" size="1px" length="10" color="black"/>
 
-            <div class="shou" style="">
+            <div class="shou" style="width: 100%">
 
               <el-row :gutter="5" style="">
                 <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printJianYaoData.hospitalName}}</span></p></div></el-col>
@@ -207,11 +207,11 @@
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printJianYaoData.takemethod}}</span></p></div></el-col>
                 <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
               </el-row>
-              <div class="footer" >
 
+              <div class="footer" style="width: 100%">
                 <el-table
                   :data="printJianYaoDrugData"
-                  :row-style="{height: '1'}"
+                  :row-style="{height: '0'}"
                   :cell-style="{padding: '0'}"
                   style="border-color: #000000;border-top: 1px solid;font-size: 30px">
                   <el-table-column
@@ -326,6 +326,9 @@
               <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方名称：<span>{{printData.presName}}</span></p></div></el-col>
               <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方付数：<span>{{printData.quantity==1?'贴数':'剂数'}}</span></p></div></el-col>
               <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">分服次数：<span>{{printData.separateFrequency}}</span></p></div></el-col>
+            </el-row>
+            <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
+              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
             </el-row>
             <div class="footer" >
 
@@ -973,6 +976,4 @@
     }
   };
 </script>
-<!--<style lang="css" >-->
 
-<!--</style>-->
