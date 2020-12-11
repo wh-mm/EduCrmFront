@@ -158,7 +158,7 @@ export default {
               },
             ],
           },
-          {
+ /*         {
             label: "区类型",
             prop: "areaType",
             type: "select",
@@ -178,7 +178,7 @@ export default {
             },
             search: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=area_type"
-          },
+          },*/
           {
             label: "层",
             prop: "layer",

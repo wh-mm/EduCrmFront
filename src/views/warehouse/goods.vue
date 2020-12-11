@@ -187,14 +187,15 @@
               search: true,
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
-            {
+            /*{
               label: "货品编码",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,
                 trigger: "blur"
               }]
-            }, {
+            },*/
+            {
               label: "规格",
               prop: "goodsSpecification",
               type: "select",

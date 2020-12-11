@@ -152,7 +152,7 @@
 
             },
             {
-              label: "数量",
+              label: "数量(g)",
               prop: "quantity",
               type: "number",
             },
@@ -195,7 +195,6 @@
               row: true,
               span: 24,
               rules:[{
-                required: true,
                 message: "请输入商品",
                 trigger: "blur",
               }],
@@ -242,7 +241,7 @@
               dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
             {
-              label: "数量",
+              label: "数量(g)",
               prop: "quantity",
               type: "number",
               precision: 0,
