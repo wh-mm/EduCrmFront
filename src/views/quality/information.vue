@@ -44,7 +44,7 @@
         <el-button icon="el-icon-check"
                    :size="scope.size"
                    :type="scope.type"
-                   v-if="permission.information_edit  && scope.row.stateExamine === '1'"
+                   v-if="permission.information_edit  && (scope.row.stateExamine === '1' || scope.row.stateExamine=== '52')"
                    @click.stop="handleEdit(scope.row,scope.index)">编 辑
         </el-button>
         <el-button icon="el-icon-check"

@@ -156,7 +156,7 @@
             },
 
             {
-              label: "库房药编码",
+              label: "库房药名称",
               prop: "goodsId",
               type: "tree",
               props: {
