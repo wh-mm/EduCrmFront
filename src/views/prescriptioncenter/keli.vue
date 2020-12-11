@@ -19,7 +19,7 @@
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
       </template>
-
+<!--   颗粒接单打印 -->
       <template slot-scope="scope" slot="menu">
 
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
