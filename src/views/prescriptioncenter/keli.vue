@@ -1018,22 +1018,4 @@
     }
   };
 </script>
-<!--<style lang="css" >-->
-<!--  .first.td{-->
 
-<!--    width: 50px;-->
-<!--    align: center;-->
-<!--  }-->
-<!--  .second{-->
-<!--    width: 50px;-->
-<!--  }  .third{-->
-<!--    width: 50px;-->
-<!--  }-->
-<!--  td{-->
-<!--    width: 50px;-->
-<!--  }-->
-<!--  .code{-->
-<!--    transform:translateX(50%);-->
-<!--  }-->
-
-<!--</style>-->
