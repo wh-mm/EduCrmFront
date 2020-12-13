@@ -6,7 +6,6 @@ export const phonelength = (rule, value, callback) => {
   }
 };
 
-
 export function isInteger(rule, value, callback) {
   if (!value) {
     return callback(new Error('输入不可以为空'));
@@ -25,7 +24,6 @@ export function isInteger(rule, value, callback) {
     }
   }, 0);
 }
-
 
 export function isOneToNinetyNine(rule, value, callback) {
   if (!value) {
@@ -119,16 +117,7 @@ export const newAddDrugOption = {
           prop: "yizhu",
           span: 6,
         },
-        {
-          label: "药品总量",
-          prop: "drugCount",
-          span: 6,
-          rules: [{
-            message: "请输入药品总量",
-            trigger: "blur",
-            validator:isInteger,
-          }],
-        },
+
       ]
     },
     {
@@ -215,6 +204,16 @@ export const newAddDrugOption = {
             value: 'dictKey'
           },
           dicUrl: "/api/blade-system/dict-biz/dictionary?code=boil_medicine_scheme"
+        },
+        {
+          label: "药品总味数",
+          prop: "drugCount",
+          span: 6,
+          rules: [{
+            message: "药品总味数",
+            trigger: "blur",
+            validator:isInteger,
+          }],
         },
         {
           label: "贴数",

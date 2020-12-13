@@ -26,16 +26,12 @@
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
-<!--处方中心打印功能-->
+      <!--处方中心打印功能-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
                    @click.stop="updateOrderStatic(scope.row)">接 单</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
-
-<!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
-
-
-
+        <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
@@ -371,17 +367,13 @@
                   prop="equivalent"
                   label="当量"
                   width="247"
-                  align="center"
-                >
+                  align="center">
                 </el-table-column>
-
               </el-table>
-
               <el-row>
                 <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">配方中药师：<span></span></p></div></el-col>
                 <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div></el-col>
               </el-row>
-
             </div>
 
 
