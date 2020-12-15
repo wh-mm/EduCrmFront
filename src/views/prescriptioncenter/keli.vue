@@ -244,8 +244,6 @@
 
           </div>
 
-
-
         </div>
       </div>
 
@@ -373,7 +371,7 @@
     option,
     viewAddBlenderListOption,
     viewDrugListOption
-  } from "@/const/order/customerorder"
+  } from "@/const/order/customerorders"
   import JsBarcode from "jsbarcode";
 
   export default {
