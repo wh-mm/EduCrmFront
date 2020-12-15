@@ -204,6 +204,7 @@
                      done();
                  },
                 column: [
+
                   {
                     label: '*出货仓库',
                     prop: "warehouseId",
@@ -238,14 +239,6 @@
                     dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
                   },
                   {
-                    label: "库存检索",
-                    prop: "inventoryToRetrieve",
-                    type:'input',
-                    placeholder: " ",
-                    formslot:true,
-                    width: 100,
-                  },
-                  {
                     label: '*商品',
                     prop: "goodsId",
                     type: 'tree',
@@ -261,6 +254,7 @@
                       label: 'goodsName',
                       value: 'goodsId'
                     },
+                    cascaderItem: ['batchNumber'],
                     dicMethod:'post',
                     dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
                     // dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
@@ -273,15 +267,35 @@
                             if (val.goodsId == value) {
                               var detail = res.data.data;
                               val.basicUnit = detail.basicUnit;
+
                               val.specification = detail.goodsSpecification;
-
-
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });
                         });
                       }
                     },
+                  },
+                  {
+                    label: "库存检索",
+                    prop: "inventoryToRetrieve",
+                    type:'input',
+                    placeholder: " ",
+                    formslot:true,
+                    width: 100,
+                  },
+                  {
+                    label: "批号",
+                     prop: "batchNumber",
+                    type:'select',
+                     props: {
+
+                       label: 'batchNumber',
+                       value: 'batchNumber'
+                     },
+                    dicMethod:'post',
+                    // dicUrl: '/api/erp-wms/repertory/dropDown?goodsId={{key}}',
+                    dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                   },
                   {
                     label: '商品资质',
@@ -566,6 +580,24 @@
               dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
             },
             {
+              label: "批号",
+              prop: "warehouseinoutBatchNumber",
+            },
+            {
+              label: "生产日期",
+              prop: "warehouseinoutDateOfManufacture",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "有效期至",
+              prop: "warehouseinoutPeriodOfValidity",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
               label:'商品名称',
               prop:'goodsId',
               props: {
@@ -581,6 +613,11 @@
               rules: [{
                 trigger: "blur"
               }]
+            },
+            {
+              label: "入库时间",
+              prop: "createTime",
+
             },
           ]
         },
@@ -759,7 +796,6 @@
           .catch(() => {
             status = 3;
           }).finally(()=>{
-            console.log(status);
           updateStatus(id,status).then(res => {
             if(res.data.success){
               this.$message.success(res.data.msg);

@@ -1,7 +1,7 @@
 import request from '@/router/axios';
 import {ERP_WMS_NAME} from '@/const/YueConst';
 
-export const getList = (current, size, params) => {
+export const getRepertoryList = (current, size, params,goodsId) => {
   return request({
     url: ERP_WMS_NAME + '/repertory/page',
     method: 'get',
@@ -9,6 +9,7 @@ export const getList = (current, size, params) => {
       ...params,
       current,
       size,
+      goodsId
     }
   })
 }

@@ -259,6 +259,7 @@
                       label: 'goodsName',
                       value: 'goodsId'
                     },
+                    cascaderItem: ['batchNumber'],
                     dicMethod:'post',
                     dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
                     // dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
@@ -280,6 +281,18 @@
                         });
                       }
                     },
+                  },
+                  {
+                    label: "批号",
+                    prop: "batchNumber",
+                    type:'select',
+                    props: {
+
+                      label: 'batchNumber',
+                      value: 'batchNumber'
+                    },
+                    dicMethod:'post',
+                    dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                   },
                   {
                     label: '商品资质',
@@ -631,6 +644,13 @@
           status1.push(ele.status);
         });
         return status1.join(",");
+      },
+      batchNumber1() {
+        let batchNumber1 = [];
+        this.selectionList.forEach(ele => {
+          batchNumber1.push(ele.batchNumber);
+        });
+        return batchNumber1.join(",");
       }
     },
     methods: {
@@ -761,32 +781,8 @@
           this.selectionClear();
         });
       },
-      updateStatus(id){
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-          })
-          .catch(() => {
-            status = 3;
-          }).finally(()=>{
-            console.log(status);
-          updateStatus(id,status).then(res => {
-            if(res.data.success){
-              this.$message.success(res.data.msg);
-            }else{
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
       updateStatusNew() {
+
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
@@ -806,7 +802,7 @@
           .catch(() => {
             status = 101;
           }).finally(() => {
-          updateStatus(id, status).then(res => {
+          updateStatus(id, status,).then(res => {
             if (res.data.success) {
               this.$message.success(res.data.msg);
             } else {

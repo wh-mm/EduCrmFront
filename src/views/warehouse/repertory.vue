@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import {getList} from "@/api/warehouse/repertory";
+  import {getRepertoryList} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
 
@@ -115,6 +115,25 @@
               dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
+              label: "批号",
+              prop: "batchNumber",
+              search:true,
+            },
+            {
+              label: "生产日期",
+              prop: "warehouseinoutDateOfManufacture",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "有效期至",
+              prop: "warehouseinoutPeriodOfValidity",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
               label: "库存数量",
               prop: "repertoryQuantity",
               rules: [{
@@ -159,6 +178,7 @@
               dicMethod:"post",
               dicUrl:'/api/taocao-warehouse/goods/dropDown'
             },
+
             {
               label: "仓库",
               prop: "warehouseId",
@@ -287,7 +307,7 @@
           this.query.updateTime = null;
         }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        getRepertoryList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

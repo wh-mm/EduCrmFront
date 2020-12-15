@@ -31,8 +31,15 @@
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_out"
                    plain
-                   @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
+                   @click="outdialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
         </el-button>
+
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   plain-->
+<!--                   @click="outputorderdialogVisible = true,obj.type = 'out' ">出 库 单 出 库-->
+<!--        </el-button>-->
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
@@ -43,10 +50,29 @@
     <el-dialog
       :title="title"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="40%"
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
+      </avue-form>
+    </el-dialog>
+    <el-dialog
+      :title="title"
+      :visible.sync="outdialogVisible"
+      width="40%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj" :option="outoptionForm" @submit="submit">
+      </avue-form>
+    </el-dialog>
+
+    <el-dialog
+      title="出库单出库"
+      :visible.sync="outputorderdialogVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj" :option="outputOrderOptionForm" @submit="submit">
       </avue-form>
     </el-dialog>
 
@@ -94,6 +120,8 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        outdialogVisible:false,
+        outputorderdialogVisible:false,
         commoditydialogVisible:false,
         selectionList: [],
         option: {
@@ -149,12 +177,38 @@
               search:true,
               dicMethod:'post',
               dicUrl:'/api/erp-wms/goods/selecListGoods'
-
             },
             {
               label: "数量(g)",
               prop: "quantity",
               type: "number",
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              search:true,
+            },
+            {
+              label: "生产日期",
+              prop: "dateOfManufacture",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "有效期至",
+              prop: "periodOfValidity",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin",
             },
             {
               label: "类型",
@@ -185,6 +239,89 @@
             }
           ]
         },
+        outputOrderOptionForm : {
+          column: [
+            {
+              label: "出库单号",
+              prop: "orderNumber",
+              row: true,
+              span: 24,
+            },
+            {
+              label: "商品",
+              prop: "goodsId",
+              span: 24,
+              search:true,
+            },
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+              row: true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+            },
+            {
+              label: "数量(g)",
+              prop: "quantity",
+              type: "number",
+              precision: 0,
+              value: 1,
+              row: true,
+              span: 24,
+              rules: [{
+                validator: validateNumber,
+                trigger: 'change',
+              }]
+            },
+            {
+              label: "类型",
+              prop: "type",
+              type: "select",
+              row: true,
+              span: 24,
+              disabled:true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
+            },
+            {
+              label: "备注",
+              prop: "remark",
+              type: "textarea",
+              span: 24,
+            }
+          ]
+        },
         data: [],
         optionForm : {
           column: [
@@ -204,6 +341,33 @@
               },
               dicMethod:'post',
               dicUrl:'/api/erp-wms/goods/selecListGoods'
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              span: 24,
+            },
+            {
+              label: "生产日期",
+              prop: "dateOfManufacture",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "有效期至",
+              prop: "periodOfValidity",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin",
             },
             {
               label: "仓库",
@@ -240,6 +404,101 @@
               },
               dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
+
+            {
+              label: "数量(g)",
+              prop: "quantity",
+              type: "number",
+              precision: 0,
+              value: 1,
+              row: true,
+              span: 24,
+              rules: [{
+                validator: validateNumber,
+                trigger: 'change',
+              }]
+            },
+            {
+              label: "类型",
+              prop: "type",
+              type: "select",
+              row: true,
+              span: 24,
+              disabled:true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
+            },
+            {
+              label: "备注",
+              prop: "remark",
+              type: "textarea",
+              span: 24,
+            }
+          ]
+        },
+        outoptionForm : {
+          column: [
+            {
+              label: "商品",
+              prop: "goodsId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules:[{
+                message: "请输入商品",
+                trigger: "blur",
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod:'post',
+              dicUrl:'/api/erp-wms/goods/selecListGoods'
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              span: 24,
+            },
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+              row: true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+             dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+            },
+
             {
               label: "数量(g)",
               prop: "quantity",
