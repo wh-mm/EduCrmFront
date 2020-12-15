@@ -43,6 +43,7 @@ export function isOneToNinetyNine(rule, value, callback) {
     }
   }, 0);
 }
+
 export const zhongwen = (rule, value, callback) => {
   if (!value) {
     return callback(new Error('请输入姓名'))
@@ -88,23 +89,23 @@ export const newAddDrugOption = {
           search: true,
           dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
         },
-       /* {
-          label: "处方号",
-          prop: "pspnum",
-          span: 6,
-          rules: [{
-            required: true,
-            message: "请输入处方号",
-            trigger: "blur",
-          }],
-        },*/
+        /* {
+           label: "处方号",
+           prop: "pspnum",
+           span: 6,
+           rules: [{
+             required: true,
+             message: "请输入处方号",
+             trigger: "blur",
+           }],
+         },*/
         {
           label: "医生姓名",
           prop: "doctor",
           span: 6,
           rules: [{
             required: true,
-            validator:zhongwen,
+            validator: zhongwen,
           }],
         },
         {
@@ -132,7 +133,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:zhongwen,
+            validator: zhongwen,
           }],
         },
         {
@@ -157,7 +158,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:isOneToNinetyNine,
+            validator: isOneToNinetyNine,
 
           },
             {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
@@ -212,7 +213,7 @@ export const newAddDrugOption = {
           rules: [{
             message: "药品总味数",
             trigger: "blur",
-            validator:isInteger,
+            validator: isInteger,
           }],
         },
         {
@@ -221,7 +222,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:isInteger,
+            validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -232,7 +233,7 @@ export const newAddDrugOption = {
           row: true,
           rules: [{
             required: true,
-            validator:isInteger,
+            validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -242,7 +243,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:isInteger,
+            validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -354,7 +355,7 @@ export const newAddDrugOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:zhongwen,
+            validator: zhongwen,
           }],
 
         },
@@ -432,7 +433,7 @@ export const newAddGrainOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:zhongwen,
+            validator: zhongwen,
           }],
 
         },
@@ -482,7 +483,7 @@ export const newAddGrainOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:zhongwen,
+            validator: zhongwen,
           }],
         },
         {
@@ -507,7 +508,7 @@ export const newAddGrainOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:isOneToNinetyNine,
+            validator: isOneToNinetyNine,
 
           },
             {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
@@ -518,8 +519,7 @@ export const newAddGrainOption = {
           prop: "detailedAge",
           span: 6,
           rules: [{
-            validator:isOneToNinetyNine,
-
+            validator: isOneToNinetyNine,
           },
             {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
           ],
@@ -576,7 +576,7 @@ export const newAddGrainOption = {
           span: 6,
           rules: [{
             required: true,
-            validator:zhongwen,
+            validator: zhongwen,
           }],
         },
       ]
@@ -856,6 +856,19 @@ export const option = {
       trigger: "blur"
     },
     {
+      label: "订单区分",
+      prop: "orderDifferentiation",
+      type: "select",
+      props: {
+        label: 'dictValue',
+        value: 'dictKey'
+      },
+      search: true,
+      required: true,
+      dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
+      trigger: "blur"
+    },
+    {
       label: "收货地址",
       prop: "address",
       rules: [{
@@ -890,7 +903,7 @@ export const option = {
       format: "yyyy-MM-dd hh:mm:ss",
       valueFormat: "yyyy-MM-dd hh:mm:ss",
       searchRange: true,
-      searchSpan:12,
+      searchSpan: 12,
       hide: true,
       addDisplay: false,
       editDisplay: false,
@@ -906,7 +919,7 @@ export const option = {
       label: "订单时间",
       prop: "orderTime",
       type: "date",
-      width: 150 ,
+      width: 150,
       format: "yyyy-MM-dd HH:mm:ss",
       valueFormat: "yyyy-MM-dd HH:mm:ss",
       rules: [{
