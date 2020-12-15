@@ -319,6 +319,28 @@ export const newAddDrugOption = {
           },
           dicUrl: "/api/blade-system/dict-biz/dictionary?code=isDaijian"
         },
+        {
+          label: "加工类型",
+          prop: "processtype",
+          span: 6,
+          type: 'select',
+          props: {
+            label: 'dictValue',
+            value: 'dictKey'
+          },
+          dicUrl: "/api/blade-system/dict-biz/dictionary?code=processing_type"
+        },
+        {
+          label: "处方类型",
+          prop: "ptype",
+          span: 6,
+          type: 'select',
+          props: {
+            label: 'dictValue',
+            value: 'dictKey'
+          },
+          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_type"
+        },
       ]
     },
     {
@@ -426,7 +448,7 @@ export const newAddGrainOption = {
           }],
           span: 6,
         },
-        {
+        /*{
           label: "收货地址",
           prop: "dtbaddress",
           rules: [{
@@ -435,7 +457,7 @@ export const newAddGrainOption = {
             trigger: "blur",
           },],
           span: 6,
-        },
+        },*/
         {
           label: "快递类型",
           prop: "dtbtype",
