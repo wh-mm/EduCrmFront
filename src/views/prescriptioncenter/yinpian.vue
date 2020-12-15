@@ -383,7 +383,7 @@
     option,
     viewAddBlenderListOption,
     viewDrugListOption
-  } from "@/const/order/customerorder"
+  } from "@/const/order/customerorders"
 
 
   export default {
