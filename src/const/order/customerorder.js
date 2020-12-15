@@ -375,11 +375,11 @@ export const newAddDrugOption = {
             trigger: 'blur'
           }],
         },
-        {
+       {
           label: "快递类型",
           prop: "dtbtype",
           span: 6,
-          type: 'select',
+        type: 'select',
           props: {
             label: 'dictValue',
             value: 'dictKey'
