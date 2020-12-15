@@ -455,13 +455,22 @@
                 label: 'goodsName',
                 value: 'id'
               },
+              cascaderItem: ['batchNumber'],
               dicMethod:'post',
               dicUrl:'/api/erp-wms/goods/selecListGoods'
             },
             {
               label: "批号",
               prop: "batchNumber",
-              span: 24,
+              type:'select',
+              props: {
+
+                label: 'batchNumber',
+                value: 'batchNumber'
+              },
+              dicMethod:'post',
+              // dicUrl: '/api/erp-wms/repertory/dropDown?goodsId={{key}}',
+              dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
             },
             {
               label: "仓库",

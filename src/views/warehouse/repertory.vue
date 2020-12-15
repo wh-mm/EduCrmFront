@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import {getRepertoryList} from "@/api/warehouse/repertory";
+  import {getList} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
 
@@ -307,7 +307,7 @@
           this.query.updateTime = null;
         }
         this.loading = true;
-        getRepertoryList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
