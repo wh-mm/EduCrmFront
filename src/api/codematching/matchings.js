@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-codematching/matching/page',
+    url: '/api/taocao-codematching/matching/pagenull',
     method: 'get',
     params: {
       ...params,
@@ -11,7 +11,6 @@ export const getList = (current, size, params) => {
     }
   })
 }
-
 export const getDetail = (id) => {
   return request({
     url: '/api/taocao-codematching/matching/detail',
@@ -47,4 +46,5 @@ export const update = (row) => {
     data: row
   })
 }
+
 
