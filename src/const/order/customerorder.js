@@ -213,7 +213,7 @@ export const newAddDrugOption = {
           rules: [{
             message: "药品总味数",
             trigger: "blur",
-            validator: isInteger,
+            //validator: isInteger,
           }],
         },
         {
@@ -221,8 +221,8 @@ export const newAddDrugOption = {
           prop: "dose",
           span: 6,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -232,8 +232,8 @@ export const newAddDrugOption = {
           span: 6,
           row: true,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -242,8 +242,8 @@ export const newAddDrugOption = {
           prop: "packagenum",
           span: 6,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -747,11 +747,11 @@ export const viewDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-    {
+ /*   {
       label: "次数",
       prop: "tienum",
       slot: true,
-    },
+    },*/
     {
       label: "总剂量",
       prop: "drugweight",
