@@ -225,10 +225,10 @@
                 <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printJianYaoData.dose}}</span>
                 </p></div>
               </el-col>
-              <el-col :span="4" :offset="1">
+              <!--<el-col :span="4" :offset="1">
                 <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span>
                 </p></div>
-              </el-col>
+              </el-col>-->
             </el-row>
 
             <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">

@@ -247,25 +247,27 @@ export const newAddDrugOption = {
             trigger: "blur",
           }],
         },
+        /*
         {
-          label: "一煎时间(分)",
-          prop: "oncetime",
+                  label: "一煎时间(分)",
+                  prop: "oncetime",
+                  labelWidth: 130,
+                  rules: [{
+                    message: "请填写一煎时间",
+                    trigger: "blur",
+                  }],
+                  span: 6,
+                },*/
+        /*
+         {
+                  label: "二煎时间(分)",
+                  labelWidth: 130,
+                  prop: "twicetime",
+                  span: 6,
+                },*/
+        {
+          label: "浸泡加水量(ml)",
           labelWidth: 130,
-          rules: [{
-            message: "请填写一煎时间",
-            trigger: "blur",
-          }],
-          span: 6,
-
-        },
-        {
-          label: "二煎时间(分)",
-          labelWidth: 130,
-          prop: "twicetime",
-          span: 6,
-        },
-        {
-          label: "浸泡加水量",
           prop: "soakwater",
           span: 6,
         },
@@ -376,11 +378,11 @@ export const newAddDrugOption = {
             trigger: 'blur'
           }],
         },
-       {
+        {
           label: "快递类型",
           prop: "dtbtype",
           span: 6,
-        type: 'select',
+          type: 'select',
           props: {
             label: 'dictValue',
             value: 'dictKey'
@@ -661,11 +663,11 @@ export const newAddDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-    {
+    /*{
       label: "次数",
       prop: "tienum",
       slot: true,
-    },
+    },*/
     {
       label: "总剂量",
       prop: "drugweight",
