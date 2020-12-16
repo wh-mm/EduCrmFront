@@ -41,9 +41,9 @@
 <!--                   @click="outputorderdialogVisible = true,obj.type = 'out' ">出 库 单 出 库-->
 <!--        </el-button>-->
       </template>
-      <template slot-scope="scope" slot="menu">
+      <!--<template slot-scope="scope" slot="menu">
         <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
-      </template>
+      </template>-->
 
 
     </avue-crud>

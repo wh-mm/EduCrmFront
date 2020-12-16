@@ -48,38 +48,40 @@
 </template>
 
 <script>
-  import {getList,getLazyList, getDetail, add, update, remove,testingOnlyCode,selectName,
-    getWarehouseTree} from "@/api/warehouse/warehouse";
+  import {
+    getList, getLazyList, getDetail, add, update, remove, testingOnlyCode, selectName,
+    getWarehouseTree
+  } from "@/api/warehouse/warehouse";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
-      var codeTestingOnly = (rule,value,callback) =>{
-        if (value === ''){
+      var codeTestingOnly = (rule, value, callback) => {
+        if (value === '') {
           callback(new Error("请输入编码！"))
-        }else {
-          testingOnlyCode(this.form.id,value).then( res => {
-            if(res.data.success){
+        } else {
+          testingOnlyCode(this.form.id, value).then(res => {
+            if (res.data.success) {
               callback();
-            }else{
+            } else {
               callback(new Error(res.data.msg));
             }
-          },err =>{
+          }, err => {
             callback(new Error(err.data.msg));
           })
         }
       }
-      var selectWarehouseName = (rule,value,callback) =>{
-        if (value === ''){
+      var selectWarehouseName = (rule, value, callback) => {
+        if (value === '') {
           callback(new Error("请输入仓库名称！"))
-        }else {
-          selectName(this.form.id,value).then( res => {
-            if(res.data.success){
+        } else {
+          selectName(this.form.id, value).then(res => {
+            if (res.data.success) {
               callback();
-            }else{
+            } else {
               callback(new Error(res.data.msg));
             }
-          },err =>{
+          }, err => {
             callback(new Error(err.data.msg));
           })
         }
@@ -96,7 +98,7 @@
         parentId: 0,
         selectionList: [],
         option: {
-          height:'auto',
+          height: 'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -115,10 +117,10 @@
               search: true,
               rules: [{
                 required: true,
-                validator:selectWarehouseName,
+                validator: selectWarehouseName,
                 trigger: "blur"
               },
-              { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+                {min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur'}
               ]
             },
             {
@@ -149,9 +151,27 @@
                 trigger: "blur"
               },
 
-               { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+                {min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur'}
               ]
 
+            },
+            {
+              label: "类型",
+              prop: "type",
+              type: "select",
+              rules: [
+                {
+                  required: true,
+                  message: "请选择类型",
+                  trigger: "click",
+                },
+              ],
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=warehouse_type"
             },
             {
               label: "地址",
@@ -178,8 +198,8 @@
               }]
             },
             {
-              label:"创建时间",
-              prop:"updateTime",
+              label: "创建时间",
+              prop: "updateTime",
               editDisplay: false,
               addDisplay: false,
             },
@@ -316,10 +336,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
