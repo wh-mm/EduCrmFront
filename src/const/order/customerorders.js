@@ -557,13 +557,14 @@ export const newAddGrainOption = {
         {
           label: "处方付数",
           prop: "quantity",
-          type: "select",
+          //type: "select",
           span: 6,
-          props: {
-            label: "dictValue",
-            value: "dictKey"
-          },
-          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+          /*  props: {
+              label: "dictValue",
+              value: "dictKey"
+            },
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+          },*/
         },
         {
           label: "分服次数",
