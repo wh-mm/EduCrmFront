@@ -213,7 +213,7 @@ export const newAddDrugOption = {
           rules: [{
             message: "药品总味数",
             trigger: "blur",
-            validator: isInteger,
+            //validator: isInteger,
           }],
         },
         {
@@ -221,8 +221,8 @@ export const newAddDrugOption = {
           prop: "dose",
           span: 6,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -232,8 +232,8 @@ export const newAddDrugOption = {
           span: 6,
           row: true,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -242,30 +242,32 @@ export const newAddDrugOption = {
           prop: "packagenum",
           span: 6,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
+        /*
         {
-          label: "一煎时间(分)",
-          prop: "oncetime",
+                  label: "一煎时间(分)",
+                  prop: "oncetime",
+                  labelWidth: 130,
+                  rules: [{
+                    message: "请填写一煎时间",
+                    trigger: "blur",
+                  }],
+                  span: 6,
+                },*/
+        /*
+         {
+                  label: "二煎时间(分)",
+                  labelWidth: 130,
+                  prop: "twicetime",
+                  span: 6,
+                },*/
+        {
+          label: "浸泡加水量(ml)",
           labelWidth: 130,
-          rules: [{
-            message: "请填写一煎时间",
-            trigger: "blur",
-          }],
-          span: 6,
-
-        },
-        {
-          label: "二煎时间(分)",
-          labelWidth: 130,
-          prop: "twicetime",
-          span: 6,
-        },
-        {
-          label: "浸泡加水量",
           prop: "soakwater",
           span: 6,
         },
@@ -376,11 +378,11 @@ export const newAddDrugOption = {
             trigger: 'blur'
           }],
         },
-       {
+        {
           label: "快递类型",
           prop: "dtbtype",
           span: 6,
-        type: 'select',
+          type: 'select',
           props: {
             label: 'dictValue',
             value: 'dictKey'
@@ -557,13 +559,13 @@ export const newAddGrainOption = {
         {
           label: "处方付数",
           prop: "quantity",
-          type: "select",
+          //type: "select",
           span: 6,
-          props: {
+          /*props: {
             label: "dictValue",
             value: "dictKey"
           },
-          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"*/
         },
         {
           label: "分服次数",
@@ -575,7 +577,7 @@ export const newAddGrainOption = {
           prop: "doctorName",
           span: 6,
           rules: [{
-            required: true,
+            //required: true,
             validator: zhongwen,
           }],
         },
@@ -661,11 +663,11 @@ export const newAddDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-    {
+    /*{
       label: "次数",
       prop: "tienum",
       slot: true,
-    },
+    },*/
     {
       label: "总剂量",
       prop: "drugweight",
@@ -745,11 +747,11 @@ export const viewDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-    {
+ /*   {
       label: "次数",
       prop: "tienum",
       slot: true,
-    },
+    },*/
     {
       label: "总剂量",
       prop: "drugweight",

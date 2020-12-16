@@ -79,21 +79,6 @@
           })
         }
       }
-      var selectCode = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入编码！"))
-        } else {
-          selectGoodsCode(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
       return {
         form: {},
         query: {},
@@ -126,6 +111,7 @@
                 validator: selectName,
                 trigger: 'blur',
               }],
+              search: true,
             },
             {
               label: "货物类型",

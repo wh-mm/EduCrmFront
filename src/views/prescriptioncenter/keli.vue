@@ -16,10 +16,12 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain
+                   v-if="permission.keli_add"
+                   @click="newAdd()">新 增
         </el-button>
       </template>
-<!--   颗粒接单打印 -->
+      <!--   颗粒接单打印 -->
       <template slot-scope="scope" slot="menu">
 
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
@@ -129,42 +131,89 @@
         <div style="padding: 1px;height: 100px;">
           <div class="yinpianhead" style="width: 100%">
             <el-row>
-              <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
-                <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
+              <el-col :span="5" :offset="9">
+                <div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
+              </el-col>
 
-              <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
-                <svg id="bigcode" style="padding: 1px;" ></svg></div></el-col>
+              <el-col :span="5" :offset="1">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
             </el-row>
 
             <el-row>
-              <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printJianYaoData.createTime}}</span></p></div></el-col>
-              <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">接方时间：<span>{{printJianYaoData.createTime}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+              </el-col>
             </el-row>
           </div>
 
-          <hr  align="center" width="100%" size="1px" length="10" color="black"/>
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
 
           <div class="yinpianshou" style="width: 100%">
 
             <el-row :gutter="5" style="">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printJianYaoData.hospitalName}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">姓名：<span>{{printJianYaoData.name}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">性别：<span>{{printJianYaoData.sex==1?'男':'女'}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">年龄：<span>{{printJianYaoData.age}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  医院名称：<span>{{printJianYaoData.hospitalName}}</span></p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  姓名：<span>{{printJianYaoData.name}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  性别：<span>{{printJianYaoData.sex==1?'男':'女'}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  年龄：<span>{{printJianYaoData.age}}</span></p></div>
+              </el-col>
             </el-row>
 
             <el-row :gutter="5" style="margin-top:-200px;margin-bottom:-200px">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方号：<span>{{printJianYaoData.delnum}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">包装量：<span>{{printJianYaoData.packagenum}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printJianYaoData.dose}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方号：<span>{{printJianYaoData.delnum}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">包装量：<span>{{printJianYaoData.packagenum}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printJianYaoData.dose}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span>
+                </p></div>
+              </el-col>
             </el-row>
 
             <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">浸泡加水量：<span>{{printJianYaoData.soakwater}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">煎药方案：<span>{{printJianYaoData.decscheme}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printJianYaoData.takemethod}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">浸泡加水量：<span>{{printJianYaoData.soakwater}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">煎药方案：<span>{{printJianYaoData.decscheme}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">服用方式：<span>{{printJianYaoData.takemethod}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p>
+                </div>
+              </el-col>
             </el-row>
           </div>
 
@@ -219,7 +268,7 @@
                 width="165"
                 align="center"
               >
-                <template  slot-scope="scope">
+                <template slot-scope="scope">
                   <span>{{scope.row.drug_allnum / 1 | rounding}}</span>
                 </template>
               </el-table-column>
@@ -238,8 +287,12 @@
             </el-table>
 
             <el-row>
-              <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">配方中药师：<span></span></p></div></el-col>
-              <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div></el-col>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
+              </el-col>
             </el-row>
 
           </div>
@@ -253,41 +306,79 @@
       <div style="display: none" id="printkeli" ref="printkeli">
         <!-- 隐藏打印区域，避免用户看到 -->
         <div style="padding: 1px;height: 100px;width: 100%">
-          <div class="kelihead" style="width: 100%" >
+          <div class="kelihead" style="width: 100%">
             <el-row>
-              <el-col :span="5" :offset="9"><div class="grid-content bg-purple">
-                <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px" >调配单</h1></div></el-col>
-              <el-col :span="5" :offset="1"><div class="grid-content bg-purple-light">
-                <svg id="bigcode2" style="padding: 1px;" ></svg></div></el-col>
+              <el-col :span="5" :offset="9">
+                <div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
+              </el-col>
+              <el-col :span="5" :offset="1">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode2" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
             </el-row>
             <el-row>
-              <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">接方时间：<span>{{printData.createTime}}</span></p></div></el-col>
-              <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">打印时间：<span>2020年12月5日12:12:29</span></p></div></el-col>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">
+                  接方时间：<span>{{printData.createTime}}</span></p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+              </el-col>
             </el-row>
           </div>
 
-          <hr  align="center" width="100%" size="1px" length="10" color="black"/>
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
 
-          <div class="kelishou"  style="width: 100%">
+          <div class="kelishou" style="width: 100%">
 
             <el-row :gutter="5" style="">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">医院名称：<span>{{printData.hospitalName}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">姓名：<span>{{printData.name}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">性别：<span>{{printData.sex==1?'男':'女'}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple" style="margin-bottom: 0px"> <p style="font-size: 15px;margin: 0px;">年龄：<span>{{printData.age}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  医院名称：<span>{{printData.hospitalName}}</span></p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  姓名：<span>{{printData.name}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  性别：<span>{{printData.sex==1?'男':'女'}}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  年龄：<span>{{printData.age}}</span></p></div>
+              </el-col>
             </el-row>
             <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方号：<span>{{printData.presId}}</span></p></div></el-col>
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方名称：<span>{{printData.presName}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">处方付数：<span>{{printData.quantity==1?'贴数':'剂数'}}</span></p></div></el-col>
-              <el-col :span="4" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">分服次数：<span>{{printData.separateFrequency}}</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方号：<span>{{printData.presId}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方名称：<span>{{printData.presName}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">处方付数：<span>{{printData.quantity==1?'贴数':'剂数'}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">分服次数：<span>{{printData.separateFrequency}}</span>
+                </p></div>
+              </el-col>
             </el-row>
             <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
-              <el-col :span="6" :offset="1"><div class="grid-content bg-purple"> <p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p></div></el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p>
+                </div>
+              </el-col>
             </el-row>
           </div>
 
-          <div class="kelifooter" style="width: 100%" >
+          <div class="kelifooter" style="width: 100%">
 
             <el-table
               :data="printDrugData"
@@ -337,12 +428,15 @@
             </el-table>
 
             <el-row>
-              <el-col :span="10" :offset="3"><div class="grid-content bg-purple"> <p style="font-size: 15px">配方中药师：<span></span></p></div></el-col>
-              <el-col :span="8" :offset="3"><div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div></el-col>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
+              </el-col>
             </el-row>
 
           </div>
-
 
 
         </div>
@@ -368,7 +462,7 @@
     newAddDrugOption,
     newAddGrainOption,
     newAddListOption,
-    option,
+    option, phonelength,
     viewAddBlenderListOption,
     viewDrugListOption
   } from "@/const/order/customerorders"
@@ -475,56 +569,7 @@
           },
           data: [],
           selectionList: [],
-          option: {
-            height: 'auto',
-            calcHeight: 30,
-            align: 'center',
-            tip: false,
-            printBtnText: '打印文案',
-            searchShow: true,
-            searchMenuSpan: 6,
-            border: true,
-            index: false,
-            printBtn: true,
-            addBtn: false,
-            menu: false,
-            header: false,
-            selection: true,
-            dialogClickModal: false,
-            column: [
-              {
-                label: "颗粒名称/药品名称",
-                prop: "goodsName",
-              },
-              {
-                label: "货物类别",
-                prop: "goodsCategory",
-                type: "tree",
-                props: {
-                  label: 'dictValue',
-                  value: 'id'
-                },
-                search: true,
-                dicFlag: false,
-                dicUrl: "/api/blade-system/dictCategory/dictionaryByName"
-              },
-              {
-                label: "规格",
-                prop: "unit",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
-              },
-              {
-                label: "单价",
-                prop: "unitPrice",
-              }
-            ]
-          },
+          option: {},
         },
         addDialogVisible: false,
         dialogVisible: false,
@@ -552,7 +597,7 @@
           total: 0
         },
         selectionList: [],
-        option: option,
+        option: {},
         data: []
       };
     },
@@ -579,6 +624,130 @@
           ids.push(ele.id);
         });
         return ids.join(",");
+      },
+      option1() {
+        return {
+          addBtn: false,
+          height: "auto",
+          calcHeight: 30,
+          tip: false,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: false,
+          selection: true,
+          dialogClickModal: false,
+          column: [
+            {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+            },
+            {
+              label: "订单状态",
+              prop: "orderStatic",
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
+              trigger: "blur"
+            },
+
+            {
+              label: "订单类型",
+              prop: "orderType",
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
+              trigger: "blur"
+            },
+            {
+              label: "收货地址",
+              prop: "address",
+              rules: [{
+                required: true,
+                message: "请输入收货地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人",
+              prop: "addressee",
+              rules: [{
+                required: true,
+                message: "请输入收件人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人电话",
+              prop: "addresseePhone",
+              rules: [{
+                required: true,
+                validator: phonelength,
+                trigger: 'blur'
+              }],
+              labelWidth: 100,
+            },
+            {
+              label: "订单时间",
+              prop: "releaseTimeRange",
+              type: "datetime",
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              searchRange: true,
+              searchSpan: 12,
+              hide: true,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              search: true,
+              rules: [{
+                required: true,
+                message: "请输入通知时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "订单时间",
+              prop: "orderTime",
+              type: "date",
+              width: 150,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules: [{
+                required: true,
+                message: "请输入通知日期",
+                trigger: "click"
+              }]
+            },
+            {
+              label: "总价",
+              prop: "totalPrices",
+              hide: !this.vaildData(this.permission.keli_jiage, false),
+              rules: [{
+                required: true,
+                message: "请输入总价",
+                trigger: "blur"
+              }]
+            },
+          ]
+        }
       },
     },
     methods: {
@@ -727,10 +896,8 @@
 
       //打印
       dayin(row) {
-
-        if(row.orderType === "jianyao"){
-
-          selectByOrderId(row.id).then(res=>{
+        if (row.orderType === "jianyao") {
+          selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
               this.printJianYaoDrugData = res.data.data.drugList;
@@ -742,7 +909,7 @@
           //  console.log(row.id);
           // console.log(row.orderType);
           setTimeout(() => {
-            JsBarcode("#bigcode", row.id,{
+            JsBarcode("#bigcode", row.id, {
               width: 2,//设置条之间的宽度
               height: 56,//高度
               fontOptions: "bold",//使文字加粗体或变斜体
@@ -767,8 +934,8 @@
               document.body.removeChild(iframe);
             }*/
           }, 100);
-        }else if(row.orderType === 'tiaopei'){
-          selectByOrderId(row.id).then(res=>{
+        } else if (row.orderType === 'tiaopei') {
+          selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printData = res.data.data.form;
               this.printDrugData = res.data.data.drugList;
@@ -778,7 +945,7 @@
             }
           })
           setTimeout(() => {
-            JsBarcode("#bigcode2", row.id,{
+            JsBarcode("#bigcode2", row.id, {
               width: 2,//设置条之间的宽度
               height: 56,//高度
               fontOptions: "bold",//使文字加粗体或变斜体
@@ -803,7 +970,6 @@
         this.addOption.detail = false;
       },
 
-
       tabFrom() {
         if (this.activeName === 'jianyao') {
           this.addOption = Object.assign({}, newAddDrugOption);
@@ -826,6 +992,9 @@
       },
       //时间
       onLoad(page, params = {}) {
+        if(this.option){
+          this.option=this.option1;
+        }
         const {releaseTimeRange} = params;
         let values = {
           ...params,
@@ -859,7 +1028,39 @@
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = Object.assign({}, newAddGrainOption);
-          this.viewCrudOption = Object.assign({}, viewAddBlenderListOption);
+          const viewCrudOption = {
+            calcHeight: 200,
+            border: true,
+            index: true,
+            viewBtn: false,
+            addBtn: false,
+            menu: false,
+            page: false,
+            dialogClickModal: false,
+            menuBtn: false,
+            column: [
+              {
+                label: "药品名称",
+                prop: "drugName",
+              },
+              {
+                label: "饮片剂量",
+                prop: "doseHerb",
+                slot: true,
+              },
+              {
+                label: "当量",
+                prop: "equivalent",
+                slot: true,
+              },
+              {
+                label: "单价",
+                prop: "unitPrice",
+                hide: !this.vaildData(this.permission.keli_jiage, false),
+              },
+            ],
+          };
+          this.viewCrudOption = Object.assign({}, viewCrudOption);
           url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else {
           this.$message({
@@ -901,6 +1102,9 @@
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
       drugOnLoad(page, params = {}) {
+        if(this.drugList.option){
+          this.drugList.option=this.drugListOption();
+        }
         this.drugList.loading = true;
         params.drugCategory = this.activeName;
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
