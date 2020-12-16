@@ -214,7 +214,7 @@ export const newAddDrugOption = {
           rules: [{
             message: "药品总味数",
             trigger: "blur",
-            validator: isInteger,
+            //validator: isInteger,
           }],
         },
         {
@@ -222,8 +222,8 @@ export const newAddDrugOption = {
           prop: "dose",
           span: 6,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -233,8 +233,8 @@ export const newAddDrugOption = {
           span: 6,
           row: true,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -243,8 +243,8 @@ export const newAddDrugOption = {
           prop: "packagenum",
           span: 6,
           rules: [{
-            required: true,
-            validator: isInteger,
+            //required: true,
+            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -558,13 +558,14 @@ export const newAddGrainOption = {
         {
           label: "处方付数",
           prop: "quantity",
-          type: "select",
+          //type: "select",
           span: 6,
-          props: {
-            label: "dictValue",
-            value: "dictKey"
-          },
-          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+          /*  props: {
+              label: "dictValue",
+              value: "dictKey"
+            },
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+          },*/
         },
         {
           label: "分服次数",
@@ -662,11 +663,11 @@ export const newAddDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-    {
+/*    {
       label: "次数",
       prop: "tienum",
       slot: true,
-    },
+    },*/
     {
       label: "总剂量",
       prop: "drugweight",
@@ -746,11 +747,11 @@ export const viewDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-    {
+/*    {
       label: "次数",
       prop: "tienum",
       slot: true,
-    },
+    },*/
     {
       label: "总剂量",
       prop: "drugweight",
