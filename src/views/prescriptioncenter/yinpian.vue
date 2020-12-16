@@ -16,7 +16,9 @@
                @on-load="onLoad">
 
       <template  slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain
+                   v-if="permission.yinpian_add"
+                   @click="newAdd()">新 增
         </el-button>
 
         <!--<el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
@@ -26,7 +28,6 @@
       </template>
 
 <!--    饮片打印功能-->
-
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
@@ -377,7 +378,7 @@
     newAddDrugOption,
     newAddGrainOption,
     newAddListOption,
-    option,
+    phonelength,
     viewAddBlenderListOption,
     viewDrugListOption
   } from "@/const/order/customerorders"
@@ -410,18 +411,6 @@
           }
         ],
 
-        printJianYaoDrugData:[
-          {
-            /** 煎药**/
-            drug_name: '',   //药品名称
-            // drug_allnum:'', //单剂量
-            drug_description:'',//药品脚注
-            drugweight:'',//药品总量
-            description:'',//药品说明
-            shelf_number:'',//货位号
-
-          }
-        ],
 
         printData:[
           {
@@ -484,56 +473,7 @@
           },
           data: [],
           selectionList: [],
-          option: {
-            height: 'auto',
-            calcHeight: 30,
-            align:'center',
-            tip: false,
-            printBtnText:'打印文案',
-            searchShow: true,
-            searchMenuSpan: 6,
-            border: true,
-            index: false,
-            printBtn:true,
-            addBtn:false,
-            menu: false,
-            header: false,
-            selection: true,
-            dialogClickModal: false,
-            column: [
-              {
-                label: "颗粒名称/药品名称",
-                prop: "goodsName",
-              },
-              {
-                label: "货物类别",
-                prop: "goodsCategory",
-                type: "tree",
-                props: {
-                  label: 'dictValue',
-                  value: 'id'
-                },
-                search: true,
-                dicFlag: false,
-                dicUrl: "/api/blade-system/dictCategory/dictionaryByName"
-              },
-              {
-                label: "规格",
-                prop: "unit",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
-              },
-              {
-                label: "单价",
-                prop: "unitPrice",
-              }
-            ]
-          },
+          option: {},
         },
         addDialogVisible: false,
         dialogVisible: false,
@@ -561,7 +501,7 @@
           total: 0
         },
         selectionList: [],
-        option: option,
+        option: {},
         data: []
       };
     },
@@ -589,6 +529,183 @@
         });
         return ids.join(",");
       },
+      option1() {
+        return {
+          addBtn: false,
+          height: "auto",
+          calcHeight: 30,
+          tip: false,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: false,
+          selection: true,
+          dialogClickModal: false,
+          column: [
+            {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+            },
+            {
+              label: "订单状态",
+              prop: "orderStatic",
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
+              trigger: "blur"
+            },
+
+            {
+              label: "订单类型",
+              prop: "orderType",
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              required: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
+              trigger: "blur"
+            },
+            {
+              label: "收货地址",
+              prop: "address",
+              rules: [{
+                required: true,
+                message: "请输入收货地址",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人",
+              prop: "addressee",
+              rules: [{
+                required: true,
+                message: "请输入收件人",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人电话",
+              prop: "addresseePhone",
+              rules: [{
+                required: true,
+                validator: phonelength,
+                trigger: 'blur'
+              }],
+              labelWidth: 100,
+            },
+            {
+              label: "订单时间",
+              prop: "releaseTimeRange",
+              type: "datetime",
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              searchRange: true,
+              searchSpan: 12,
+              hide: true,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              search: true,
+              rules: [{
+                required: true,
+                message: "请输入通知时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "订单时间",
+              prop: "orderTime",
+              type: "date",
+              width: 150,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules: [{
+                required: true,
+                message: "请输入通知日期",
+                trigger: "click"
+              }]
+            },
+            {
+              label: "总价",
+              prop: "totalPrices",
+              hide: !this.vaildData(this.permission.yinpian_jiage, false),
+              rules: [{
+                required: true,
+                message: "请输入总价",
+                trigger: "blur"
+              }]
+            },
+          ]
+        };
+      },
+      drugListOption(){
+        return {
+          height: 'auto',
+          calcHeight: 30,
+          align: 'center',
+          tip: false,
+          printBtnText: '打印文案',
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: false,
+          printBtn: true,
+          addBtn: false,
+          menu: false,
+          header: false,
+          selection: true,
+          dialogClickModal: false,
+          column: [
+            {
+              label: "颗粒名称/药品名称",
+              prop: "goodsName",
+            },
+            {
+              label: "货物类别",
+              prop: "goodsCategory",
+              type: "tree",
+              props: {
+                label: 'dictValue',
+                value: 'id'
+              },
+              search: true,
+              dicFlag: false,
+              dicUrl: "/api/blade-system/dictCategory/dictionaryByName"
+            },
+            {
+              label: "规格",
+              prop: "unit",
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+            },
+            {
+              label: "单价",
+              prop: "unitPrice",
+              hide: !this.vaildData(this.permission.yinpian_jiage, false),
+            }
+          ]
+        }
+      }
     },
     methods: {
       handleClick() {
@@ -833,6 +950,9 @@
       },
       //时间
       onLoad(page, params = {}) {
+        if(this.option){
+          this.option=this.option1;
+        }
         const {releaseTimeRange} = params;
         let values = {
           ...params,
@@ -860,9 +980,60 @@
       lockInfo(row) {
         let url = '';
         if (row.orderType === "jianyao") {
-
           this.viewOption = Object.assign({}, newAddDrugOption);
-          this.viewCrudOption = Object.assign({}, viewDrugListOption);
+          const newAddListOption = {
+            calcHeight: 200,
+            border: true,
+            index: true,
+            viewBtn: false,
+            addBtn: false,
+            menu: false,
+            page: false,
+            dialogClickModal: false,
+            menuBtn: false,
+            column: [
+              {
+                label: "药品名称",
+                prop: "goodsName",
+              },
+              {
+                label: "规格",
+                prop: "unit",
+                width: 120,
+              },
+              {
+                label: "单剂量",
+                prop: "drugAllnum",
+                slot: true,
+              },
+              {
+                label: "贴数",
+                prop: "tienum",
+                slot: true,
+              },
+              {
+                label: "总剂量",
+                prop: "drugweight",
+                slot: true,
+              },
+              {
+                label: "药品脚注",
+                prop: "drugDescription",
+                slot: true,
+              },
+              {
+                label: "说明",
+                prop: "description",
+                slot: true,
+              },
+              {
+                label: "单价",
+                prop: "unitPrice",
+                hide: !this.vaildData(this.permission.yinpian_jiage, false),
+              },
+            ],
+          };
+          this.viewCrudOption = Object.assign({}, newAddListOption);
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = Object.assign({}, newAddGrainOption);
@@ -908,6 +1079,9 @@
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
       drugOnLoad(page, params = {}) {
+        if(this.drugList.option){
+          this.drugList.option=this.drugListOption();
+        }
         this.drugList.loading = true;
         params.drugCategory = this.activeName;
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {

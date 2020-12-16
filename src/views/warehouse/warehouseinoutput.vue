@@ -41,9 +41,9 @@
 <!--                   @click="outputorderdialogVisible = true,obj.type = 'out' ">出 库 单 出 库-->
 <!--        </el-button>-->
       </template>
-      <template slot-scope="scope" slot="menu">
+      <!--<template slot-scope="scope" slot="menu">
         <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
-      </template>
+      </template>-->
 
 
     </avue-crud>
@@ -67,16 +67,6 @@
     </el-dialog>
 
     <el-dialog
-      title="出库单出库"
-      :visible.sync="outputorderdialogVisible"
-      width="30%"
-      :modal="false"
-      :before-close="handleClose">
-      <avue-form ref="form" v-model="obj" :option="outputOrderOptionForm" @submit="submit">
-      </avue-form>
-    </el-dialog>
-
-    <el-dialog
       title="商品资质"
       :append-to-body="true"
       :visible.sync="commoditydialogVisible"
@@ -96,6 +86,8 @@
   import {getList,add,updateStatus} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
+  import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {selectByBatchNumber} from "@/api/warehouse/repertory";
 
   export default {
     data() {
@@ -121,7 +113,6 @@
         title: '' ,
         dialogVisible:false,
         outdialogVisible:false,
-        outputorderdialogVisible:false,
         commoditydialogVisible:false,
         selectionList: [],
         option: {
@@ -236,89 +227,6 @@
             {
               label: "备注",
               prop: "remark",
-            }
-          ]
-        },
-        outputOrderOptionForm : {
-          column: [
-            {
-              label: "出库单号",
-              prop: "orderNumber",
-              row: true,
-              span: 24,
-            },
-            {
-              label: "商品",
-              prop: "goodsId",
-              span: 24,
-              search:true,
-            },
-            {
-              label: "仓库",
-              prop: "warehouseId",
-              type:'tree',
-              row: true,
-              span: 24,
-              props: {
-                label: 'title',
-                value: 'value'
-              },
-              cascaderItem: ['storageId'],
-              rules: [{
-                required: true,
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
-              dicUrl:'/api/erp-wms/warehouse/tree'
-            },
-            {
-              label: "储位",
-              prop: "storageId",
-              type:'tree',
-              row: true,
-              span: 24,
-              rules: [{
-                required: true,
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-            },
-            {
-              label: "数量(g)",
-              prop: "quantity",
-              type: "number",
-              precision: 0,
-              value: 1,
-              row: true,
-              span: 24,
-              rules: [{
-                validator: validateNumber,
-                trigger: 'change',
-              }]
-            },
-            {
-              label: "类型",
-              prop: "type",
-              type: "select",
-              row: true,
-              span: 24,
-              disabled:true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              }
-            },
-            {
-              label: "备注",
-              prop: "remark",
-              type: "textarea",
-              span: 24,
             }
           ]
         },
@@ -463,19 +371,28 @@
               label: "批号",
               prop: "batchNumber",
               type:'select',
+              span: 24,
               props: {
-
                 label: 'batchNumber',
                 value: 'batchNumber'
               },
               dicMethod:'post',
-              // dicUrl: '/api/erp-wms/repertory/dropDown?goodsId={{key}}',
               dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
+
+              change: ({value}) => {
+                  selectByBatchNumber(value).then(res => {
+                      var detail = res.data.data;
+                      detail.forEach(val =>{
+                        if (value==val.batchNumber) {
+                            val.warehouseId
+                        }
+                      });
+                  });
+                },
             },
             {
               label: "仓库",
               prop: "warehouseId",
-              type:'tree',
               row: true,
               span: 24,
               props: {
@@ -493,7 +410,6 @@
             {
               label: "储位",
               prop: "storageId",
-              type:'tree',
               row: true,
               span: 24,
               rules: [{
@@ -542,7 +458,6 @@
             }
           ]
         },
-        commoditydata:[],
         commoditydataoption : {
           addBtn: false,
           menu:false,
@@ -883,6 +798,8 @@
       },
     }
   };
+
+
 </script>
 
 <style>

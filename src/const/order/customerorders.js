@@ -1,3 +1,4 @@
+
 export const phonelength = (rule, value, callback) => {
   if (value.length != 11) {
     callback(new Error('请输入正确手机号'));
