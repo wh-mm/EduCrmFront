@@ -153,10 +153,10 @@
               search: true,
               slot: true,
               props: {
-                label: 'dictValue',
-                value: 'dictKey',
+                label: 'name',
+                value: 'id',
               },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
+              dicUrl: "/api/blade-user/selectAllUser",
             },
 
           ]
