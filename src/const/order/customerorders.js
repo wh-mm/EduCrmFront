@@ -248,7 +248,7 @@ export const newAddDrugOption = {
             trigger: "blur",
           }],
         },
-        {
+        /*{
           label: "一煎时间(分)",
           prop: "oncetime",
           labelWidth: 130,
@@ -264,10 +264,11 @@ export const newAddDrugOption = {
           labelWidth: 130,
           prop: "twicetime",
           span: 6,
-        },
+        },*/
         {
-          label: "浸泡加水量",
+          label: "浸泡加水量(ml)",
           prop: "soakwater",
+          labelWidth: 130,
           span: 6,
         },
         {

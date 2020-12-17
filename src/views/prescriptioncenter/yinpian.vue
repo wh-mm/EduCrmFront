@@ -85,8 +85,9 @@
         <template slot="tienum" slot-scope="scope">
           <el-input type="number" v-model="scope.row.tienum" min=0 placeholder="请输入贴数"></el-input>
         </template>
+
         <template slot="drugweight" slot-scope="scope">
-          {{scope.row.tienum * scope.row.drugAllnum}}
+          {{scope.row.dose * scope.row.drugAllnum}}
         </template>
         <template slot="drugDescription" slot-scope="scope">
           <avue-input size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
@@ -112,7 +113,8 @@
           {{scope.row.tienum}}
         </template>
         <template slot="drugweight" slot-scope="scope">
-          {{scope.row.tienum * scope.row.drugAllnum}}
+
+          {{scope.row.dose * scope.row.drugAllnum}}
         </template>
         <template slot="drugDescription" slot-scope="scope">
           {{scope.row.drugDescription}}
@@ -243,7 +245,6 @@
                 </template>
               </el-table-column>
 
-
             </el-table>
 
             <el-row>
@@ -252,9 +253,6 @@
             </el-row>
 
           </div>
-
-
-
         </div>
       </div>
 
@@ -359,7 +357,6 @@
         </div>
       </div>
     </el-form>
-
   </basic-container>
 </template>
 
