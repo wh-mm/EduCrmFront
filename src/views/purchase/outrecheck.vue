@@ -92,7 +92,7 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieves,updaterejectText} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
@@ -607,6 +607,10 @@
               dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
             },
             {
+              label: '批号',
+              prop:'batchNumber'
+            },
+            {
               label:'商品名称',
               prop:'goodsId',
               props: {
@@ -845,7 +849,7 @@
       },
       inventoryToRetrieve(warehouseId){
         this.dialogVisible = true;
-        inventoryToRetrieves(warehouseId).then(res=>{
+        inventoryToRetrieve(warehouseId).then(res=>{
           if (res.data.success) {
             this.inventoryToRetrievedata = res.data.data;
             this.$message.success(res.data.msg);

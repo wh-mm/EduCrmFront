@@ -144,6 +144,21 @@
               },
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
             },
+
+
+            {
+              label: "医院操作员ID",
+              prop: "hospitalUserId",
+              type: 'tree',
+              search: true,
+              slot: true,
+              props: {
+                label: 'name',
+                value: 'id',
+              },
+              dicUrl: "/api/blade-user/selectAllUser",
+            },
+
           ]
         },
         data: []

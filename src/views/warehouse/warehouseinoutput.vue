@@ -86,16 +86,18 @@
   import {getList,add,updateStatus} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
 
   export default {
     data() {
       var validateNumber = (rule, value, callback)=>{
+        console.log();
         if (value === '') {
           callback(new Error('请输入数量'));
         } else if(value < 1){
-          callback(new Error('请输入正确的数量'));
+          callback(new Error('数量不能少于1'));
+        } else if(value > this.repertoryQuantity && this.repertoryQuantity !== 0 && this.obj.type === 'out') {
+          callback(new Error('库存数量不足'));
         } else {
           callback();
         }
@@ -111,6 +113,7 @@
         },
         obj:{},
         title: '' ,
+        repertoryQuantity:0,
         dialogVisible:false,
         outdialogVisible:false,
         commoditydialogVisible:false,
@@ -125,7 +128,7 @@
           index: true,
           viewBtn: true,
           selection: true,
-          menu:true,
+          menu:false,
           dialogClickModal: false,
           column: [
             {
@@ -346,7 +349,7 @@
               rules: [{
                 required: true,
                 validator: validateNumber,
-                trigger: 'change',
+                trigger: 'blur',
               }]
             },
             {
@@ -405,9 +408,12 @@
               change: ({value}) => {
                   selectByBatchNumber(value).then(res => {
                       var detail = res.data.data;
+                      console.log(detail)
                       detail.forEach(val =>{
-                        if (value==val.batchNumber) {
-                            val.warehouseId
+                        if (value === val.batchNumber) {
+                            this.obj.warehouseId = val.warehouseId;
+                            this.obj.storageId = val.storageId;
+                            this.repertoryQuantity = val.repertoryQuantity;
                         }
                       });
                   });
@@ -417,6 +423,7 @@
               label: "仓库",
               prop: "warehouseId",
               row: true,
+              type: 'tree',
               span: 24,
               props: {
                 label: 'title',
@@ -433,6 +440,7 @@
             {
               label: "储位",
               prop: "storageId",
+              type: 'tree',
               row: true,
               span: 24,
               rules: [{
@@ -457,7 +465,7 @@
               span: 24,
               rules: [{
                 validator: validateNumber,
-                trigger: 'change',
+                trigger: 'blur',
               }]
             },
             {
