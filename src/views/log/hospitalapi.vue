@@ -60,19 +60,14 @@
           delBtn: false,
           viewBtn: true,
           selection: true,
-          menuWidth: 120,
+          menu: false,
           dialogType: 'drawer',
           column: [
-           /* {
-              label: "医院id",
-              prop: "hospitalId",
-              search: true
-            },*/
             {
               label: "医院名称",
               prop: "hospitalId",
-              //type: "tree",
-              cascaderItem:['excelFile'],
+              type: "tree",
+              cascaderItem: ['excelFile'],
               props: {
                 label: "hospitalName",
                 value: "id"
@@ -83,18 +78,35 @@
             {
               label: "日志时间",
               prop: "createTime",
-              //search: true
+              type: "datetime",
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              searchRange: true,
+              searchSpan: 8,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              search: true,
             },
+
             {
               label: "请求数据",
               prop: "params",
-             // search: true
+              // search: true
             },
-            /* {
-                label: "成功失败",
-                prop: "params",
-                search: true
-              },*/
+            {
+              label: "成功失败",
+              prop: "successAndFailure",
+              //search: true
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              //required: true,
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=success_and_failure",
+            },
           ]
 
         },
@@ -106,7 +118,7 @@
       permissionList() {
         return {
           addBtn: false,
-          viewBtn: this.vaildData(this.permission.log_api_view, false),
+          viewBtn: false,
           delBtn: false,
           editBtn: false
         };
@@ -219,15 +231,30 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
+      //时间
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            startTime: createTime[0],
+            endTime: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
+          this.selectionClear();
         });
-      }
+      },
     }
   };
 </script>

@@ -16,22 +16,23 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain
-                   v-if="permission.keli_add"
-                   @click="newAdd()">新 增
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
-      </template>
-      <!--   颗粒接单打印 -->
-      <template slot-scope="scope" slot="menu">
+        <!--<el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
+        </el-button>-->
 
+      </template>
+
+      <template slot-scope="scope" slot="menu">
+        <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
+
+        <!--处方中心打印功能-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
                    @click.stop="updateOrderStatic(scope.row)">接 单
         </el-button>
-
-        <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
-
+        <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
@@ -56,7 +57,6 @@
                width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-
         <el-tab-pane label="颗粒" name="tiaopei">
         </el-tab-pane>
       </el-tabs>
@@ -124,6 +124,38 @@
         <el-button type="primary" @click="prescription()">抓 药</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="订单详情" :visible.sync="dialogVisible" v-if="dialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false"
+               :before-close="handleClose">
+      <avue-form ref="viewForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
+      <avue-crud ref="viewCrud" :data="orderInfo.drugList" :option="viewCrudOption">
+        <template slot="drugAllnum" slot-scope="scope">
+          {{scope.row.drugAllnum}}
+        </template>
+        <template slot="tienum" slot-scope="scope">
+          {{scope.row.tienum}}
+        </template>
+        <template slot="drugweight" slot-scope="scope">
+          {{scope.row.tienum * scope.row.drugAllnum}}
+        </template>
+        <template slot="drugDescription" slot-scope="scope">
+          {{scope.row.drugDescription}}
+        </template>
+        <template slot="description" slot-scope="scope">
+          {{scope.row.description}}
+        </template>
+        <template slot="doseHerb" slot-scope="scope">
+          {{scope.row.doseHerb}}
+        </template>
+        <template slot="equivalent" slot-scope="scope">
+          {{scope.row.equivalent}}
+        </template>
+      </avue-crud>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="prescription()">抓 药</el-button>
+      </span>
+    </el-dialog>
+
 
     <el-form :model="form">
       <div style="display: none" id="printyinpian" ref="printyinpian">
@@ -191,10 +223,10 @@
                 <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">剂数/贴数：<span>{{printJianYaoData.dose}}</span>
                 </p></div>
               </el-col>
-              <el-col :span="4" :offset="1">
+              <!--<el-col :span="4" :offset="1">
                 <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span>
                 </p></div>
-              </el-col>
+              </el-col>-->
             </el-row>
 
             <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">
@@ -283,7 +315,6 @@
                 </template>
               </el-table-column>
 
-
             </el-table>
 
             <el-row>
@@ -296,6 +327,7 @@
             </el-row>
 
           </div>
+
 
         </div>
       </div>
@@ -421,12 +453,9 @@
                 prop="equivalent"
                 label="当量"
                 width="247"
-                align="center"
-              >
+                align="center">
               </el-table-column>
-
             </el-table>
-
             <el-row>
               <el-col :span="10" :offset="3">
                 <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
@@ -435,13 +464,14 @@
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
               </el-col>
             </el-row>
-
           </div>
 
 
         </div>
       </div>
     </el-form>
+
+
   </basic-container>
 </template>
 
@@ -452,28 +482,35 @@
     getListd,
     receiveBlenderSave,
     receiveDecoctingSave,
+    selectListByDrugCategory,
     selectByOrderId,
-    selectListByDrugCategory, updateOrderStatic,
+    updateOrderStatic,
   } from "@/api/order/order";
   import {mapGetters} from "vuex";
+  import JsBarcode from 'jsbarcode';
   import {
     newAddBlenderListOption,
     newAddDrugListOption,
     newAddDrugOption,
     newAddGrainOption,
     newAddListOption,
-    option, phonelength,
+    option,
     viewAddBlenderListOption,
     viewDrugListOption
   } from "@/const/order/customerorders"
-  import JsBarcode from "jsbarcode";
 
   export default {
+    filters: {
+      rounding(value) {
+        return value.toFixed(2)
+      }
+    },
     data() {
       return {
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'tiaopei',
+
         printJianYaoData: [
           {
             /** 煎药**/
@@ -557,7 +594,6 @@
           }
         ],
 
-
         drugList: {
           form: {},
           query: {},
@@ -569,7 +605,56 @@
           },
           data: [],
           selectionList: [],
-          option: {},
+          option: {
+            height: 'auto',
+            calcHeight: 30,
+            align: 'center',
+            tip: false,
+            printBtnText: '打印文案',
+            searchShow: true,
+            searchMenuSpan: 6,
+            border: true,
+            index: false,
+            printBtn: true,
+            addBtn: false,
+            menu: false,
+            header: false,
+            selection: true,
+            dialogClickModal: false,
+            column: [
+              {
+                label: "颗粒名称/药品名称",
+                prop: "goodsName",
+              },
+              {
+                label: "货物类别",
+                prop: "goodsType",
+                type: "tree",
+                props: {
+                  label: 'dictValue',
+                  value: 'id'
+                },
+                search: true,
+                dicFlag: false,
+                dicUrl: "/api/erp-wms/goods-type/tree"
+              },
+              {
+                label: "规格",
+                prop: "goodsSpecification",
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                search: true,
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+              },
+              {
+                label: "单价",
+                prop: "unitPrice",
+              }
+            ]
+          },
         },
         addDialogVisible: false,
         dialogVisible: false,
@@ -597,7 +682,7 @@
           total: 0
         },
         selectionList: [],
-        option: {},
+        option: option,
         data: []
       };
     },
@@ -624,130 +709,6 @@
           ids.push(ele.id);
         });
         return ids.join(",");
-      },
-      option1() {
-        return {
-          addBtn: false,
-          height: "auto",
-          calcHeight: 30,
-          tip: false,
-          searchShow: true,
-          searchMenuSpan: 6,
-          border: true,
-          index: true,
-          viewBtn: false,
-          selection: true,
-          dialogClickModal: false,
-          column: [
-            {
-              label: "医院名称",
-              prop: "hospitalId",
-              type: "select",
-              props: {
-                label: "hospitalName",
-                value: "id"
-              },
-              search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-            },
-            {
-              label: "订单状态",
-              prop: "orderStatic",
-              type: "select",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
-              trigger: "blur"
-            },
-
-            {
-              label: "订单类型",
-              prop: "orderType",
-              type: "select",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
-              trigger: "blur"
-            },
-            {
-              label: "收货地址",
-              prop: "address",
-              rules: [{
-                required: true,
-                message: "请输入收货地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "收件人",
-              prop: "addressee",
-              rules: [{
-                required: true,
-                message: "请输入收件人",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "收件人电话",
-              prop: "addresseePhone",
-              rules: [{
-                required: true,
-                validator: phonelength,
-                trigger: 'blur'
-              }],
-              labelWidth: 100,
-            },
-            {
-              label: "订单时间",
-              prop: "releaseTimeRange",
-              type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
-              searchRange: true,
-              searchSpan: 12,
-              hide: true,
-              addDisplay: false,
-              editDisplay: false,
-              viewDisplay: false,
-              search: true,
-              rules: [{
-                required: true,
-                message: "请输入通知时间",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "订单时间",
-              prop: "orderTime",
-              type: "date",
-              width: 150,
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              rules: [{
-                required: true,
-                message: "请输入通知日期",
-                trigger: "click"
-              }]
-            },
-            {
-              label: "总价",
-              prop: "totalPrices",
-              hide: !this.vaildData(this.permission.keli_jiage, false),
-              rules: [{
-                required: true,
-                message: "请输入总价",
-                trigger: "blur"
-              }]
-            },
-          ]
-        }
       },
     },
     methods: {
@@ -896,7 +857,9 @@
 
       //打印
       dayin(row) {
+
         if (row.orderType === "jianyao") {
+
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
@@ -962,14 +925,12 @@
         }
 
       },
-
       //新增 按钮
       newAdd() {
         this.addDialogVisible = true;
         this.tabFrom();
         this.addOption.detail = false;
       },
-
       tabFrom() {
         if (this.activeName === 'jianyao') {
           this.addOption = Object.assign({}, newAddDrugOption);
@@ -992,9 +953,6 @@
       },
       //时间
       onLoad(page, params = {}) {
-        if(this.option){
-          this.option=this.option1;
-        }
         const {releaseTimeRange} = params;
         let values = {
           ...params,
@@ -1028,39 +986,7 @@
           url = "/api/taocao-order/order/decoctingSelectByOrderId"
         } else if (row.orderType === "tiaopei") {
           this.viewOption = Object.assign({}, newAddGrainOption);
-          const viewCrudOption = {
-            calcHeight: 200,
-            border: true,
-            index: true,
-            viewBtn: false,
-            addBtn: false,
-            menu: false,
-            page: false,
-            dialogClickModal: false,
-            menuBtn: false,
-            column: [
-              {
-                label: "药品名称",
-                prop: "drugName",
-              },
-              {
-                label: "饮片剂量",
-                prop: "doseHerb",
-                slot: true,
-              },
-              {
-                label: "当量",
-                prop: "equivalent",
-                slot: true,
-              },
-              {
-                label: "单价",
-                prop: "unitPrice",
-                hide: !this.vaildData(this.permission.keli_jiage, false),
-              },
-            ],
-          };
-          this.viewCrudOption = Object.assign({}, viewCrudOption);
+          this.viewCrudOption = Object.assign({}, viewAddBlenderListOption);
           url = "/api/taocao-order/order/blenderSelectByOrderId"
         } else {
           this.$message({
@@ -1102,9 +1028,6 @@
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
       drugOnLoad(page, params = {}) {
-        if(this.drugList.option){
-          this.drugList.option=this.drugListOption();
-        }
         this.drugList.loading = true;
         params.drugCategory = this.activeName;
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {

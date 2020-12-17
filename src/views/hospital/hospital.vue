@@ -130,12 +130,12 @@
                 trigger: "blur"
               }]
             },
-
-
             {
               label: "医院接口开关",
               prop: "hospitalSwitch",
               type: 'select',
+              searchLabelWidth:140,
+              searchSpan:7,
               search: true,
               slot: true,
               props: {
