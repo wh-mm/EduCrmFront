@@ -660,13 +660,6 @@
               {
                 label: "规格",
                 prop: "goodsSpecification",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
               },
               {
                 label: "单价",
