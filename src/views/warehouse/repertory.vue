@@ -207,7 +207,7 @@
               span: 24,
               rules: [{
                 validator: validateNumber,
-                trigger: 'change',
+                trigger: 'blur',
               }]
             },
             {
