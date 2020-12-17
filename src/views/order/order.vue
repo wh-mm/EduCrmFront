@@ -660,7 +660,7 @@
                 },
                 search: true,
                 dicMethod: "Get",
-                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoodsByTypeKL"
+                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoodsByType"
               },
 
               {
