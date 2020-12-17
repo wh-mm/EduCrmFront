@@ -37,7 +37,7 @@
 
 
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
-        <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">商 品 总 量</el-button>
+        <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
       </template>
 
       <template slot-scope="scope" slot="unitForm">

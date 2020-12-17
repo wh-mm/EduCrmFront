@@ -248,6 +248,7 @@
                     label: "批号",
                     prop: "batchNumber",
                     type:'select',
+                    width:170,
                     props: {
 
                       label: 'batchNumber',
@@ -262,6 +263,7 @@
                           this.form.outputOrderDetailList.forEach(vals => {
                             if (value==val.batchNumber) {
                                vals.warehouseId = val.warehouseId;
+                               vals.storageRegionId = val.storageRegionId;
                                vals.storageId = val.storageId;
                                vals.repertoryQuantity  = val.repertoryQuantity
                             }
@@ -275,6 +277,7 @@
                     label:'库存数量(g)',
                     prop: 'repertoryQuantity',
                     disabled: true,
+                    width:100,
                   },
                   {
                     label: '*出货仓库',
@@ -282,6 +285,7 @@
                     type: "tree",
                     rsearch: true,
                     disabled: true,
+                    width:150,
                     rules: [{
                       required: true,
                       message: "请输入类型",
@@ -295,10 +299,30 @@
                     dicUrl: '/api/erp-wms/warehouse/tree'
                   },
                   {
+                    label:'区域',
+                    prop: "storageRegionId",
+                    type:'tree',
+                    row: true,
+                    disabled: true,
+                    width:150,
+                    rules: [{
+                      required: true,
+                      message: "请输入储位",
+                      trigger: "blur"
+                    }],
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    cascaderItem: ['storageId'],
+                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+                  },
+                  {
                     label: "储位",
                     prop: "storageId",
                     type:'tree',
                     disabled: true,
+                    width:150,
                     props: {
                       label: 'title',
                       value: 'id'

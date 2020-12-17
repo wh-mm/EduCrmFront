@@ -47,6 +47,7 @@
 
 
     </avue-crud>
+    <!-- 入库-->
     <el-dialog
       :title="title"
       :visible.sync="dialogVisible"
@@ -56,6 +57,7 @@
       <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
       </avue-form>
     </el-dialog>
+    <!-- 出库-->
     <el-dialog
       :title="title"
       :visible.sync="outdialogVisible"
@@ -65,6 +67,8 @@
       <avue-form ref="form" v-model="obj" :option="outoptionForm" @submit="submit">
       </avue-form>
     </el-dialog>
+    <!-- 转区-->
+
 
     <el-dialog
       title="商品资质"
@@ -116,6 +120,7 @@
         repertoryQuantity:0,
         dialogVisible:false,
         outdialogVisible:false,
+        conversiondialogVisible:false,
         commoditydialogVisible:false,
         selectionList: [],
         option: {
@@ -139,9 +144,27 @@
                 label: 'title',
                 value: 'id'
               },
-              cascaderItem: ['storageId'],
+              cascaderItem: ['storageRegionId'],
              search:true,
              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
               label: "储位",
@@ -151,7 +174,7 @@
               span: 24,
               rules: [{
                 required: true,
-                message: "请输入仓库",
+                message: "请输入储位",
                 trigger: "blur"
               }],
               props: {
@@ -265,8 +288,10 @@
               prop: "batchNumber",
               span: 24,
               rules:[{
+                message: "请输入批号",
+                trigger: "blur",
                 required: true,
-              }]
+              }],
             },
             {
               label: "生产日期",
@@ -275,8 +300,10 @@
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules:[{
+                message: "请输入生产日期",
+                trigger: "blur",
                 required: true,
-              }]
+              }],
             },
             {
               label: "有效期至",
@@ -285,22 +312,28 @@
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules:[{
+                message: "请输入有效期",
+                trigger: "blur",
                 required: true,
-              }]
+              }],
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
               rules:[{
+                message: "请输入生产厂家",
+                trigger: "blur",
                 required: true,
-              }]
+              }],
             },
             {
               label: "产地",
               prop: "placeOfOrigin",
               rules:[{
+                message: "请输入产地",
+                trigger: "blur",
                 required: true,
-              }]
+              }],
             },
             {
               label: "仓库",
@@ -312,13 +345,32 @@
                 label: 'title',
                 value: 'value'
               },
-              cascaderItem: ['storageId'],
+              cascaderItem: ['storageRegionId'],
               rules: [{
                 required: true,
                 message: "请输入仓库",
                 trigger: "blur"
               }],
              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
               label: "储位",
@@ -384,6 +436,7 @@
               rules:[{
                 message: "请输入商品",
                 trigger: "blur",
+                required: true,
               }],
               props: {
                 label: 'goodsName',
@@ -398,6 +451,11 @@
               prop: "batchNumber",
               type:'select',
               span: 24,
+              rules:[{
+                message: "请输入批号",
+                trigger: "blur",
+                required: true,
+              }],
               props: {
                 label: 'batchNumber',
                 value: 'batchNumber'
@@ -411,8 +469,9 @@
                       detail.forEach(val =>{
                         if (value === val.batchNumber) {
                             this.obj.warehouseId = val.warehouseId;
+                            this.obj.storageRegionId = val.storageRegionId;
                             this.obj.storageId = val.storageId;
-                            this.repertoryQuantity = val.repertoryQuantity;
+                            this.obj.repertoryQuantity = val.repertoryQuantity;
                         }
                       });
                   });
@@ -421,30 +480,49 @@
             {
               label: "仓库",
               prop: "warehouseId",
-              row: true,
-              type: 'tree',
+              type:"select",
               span: 24,
+              rules:[{
+                message: "请输入仓库",
+                trigger: "blur",
+                required: true,
+              }],
               props: {
+                required: true,
                 label: 'title',
-                value: 'value'
+                value: 'id'
               },
-              cascaderItem: ['storageId'],
+              cascaderItem: ['storageRegionId'],
+              search:true,
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              row: true,
+              span: 24,
               rules: [{
                 required: true,
-                message: "请输入仓库",
+                message: "请输入储位",
                 trigger: "blur"
               }],
-             dicUrl:'/api/erp-wms/warehouse/tree'
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
               label: "储位",
               prop: "storageId",
-              type: 'tree',
+              type:'tree',
               row: true,
               span: 24,
               rules: [{
                 required: true,
-                message: "请输入仓库",
+                message: "请输入储位",
                 trigger: "blur"
               }],
               props: {
@@ -453,7 +531,12 @@
               },
               dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
-
+            {
+              label:'库存数量',
+              prop:'repertoryQuantity',
+              span:24,
+              disabled: true
+            },
             {
               label: "数量(g)",
               prop: "quantity",
@@ -465,6 +548,8 @@
               rules: [{
                 validator: validateNumber,
                 trigger: 'blur',
+                required: true,
+                message: "请输入数量",
               }]
             },
             {
