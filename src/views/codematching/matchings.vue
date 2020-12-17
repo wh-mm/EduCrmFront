@@ -2,7 +2,6 @@
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
-               :search.sync="search"
                :data="data"
                :page.sync="page"
                :permission="permissionList"
@@ -20,28 +19,22 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+       <!-- <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.goods_delete"
+                   v-if="permission.matching_delete"
                    @click="handleDelete">删 除
-        </el-button>
-        <el-button type="success"
+        </el-button>-->
+        <!--<el-button v-if="permission.region_import"
+                   type="primary"
                    size="small"
-                   plain
-                   icon="el-icon-upload2"
-                   @click="handleImport">导入
-        </el-button>
-        <el-button type="warning"
-                   size="small"
-                   plain
-                   icon="el-icon-download"
-                   @click="handleExport">导出
-        </el-button>
+                   @click="handleImport">导 入
+          <i class="el-icon-upload el-icon&#45;&#45;right"></i>
+        </el-button>-->
       </template>
     </avue-crud>
-    <el-dialog title="货品数据导入"
+    <el-dialog title="导入HIS编码"
                append-to-body
                :visible.sync="excelBox"
                width="555px">
@@ -57,145 +50,31 @@
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
+  import {getList, getDetail, add, update, remove} from "@/api/codematching/matchings";
   import {mapGetters} from "vuex";
-  import {getToken} from "@/util/auth";
-
+  import {getToken} from '@/util/auth';
 
   export default {
     data() {
-      var selectName = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error("请输入商品名称！"))
-        } else {
-          selectGoodsName(this.form.id, value).then(res => {
-            if (res.data.success) {
-              callback();
-            } else {
-              callback(new Error(res.data.msg));
-            }
-          }, err => {
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
       return {
-        form: {},
-        query: {},
-        search: {},
-        loading: true,
-        page: {
-          pageSize: 10,
-          currentPage: 1,
-          total: 0
-        },
-        selectionList: [],
         excelBox: false,
-        option: {
-          height: 'auto',
-          calcHeight: 30,
-          tip: false,
-          searchShow: true,
-          searchMenuSpan: 6,
-          border: true,
-          index: true,
-          viewBtn: true,
-          selection: true,
-          dialogClickModal: false,
-          column: [
-            {
-              label: "商品名称",
-              prop: "goodsName",
-              rules: [{
-                required: true,
-                validator: selectName,
-                trigger: 'blur',
-              }],
-              search: true,
-            },
-            {
-              label: "货物类型",
-              prop: "goodsType",
-              type: "tree",
-              rules: [{
-                required: true,
-                message: "请选择货物类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
-            },
-            /*
-            {
-              label: "货品编码",
-              prop: "goodsCode",
-              rules: [{
-                validator: selectCode,
-                trigger: "blur"
-              }]
-            },
-            */
-            {
-              label: "规格",
-              prop: "goodsSpecification",
-              rules: [{
-                required: true,
-                message: "请输入规格",
-                trigger: "blur"
-              }],
-              /*type: "select",*/
-             /* props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"*/
-            },
-            {
-              label: "基本单位",
-              prop: "basicUnit",
-              rules: [{
-                required: true,
-                message: "请输入基本单位",
-                trigger: "blur"
-              }],
-              /*type: "select",*/
-             /* searchSpan: 7,*/
-             /* props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",*/
-            },
-            {
-              label: "货品价格",
-              prop: "unitPrice",
-              rules: [{
-                message: "请输入货品价格",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "货架号",
-              prop: "shelfNumber",
-              rules: [{
-                message: "请输入货品价格",
-                trigger: "blur"
-              }]
-            },
-          ]
-        },
-        data: [],
         excelForm: {},
         excelOption: {
           submitBtn: false,
           emptyBtn: false,
           column: [
+            {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "tree",
+              cascaderItem:['excelFile'],
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+            },
             {
               label: '模板上传',
               prop: 'excelFile',
@@ -207,7 +86,7 @@
                 res: 'data'
               },
               tip: '请上传 .xls,.xlsx 标准格式文件',
-              action: this.ERP_WMS_NAME + "/goods/import-goods"
+              action: "/api/taocao-codematching/matching/import-region ?  hospitalId={{this}}"
             },
             {
               label: "数据覆盖",
@@ -242,17 +121,101 @@
               span: 24,
             }
           ]
-        }
+        },
+        form: {},
+        query: {},
+        loading: true,
+        page: {
+          pageSize: 10,
+          currentPage: 1,
+          total: 0
+        },
+        selectionList: [],
+        option: {
+          height: 'auto',
+          calcHeight: 30,
+          tip: false,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: true,
+          selection: true,
+          dialogClickModal: false,
+          column: [
+            {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "tree",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+            },
+
+            {
+              label: "库房药名称",
+              prop: "goodsId",
+              type: "tree",
+              searchLabelWidth:130,
+              searchSpan:7,
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              search: true,
+              dicMethod: "post",
+              dicUrl: '/api/erp-wms/goods/selecListGoods'
+            },
+
+            {
+              label: "HIS药品码",
+              prop: "hisDrugsUmber",
+              rules: [{
+                required: true,
+                message: "HIS药品码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "HIS药品名称",
+              prop: "hisDrugsName",
+              rules: [{
+                required: true,
+                message: "HIS药品名称",
+                trigger: "blur"
+              }]
+            }
+          ]
+        },
+        data: [],
       };
+    },
+    watch: {
+      'form.tenantId'() {
+        if (this.form.tenantId !== '' && this.initFlag) {
+          this.initData(this.form.tenantId);
+        }
+      },
+      'excelForm.isCovered'() {
+        alert(this.excelForm.hospitalId);
+        //if ()
+      if (this.excelForm.isCovered !== '') {
+          const column = this.findObject(this.excelOption.column, "excelFile");
+          column.action = `/api/taocao-codematching/matching/import-matching?isCovered=${this.excelForm.isCovered}&hospitalId=${this.excelForm.hospitalId}`;
+        }
+      }
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.goods_add, false),
-          viewBtn: this.vaildData(this.permission.goods_view, false),
-          delBtn: this.vaildData(this.permission.goods_delete, false),
-          editBtn: this.vaildData(this.permission.goods_edit, false)
+          addBtn: false,
+          viewBtn: this.vaildData(this.permission.matching_view, false),
+          delBtn: false,
+          editBtn: this.vaildData(this.permission.matching_edit, false)
         };
       },
       ids() {
@@ -261,14 +224,6 @@
           ids.push(ele.id);
         });
         return ids.join(",");
-      }
-    },
-    watch: {
-      'excelForm.isCovered'() {
-        if (this.excelForm.isCovered !== '') {
-          const column = this.findObject(this.excelOption.column, "excelFile");
-          column.action = this.ERP_WMS_NAME + `/goods/import-goods?isCovered=${this.excelForm.isCovered}`;
-        }
       }
     },
     methods: {
@@ -284,6 +239,17 @@
           loading();
           window.console.log(error);
         });
+      },
+      //导入
+      handleImport() {
+        this.excelBox = true;
+      },
+      //导入
+      uploadAfter(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBox = false;
+        this.initTree();
+        done();
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
@@ -315,6 +281,9 @@
             });
           });
       },
+      handleTemplate() {
+          window.open(`/api/taocao-codematching/matching/export-template?${this.website.tokenHeader}=${getToken()}`);
+      },
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -339,7 +308,7 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getGoodsDetail(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
@@ -380,28 +349,7 @@
           this.loading = false;
           this.selectionClear();
         });
-      },
-      handleImport() {
-        this.excelBox = true;
-      },
-      uploadAfter(res, done, loading, column) {
-        window.console.log(column);
-        this.excelBox = false;
-        this.refreshChange();
-        done();
-      },
-      handleExport() {
-        this.$confirm("是否导出货品数据?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(() => {
-          window.open( this.ERP_WMS_NAME + `/goods/export-goods?${this.website.tokenHeader}=${getToken()}&goodsType=${this.search.goodsType}`);
-        });
-      },
-      handleTemplate() {
-        window.open(this.ERP_WMS_NAME + `/goods/export-template?${this.website.tokenHeader}=${getToken()}`);
-      },
+      }
     }
   };
 </script>

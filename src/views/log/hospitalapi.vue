@@ -1,5 +1,4 @@
 <template>
-  <!--医院接口-->
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
@@ -24,47 +23,20 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospital_delete"
+                   v-if="permission.hospitalapi_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-      <!--<template slot="hospitalSwitch" slot-scope="scope,row">
-        <el-tag>{{scope.row.hospitalSwitch}}
-        </el-tag>
-      </template>-->
-     <template slot="hospitalSwitch" slot-scope="scope">
-       <div style="color: green" v-if="scope.row.hospitalSwitch=='true'?true:false">开</div>
-       <div style="color: red" v-else>关</div>
-      </template>
-
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,
-    selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
+  import {getList, getDetail, add, update, remove} from "@/api/log/hospitalapi";
   import {mapGetters} from "vuex";
+
   export default {
-
     data() {
-
-      var hospitalName = (rule, value, callback)=>{
-        if (value === ''){
-          callback(new Error("医院名称重复,请从新输入!"))
-        }else {
-          selectHosptalByHospintl(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-
       return {
         form: {},
         query: {},
@@ -76,90 +48,67 @@
         },
         selectionList: [],
         option: {
-          height:'auto',
+          height: 'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
           index: true,
+          editBtn: false,
+          addBtn: false,
+          delBtn: false,
           viewBtn: true,
           selection: true,
-          cancelBtn:false,
-          dialogClickModal: false,
+          menu: false,
+          dialogType: 'drawer',
           column: [
             {
-              label: "医院名字",
-              prop: "hospitalName",
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "tree",
+              cascaderItem: ['excelFile'],
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
               search: true,
-              rules: [{
-                required: true,
-                message: "请输入医院名字",
-                validator:hospitalName,
-                trigger: 'blur' }],
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
             {
-              label: "key",
-              prop: "id",
-              /*append: "供应商唯一编号",*/
-              labelWidth: 110,
+              label: "日志时间",
+              prop: "createTime",
+              type: "datetime",
+              format: "yyyy-MM-dd hh:mm:ss",
+              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              searchRange: true,
+              searchSpan: 8,
               addDisplay: false,
               editDisplay: false,
               viewDisplay: false,
               search: true,
-              rules: [{
-                required: true,
-                trigger: "blur"
-              }]
+            },
+
+            {
+              label: "请求数据",
+              prop: "params",
+              // search: true
             },
             {
-              label: "医院地址",
-              prop: "hospitalProfile",
-              rules: [{
-                required: true,
-                message: "请输入医院地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "医院联系方式",
-              prop: "hospitalTel",
-              rules: [{
-                required: true,
-                message: "医院联系方式",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "医院接口开关",
-              prop: "hospitalSwitch",
+              label: "成功失败",
+              prop: "successAndFailure",
+              //search: true
               type: 'select',
-              searchLabelWidth:140,
-              searchSpan:7,
-              search: true,
-              slot: true,
               props: {
                 label: 'dictValue',
-                value: 'dictKey',
+                value: 'dictKey'
               },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
-            },
-
-
-            {
-              label: "医院操作员ID",
-              prop: "hospitalUserId",
-              type: 'tree',
+              //required: true,
               search: true,
-              slot: true,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey',
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=success_and_failure",
             },
-
           ]
+
         },
         data: []
       };
@@ -168,10 +117,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.hospital_add, false),
-          viewBtn: this.vaildData(this.permission.hospital_view, false),
-          delBtn: this.vaildData(this.permission.hospital_delete, false),
-          editBtn: this.vaildData(this.permission.hospital_edit, false)
+          addBtn: false,
+          viewBtn: false,
+          delBtn: false,
+          editBtn: false
         };
       },
       ids() {
@@ -182,48 +131,7 @@
         return ids.join(",");
       }
     },
-    //医院开关
     methods: {
-/*      handleRowClick(row) {
-        this.$confirm("请在此确认", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-           // return remove(row.id);
-
-            let params = {
-              hospitalSwitch: !row.hospitalSwitch,
-              id: row.id
-            }
-            add(params).then((res)=>{
-              console.log(res)
-              if (res.data.code == 200){
-                this.$message({
-                  type: "success",
-                  message: res.data.msg
-                });
-                this.refreshChange();
-              }else{
-                this.$message({
-                  type: "error",
-                  message: res.data.msg
-                });
-              }
-            })
-          })
-          .then(() => {
-            this.onLoad(this.page);
-            this.$message({
-              type: "success",
-              message: "操作成功!"
-            });
-          });
-/!*        console.log(row.hospitalSwitch);
-        console.log(row.id);*!/
-
-      },*/
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -267,6 +175,14 @@
             });
           });
       },
+      beforeOpen(done, type) {
+        if (["edit", "view"].includes(type)) {
+          getDetail(this.form.id).then(res => {
+            this.form = res.data.data;
+          });
+        }
+        done();
+      },
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -289,14 +205,6 @@
             this.$refs.crud.toggleSelection();
           });
       },
-      beforeOpen(done, type) {
-        if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
-            this.form = res.data.data;
-          });
-        }
-        done();
-      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
@@ -314,37 +222,42 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
+      //时间
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            startTime: createTime[0],
+            endTime: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
-          data.records.forEach((value)=>{
-            value.$cellEdit = true
-          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
     }
   };
 </script>
 
 <style>
- /* .el-switch.is-disabled {
-    opacity: 1;
-  }
-  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
-    cursor: pointer !important;;
-  }*/
 </style>

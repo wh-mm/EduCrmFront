@@ -19,109 +19,42 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <el-button type="primary"
                    size="small"
-                   icon="el-icon-delete"
+                   icon="el-icon-plus"
                    plain
-                   v-if="permission.matching_delete"
-                   @click="handleDelete">删 除
-        </el-button>
-        <el-button v-if="permission.region_import"
-                   type="primary"
-                   size="small"
-                   @click="handleImport">导 入
-          <i class="el-icon-upload el-icon--right"></i>
+                   @click="viewTransport()">发起运输单
         </el-button>
       </template>
+      <template slot="orderNumber" slot-scope="{scope,row}">
+        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+      </template>
     </avue-crud>
-    <el-dialog title="导入HIS编码"
-               append-to-body
-               :visible.sync="excelBox"
-               width="555px">
-      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
-        <template slot="excelTemplate">
-          <el-button type="primary" @click="handleTemplate">
-            点击下载<i class="el-icon-download el-icon--right"></i>
-          </el-button>
-        </template>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="80%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="transportForm" v-model="obj" :option="transportOption" @submit="submitTransport">
       </avue-form>
+      <avue-crud :data="selectionList" :option="transportListOption">
+        <template slot="orderNumber" slot-scope="{scope,row}">
+          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+        </template>
+      </avue-crud>
     </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/codematching/matching";
+  import {getList, getDetail, add, update, remove} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
-  import {getToken} from '@/util/auth';
+  import {submitTransport} from "@/api/logistics/distributionCentre";
 
   export default {
     data() {
       return {
-        excelBox: false,
-        excelForm: {},
-        excelOption: {
-          submitBtn: false,
-          emptyBtn: false,
-          column: [
-            {
-              label: "医院名称",
-              prop: "hospitalId",
-              type: "tree",
-              cascaderItem:['excelFile'],
-              props: {
-                label: "hospitalName",
-                value: "id"
-              },
-              search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-            },
-            {
-              label: '模板上传',
-              prop: 'excelFile',
-              type: 'upload',
-              drag: true,
-              loadText: '模板上传中，请稍等',
-              span: 24,
-              propsHttp: {
-                res: 'data'
-              },
-              tip: '请上传 .xls,.xlsx 标准格式文件',
-              action: "/api/taocao-codematching/matching/import-region ?  hospitalId={{this}}"
-            },
-            {
-              label: "数据覆盖",
-              prop: "isCovered",
-              type: "switch",
-              align: "center",
-              width: 80,
-              dicData: [
-                {
-                  label: "否",
-                  value: 0
-                },
-                {
-                  label: "是",
-                  value: 1
-                }
-              ],
-              value: 0,
-              slot: true,
-              rules: [
-                {
-                  required: true,
-                  message: "请选择是否覆盖",
-                  trigger: "blur"
-                }
-              ]
-            },
-            {
-              label: '模板下载',
-              prop: 'excelTemplate',
-              formslot: true,
-              span: 24,
-            }
-          ]
-        },
         form: {},
         query: {},
         loading: true,
@@ -131,8 +64,9 @@
           total: 0
         },
         selectionList: [],
+        dialogVisible: false,
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -144,78 +78,114 @@
           dialogClickModal: false,
           column: [
             {
+              label: '单号',
+              prop: 'orderNumber',
+              slot: true,
+              addDisplay: false,
+              editDisplay: false,
+              width: 180,
+              search: true,
+            },
+            {
               label: "医院名称",
               prop: "hospitalId",
-              type: "tree",
+              type: "select",
               props: {
                 label: "hospitalName",
                 value: "id"
               },
+              span: 6,
               search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+              filterable: true,
+              remote: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
             },
-
-            {
-              label: "库房药名称",
-              prop: "goodsId",
-              type: "tree",
-              searchLabelWidth:130,
-              searchSpan:7,
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              search: true,
-              dicMethod: "post",
-              dicUrl: '/api/erp-wms/goods/selecListGoods'
-            },
-
-            {
-              label: "HIS药品码",
-              prop: "hisDrugsUmber",
-              rules: [{
-                required: true,
-                message: "HIS药品码",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "HIS药品名称",
-              prop: "hisDrugsName",
-              rules: [{
-                required: true,
-                message: "HIS药品名称",
-                trigger: "blur"
-              }]
-            }
           ]
         },
         data: [],
+        transportListOption: {
+          calcHeight: 30,
+          border: true,
+          index: false,
+          viewBtn: false,
+          addBtn: false,
+          selection: false,
+          columnBtn: false,
+          refreshBtn: false,
+          menu: false,
+          dialogClickModal: false,
+          column: [
+            {
+              label: '单号',
+              prop: 'orderNumber',
+              slot: true,
+            },
+            {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
+            },
+          ]
+        },
+        transportData: [],
+        transportForm: {},
+        transportOption: {
+          height: 'auto',
+          calcHeight: 30,
+          border: true,
+          menu: false,
+          menuPosition: "right",
+          dialogClickModal: false,
+          column: [
+            {
+              label: "车辆",
+              prop: "carId",
+              type: 'select',
+              search: true,
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              rules: [{
+                required: true,
+                message: "请选择运送车辆",
+                trigger: "blur"
+              }],
+              dicUrl: '/api/logistics/taocar/selectTaoCar'
+            },
+            {
+              label: "司机",
+              prop: "driverId",
+              type: 'select',
+
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              rules: [{
+                required: true,
+                message: "请选择运送人员",
+                trigger: "blur"
+              }],
+              dicUrl: '/api/logistics/taodriver/selectTaodriver'
+            },
+          ]
+        }
       };
-    },
-    watch: {
-      'form.tenantId'() {
-        if (this.form.tenantId !== '' && this.initFlag) {
-          this.initData(this.form.tenantId);
-        }
-      },
-      'excelForm.isCovered'() {
-        alert(this.excelForm.hospitalId);
-        //if ()
-      if (this.excelForm.isCovered !== '') {
-          const column = this.findObject(this.excelOption.column, "excelFile");
-          column.action = `/api/taocao-codematching/matching/import-matching?isCovered=${this.excelForm.isCovered}&hospitalId=${this.excelForm.hospitalId}`;
-        }
-      }
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.matching_add, false),
-          viewBtn: this.vaildData(this.permission.matching_view, false),
-          delBtn: this.vaildData(this.permission.matching_delete, false),
-          editBtn: this.vaildData(this.permission.matching_edit, false)
+          addBtn: false,
+          viewBtn: false,
+          delBtn: false,
+          editBtn: false
         };
       },
       ids() {
@@ -239,17 +209,6 @@
           loading();
           window.console.log(error);
         });
-      },
-      //导入
-      handleImport() {
-        this.excelBox = true;
-      },
-      //导入
-      uploadAfter(res, done, loading, column) {
-        window.console.log(column);
-        this.excelBox = false;
-        this.initTree();
-        done();
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
@@ -280,9 +239,6 @@
               message: "操作成功!"
             });
           });
-      },
-      handleTemplate() {
-          window.open(`/api/taocao-codematching/matching/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
       handleDelete() {
         if (this.selectionList.length === 0) {
@@ -331,10 +287,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -349,7 +305,30 @@
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
+      viewTransport() {
+        if(this.ids){
+          this.dialogVisible = true;
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择配送单'
+          });
+        }
+      },
+      submitTransport() {
+        submitTransport(this.obj.carId,this.obj.driverId,this.ids).then(res => {
+          if(res.data.success){
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            });
+            this.dialogVisible = false;
+            this.refreshChange();
+          }
+
+        })
+      },
     }
   };
 </script>

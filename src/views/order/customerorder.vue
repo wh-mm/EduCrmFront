@@ -290,6 +290,7 @@
           l.tienum = 1;
           l.doseHerb = 1;
           l.equivalent = 1;
+          l.dose = 1;
         })
         this.addInfo.drugList = this.drugList.selectionList;
         this.selectDrugDialogVisible = false;

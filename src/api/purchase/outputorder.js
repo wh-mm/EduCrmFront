@@ -58,12 +58,12 @@ export const updateStatus = (id, status) => {
     }
   })
 }
-export const inventoryToRetrieves = (warehouseId) => { //库存检索
+export const selectGoodsGross = (goodsId) => { //库存检索
   return request({
-    url: '/api/purchase/outputorder/inventoryToRetrieve',
+    url: '/api/purchase/outputorder/selectGoodsGross',
     method: 'post',
     params:{
-      warehouseId
+      goodsId
     }
   })
 }

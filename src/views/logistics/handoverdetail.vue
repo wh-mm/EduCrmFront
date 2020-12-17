@@ -23,105 +23,21 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.matching_delete"
+                   v-if="permission.handoverdetail_delete"
                    @click="handleDelete">删 除
-        </el-button>
-        <el-button v-if="permission.region_import"
-                   type="primary"
-                   size="small"
-                   @click="handleImport">导 入
-          <i class="el-icon-upload el-icon--right"></i>
         </el-button>
       </template>
     </avue-crud>
-    <el-dialog title="导入HIS编码"
-               append-to-body
-               :visible.sync="excelBox"
-               width="555px">
-      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
-        <template slot="excelTemplate">
-          <el-button type="primary" @click="handleTemplate">
-            点击下载<i class="el-icon-download el-icon--right"></i>
-          </el-button>
-        </template>
-      </avue-form>
-    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/codematching/matching";
+  import {getList, getDetail, add, update, remove} from "@/api/logistics/handoverdetail";
   import {mapGetters} from "vuex";
-  import {getToken} from '@/util/auth';
 
   export default {
     data() {
       return {
-        excelBox: false,
-        excelForm: {},
-        excelOption: {
-          submitBtn: false,
-          emptyBtn: false,
-          column: [
-            {
-              label: "医院名称",
-              prop: "hospitalId",
-              type: "tree",
-              cascaderItem:['excelFile'],
-              props: {
-                label: "hospitalName",
-                value: "id"
-              },
-              search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-            },
-            {
-              label: '模板上传',
-              prop: 'excelFile',
-              type: 'upload',
-              drag: true,
-              loadText: '模板上传中，请稍等',
-              span: 24,
-              propsHttp: {
-                res: 'data'
-              },
-              tip: '请上传 .xls,.xlsx 标准格式文件',
-              action: "/api/taocao-codematching/matching/import-region ?  hospitalId={{this}}"
-            },
-            {
-              label: "数据覆盖",
-              prop: "isCovered",
-              type: "switch",
-              align: "center",
-              width: 80,
-              dicData: [
-                {
-                  label: "否",
-                  value: 0
-                },
-                {
-                  label: "是",
-                  value: 1
-                }
-              ],
-              value: 0,
-              slot: true,
-              rules: [
-                {
-                  required: true,
-                  message: "请选择是否覆盖",
-                  trigger: "blur"
-                }
-              ]
-            },
-            {
-              label: '模板下载',
-              prop: 'excelTemplate',
-              formslot: true,
-              span: 24,
-            }
-          ]
-        },
         form: {},
         query: {},
         loading: true,
@@ -132,7 +48,7 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -144,78 +60,36 @@
           dialogClickModal: false,
           column: [
             {
-              label: "医院名称",
-              prop: "hospitalId",
-              type: "tree",
-              props: {
-                label: "hospitalName",
-                value: "id"
-              },
-              search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-            },
-
-            {
-              label: "库房药名称",
-              prop: "goodsId",
-              type: "tree",
-              searchLabelWidth:130,
-              searchSpan:7,
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              search: true,
-              dicMethod: "post",
-              dicUrl: '/api/erp-wms/goods/selecListGoods'
-            },
-
-            {
-              label: "HIS药品码",
-              prop: "hisDrugsUmber",
+              label: "交接单id",
+              prop: "handoverId",
               rules: [{
                 required: true,
-                message: "HIS药品码",
+                message: "请输入交接单id",
                 trigger: "blur"
               }]
             },
             {
-              label: "HIS药品名称",
-              prop: "hisDrugsName",
+              label: "配送单id",
+              prop: "distributionId",
               rules: [{
                 required: true,
-                message: "HIS药品名称",
+                message: "请输入配送单id",
                 trigger: "blur"
               }]
-            }
+            },
           ]
         },
-        data: [],
+        data: []
       };
-    },
-    watch: {
-      'form.tenantId'() {
-        if (this.form.tenantId !== '' && this.initFlag) {
-          this.initData(this.form.tenantId);
-        }
-      },
-      'excelForm.isCovered'() {
-        alert(this.excelForm.hospitalId);
-        //if ()
-      if (this.excelForm.isCovered !== '') {
-          const column = this.findObject(this.excelOption.column, "excelFile");
-          column.action = `/api/taocao-codematching/matching/import-matching?isCovered=${this.excelForm.isCovered}&hospitalId=${this.excelForm.hospitalId}`;
-        }
-      }
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.matching_add, false),
-          viewBtn: this.vaildData(this.permission.matching_view, false),
-          delBtn: this.vaildData(this.permission.matching_delete, false),
-          editBtn: this.vaildData(this.permission.matching_edit, false)
+          addBtn: this.vaildData(this.permission.handoverdetail_add, false),
+          viewBtn: this.vaildData(this.permission.handoverdetail_view, false),
+          delBtn: this.vaildData(this.permission.handoverdetail_delete, false),
+          editBtn: this.vaildData(this.permission.handoverdetail_edit, false)
         };
       },
       ids() {
@@ -239,17 +113,6 @@
           loading();
           window.console.log(error);
         });
-      },
-      //导入
-      handleImport() {
-        this.excelBox = true;
-      },
-      //导入
-      uploadAfter(res, done, loading, column) {
-        window.console.log(column);
-        this.excelBox = false;
-        this.initTree();
-        done();
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
@@ -280,9 +143,6 @@
               message: "操作成功!"
             });
           });
-      },
-      handleTemplate() {
-          window.open(`/api/taocao-codematching/matching/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
       handleDelete() {
         if (this.selectionList.length === 0) {
@@ -331,10 +191,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {

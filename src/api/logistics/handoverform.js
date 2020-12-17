@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-codematching/matching/page',
+    url: '/api/logistics/handoverform/list',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-codematching/matching/detail',
+    url: '/api/logistics/handoverform/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-codematching/matching/remove',
+    url: '/api/logistics/handoverform/remove',
     method: 'post',
     params: {
       ids,
@@ -32,17 +32,19 @@ export const remove = (ids) => {
   })
 }
 
-export const add = (row) => {
+export const add = (hospitalId,distributionIds) => {
   return request({
-    url: '/api/taocao-codematching/matching/submit',
+    url: '/api/logistics/handoverform/add',
     method: 'post',
-    data: row
+    params: {
+      hospitalId,distributionIds
+    }
   })
 }
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-codematching/matching/submit',
+    url: '/api/logistics/handoverform/update',
     method: 'post',
     data: row
   })

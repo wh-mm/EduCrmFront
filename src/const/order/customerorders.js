@@ -247,25 +247,27 @@ export const newAddDrugOption = {
             trigger: "blur",
           }],
         },
+        /*
         {
-          label: "一煎时间(分)",
-          prop: "oncetime",
+                  label: "一煎时间(分)",
+                  prop: "oncetime",
+                  labelWidth: 130,
+                  rules: [{
+                    message: "请填写一煎时间",
+                    trigger: "blur",
+                  }],
+                  span: 6,
+                },*/
+        /*
+         {
+                  label: "二煎时间(分)",
+                  labelWidth: 130,
+                  prop: "twicetime",
+                  span: 6,
+                },*/
+        {
+          label: "浸泡加水量(ml)",
           labelWidth: 130,
-          rules: [{
-            message: "请填写一煎时间",
-            trigger: "blur",
-          }],
-          span: 6,
-
-        },
-        {
-          label: "二煎时间(分)",
-          labelWidth: 130,
-          prop: "twicetime",
-          span: 6,
-        },
-        {
-          label: "浸泡加水量",
           prop: "soakwater",
           span: 6,
         },
@@ -557,13 +559,13 @@ export const newAddGrainOption = {
         {
           label: "处方付数",
           prop: "quantity",
-          type: "select",
+          //type: "select",
           span: 6,
-          props: {
+          /*props: {
             label: "dictValue",
             value: "dictKey"
           },
-          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+          dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"*/
         },
         {
           label: "分服次数",
@@ -575,7 +577,7 @@ export const newAddGrainOption = {
           prop: "doctorName",
           span: 6,
           rules: [{
-            required: true,
+            //required: true,
             validator: zhongwen,
           }],
         },
@@ -661,7 +663,7 @@ export const newAddDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-/*    {
+    /*{
       label: "次数",
       prop: "tienum",
       slot: true,
@@ -745,11 +747,11 @@ export const viewDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
-/*    {
-      label: "次数",
-      prop: "tienum",
-      slot: true,
-    },*/
+    /*   {
+         label: "次数",
+         prop: "tienum",
+         slot: true,
+       },*/
     {
       label: "总剂量",
       prop: "drugweight",
@@ -845,13 +847,25 @@ export const option = {
     {
       label: "订单类型",
       prop: "orderType",
-      type: "select",
       props: {
         label: 'dictValue',
         value: 'dictKey'
       },
       required: true,
       dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
+      trigger: "blur"
+    },
+    {
+      label: "订单区分",
+      prop: "orderDifferentiation",
+      type: "select",
+      props: {
+        label: 'dictValue',
+        value: 'dictKey'
+      },
+      search: true,
+      required: true,
+      dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
       trigger: "blur"
     },
     {
@@ -914,7 +928,7 @@ export const option = {
         trigger: "click"
       }]
     },
-    {
+   /* {
       label: "总价",
       prop: "totalPrices",
       rules: [{
@@ -922,6 +936,6 @@ export const option = {
         message: "请输入总价",
         trigger: "blur"
       }]
-    },
+    },*/
   ]
 }

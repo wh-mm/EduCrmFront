@@ -44,7 +44,7 @@
        <el-button icon="el-icon-check"
                             :size="scope.size"
                             :type="scope.type"
-                            v-if="scope.row.status==1"
+                            v-if="scope.row.status==1 || scope.row.status==102|| scope.row.status==103"
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
 
@@ -97,6 +97,7 @@
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
+  import {selectByBatchNumber} from "@/api/warehouse/repertory";
   export default {
 
     data() {
@@ -204,6 +205,77 @@
                      done();
                  },
                 column: [
+
+                  {
+                    label: '*商品',
+                    prop: "goodsId",
+                    type: 'tree',
+                    width: 130,
+                    filterable: true,
+                    remote: true,
+                    display:false,
+                    // disabled: true,
+                    rules: [{
+                      require: true,
+                      message: '请选择商品',
+                    }],
+                    props: {
+                      label: 'goodsName',
+                      value: 'goodsId'
+                    },
+                    cascaderItem: ['batchNumber'],
+                    dicMethod:'post',
+                    // dicUrl:'/api/erp-wms/goods/selecListGoods',
+                    dicUrl: '/api/erp-wms/repertory/dropDowns',
+                    change: ({value}) => {
+                      if (value) {
+                        getGoodsDetail(value).then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outputOrderDetailList.forEach(val => {
+                            if (val.goodsId == value) {
+                              var detail = res.data.data;
+                              val.basicUnit = detail.basicUnit;
+                              val.specification = detail.goodsSpecification;
+
+                            }
+                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
+                          });
+                        });
+                      }
+                    },
+                  },
+                  {
+                    label: "批号",
+                    prop: "batchNumber",
+                    type:'select',
+                    props: {
+
+                      label: 'batchNumber',
+                      value: 'batchNumber'
+                    },
+                    dicMethod:'post',
+                    dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
+                    change: ({value}) => {
+                      selectByBatchNumber(value).then(res => {
+                        var detail = res.data.data;
+                        detail.forEach(val =>{
+                          this.form.outputOrderDetailList.forEach(vals => {
+                            if (value==val.batchNumber) {
+                               vals.warehouseId = val.warehouseId;
+                               vals.storageId = val.storageId;
+                               vals.repertoryQuantity  = val.repertoryQuantity
+                            }
+                          });
+
+                        });
+                      });
+                    },
+                  },
+                  {
+                    label:'库存数量(g)',
+                    prop: 'repertoryQuantity',
+                    disabled: true,
+                  },
                   {
                     label: '*出货仓库',
                     prop: "warehouseId",
@@ -231,7 +303,7 @@
                       label: 'title',
                       value: 'id'
                     },
-                    cascaderItem: ['goodsId'],
+                    // cascaderItem: ['goodsId'],
                     dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
                   },
                   {
@@ -243,58 +315,6 @@
                     width: 100,
                   },
                   {
-                    label: '*商品',
-                    prop: "goodsId",
-                    type: 'tree',
-                    width: 130,
-                    filterable: true,
-                    remote: true,
-                    display:false,
-                    disabled: true,
-                    rules: [{
-                      require: true,
-                      message: '请选择商品',
-                    }],
-                    props: {
-                      label: 'goodsName',
-                      value: 'goodsId'
-                    },
-                    cascaderItem: ['batchNumber'],
-                    dicMethod:'post',
-                    dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
-                    // dicUrl: '/api/erp-wms/repertory/dropDowns?storageId={{key}}',
-                    change: ({value}) => {
-                      if (value) {
-                        getGoodsDetail(value).then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            console.log(res.goodsSpecification)
-                            if (val.goodsId == value) {
-                              var detail = res.data.data;
-                              val.basicUnit = detail.basicUnit;
-                              val.specification = detail.goodsSpecification;
-
-
-                            }
-                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                          });
-                        });
-                      }
-                    },
-                  },
-                  {
-                    label: "批号",
-                    prop: "batchNumber",
-                    type:'select',
-                    props: {
-
-                      label: 'batchNumber',
-                      value: 'batchNumber'
-                    },
-                    dicMethod:'post',
-                    dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
-                  },
-                  {
                     label: '商品资质',
                     prop: "unit",
                     type:'input',
@@ -303,7 +323,7 @@
                     width: 100,
                   },
                   {
-                    label: '*数量',
+                    label: '出库数量(g)',
                     prop: "goodsQuantity",
                     type: "number",
                     width: 130,
@@ -314,7 +334,7 @@
                     }]
                   },
                   {
-                    label: '复核数量',
+                    label: '复核出库数量(g)',
                     prop: "recheckGoodsQuantity",
                     type: "number",
                     width: 130,
@@ -569,7 +589,6 @@
               label: "仓库",
               prop: "warehouseId",
               type:'tree',
-
               props: {
                 label: 'title',
                 value: 'id'
@@ -598,7 +617,7 @@
               dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
-              label: "库存数量",
+              label: "库存数量(g)",
               prop: "repertoryQuantity",
               rules: [{
                 trigger: "blur"
