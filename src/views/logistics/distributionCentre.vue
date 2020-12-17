@@ -22,7 +22,7 @@
                    size="small"
                    icon="el-icon-plus"
                    plain
-                   @click="viewTransport()">发起运输单
+                   @click="print">新增并打印交接单
         </el-button>
       </template>
       <template slot="orderNumber" slot-scope="{scope,row}">
@@ -30,29 +30,130 @@
       </template>
     </avue-crud>
     <el-dialog
-      :title="title"
+      title="打印交接单"
       :visible.sync="dialogVisible"
-      width="80%"
+      width="800px"
       :modal="false"
       :before-close="handleClose">
-      <avue-form ref="transportForm" v-model="obj" :option="transportOption" @submit="submitTransport">
-      </avue-form>
-      <avue-crud :data="selectionList" :option="transportListOption">
-        <template slot="orderNumber" slot-scope="{scope,row}">
-          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-        </template>
-      </avue-crud>
+      <el-button type="primary"
+                 size="small"
+                 icon="el-icon-plus"
+                 plain
+                 v-print="'#print1'"
+                 @click="printSave">打印交接单
+      </el-button>
+      <div id="print1" ref="print11">
+        <div style="padding: 10px;">
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-dark"
+                   style="font-size: 24px;text-align: center;margin-bottom: 15px;">
+                配送交接单
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-dark">
+                <p>医院名称 : <span style="margin-left: 10px;">{{printData.hospitalName}}</span></p>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="18">
+              <div class="grid-content bg-purple">
+                <p>医院地址 : <span style="margin-left: 10px;">{{printData.hospitalAddress}}</span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <p>联系方式 : <span style="margin-left: 10px;">{{printData.hospitalTel}}</span></p>
+              </div>
+            </el-col>
+          </el-row>
+          <el-table
+            :data="printData.tableData"
+            border :fit="false"
+            style="width: 707px;margin-top: 15px;margin-right: 0px;">
+            <el-table-column
+              type="index"
+              label="序号"
+              width="60">
+            </el-table-column>
+            <el-table-column
+              prop="receivingDate"
+              label="接方日期"
+              width="100">
+            </el-table-column>
+            <el-table-column
+              prop="pspnum"
+              label="处方编号"
+              width="150">
+            </el-table-column>
+            <el-table-column
+              prop="addresseeName"
+              label="患者姓名"
+              width="90">
+            </el-table-column>
+            <el-table-column
+              prop="addresseeSex"
+              label="性别"
+              width="55">
+              <template slot-scope="scope">
+                {{ scope.row.addresseeSex === '1'?'男':'女' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="addresseeAge"
+              label="年龄"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              prop="dose"
+              label="剂数"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              prop="remark"
+              label="备注">
+            </el-table-column>
+            <el-table-column
+              label=""
+              width="60">
+            </el-table-column>
+          </el-table>
+          <el-row style="margin-top: 20px;">
+            <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <p>日期 : <span style="margin-left: 10px;">{{printData.time}}</span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <p>送货人 : <span style="margin-left: 10px;"></span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <p>收货人 : <span style="margin-left: 10px;"></span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <p>收货日期 : <span style="margin-left: 10px;"></span></p>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
     </el-dialog>
   </basic-container>
 </template>
-<el-switch
-  v-model="value"
-  active-color="#13ce66"
-  inactive-color="#ff4949">
-</el-switch>
 <script>
-  import {getList, submitTransport} from '@/api/logistics/distributionCentre';
+  import {getList} from '@/api/logistics/distributionCentre';
+  import {add} from "@/api/logistics/handoverform";
   import {mapGetters} from 'vuex';
+  import {getHospitalDetail} from "@/api/hisHospital/hospital";
 
   export default {
     data() {
@@ -66,8 +167,15 @@
           currentPage: 1,
           total: 0
         },
-        selectionList: [],
+        printData: {
+          hospitalName: '',
+          time: '',
+          hospitalAddress: '',
+          hospitalTel: '',
+          tableData: [],
+        },
         dialogVisible: false,
+        selectionList: [],
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -85,60 +193,34 @@
               label: '单号',
               prop: 'orderNumber',
               slot: true,
+              addDisplay: false,
+              editDisplay: false,
+              width: 180,
+              search: true,
             },
             {
-              label: "医院",
-              prop: "hospitalName",
+              label: "状态",
+              prop: "distributionStatus",
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict/dictionary?code=distribution_status"
             },
             {
-              label: "收件人",
-              prop: "addresseeName",
-              rules: [{
-                required: true,
-                message: "请输入收件人",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "收件人地址",
-              prop: "addresseeAddress",
-              rules: [{
-                required: true,
-                message: "请输入收件人地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "收件人手机号",
-              prop: "addresseePhone",
-              rules: [{
-                required: true,
-                message: "请输入收件人手机号",
-                trigger: "blur"
-              }]
-            },
-          ]
-        },
-        transportListOption: {
-          calcHeight: 30,
-          border: true,
-          index: false,
-          viewBtn: false,
-          addBtn: false,
-          selection: false,
-          columnBtn: false,
-          refreshBtn: false,
-          menu: false,
-          dialogClickModal: false,
-          column: [
-            {
-              label: '单号',
-              prop: 'orderNumber',
-              slot: true,
-            },
-            {
-              label: "医院",
-              prop: "hospitalName",
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              span: 6,
+              search: true,
+              filterable: true,
+              remote: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
             },
             {
               label: "收件人",
@@ -170,50 +252,6 @@
           ]
         },
         data: [],
-        transportData: [],
-        transportForm: {},
-        transportOption: {
-          height: 'auto',
-          calcHeight: 30,
-          border: true,
-          menu: false,
-          menuPosition: "right",
-          dialogClickModal: false,
-          column: [
-            {
-              label: "车辆",
-              prop: "carId",
-              type: 'select',
-              search: true,
-              props: {
-                label: 'name',
-                value: 'id'
-              },
-              rules: [{
-                required: true,
-                message: "请选择运送车辆",
-                trigger: "blur"
-              }],
-              dicUrl: '/api/logistics/taocar/selectTaoCar'
-            },
-            {
-              label: "司机",
-              prop: "driverId",
-              type: 'select',
-
-              props: {
-                label: 'name',
-                value: 'id'
-              },
-              rules: [{
-                required: true,
-                message: "请选择运送人员",
-                trigger: "blur"
-              }],
-              dicUrl: '/api/logistics/taodriver/selectTaodriver'
-            },
-          ]
-        }
       };
     },
     computed: {
@@ -271,31 +309,74 @@
           this.selectionClear();
         });
       },
-      viewTransport() {
-        if(this.ids){
-          this.dialogVisible = true;
-        }else{
-          this.$message({
-            type: 'info',
-            message: '请选择配送单'
-          });
+      print() {
+        if (this.query['hospitalId'] == null) {
+          return this.$message.error("请搜索一家医院!");
+        } else {
+          getHospitalDetail(this.query['hospitalId']).then(res => {
+            let data = res.data.data;
+            this.printData.hospitalName = data.hospitalName;
+            this.printData.hospitalAddress = data.hospitalProfile;
+            this.printData.hospitalTel = data.hospitalTel;
+          })
         }
-      },
-      submitTransport() {
-        submitTransport(this.obj.carId,this.obj.driverId,this.ids).then(res => {
-          if(res.data.success){
-            this.$message({
-              type: 'success',
-              message: res.data.msg
-            });
-            this.dialogVisible = false;
-            this.refreshChange();
-          }
+        if (this.selectionList.length > 0) {
+          let date = new Date();
+          let year = date.getFullYear(); // 年
+          let month = date.getMonth() + 1; // 月
+          let day = date.getDate(); // 日
+          this.printData.time = year + '-' + month + '-' + day;
+          this.printData.tableData = this.selectionList;
+          this.dialogVisible = true;
+        } else {
+          this.$message.error("请选择配送记录!");
+        }
 
+      },
+      printSave(){
+        add(this.query['hospitalId'],this.ids).then(res =>{
+          this.$message.info(res.data.msg);
         })
       }
     }
   };
 </script>
 
-<style></style>
+<style>
+  p {
+    margin: 0px;
+    font-size: 14px;
+  }
+
+  #print1 td, #print1 th {
+    padding: 2px;
+  }
+
+  #print1, #print1 .el-table th, #print1 .el-table td {
+    color: #000000;
+    font-size: 12px;
+  }
+
+  #print1 .el-table tr {
+    border-left: 1px solid #000;
+  }
+
+  #print1 .el-table td {
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+  }
+
+  #print1 .el-table th {
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+  }
+
+  #print1 .el-table--border {
+    border-bottom: 1px solid #000;
+    border-right: 1px solid #000;
+  }
+
+  #print1 .el-table__body-wrapper {
+    border-left: 1px solid #000;
+  }
+</style>

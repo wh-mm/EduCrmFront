@@ -19,19 +19,19 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+       <!-- <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.matching_delete"
                    @click="handleDelete">删 除
-        </el-button>
-        <el-button v-if="permission.region_import"
+        </el-button>-->
+        <!--<el-button v-if="permission.region_import"
                    type="primary"
                    size="small"
                    @click="handleImport">导 入
-          <i class="el-icon-upload el-icon--right"></i>
-        </el-button>
+          <i class="el-icon-upload el-icon&#45;&#45;right"></i>
+        </el-button>-->
       </template>
     </avue-crud>
     <el-dialog title="导入HIS编码"
@@ -154,11 +154,13 @@
               search: true,
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
-          /*
+
             {
               label: "库房药名称",
               prop: "goodsId",
               type: "tree",
+              searchLabelWidth:130,
+              searchSpan:7,
               props: {
                 label: 'goodsName',
                 value: 'id'
@@ -166,7 +168,7 @@
               search: true,
               dicMethod: "post",
               dicUrl: '/api/erp-wms/goods/selecListGoods'
-            },*/
+            },
 
             {
               label: "HIS药品码",
@@ -210,9 +212,9 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.matching_add, false),
+          addBtn: false,
           viewBtn: this.vaildData(this.permission.matching_view, false),
-          delBtn: this.vaildData(this.permission.matching_delete, false),
+          delBtn: false,
           editBtn: this.vaildData(this.permission.matching_edit, false)
         };
       },

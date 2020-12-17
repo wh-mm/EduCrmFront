@@ -129,36 +129,48 @@
               search: true,
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
-            /*{
+            /*
+            {
               label: "货品编码",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,
                 trigger: "blur"
               }]
-            },*/
+            },
+            */
             {
               label: "规格",
               prop: "goodsSpecification",
-              type: "select",
-              props: {
+              rules: [{
+                required: true,
+                message: "请输入规格",
+                trigger: "blur"
+              }],
+              /*type: "select",*/
+             /* props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"*/
             },
             {
               label: "基本单位",
               prop: "basicUnit",
-              type: "select",
-              searchSpan: 7,
-              props: {
+              rules: [{
+                required: true,
+                message: "请输入基本单位",
+                trigger: "blur"
+              }],
+              /*type: "select",*/
+             /* searchSpan: 7,*/
+             /* props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",*/
             },
             {
               label: "货品价格",

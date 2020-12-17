@@ -1,5 +1,4 @@
 <template>
-  <!--医院接口-->
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
@@ -20,51 +19,41 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <el-button type="primary"
                    size="small"
-                   icon="el-icon-delete"
+                   icon="el-icon-plus"
                    plain
-                   v-if="permission.hospital_delete"
-                   @click="handleDelete">删 除
+                   @click="viewTransport()">发起运输单
         </el-button>
       </template>
-      <!--<template slot="hospitalSwitch" slot-scope="scope,row">
-        <el-tag>{{scope.row.hospitalSwitch}}
-        </el-tag>
-      </template>-->
-     <template slot="hospitalSwitch" slot-scope="scope">
-       <div style="color: green" v-if="scope.row.hospitalSwitch=='true'?true:false">开</div>
-       <div style="color: red" v-else>关</div>
+      <template slot="orderNumber" slot-scope="{scope,row}">
+        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
       </template>
-
     </avue-crud>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="80%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="transportForm" v-model="obj" :option="transportOption" @submit="submitTransport">
+      </avue-form>
+      <avue-crud :data="selectionList" :option="transportListOption">
+        <template slot="orderNumber" slot-scope="{scope,row}">
+          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+        </template>
+      </avue-crud>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,
-    selectHosptalByHospintl,receiveDecocting} from "@/api/hisHospital/hospital";
+  import {getList, getDetail, add, update, remove} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
+  import {submitTransport} from "@/api/logistics/distributionCentre";
+
   export default {
-
     data() {
-
-      var hospitalName = (rule, value, callback)=>{
-        if (value === ''){
-          callback(new Error("医院名称重复,请从新输入!"))
-        }else {
-          selectHosptalByHospintl(this.form.id,value).then( res => {
-            if(res.data.success){
-              callback();
-            }else{
-              callback(new Error(res.data.msg));
-            }
-          },err =>{
-            callback(new Error(err.data.msg));
-          })
-        }
-      }
-
       return {
         form: {},
         query: {},
@@ -75,6 +64,7 @@
           total: 0
         },
         selectionList: [],
+        dialogVisible: false,
         option: {
           height:'auto',
           calcHeight: 30,
@@ -85,78 +75,117 @@
           index: true,
           viewBtn: true,
           selection: true,
-          cancelBtn:false,
           dialogClickModal: false,
           column: [
             {
-              label: "医院名字",
-              prop: "hospitalName",
-              search: true,
-              rules: [{
-                required: true,
-                message: "请输入医院名字",
-                validator:hospitalName,
-                trigger: 'blur' }],
-            },
-            {
-              label: "key",
-              prop: "id",
-              /*append: "供应商唯一编号",*/
-              labelWidth: 110,
+              label: '单号',
+              prop: 'orderNumber',
+              slot: true,
               addDisplay: false,
               editDisplay: false,
-              viewDisplay: false,
+              width: 180,
               search: true,
-              rules: [{
-                required: true,
-                trigger: "blur"
-              }]
             },
             {
-              label: "医院地址",
-              prop: "hospitalProfile",
-              rules: [{
-                required: true,
-                message: "请输入医院地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "医院联系方式",
-              prop: "hospitalTel",
-              rules: [{
-                required: true,
-                message: "医院联系方式",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "医院接口开关",
-              prop: "hospitalSwitch",
-              type: 'select',
-              searchLabelWidth:140,
-              searchSpan:7,
-              search: true,
-              slot: true,
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
               props: {
-                label: 'dictValue',
-                value: 'dictKey',
+                label: "hospitalName",
+                value: "id"
               },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
+              span: 6,
+              search: true,
+              filterable: true,
+              remote: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
             },
           ]
         },
-        data: []
+        data: [],
+        transportListOption: {
+          calcHeight: 30,
+          border: true,
+          index: false,
+          viewBtn: false,
+          addBtn: false,
+          selection: false,
+          columnBtn: false,
+          refreshBtn: false,
+          menu: false,
+          dialogClickModal: false,
+          column: [
+            {
+              label: '单号',
+              prop: 'orderNumber',
+              slot: true,
+            },
+            {
+              label: "医院名称",
+              prop: "hospitalId",
+              type: "select",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
+            },
+          ]
+        },
+        transportData: [],
+        transportForm: {},
+        transportOption: {
+          height: 'auto',
+          calcHeight: 30,
+          border: true,
+          menu: false,
+          menuPosition: "right",
+          dialogClickModal: false,
+          column: [
+            {
+              label: "车辆",
+              prop: "carId",
+              type: 'select',
+              search: true,
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              rules: [{
+                required: true,
+                message: "请选择运送车辆",
+                trigger: "blur"
+              }],
+              dicUrl: '/api/logistics/taocar/selectTaoCar'
+            },
+            {
+              label: "司机",
+              prop: "driverId",
+              type: 'select',
+
+              props: {
+                label: 'name',
+                value: 'id'
+              },
+              rules: [{
+                required: true,
+                message: "请选择运送人员",
+                trigger: "blur"
+              }],
+              dicUrl: '/api/logistics/taodriver/selectTaodriver'
+            },
+          ]
+        }
       };
     },
     computed: {
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.hospital_add, false),
-          viewBtn: this.vaildData(this.permission.hospital_view, false),
-          delBtn: this.vaildData(this.permission.hospital_delete, false),
-          editBtn: this.vaildData(this.permission.hospital_edit, false)
+          addBtn: false,
+          viewBtn: false,
+          delBtn: false,
+          editBtn: false
         };
       },
       ids() {
@@ -167,48 +196,7 @@
         return ids.join(",");
       }
     },
-    //医院开关
     methods: {
-/*      handleRowClick(row) {
-        this.$confirm("请在此确认", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-           // return remove(row.id);
-
-            let params = {
-              hospitalSwitch: !row.hospitalSwitch,
-              id: row.id
-            }
-            add(params).then((res)=>{
-              console.log(res)
-              if (res.data.code == 200){
-                this.$message({
-                  type: "success",
-                  message: res.data.msg
-                });
-                this.refreshChange();
-              }else{
-                this.$message({
-                  type: "error",
-                  message: res.data.msg
-                });
-              }
-            })
-          })
-          .then(() => {
-            this.onLoad(this.page);
-            this.$message({
-              type: "success",
-              message: "操作成功!"
-            });
-          });
-/!*        console.log(row.hospitalSwitch);
-        console.log(row.id);*!/
-
-      },*/
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -313,23 +301,37 @@
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
-          data.records.forEach((value)=>{
-            value.$cellEdit = true
-          })
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
+      viewTransport() {
+        if(this.ids){
+          this.dialogVisible = true;
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择配送单'
+          });
+        }
+      },
+      submitTransport() {
+        submitTransport(this.obj.carId,this.obj.driverId,this.ids).then(res => {
+          if(res.data.success){
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            });
+            this.dialogVisible = false;
+            this.refreshChange();
+          }
+
+        })
+      },
     }
   };
 </script>
 
 <style>
- /* .el-switch.is-disabled {
-    opacity: 1;
-  }
-  .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
-    cursor: pointer !important;;
-  }*/
 </style>
