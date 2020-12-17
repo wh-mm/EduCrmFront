@@ -162,6 +162,7 @@
               prop: "goodsId",
               type:"select",
               props: {
+                required: true,
                 label: 'goodsName',
                 value: 'id'
               },
@@ -177,6 +178,7 @@
             {
               label: "批号",
               prop: "batchNumber",
+              required: true,
               search:true,
             },
             {
@@ -185,6 +187,7 @@
               type:'datetime',
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
+              required: true,
             },
             {
               label: "有效期至",
@@ -192,14 +195,17 @@
               type:'datetime',
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
+              required: true,
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
+              required: true,
             },
             {
               label: "产地",
               prop: "placeOfOrigin",
+              required: true,
             },
             {
               label: "类型",
@@ -240,6 +246,7 @@
               row: true,
               span: 24,
               rules:[{
+                required: true,
                 message: "请输入商品",
                 trigger: "blur",
               }],
@@ -254,6 +261,9 @@
               label: "批号",
               prop: "batchNumber",
               span: 24,
+              rules:[{
+                required: true,
+              }]
             },
             {
               label: "生产日期",
@@ -261,6 +271,9 @@
               type:'datetime',
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules:[{
+                required: true,
+              }]
             },
             {
               label: "有效期至",
@@ -268,14 +281,23 @@
               type:'datetime',
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules:[{
+                required: true,
+              }]
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
+              rules:[{
+                required: true,
+              }]
             },
             {
               label: "产地",
               prop: "placeOfOrigin",
+              rules:[{
+                required: true,
+              }]
             },
             {
               label: "仓库",
@@ -322,6 +344,7 @@
               row: true,
               span: 24,
               rules: [{
+                required: true,
                 validator: validateNumber,
                 trigger: 'change',
               }]

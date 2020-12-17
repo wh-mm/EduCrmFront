@@ -37,7 +37,7 @@
 
 
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
-        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.warehouseId)">库 存 检 索</el-button>
+        <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">商 品 总 量</el-button>
       </template>
 
       <template slot-scope="scope" slot="unitForm">
@@ -60,7 +60,7 @@
     </el-dialog>
 
     <el-dialog
-      title="库存检索"
+      title="商品总量"
       :append-to-body="true"
       :visible.sync="dialogVisible"
       width="50%"
@@ -91,12 +91,11 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieves,viewReason} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,selectGoodsGross,viewReason} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
-  import {selectByBatchNumber} from "@/api/warehouse/repertory";
   export default {
 
     data() {
@@ -306,14 +305,14 @@
                   //   cascaderItem: ['goodsId'],
                   //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
                   // },
-                  // {
-                  //   label: "库存检索",
-                  //   prop: "inventoryToRetrieve",
-                  //   type:'input',
-                  //   placeholder: " ",
-                  //   formslot:true,
-                  //   width: 100,
-                  // },
+                  {
+                    label: "库存检索",
+                    prop: "inventoryToRetrieve",
+                    type:'input',
+                    placeholder: " ",
+                    formslot:true,
+                    width: 100,
+                  },
 
                   {
                     label: '商品资质',
@@ -324,7 +323,7 @@
                     width: 200,
                   },
                   {
-                    label: '*出库数量',
+                    label: '*出库数量(g)',
                     prop: "goodsQuantity",
                     type: "number",
                     width: 200,
@@ -577,46 +576,6 @@
           align:'center',
           column:[
             {
-              label: "仓库",
-              prop: "warehouseId",
-              type:'tree',
-
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              // cascaderItem: ['storageId'],
-              dicUrl:this.ERP_WMS_NAME + '/warehouse/tree'
-            },
-            {
-              label: "储位",
-              prop: "storageId",
-              type:'tree',
-              props: {
-                label: 'name',
-                value: 'id'
-              },
-              dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
-            },
-            {
-              label: "批号",
-              prop: "warehouseinoutBatchNumber",
-            },
-            {
-              label: "生产日期",
-              prop: "warehouseinoutDateOfManufacture",
-              type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-            },
-            {
-              label: "有效期至",
-              prop: "warehouseinoutPeriodOfValidity",
-              type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-            },
-            {
               label:'商品名称',
               prop:'goodsId',
               props: {
@@ -628,16 +587,12 @@
             },
             {
               label: "库存数量",
-              prop: "repertoryQuantity",
+              prop: "sumrepertoryquantity",
               rules: [{
                 trigger: "blur"
               }]
             },
-            {
-              label: "入库时间",
-              prop: "createTime",
 
-            },
           ]
         },
         reasondata:[],
@@ -868,9 +823,9 @@
           }
         })
       },
-      inventoryToRetrieve(warehouseId){
+      selectGoodsGross(goodsId){
         this.dialogVisible = true;
-        inventoryToRetrieves(warehouseId).then(res=>{
+        selectGoodsGross(goodsId).then(res=>{
           if (res.data.success) {
             this.inventoryToRetrievedata = res.data.data;
             this.$message.success(res.data.msg);

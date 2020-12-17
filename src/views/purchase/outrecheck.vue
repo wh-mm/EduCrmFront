@@ -44,7 +44,7 @@
        <el-button icon="el-icon-check"
                             :size="scope.size"
                             :type="scope.type"
-                            v-if="scope.row.status==1"
+                            v-if="scope.row.status==1 || scope.row.status==102|| scope.row.status==103"
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
 
@@ -272,7 +272,7 @@
                     },
                   },
                   {
-                    label:'库存数量',
+                    label:'库存数量(g)',
                     prop: 'repertoryQuantity',
                     disabled: true,
                   },
@@ -323,7 +323,7 @@
                     width: 100,
                   },
                   {
-                    label: '出库数量',
+                    label: '出库数量(g)',
                     prop: "goodsQuantity",
                     type: "number",
                     width: 130,
@@ -334,7 +334,7 @@
                     }]
                   },
                   {
-                    label: '复核出库数量',
+                    label: '复核出库数量(g)',
                     prop: "recheckGoodsQuantity",
                     type: "number",
                     width: 130,
@@ -617,7 +617,7 @@
               dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
-              label: "库存数量",
+              label: "库存数量(g)",
               prop: "repertoryQuantity",
               rules: [{
                 trigger: "blur"
