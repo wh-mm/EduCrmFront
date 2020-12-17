@@ -650,13 +650,17 @@
                 label: "货物类别",
                 prop: "goodsType",
                 type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
                 props: {
-                  label: 'dictValue',
+                  label: 'title',
                   value: 'id'
                 },
-                dicFlag: false,
-                search: true,
-                dicUrl: "/api/erp-wms/goods-type/tree"
+                //search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
@@ -1042,7 +1046,6 @@
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
       drugOnLoad(page, params = {}) {
-        alert(111111111111);
         this.drugList.loading = true;
         //params.goodsType = this.activeName;
         params.goodsType ="1331839100138426370";

@@ -671,7 +671,7 @@ export const newAddBlenderListOption = {
       prop: "goodsName",
     },
     {
-      label: "饮片剂量",
+      label: "单剂量",
       prop: "doseHerb",
       slot: true,
     },
@@ -755,7 +755,7 @@ export const viewAddBlenderListOption = {
       prop: "drugName",
     },
     {
-      label: "饮片剂量",
+      label: "单剂量",
       prop: "doseHerb",
       slot: true,
     },

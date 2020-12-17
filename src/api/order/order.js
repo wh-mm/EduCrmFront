@@ -12,6 +12,20 @@ export const getList = (current, size, params) => {
     }
   })
 };
+//
+export const getListsd = (current, size, params) => {
+  return request({
+    url: '/api/taocao-order/order/page',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+
+//
 export const getLists = (current, size, params) => {
   return request({
     url: '/api/taocao-order/order/pageJianyao',
@@ -94,6 +108,17 @@ export const selectListByDrugCategory = (current, size, params) => {
   return request({
     url: ERP_WMS_NAME + '/goods/selectListBydrugCategory',
 
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+export const selecListGoodsByTypeKL = (current, size, params) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/selecListGoodsByTypeKL',
     method: 'get',
     params: {
       ...params,

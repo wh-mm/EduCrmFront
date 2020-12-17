@@ -18,8 +18,8 @@
       <template slot-scope="scope" slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
-        <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
-        </el-button>
+       <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
+        </el-button>-->
 
       </template>
 
@@ -638,20 +638,7 @@
             dialogClickModal: false,
             column: [
               {
-                label: "货物类别",
-                prop: "goodsType",
-                type: "tree",
-                props: {
-                  label: 'dictValue',
-                  value: 'id'
-                },
-                dicFlag: false,
-                search: true,
-                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoods"
-              },
-
-              {
-                label: "颗粒名称/药品名称",
+                label: "颗粒名称",
                 prop: "goodsName",
                 type: "tree",
                 props: {
@@ -659,19 +646,30 @@
                   value: 'id'
                 },
                 search: true,
-                dicMethod: "Get",
-                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoodsByTypeKL"
+                dicMethod: "post",
+                dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
               },
-
+              {
+                label: "货物类型",
+                prop: "goodsType",
+                type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
+              },
               {
                 label: "规格",
                 prop: "goodsSpecification",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+
+
               },
               {
                 label: "单价",
