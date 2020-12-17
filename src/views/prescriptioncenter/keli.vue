@@ -637,29 +637,34 @@
               {
                 label: "颗粒名称/药品名称",
                 prop: "goodsName",
+                type: "tree",
+                props: {
+                  label: 'goodsName',
+                  value: 'id'
+                },
+                search: true,
+                dicMethod: "Get",
+                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoodsByTypeKL"
               },
               {
                 label: "货物类别",
                 prop: "goodsType",
                 type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
                 props: {
-                  label: 'dictValue',
+                  label: 'title',
                   value: 'id'
                 },
-                search: true,
-                dicFlag: false,
-                dicUrl: "/api/erp-wms/goods-type/tree"
+                //search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
                 prop: "goodsSpecification",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
               },
               {
                 label: "单价",
@@ -756,7 +761,8 @@
         this.onLoad(this.page, this.query);
       },
       //确认选择
-      selectDrugBtn() {
+      selectDrugBtn()
+      {
         this.drugList.selectionList.forEach(l => {
           l.drugAllnum = 1;
           l.tienum = 1;
@@ -1041,7 +1047,8 @@
       },
       drugOnLoad(page, params = {}) {
         this.drugList.loading = true;
-        params.drugCategory = this.activeName;
+        //params.goodsType = this.activeName;
+        params.goodsType ="1331839100138426370";
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
           const data = res.data.data;
           if (data.length == 0) {
@@ -1050,7 +1057,7 @@
             this.drugList.data = [];
             return;
           }
-          data.records.forEach((value) => {
+         data.records.forEach((value) => {
             value.drugAllnum = 0
             value.tienum = 0
             value.doseHerb = 1

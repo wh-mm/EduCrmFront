@@ -642,29 +642,34 @@
               {
                 label: "颗粒名称/药品名称",
                 prop: "goodsName",
+                type: "tree",
+                props: {
+                  label: 'goodsName',
+                  value: 'id'
+                },
+                search: true,
+                dicMethod: "Get",
+                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoodsByTypeYP"
               },
               {
                 label: "货物类别",
                 prop: "goodsType",
                 type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
                 props: {
-                  label: 'dictValue',
+                  label: 'title',
                   value: 'id'
                 },
-                search: true,
-                dicFlag: false,
-                dicUrl: "/api/erp-wms/goods-type/tree"
+                //search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
                 prop: "goodsSpecification",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
               },
               {
                 label: "单价",
@@ -1056,7 +1061,9 @@
       },
       drugOnLoad(page, params = {}) {
         this.drugList.loading = true;
-        params.drugCategory = this.activeName;
+       /* params.drugCategory = this.activeName;*/
+
+        params.goodsType ="1329684210586906625";
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
           const data = res.data.data;
 

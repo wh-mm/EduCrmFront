@@ -165,31 +165,38 @@
             dialogClickModal: false,
             column: [
               {
-                label: "颗粒名称/药品名称",
+                label: "颗粒名称",
                 prop: "goodsName",
-              },
-              {
-                label: "货物类别",
-                prop: "goodsCategory",
                 type: "tree",
                 props: {
-                  label: 'dictValue',
+                  label: 'goodsName',
                   value: 'id'
                 },
                 search: true,
-                dicFlag: false,
-                dicUrl: "/api/blade-system/dictCategory/dictionaryByName"
+                dicMethod: "post",
+                dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
+              },
+              {
+                label: "货物类型",
+                prop: "goodsType",
+                type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
-                prop: "unit",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+                prop: "goodsSpecification",
+
+
               },
               {
                 label: "单价",
