@@ -328,7 +328,7 @@
               span: 24,
               rules: [{
                 required: true,
-                message: "请输入仓库",
+                message: "请输入储位",
                 trigger: "blur"
               }],
               props: {
@@ -408,7 +408,6 @@
               change: ({value}) => {
                   selectByBatchNumber(value).then(res => {
                       var detail = res.data.data;
-                      console.log(detail)
                       detail.forEach(val =>{
                         if (value === val.batchNumber) {
                             this.obj.warehouseId = val.warehouseId;
