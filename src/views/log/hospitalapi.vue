@@ -92,6 +92,7 @@
             {
               label: "请求数据",
               prop: "params",
+              overHidden:true,
               // search: true
             },
             {
