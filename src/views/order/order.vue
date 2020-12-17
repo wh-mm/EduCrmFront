@@ -642,11 +642,12 @@
                 prop: "goodsName",
                 type: "tree",
                 props: {
-                  label: 'title',
+                  label: 'goodsName',
                   value: 'id'
                 },
                 search: true,
-                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
+                dicMethod: "post",
+                dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
               },
               {
                 label: "货物类型",
