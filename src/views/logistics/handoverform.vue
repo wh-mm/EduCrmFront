@@ -26,6 +26,13 @@
                    @click="viewTransport()">发起运输单
         </el-button>
       </template>
+      <template slot-scope="{type,size,row}" slot="menu">
+        <el-button  :size="size"
+                    :type="type"
+                   icon="el-icon-plus"
+                   @click="viewHandover(row.id)">详情
+        </el-button>
+      </template>
       <template slot="orderNumber" slot-scope="{scope,row}">
         <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
       </template>
@@ -44,11 +51,25 @@
         </template>
       </avue-crud>
     </el-dialog>
+    <el-dialog
+      :title="title"
+      :visible.sync="viewDialogVisible"
+      width="80%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-crud :data="view.data" :option="distributionOption"
+                 :page.sync="view.page"
+                 :table-loading="view.loading">
+        <template slot="orderNumber" slot-scope="{scope,row}">
+          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+        </template>
+      </avue-crud>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,submitTransport} from "@/api/logistics/handoverform";
+  import {getList, getDetail, add, update, remove,submitTransport,view} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
 
   export default {
@@ -63,7 +84,17 @@
           total: 0
         },
         selectionList: [],
+        view:{
+          data:[],
+          loading: true,
+          page: {
+            pageSize: 10,
+            currentPage: 1,
+            total: 0
+          },
+        },
         dialogVisible: false,
+        viewDialogVisible:false,
         option: {
           height:'auto',
           calcHeight: 30,
@@ -185,7 +216,123 @@
               dicUrl: '/api/logistics/taodriver/selectTaodriver'
             },
           ]
-        }
+        },
+        distributionOption:{
+          height: 'auto',
+          calcHeight: 30,
+          tip: false,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: false,
+          addBtn: false,
+          editBtn: false,
+          delBtn: false,
+          refreshBtn:false,
+          columnBtn:false,
+          menu:false,
+          selection: true,
+          dialogClickModal: false,
+          column: [
+            {
+              label: "单号",
+              prop: "orderNumber",
+              slot: true,
+              width: 180,
+            },
+            {
+              label: "状态",
+              prop: "distributionStatus",
+              addDisplay: false,
+              editDisplay: false,
+              dicUrl: "/api/blade-system/dict/dictionary?code=distribution_status",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
+            },
+            {
+              label: "医院",
+              prop: "hospitalId",
+              type: "tree",
+              props: {
+                label: "hospitalName",
+                value: "id"
+              },
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+            },
+            {
+              label: "处方号",
+              prop: "pspnum",
+            },
+            {
+              label: "剂数",
+              prop: "dose",
+            },
+            {
+              label: "类型",
+              prop: "orderType",
+              type: 'select',
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=isDaijian"
+            },
+            {
+              label: "接方时间",
+              prop: "receivingDate",
+              type: "date",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "患者姓名",
+              prop: "addresseeName",
+            },
+            {
+              label: "患者性别",
+              prop: "addresseeSex",
+              type: "radio",
+              dicData: [{
+                label: '男',
+                value: '1'
+              }, {
+                label: '女',
+                value: '2'
+              }],
+            },
+            {
+              label: "患者年龄",
+              prop: "addresseeAge",
+              type:'number'
+            },
+            {
+              label: "患者地址",
+              prop: "addresseeAddress",
+            },
+            {
+              label: "患者手机号",
+              prop: "addresseePhone",
+              maxlength:11,
+              showWordLimit:true,
+            },
+            {
+              label: "收件时间",
+              prop: "addresseeTime",
+              type: "datetime",
+              addDisplay: false,
+              editDisplay: false,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+            },
+            {
+              label: "备注",
+              prop: "remark",
+            },
+          ]
+        },
       };
     },
     computed: {
@@ -339,6 +486,16 @@
 
         })
       },
+      viewHandover(id){
+        this.viewDialogVisible = true;
+        this.view.loading = true;
+        view(this.view.page.currentPage, this.view.page.pageSize, id).then(res => {
+          const data = res.data.data;
+          this.view.page.total = data.total;
+          this.view.data = data.records;
+          this.view.loading = false;
+        });
+      }
     }
   };
 </script>
