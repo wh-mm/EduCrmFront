@@ -12,12 +12,3 @@ export const getList = (current, size, params) => {
     }
   })
 }
-export const submitTransport = (carId, driverId, ids) => {
-  return request({
-    url: '/api/logistics/distribution-centre/submitTransport',
-    method: 'post',
-    params: {
-      carId, driverId, ids
-    }
-  })
-}

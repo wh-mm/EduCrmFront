@@ -48,9 +48,8 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/logistics/handoverform";
+  import {getList, getDetail, add, update, remove,submitTransport} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
-  import {submitTransport} from "@/api/logistics/distributionCentre";
 
   export default {
     data() {
@@ -99,6 +98,17 @@
               filterable: true,
               remote: true,
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
+            },
+            {
+              label: "状态",
+              prop: "statusName",
+              addDisplay: false,
+              editDisplay: false,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=handover_form_status",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
             },
           ]
         },

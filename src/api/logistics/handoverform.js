@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/logistics/handoverform/list',
+    url: '/api/logistics/handoverform/page',
     method: 'get',
     params: {
       ...params,
@@ -47,6 +47,16 @@ export const update = (row) => {
     url: '/api/logistics/handoverform/update',
     method: 'post',
     data: row
+  })
+}
+
+export const submitTransport = (carId, driverId, ids) => {
+  return request({
+    url: '/api/logistics/handoverform/submitTransport',
+    method: 'post',
+    params: {
+      carId, driverId, ids
+    }
   })
 }
 
