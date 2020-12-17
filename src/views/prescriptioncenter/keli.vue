@@ -655,6 +655,7 @@
                   value: 'id'
                 },
                 dicFlag: false,
+                search: true,
                 dicUrl: "/api/erp-wms/goods-type/tree"
               },
               {

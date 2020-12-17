@@ -638,10 +638,6 @@
             dialogClickModal: false,
             column: [
               {
-                label: "颗粒名称/药品名称",
-                prop: "goodsName",
-              },
-              {
                 label: "货物类别",
                 prop: "goodsType",
                 type: "tree",
@@ -649,10 +645,24 @@
                   label: 'dictValue',
                   value: 'id'
                 },
-                search: true,
                 dicFlag: false,
-                dicUrl: "/api/erp-wms/goods-type/tree"
+                search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoods"
               },
+
+              {
+                label: "颗粒名称/药品名称",
+                prop: "goodsName",
+                type: "tree",
+                props: {
+                  label: 'goodsName',
+                  value: 'id'
+                },
+                search: true,
+                dicMethod: "Get",
+                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoodsByTypeKL"
+              },
+
               {
                 label: "规格",
                 prop: "goodsSpecification",
@@ -661,7 +671,6 @@
                   label: 'dictValue',
                   value: 'dictKey'
                 },
-                search: true,
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
               },
               {
