@@ -319,14 +319,20 @@
 
             </el-table>
 
-            <el-row>
-              <el-col :span="10" :offset="3">
-                <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
-              </el-col>
-              <el-col :span="8" :offset="3">
-                <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
-              </el-col>
-            </el-row>
+            <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+            <el-col :span="3" :offset="1">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
+            </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
+          </el-col>
 
           </div>
 
@@ -458,14 +464,21 @@
                 align="center">
               </el-table-column>
             </el-table>
-            <el-row>
-              <el-col :span="10" :offset="3">
-                <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
-              </el-col>
-              <el-col :span="8" :offset="3">
-                <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
-              </el-col>
-            </el-row>
+
+            <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+            <el-col :span="3" :offset="1">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
+            </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
+          </el-col>
           </div>
 
 

@@ -81,6 +81,7 @@
         <template slot="drugweight" slot-scope="scope">
           {{scope.row.tienum * scope.row.drugAllnum}}
         </template>
+
         <template slot="drugDescription" slot-scope="scope">
           <avue-input size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
         </template>
@@ -104,6 +105,9 @@
         <template slot="tienum" slot-scope="scope">
           {{scope.row.tienum}}
         </template>
+<!--        <template slot="drugweight" slot-scope="scope">-->
+<!--          {{scope.row.tienum * scope.row.drugAllnum}}-->
+<!--        </template>-->
         <template slot="drugweight" slot-scope="scope">
           {{scope.row.tienum * scope.row.drugAllnum}}
         </template>
@@ -138,6 +142,7 @@
         <template slot="drugweight" slot-scope="scope">
           {{scope.row.tienum * scope.row.drugAllnum}}
         </template>
+
         <template slot="drugDescription" slot-scope="scope">
           {{scope.row.drugDescription}}
         </template>
@@ -317,14 +322,20 @@
 
             </el-table>
 
-            <el-row>
-              <el-col :span="10" :offset="3">
-                <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
-              </el-col>
-              <el-col :span="8" :offset="3">
-                <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
-              </el-col>
-            </el-row>
+            <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+            <el-col :span="3" :offset="1">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
+            </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
+          </el-col>
 
           </div>
 
@@ -456,14 +467,20 @@
                 align="center">
               </el-table-column>
             </el-table>
-            <el-row>
-              <el-col :span="10" :offset="3">
-                <div class="grid-content bg-purple"><p style="font-size: 15px">配方中药师：<span></span></p></div>
-              </el-col>
-              <el-col :span="8" :offset="3">
-                <div class="grid-content bg-purple-light"><p style="font-size: 15px">复核中药师：<span></span></p></div>
-              </el-col>
-            </el-row>
+            <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+            <el-col :span="3" :offset="1">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
+            </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
+          </el-col>  <el-col :span="2" :offset="3">
+            <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
+          </el-col>
           </div>
 
 
@@ -710,6 +727,13 @@
         });
         return ids.join(",");
       },
+      dose() {
+        let ids = [];
+        this.selectionList.forEach(ele => {
+          ids.push(ele.id);
+        });
+        return ids.join(",");
+      },
     },
     methods: {
       handleClick() {
@@ -754,6 +778,7 @@
         this.addInfo.drugList = this.drugList.selectionList;
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
+        console.log(this.addInfo.drugList[0].tienum); //dose贴数
       },
       //保存
       bcBtn() {
@@ -927,6 +952,7 @@
       },
       //新增 按钮
       newAdd() {
+
         this.addDialogVisible = true;
         this.tabFrom();
         this.addOption.detail = false;
@@ -935,6 +961,7 @@
         if (this.activeName === 'jianyao') {
           this.addOption = Object.assign({}, newAddDrugOption);
           this.addCrudOption = Object.assign({}, newAddDrugListOption);
+
         } else if (this.activeName === 'tiaopei') {
           this.addOption = Object.assign({}, newAddGrainOption);
           this.addCrudOption = Object.assign({}, newAddBlenderListOption);
@@ -1032,6 +1059,7 @@
         params.drugCategory = this.activeName;
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
           const data = res.data.data;
+
           if (data.length == 0) {
             this.drugList.loading = false;
             this.drugSelectionClear();
@@ -1048,6 +1076,7 @@
           this.drugList.data = data.records;
           this.drugList.loading = false;
           this.drugSelectionClear();
+
         });
       },
     }
