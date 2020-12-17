@@ -159,6 +159,8 @@
               label: "库房药名称",
               prop: "goodsId",
               type: "tree",
+              searchLabelWidth:130,
+              searchSpan:7,
               props: {
                 label: 'goodsName',
                 value: 'id'
