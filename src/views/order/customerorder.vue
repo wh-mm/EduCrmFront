@@ -122,6 +122,8 @@
     getInfo,
     getList,
     receiveBlenderSave,
+    clinicReceiveBlender,
+    clinicReceiveDecoctingSave,
     receiveDecoctingSave,
     selectListByDrugCategory
   } from "@/api/order/order";
@@ -322,7 +324,7 @@
                 params.orderType = this.activeName;
                 params.drugList = this.addInfo.drugList;
                 if (this.activeName === 'tiaopei') {
-                  receiveBlenderSave(params).then(res => {
+                  clinicReceiveBlender(params).then(res => {
                     if (res.data.code === 200) {
                       this.$message({
                         type: "success",
@@ -342,7 +344,7 @@
                     }
                   });
                 } else if (this.activeName === 'jianyao') {
-                  receiveDecoctingSave(params).then(res => {
+                  clinicReceiveDecoctingSave(params).then(res => {
                     if (res.data.code === 200) {
                       this.$message({
                         type: "success",

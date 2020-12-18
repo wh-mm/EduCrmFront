@@ -143,6 +143,23 @@ export const receiveBlenderSave = (row) => {
     data: row
   })
 };
+
+//调配机诊所保存方法
+export const clinicReceiveBlender = (row) => {
+  return request({
+    url: '/api/taocao-order/order/clinicReceiveBlender',
+    method: 'post',
+    data: row
+  })
+};
+//煎药机诊所保存方法
+export const clinicReceiveDecoctingSave = (row) => {
+  return request({
+    url: '/api/taocao-order/order/clinicReceiveDecoctingSave',
+    method: 'post',
+    data: row
+  })
+};
 export const selectByOrderId = (orderId) => {
   return request({
     url: '/api/taocao-order/order/selectByOrderId',
