@@ -184,7 +184,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -365,7 +365,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -525,7 +525,7 @@
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'jianyao',
-
+        time:'',
         printJianYaoData: [
           {
             /** 煎药**/
@@ -545,7 +545,6 @@
             doctor: '',//医生姓名
           }
         ],
-
         printJianYaoDrugData: [
           {
             /** 煎药**/
@@ -558,10 +557,8 @@
 
           }
         ],
-
         printData: [
           {
-
             hospitalName: '', //医院名称
             name: '', //患者名称
             sex: '', //性别
@@ -884,73 +881,75 @@
 
       //打印
       dayin(row) {
-
+        let yy = new Date().getFullYear();
+        let mm = new Date().getMonth()+1;
+        let dd = new Date().getDate();
+        let hh = new Date().getHours();
+        let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
+        let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
+        this.time =  yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
         if (row.orderType === "jianyao") {
 
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
               this.printJianYaoDrugData = res.data.data.drugList;
+              setTimeout(() => {
+                JsBarcode("#bigcode", row.id, {
+                  width: 2,//设置条之间的宽度
+                  height: 56,//高度
+                  fontOptions: "bold",//使文字加粗体或变斜体
+                  textAlign: "center",//设置文本的水平对齐方式
+                  textMargin: 5,//设置条形码和文本之间的间距
+                  fontSize: 25,//设置文本的大小
+                  displayValue: true,//是否在条形码下方显示文字
+                  margin: 2
+                });
+                this.$Print(this.$refs.printyinpian);
+                /*var prnhtml = document.querySelector("#print11").innerHTML;
+                var iframe = document.createElement('IFRAME');
+                iframe.setAttribute('style', 'display:none;');
+                var doc = null;
+                document.body.appendChild(iframe);
+                doc = iframe.contentWindow.document;
+                doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
+                doc.close();
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                if (navigator.userAgent.indexOf("MSIE") > 0) {
+                  document.body.removeChild(iframe);
+                }*/
+              }, 100);
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
           })
-          //  console.log(row.id);
-          // console.log(row.orderType);
-          setTimeout(() => {
-            JsBarcode("#bigcode", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-            this.$Print(this.$refs.printyinpian);
-            /*var prnhtml = document.querySelector("#print11").innerHTML;
-            var iframe = document.createElement('IFRAME');
-            iframe.setAttribute('style', 'display:none;');
-            var doc = null;
-            document.body.appendChild(iframe);
-            doc = iframe.contentWindow.document;
-            doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
-            doc.close();
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-            if (navigator.userAgent.indexOf("MSIE") > 0) {
-              document.body.removeChild(iframe);
-            }*/
-          }, 100);
+
         } else if (row.orderType === 'tiaopei') {
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printData = res.data.data.form;
               this.printDrugData = res.data.data.drugList;
+              setTimeout(() => {
+                JsBarcode("#bigcode2", row.id, {
+                  width: 2,//设置条之间的宽度
+                  height: 56,//高度
+                  fontOptions: "bold",//使文字加粗体或变斜体
+                  textAlign: "center",//设置文本的水平对齐方式
+                  textMargin: 5,//设置条形码和文本之间的间距
+                  fontSize: 25,//设置文本的大小
+                  displayValue: true,//是否在条形码下方显示文字
+                  margin: 2
+                });
+                this.$Print(this.$refs.printkeli);
+              }, 100);
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
           })
-          setTimeout(() => {
-            JsBarcode("#bigcode2", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-
-            this.$Print(this.$refs.printkeli);
-
-          }, 100);
         }
-
       },
       //新增 按钮
       newAdd() {
