@@ -65,6 +65,7 @@
         <template slot="menuLeft">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
@@ -780,10 +781,12 @@
           l.doseHerb = 1;
           l.equivalent = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
-        console.log(this.addInfo.drugList[0].tienum); //dose贴数
       },
       //保存
       bcBtn() {
@@ -864,7 +867,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
-
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //推送
       sendHttp() {
@@ -957,7 +962,6 @@
       },
       //新增 按钮
       newAdd() {
-
         this.addDialogVisible = true;
         this.tabFrom();
         this.addOption.detail = false;
@@ -1062,7 +1066,6 @@
       drugOnLoad(page, params = {}) {
         this.drugList.loading = true;
        /* params.drugCategory = this.activeName;*/
-
         params.goodsType ="1329684210586906625";
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
           const data = res.data.data;

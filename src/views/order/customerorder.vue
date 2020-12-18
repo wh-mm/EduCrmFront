@@ -53,6 +53,7 @@
         <template slot="menuLeft">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0" ></el-input>
@@ -301,7 +302,10 @@
           l.equivalent = 1;
           l.dose = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
       },
@@ -384,6 +388,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //新增 按钮
       newAdd() {

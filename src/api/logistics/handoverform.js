@@ -12,6 +12,18 @@ export const getList = (current, size, params) => {
   })
 }
 
+export const view = (current, size, id) => {
+  return request({
+    url: '/api/logistics/handoverform/view',
+    method: 'get',
+    params: {
+      id,
+      current,
+      size,
+    }
+  })
+}
+
 export const getDetail = (id) => {
   return request({
     url: '/api/logistics/handoverform/detail',

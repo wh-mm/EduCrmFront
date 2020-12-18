@@ -40,7 +40,7 @@
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
-               v-if="selectDrugDialogVisible"
+               v-if="selectDrugDialogVisible" destroy-on-close='true'
                :close-on-click-modal="false">
       <avue-crud :option="drugList.option" :table-loading="drugList.loading" :data="drugList.data"
                  :page.sync="drugList.page" v-model="drugList.form" ref="crudDrug"
@@ -65,8 +65,8 @@
       <avue-form ref="addForm" v-model="addInfo.form" :option="addOption"></avue-form>
       <avue-crud ref="addCrud" :data="addInfo.drugList" :option="addCrudOption">
         <template slot="menuLeft">
-          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
-          </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品</el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
@@ -773,7 +773,10 @@
           l.doseHerb = 1;
           l.equivalent = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
       },
@@ -856,7 +859,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
-
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //推送
       sendHttp() {
