@@ -188,7 +188,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>{{aData = new Date() | formatDate}}</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -369,7 +369,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>{{aData = new Date() | formatDate}}</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>

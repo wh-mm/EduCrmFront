@@ -183,7 +183,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>{{aData = new Date() | formatDate}}</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -364,7 +364,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>{{aData = new Date() | formatDate}}</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -539,13 +539,7 @@
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'tiaopei',
-
-        timeData:[
-          {
-            nowTime: '',
-          }
-        ],
-
+        time:'',
         printJianYaoData: [
           {
             /** 煎药**/
@@ -948,7 +942,7 @@
               document.body.removeChild(iframe);
             }*/
           }, 100);
-        } else if (row.orderType === 'tiaopei') {
+        }  else if (row.orderType === 'tiaopei') {
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printData = res.data.data.form;
