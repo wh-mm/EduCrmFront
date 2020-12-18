@@ -671,15 +671,15 @@ export const newAddBlenderListOption = {
       prop: "goodsName",
     },
     {
-      label: "饮片剂量",
+      label: "单剂量",
       prop: "doseHerb",
       slot: true,
     },
-    {
+   /* {
       label: "当量",
       prop: "equivalent",
       slot: true,
-    },
+    },*/
     {
       label: "单价",
       prop: "unitPrice",
@@ -755,15 +755,15 @@ export const viewAddBlenderListOption = {
       prop: "drugName",
     },
     {
-      label: "饮片剂量",
+      label: "单剂量",
       prop: "doseHerb",
       slot: true,
     },
-    {
+   /* {
       label: "当量",
       prop: "equivalent",
       slot: true,
-    },
+    },*/
     {
       label: "单价",
       prop: "unitPrice",

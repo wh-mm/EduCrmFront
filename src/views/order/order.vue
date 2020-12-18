@@ -18,8 +18,8 @@
       <template slot-scope="scope" slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
-        <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
-        </el-button>
+       <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
+        </el-button>-->
 
       </template>
 
@@ -40,7 +40,7 @@
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
-               v-if="selectDrugDialogVisible"
+               v-if="selectDrugDialogVisible" destroy-on-close='true'
                :close-on-click-modal="false">
       <avue-crud :option="drugList.option" :table-loading="drugList.loading" :data="drugList.data"
                  :page.sync="drugList.page" v-model="drugList.form" ref="crudDrug"
@@ -65,8 +65,8 @@
       <avue-form ref="addForm" v-model="addInfo.form" :option="addOption"></avue-form>
       <avue-crud ref="addCrud" :data="addInfo.drugList" :option="addCrudOption">
         <template slot="menuLeft">
-          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
-          </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品</el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
@@ -184,7 +184,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -365,7 +365,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -525,7 +525,7 @@
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'jianyao',
-
+        time:'',
         printJianYaoData: [
           {
             /** 煎药**/
@@ -545,7 +545,6 @@
             doctor: '',//医生姓名
           }
         ],
-
         printJianYaoDrugData: [
           {
             /** 煎药**/
@@ -558,10 +557,8 @@
 
           }
         ],
-
         printData: [
           {
-
             hospitalName: '', //医院名称
             name: '', //患者名称
             sex: '', //性别
@@ -638,24 +635,28 @@
             dialogClickModal: false,
             column: [
               {
-                label: "货物类别",
-                prop: "goodsType",
-                type: "tree",
-                props: {
-                  label: 'dictValue',
-                  value: 'id'
-                },
-                dicFlag: false,
-                search: true,
-                dicUrl: this.ERP_WMS_NAME + "/goods/selecListGoods"
-              },
-
-              {
-                label: "颗粒名称/药品名称",
+                label: "颗粒名称",
                 prop: "goodsName",
                 type: "tree",
                 props: {
                   label: 'goodsName',
+                  value: 'id'
+                },
+                search: true,
+                dicMethod: "post",
+                dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
+              },
+              {
+                label: "货物类型",
+                prop: "goodsType",
+                type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
                   value: 'id'
                 },
                 search: true,
@@ -666,12 +667,8 @@
               {
                 label: "规格",
                 prop: "goodsSpecification",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+
+
               },
               {
                 label: "单价",
@@ -775,7 +772,10 @@
           l.doseHerb = 1;
           l.equivalent = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
       },
@@ -858,7 +858,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
-
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //推送
       sendHttp() {
@@ -881,71 +883,74 @@
 
       //打印
       dayin(row) {
-
+        let yy = new Date().getFullYear();
+        let mm = new Date().getMonth()+1;
+        let dd = new Date().getDate();
+        let hh = new Date().getHours();
+        let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
+        let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
+        this.time =  yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
         if (row.orderType === "jianyao") {
 
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
               this.printJianYaoDrugData = res.data.data.drugList;
+              setTimeout(() => {
+                JsBarcode("#bigcode", row.id, {
+                  width: 2,//设置条之间的宽度
+                  height: 56,//高度
+                  fontOptions: "bold",//使文字加粗体或变斜体
+                  textAlign: "center",//设置文本的水平对齐方式
+                  textMargin: 5,//设置条形码和文本之间的间距
+                  fontSize: 25,//设置文本的大小
+                  displayValue: true,//是否在条形码下方显示文字
+                  margin: 2
+                });
+                this.$Print(this.$refs.printyinpian);
+                /*var prnhtml = document.querySelector("#print11").innerHTML;
+                var iframe = document.createElement('IFRAME');
+                iframe.setAttribute('style', 'display:none;');
+                var doc = null;
+                document.body.appendChild(iframe);
+                doc = iframe.contentWindow.document;
+                doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
+                doc.close();
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                if (navigator.userAgent.indexOf("MSIE") > 0) {
+                  document.body.removeChild(iframe);
+                }*/
+              }, 100);
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
           })
-          //  console.log(row.id);
-          // console.log(row.orderType);
-          setTimeout(() => {
-            JsBarcode("#bigcode", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-            this.$Print(this.$refs.printyinpian);
-            /*var prnhtml = document.querySelector("#print11").innerHTML;
-            var iframe = document.createElement('IFRAME');
-            iframe.setAttribute('style', 'display:none;');
-            var doc = null;
-            document.body.appendChild(iframe);
-            doc = iframe.contentWindow.document;
-            doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
-            doc.close();
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-            if (navigator.userAgent.indexOf("MSIE") > 0) {
-              document.body.removeChild(iframe);
-            }*/
-          }, 100);
+
         } else if (row.orderType === 'tiaopei') {
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printData = res.data.data.form;
               this.printDrugData = res.data.data.drugList;
+              setTimeout(() => {
+                JsBarcode("#bigcode2", row.id, {
+                  width: 2,//设置条之间的宽度
+                  height: 56,//高度
+                  fontOptions: "bold",//使文字加粗体或变斜体
+                  textAlign: "center",//设置文本的水平对齐方式
+                  textMargin: 5,//设置条形码和文本之间的间距
+                  fontSize: 25,//设置文本的大小
+                  displayValue: true,//是否在条形码下方显示文字
+                  margin: 2
+                });
+                this.$Print(this.$refs.printkeli);
+              }, 100);
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
           })
-          setTimeout(() => {
-            JsBarcode("#bigcode2", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-
-            this.$Print(this.$refs.printkeli);
-
-          }, 100);
         }
 
       },

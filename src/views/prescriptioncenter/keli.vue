@@ -65,6 +65,7 @@
         <template slot="menuLeft">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
@@ -182,7 +183,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -363,7 +364,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -522,7 +523,7 @@
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'tiaopei',
-
+        time:'',
         printJianYaoData: [
           {
             /** 煎药**/
@@ -650,13 +651,17 @@
                 label: "货物类别",
                 prop: "goodsType",
                 type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
                 props: {
-                  label: 'dictValue',
+                  label: 'title',
                   value: 'id'
                 },
-                dicFlag: false,
-                search: true,
-                dicUrl: "/api/erp-wms/goods-type/tree"
+                //search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
@@ -765,7 +770,10 @@
           l.doseHerb = 1;
           l.equivalent = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
       },
@@ -848,7 +856,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
-
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //推送
       sendHttp() {
@@ -871,9 +881,14 @@
 
       //打印
       dayin(row) {
-
+        let yy = new Date().getFullYear();
+        let mm = new Date().getMonth()+1;
+        let dd = new Date().getDate();
+        let hh = new Date().getHours();
+        let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
+        let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
+        this.time =  yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
         if (row.orderType === "jianyao") {
-
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
@@ -916,26 +931,24 @@
             if (res.data.success) {
               this.printData = res.data.data.form;
               this.printDrugData = res.data.data.drugList;
+              setTimeout(() => {
+                JsBarcode("#bigcode2", row.id, {
+                  width: 2,//设置条之间的宽度
+                  height: 56,//高度
+                  fontOptions: "bold",//使文字加粗体或变斜体
+                  textAlign: "center",//设置文本的水平对齐方式
+                  textMargin: 5,//设置条形码和文本之间的间距
+                  fontSize: 25,//设置文本的大小
+                  displayValue: true,//是否在条形码下方显示文字
+                  margin: 2
+                });
+                this.$Print(this.$refs.printkeli);
+              }, 100);
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
           })
-          setTimeout(() => {
-            JsBarcode("#bigcode2", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-
-            this.$Print(this.$refs.printkeli);
-
-          }, 100);
         }
 
       },
@@ -1042,7 +1055,6 @@
         this.drugOnLoad(this.drugList.page, this.drugList.query);
       },
       drugOnLoad(page, params = {}) {
-        alert(111111111111);
         this.drugList.loading = true;
         //params.goodsType = this.activeName;
         params.goodsType ="1331839100138426370";

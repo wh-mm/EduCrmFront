@@ -65,6 +65,7 @@
         <template slot="menuLeft">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
@@ -187,7 +188,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -368,7 +369,7 @@
               </el-col>
               <el-col :span="8" :offset="3">
                 <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>2020年12月5日12:12:29</span></p></div>
+                  打印时间：<span>{{time}}</span></p></div>
               </el-col>
             </el-row>
           </div>
@@ -527,7 +528,7 @@
         selectDrugDialogVisible: false,
         dialogFormVisible: false,
         activeName: 'jianyao',
-
+        time:'',
         printJianYaoData: [
           {
             /** 煎药**/
@@ -655,13 +656,17 @@
                 label: "货物类别",
                 prop: "goodsType",
                 type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
                 props: {
-                  label: 'dictValue',
+                  label: 'title',
                   value: 'id'
                 },
-                dicFlag: false,
-                dicUrl: "/api/erp-wms/goods-type/tree"
-
+                //search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
@@ -776,10 +781,12 @@
           l.doseHerb = 1;
           l.equivalent = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
-        console.log(this.addInfo.drugList[0].tienum); //dose贴数
       },
       //保存
       bcBtn() {
@@ -860,7 +867,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
-
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //推送
       sendHttp() {
@@ -883,46 +892,50 @@
 
       //打印
       dayin(row) {
-
+        let yy = new Date().getFullYear();
+        let mm = new Date().getMonth()+1;
+        let dd = new Date().getDate();
+        let hh = new Date().getHours();
+        let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
+        let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
+        this.time =  yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
         if (row.orderType === "jianyao") {
 
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
               this.printJianYaoData = res.data.data.form;
               this.printJianYaoDrugData = res.data.data.drugList;
+              setTimeout(() => {
+                JsBarcode("#bigcode", row.id, {
+                  width: 2,//设置条之间的宽度
+                  height: 56,//高度
+                  fontOptions: "bold",//使文字加粗体或变斜体
+                  textAlign: "center",//设置文本的水平对齐方式
+                  textMargin: 5,//设置条形码和文本之间的间距
+                  fontSize: 25,//设置文本的大小
+                  displayValue: true,//是否在条形码下方显示文字
+                  margin: 2
+                });
+                this.$Print(this.$refs.printyinpian);
+                /*var prnhtml = document.querySelector("#print11").innerHTML;
+                var iframe = document.createElement('IFRAME');
+                iframe.setAttribute('style', 'display:none;');
+                var doc = null;
+                document.body.appendChild(iframe);
+                doc = iframe.contentWindow.document;
+                doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
+                doc.close();
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                if (navigator.userAgent.indexOf("MSIE") > 0) {
+                  document.body.removeChild(iframe);
+                }*/
+              }, 100);
               this.$message.success(res.data.msg);
             } else {
               this.$message.error(res.data.msg);
             }
           })
-          //  console.log(row.id);
-          // console.log(row.orderType);
-          setTimeout(() => {
-            JsBarcode("#bigcode", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-            this.$Print(this.$refs.printyinpian);
-            /*var prnhtml = document.querySelector("#print11").innerHTML;
-            var iframe = document.createElement('IFRAME');
-            iframe.setAttribute('style', 'display:none;');
-            var doc = null;
-            document.body.appendChild(iframe);
-            doc = iframe.contentWindow.document;
-            doc.write('<html><head><style>'  + '</style></head><body style="zoom: 60%;">' + prnhtml + '</body></html>');
-            doc.close();
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-            if (navigator.userAgent.indexOf("MSIE") > 0) {
-              document.body.removeChild(iframe);
-            }*/
-          }, 100);
         } else if (row.orderType === 'tiaopei') {
           selectByOrderId(row.id).then(res => {
             if (res.data.success) {
@@ -953,7 +966,6 @@
       },
       //新增 按钮
       newAdd() {
-
         this.addDialogVisible = true;
         this.tabFrom();
         this.addOption.detail = false;
@@ -1058,7 +1070,6 @@
       drugOnLoad(page, params = {}) {
         this.drugList.loading = true;
        /* params.drugCategory = this.activeName;*/
-
         params.goodsType ="1329684210586906625";
         selectListByDrugCategory(page.currentPage, page.pageSize, Object.assign(params, this.drugList.query)).then(res => {
           const data = res.data.data;
