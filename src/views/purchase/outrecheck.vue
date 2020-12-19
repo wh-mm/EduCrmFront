@@ -1005,15 +1005,6 @@
           }
         })
       },
-      //按钮控制复核数量赋值
-      changeSwitch () {
-        if(this.value1 ==false){
-          console.log("输出的是否")
-        }else{
-          console.log("输出的是是")
-
-        }
-      }
     }
   };
 </script>
