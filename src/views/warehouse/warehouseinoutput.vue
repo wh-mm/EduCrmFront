@@ -354,6 +354,26 @@
               type: "number",
             },
             {
+              label: "规格",
+              prop: "specification",
+              type:'select',
+              rules:[{
+                message: "请输入规格",
+                trigger: "blur",
+                required: true,
+              }],
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+            },
+            {
+              label: "供应商",
+              prop: "supplierName"
+            },
+
+            {
               label: "批号",
               prop: "batchNumber",
               required: true,
@@ -551,7 +571,6 @@
               },
               dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
-
             {
               label: "数量(g)",
               prop: "quantity",
@@ -565,6 +584,30 @@
                 validator: validateNumber,
                 trigger: 'blur',
               }]
+            },
+            {
+              label: "规格",
+              prop: "specification",
+              type:'select',
+              rules:[{
+                message: "请输入规格",
+                trigger: "blur",
+                required: true,
+              }],
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+            },
+            {
+              label: "供应商",
+              prop: "supplierName",
+              rules:[{
+                message: "请输入供应商",
+                trigger: "blur",
+                required: true,
+              }],
             },
             {
               label: "类型",

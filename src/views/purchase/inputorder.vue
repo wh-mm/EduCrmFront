@@ -343,7 +343,7 @@
             },
             {
               label: '商品列表',
-              prop: 'outputOrderDetailList',
+              prop: 'inputOrderDetailList',
               type: 'dynamic',
               span:24,
               children: {
@@ -385,7 +385,7 @@
                       if (value) {
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
+                          this.form.inputOrderDetailList.forEach(val => {
                             if (val.goodsId == value) {
                               var detail = res.data.data;
                               val.basicUnit = detail.basicUnit;

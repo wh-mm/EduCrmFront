@@ -26,14 +26,17 @@
 <!--          </el-button>-->
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size"  v-if="scope.row.status==101" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
+
         <el-button :size="scope.size"  :type="scope.type" @click="print(scope.row.id)"> 打印出库单</el-button>
-        <el-button type="primary"
-                   icon="el-icon-check"
+
+        <el-button :size="scope.size"  v-if="scope.row.status==101"
+                   type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
+        <el-button icon="el-icon-check"
                    size="small"
+                   type="text"
                    v-if="scope.row.status==101"
                    plain
-                   @click.stop="handleEdit(scope.row,scope.index)">修改采购单</el-button>
+                   @click.stop="handleEdit(scope.row,scope.index)">修改出库单</el-button>
       </template>
 
 
