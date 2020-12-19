@@ -46,7 +46,6 @@
 
       <template slot-scope="scope" slot="unitForm">
         <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查 看 资 质</el-button>
-
       </template>
      </avue-crud>
     <el-dialog

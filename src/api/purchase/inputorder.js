@@ -67,15 +67,6 @@ export const inventoryToRetrieve = (warehouseId) => { //库存检索
     }
   })
 }
-export const selectGoodsGross = (goodsId) => { //库存总量
-  return request({
-    url: '/api/purchase/input-order/selectGoodsGross',
-    method: 'post',
-    params:{
-      goodsId
-    }
-  })
-}
 export const viewReason = (id) => {  //查看驳回理由
   return request({
     url: '/api/purchase/input-order/viewReason',
@@ -97,4 +88,13 @@ export const updaterejectText = (ids,rejectText) => { //填写驳回理由
   })
 }
 
+export const printInputorderDetail = (id) => {
+  return request({
+    url: '/api/purchase/input-order/printInputOrderDetail',
+    method: 'get',
+    params:{
+      id
+    }
+  })
+}
 

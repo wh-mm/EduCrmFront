@@ -382,7 +382,7 @@
             {
               label: "生产日期",
               prop: "dateOfManufacture",
-              type:'datetime',
+              type:'date',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
               required: true,
@@ -390,7 +390,7 @@
             {
               label: "有效期至",
               prop: "periodOfValidity",
-              type:'datetime',
+              type:'date',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
               required: true,
