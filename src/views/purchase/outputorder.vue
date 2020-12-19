@@ -32,9 +32,10 @@
         <el-button type="primary"
                    icon="el-icon-check"
                    size="small"
+                   type="text"
                    v-if="scope.row.status==101"
                    plain
-                   @click.stop="handleEdit(scope.row,scope.index)">修改采购单</el-button>
+                   @click.stop="handleEdit(scope.row,scope.index)">修改出库单</el-button>
       </template>
 
 

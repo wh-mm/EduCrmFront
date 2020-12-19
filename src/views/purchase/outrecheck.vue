@@ -29,6 +29,21 @@
                    v-if="status1 == '101'"
                    @click="dialogFormVisible = true">填写驳回理由
         </el-button>
+       <el-button
+       size="small"
+       type="text"
+       >
+         <el-switch
+         style="display: block"
+         v-model="value1"
+         active-color="#13ce66"
+         inactive-color="#ff4949"
+         active-text="启用数量同步"
+         inactive-text="关闭数量同步"
+         @change="changeSwitch()">
+       </el-switch>
+       </el-button>
+
       </template>
 
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
@@ -48,16 +63,7 @@
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
 
-        <!--<el-switch
-          style="display: block"
-          v-model="value1"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="启用"
-          inactive-text="关闭"
-          @change="changeSwitch(scope.row)">
 
-        </el-switch>-->
 
       </template>
 
@@ -319,7 +325,7 @@
                     width:150,
                     rules: [{
                       required: true,
-                      message: "请输入储位",
+                      message: "请输入区域",
                       trigger: "blur"
                     }],
                     props: {
@@ -926,15 +932,6 @@
           }
         })
       },
-      //按钮控制复核数量赋值
-      changeSwitch () {
-        if(this.value1 ==false){
-          console.log("输出的是否")
-        }else{
-          console.log("输出的是是")
-
-        }
-      }
     }
   };
 </script>
