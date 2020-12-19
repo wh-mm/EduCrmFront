@@ -24,14 +24,14 @@
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_in"
                    plain
-                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">上 架
+                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架
         </el-button>
         <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_out"
                    plain
-                   @click="outdialogVisible = true,title = '出 库',obj.type = 'out' ">下 架
+                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架
         </el-button>
 
 <!--        <el-button type="primary"-->
@@ -338,7 +338,7 @@
             {
               label: "商品",
               prop: "goodsId",
-              type:"select",
+              type:"tree",
               props: {
                 required: true,
                 label: 'goodsName',
@@ -363,16 +363,16 @@
               label: "生产日期",
               prop: "dateOfManufacture",
               type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
               required: true,
             },
             {
               label: "有效期至",
               prop: "periodOfValidity",
               type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
               required: true,
             },
             {

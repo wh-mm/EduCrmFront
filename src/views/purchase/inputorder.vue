@@ -27,7 +27,7 @@
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
         <el-button :size="scope.size"  v-if="scope.row.status==101" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
-        <el-button :size="scope.size"  :type="scope.type" @click="print(scope.row.id)"> 打印出库单</el-button>
+        <el-button :size="scope.size"  :type="scope.type" @click="print(scope.row.id)"> 打印入库单</el-button>
         <el-button type="primary"
                    icon="el-icon-check"
                    size="small"
@@ -41,12 +41,11 @@
         <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
       </template>
 
-      <template slot-scope="scope" slot="unitForm">
+      <!--<template slot-scope="scope" slot="unitForm">
         <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查 看 资 质</el-button>
-
-      </template>
+      </template>-->
      </avue-crud>
-    <el-dialog
+    <!--<el-dialog
       title="商品资质"
       :append-to-body="true"
       :visible.sync="commoditydialogVisible"
@@ -58,7 +57,7 @@
     >
       <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
       </avue-crud>
-    </el-dialog>
+    </el-dialog>-->
 
     <el-dialog
       title="商品总量"
@@ -89,7 +88,7 @@
     </el-dialog>
 
     <el-dialog
-      title="打印出库单"
+      title="打印入库单"
       :append-to-body="true"
       :visible.sync="printDialogVisible"
       width="800px"
@@ -107,14 +106,14 @@
                 <el-col :span="24">
                   <div class="grid-content bg-purple-dark"
                        style="font-size: 24px;text-align: center;margin-bottom: 15px;">
-                    出库单
+                    入库单
                   </div>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="8">
                   <div class="grid-content bg-purple">
-                    <p>出库单号 : <span style="margin-left: 10px;">1</span></p>
+                    <p>入库单号 : <span style="margin-left: 10px;">1</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -124,7 +123,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>出库日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
+                    <p>入库日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -205,7 +204,7 @@
                 </el-col>
                 <el-col :span="6">
                   <div class="grid-content bg-purple-light">
-                    <p>出库人 : <span style="margin-left: 10px;"></span></p>
+                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -220,7 +219,7 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,selectGoodsGross,viewReason} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,selectGoodsGross,viewReason} from "@/api/purchase/inputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
@@ -284,7 +283,7 @@
           calcHeight: 30,
           tip: false,
           searchShow: true,
-          editBtnText:'出库复核',
+          editBtnText:'入库复核',
           searchMenuSpan: 6,
           border: true,
           index: true,
@@ -295,7 +294,7 @@
           dialogWidth: '80%',
           column: [
             {
-              label: "出库单号",
+              label: "入库单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
@@ -380,7 +379,6 @@
                     },
                     cascaderItem: ['batchNumber'],
                     dicMethod:'post',
-                    // dicUrl:'/api/erp-wms/goods/selecListGoods',
                     dicUrl: '/api/erp-wms/repertory/dropDowns',
                     change: ({value}) => {
                       console.log(this.form.outputOrderDetailList)
@@ -400,68 +398,6 @@
                       }
                     },
                   },
-                  // {
-                  //   label: "批号",
-                  //   prop: "batchNumber",
-                  //   type:'select',
-                  //   props: {
-                  //
-                  //     label: 'batchNumber',
-                  //     value: 'batchNumber'
-                  //   },
-                  //   dicMethod:'post',
-                  //   dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
-                  //   change: ({value}) => {
-                  //     selectByBatchNumber(value).then(res => {
-                  //       var detail = res.data.data;
-                  //       detail.forEach(val =>{
-                  //         this.form.outputOrderDetailList.forEach(vals => {
-                  //           if (value==val.batchNumber) {
-                  //             vals.warehouseId = val.warehouseId;
-                  //             vals.storageId = val.storageId;
-                  //             vals.repertoryQuantity  = val.repertoryQuantity
-                  //           }
-                  //         });
-                  //
-                  //       });
-                  //     });
-                  //   },
-                  // },
-                  // {
-                  //   label:'库存数量',
-                  //   prop: 'repertoryQuantity',
-                  //   disabled: true,
-                  // },
-                  // {
-                  //   label: '*出货仓库',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   disabled: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   disabled: true,
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['goodsId'],
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
                   {
                     label: "库存检索",
                     prop: "inventoryToRetrieve",
@@ -470,17 +406,16 @@
                     formslot:true,
                     width: 100,
                   },
-
-                  {
+                  /*{
                     label: '商品资质',
                     prop: "unit",
                     type:'input',
                     placeholder: " ",
                     formslot:true,
                     width: 200,
-                  },
+                  },*/
                   {
-                    label: '*出库数量(g)',
+                    label: '*入库数量(g)',
                     prop: "goodsQuantity",
                     type: "number",
                     width: 200,
@@ -855,7 +790,7 @@
       beforeOpen(done, type) {
         if (["add", "edit"].includes(type)) {
           setTimeout(()=>{
-            this.form.type = 'out';
+            this.form.type = 'in';
           },10);
         }
         if (["edit", "view"].includes(type)) {
