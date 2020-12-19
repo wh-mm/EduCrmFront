@@ -27,7 +27,7 @@
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
         <el-button :size="scope.size" v-if="scope.row.status===101" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
-        <el-button :size="scope.size"  :type="scope.type" @click="print(scope.row.id)"> 打印入库单</el-button>
+        <el-button :size="scope.size"  :type="scope.type" @click="print(scope.row)"> 打印入库单</el-button>
         <el-button type="primary"
                    icon="el-icon-check"
                    size="small"
@@ -118,7 +118,7 @@
               <el-table
                 :data="printData.tableData"
                 border :fit="false"
-                style="width: 709px;margin-top: 15px;margin-right: 0px;">
+                style="width: 729px;margin-top: 15px;margin-right: 0px;">
                 <el-table-column
                   type="index"
                   label="序号"
@@ -132,7 +132,7 @@
                 <el-table-column
                   prop="batchNumber"
                   label="批号"
-                  width="147">
+                  width="107">
                 </el-table-column>
                 <el-table-column
                   prop="specification"
@@ -142,7 +142,7 @@
                 <el-table-column
                   prop="dateOfManufacture"
                   label="生产日期"
-                  width="100">
+                  width="90">
                 </el-table-column>
                 <el-table-column
                   prop="placeOfOrigin"
@@ -152,7 +152,12 @@
                 <el-table-column
                   prop="manufacturer"
                   label="生产厂家"
-                  width="100">
+                  width="90">
+                </el-table-column>
+                <el-table-column
+                  prop="supplierName"
+                  label="供应商"
+                  width="80">
                 </el-table-column>
                 <el-table-column
                   prop="goodsQuantity"
@@ -890,9 +895,10 @@
       handleEdit (row, index) {
         this.$refs.crud.rowEdit(row, index);
       },
-      print(id){
+      print(row){
         this.printDialogVisible = true;
-        printInputorderDetail(id).then( res => {
+        this.printData.orderNumber = row.orderNumber;
+        printInputorderDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
         })
       }

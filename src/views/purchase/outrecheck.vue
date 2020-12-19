@@ -48,7 +48,7 @@
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
 
-        <el-switch
+        <!--<el-switch
           style="display: block"
           v-model="value1"
           active-color="#13ce66"
@@ -57,7 +57,7 @@
           inactive-text="关闭"
           @change="changeSwitch(scope.row)">
 
-        </el-switch>
+        </el-switch>-->
 
       </template>
 

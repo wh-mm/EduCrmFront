@@ -97,4 +97,14 @@ export const updaterejectText = (ids,rejectText) => { //填写驳回理由
   })
 }
 
+export const printOutputorderDetail = (id) => {
+  return request({
+    url: '/api/purchase/outputorder/printOutputorderDetail',
+    method: 'get',
+    params:{
+      id
+    }
+  })
+}
+
 
