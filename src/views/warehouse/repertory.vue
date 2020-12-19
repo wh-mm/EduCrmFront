@@ -83,6 +83,7 @@
               prop: "warehouseId",
               type:'tree',
               row: true,
+              search:true,
               span: 24,
               props: {
                 label: 'title',
@@ -101,6 +102,7 @@
               label: "区域",
               prop: "storageRegionId",
               type:'tree',
+              search:true,
               row: true,
               span: 24,
               rules: [{
@@ -135,7 +137,8 @@
             {
               label: "商品",
               prop: "goodsId",
-              type:'select',
+              type:'tree',
+              search:true,
               row: true,
               span: 24,
               props: {
@@ -173,8 +176,8 @@
               ]
             },
             {
-              label: "修改时间",
-              prop: "updateTime",
+              label: "上架时间",
+              prop: "createTime",
               dateDefault: true,
               addDisplay: false,
               viewDisplay: false,

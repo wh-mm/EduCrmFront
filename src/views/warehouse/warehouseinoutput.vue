@@ -24,14 +24,14 @@
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_in"
                    plain
-                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
+                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">上 架
         </el-button>
         <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_out"
                    plain
-                   @click="outdialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
+                   @click="outdialogVisible = true,title = '出 库',obj.type = 'out' ">下 架
         </el-button>
 
 <!--        <el-button type="primary"-->
@@ -386,6 +386,16 @@
               required: true,
             },
             {
+              label: "采购人",
+              prop: "inputPerson",
+              required: true,
+            },
+            {
+              label: "领料人",
+              prop: "outputPerson",
+              required: true,
+            },
+            {
               label: "类型",
               prop: "type",
               type: "select",
@@ -514,7 +524,7 @@
               span: 24,
               rules: [{
                 required: true,
-                message: "请输入储位",
+                message: "请输入区域",
                 trigger: "blur"
               }],
               props: {
@@ -530,11 +540,11 @@
               type:'tree',
               row: true,
               span: 24,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入储位",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'title',
                 value: 'id'
@@ -568,6 +578,16 @@
                 label: "dictValue",
                 value: "dictKey"
               }
+            },
+            {
+              label: "采购人",
+              prop: "inputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入采购人",
+                trigger: "blur",
+                required: true,
+              }],
             },
             {
               label: "备注",
@@ -672,11 +692,11 @@
               type:'tree',
               row: true,
               span: 24,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入储位",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'title',
                 value: 'id'
@@ -716,6 +736,16 @@
                 label: "dictValue",
                 value: "dictKey"
               }
+            },
+            {
+              label: "领料人",
+              prop: "outputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入领料人",
+                trigger: "blur",
+                required: true,
+              }],
             },
             {
               label: "备注",
