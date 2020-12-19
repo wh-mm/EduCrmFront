@@ -367,7 +367,22 @@
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
-                    }]
+                    }],
+                    change: () => {
+                      if(this.value1 == true){
+                        getGoodsDetail().then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outputOrderDetailList.forEach(val => {
+                            var detail = res.data.data;
+                             val.recheckGoodsQuantity = val.goodsQuantity;
+                            val.basicUnit = detail.basicUnit;
+                            val.specification = detail.goodsSpecification;
+
+                          });
+                        });
+                      }
+
+                    },
                   },
                   {
                     label: '复核出库数量(g)',
@@ -912,12 +927,11 @@
         })
       },
       //按钮控制复核数量赋值
-      changeSwitch (row) {
+      changeSwitch () {
         if(this.value1 ==false){
           console.log("输出的是否")
         }else{
-          console.log(this.detail)
-
+          console.log("输出的是是")
 
         }
       }
