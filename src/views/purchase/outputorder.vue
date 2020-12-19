@@ -27,8 +27,8 @@
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
         <el-button :size="scope.size"  v-if="scope.row.status==101" :type="scope.type" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
-        <el-button :size="scope.size"  :type="scope.type" @click="printOut(scope.row)"> 打印出库单</el-button>
-        <el-button :size="scope.size"  :type="scope.type" @click="print(scope.row)"> 打印领料单</el-button>
+        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="printOut(scope.row)"> 打印出库单</el-button>
+        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印领料单</el-button>
         <el-button :type="scope.type"
                    icon="el-icon-check"
                    :size="scope.size"
