@@ -34,7 +34,7 @@
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
         <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
-                   v-if="scope.row.orderStatic==2"
+                   v-if="scope.row.orderStatic!=1"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
       </template>
@@ -521,6 +521,21 @@
     filters: {
       rounding(value) {
         return value.toFixed(2)
+      },
+      formatDate: function (value) {
+        let date = new Date(value);
+        let y = date.getFullYear();
+        let MM = date.getMonth() + 1;
+        MM = MM < 10 ? ('0' + MM) : MM;
+        let d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        let h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        let m = date.getMinutes();
+        m = m < 10 ? ('0' + m) : m;
+        let s = date.getSeconds();
+        s = s < 10 ? ('0' + s) : s;
+        return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
       }
     },
     data() {

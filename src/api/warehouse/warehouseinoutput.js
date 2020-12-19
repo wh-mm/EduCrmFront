@@ -57,4 +57,13 @@ export const updateStatus = (id, status) => {
     }
   })
 }
+export const selectByWarehouseInoutputId = (warehouseinoutputId) => {
+  return request({
+    url: '/api/taocao-warehouse/warehouseinoutput/selectByWarehouseInoutputId',
+    method: 'post',
+    params:{
+      warehouseinoutputId
+    }
+  })
+}
 
