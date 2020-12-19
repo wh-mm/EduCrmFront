@@ -48,6 +48,17 @@
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
 
+        <el-switch
+          style="display: block"
+          v-model="value1"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-text="启用"
+          inactive-text="关闭"
+          @change="changeSwitch(scope.row)">
+
+        </el-switch>
+
       </template>
 
      </avue-crud>
@@ -59,8 +70,7 @@
       :modal="false"
       :before-close="handleClose"
       :close-on-click-modal="false"
-      v-dialogDrag
-    >
+      v-dialogDrag>
       <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
       </avue-crud>
     </el-dialog>
@@ -88,6 +98,7 @@
       </div>
     </el-dialog>
 
+
   </basic-container>
 
 </template>
@@ -111,6 +122,7 @@
         }
       };
       return {
+        value1: true,
         form: {},
         query: {},
         loading: true,
@@ -899,6 +911,16 @@
           }
         })
       },
+      //按钮控制复核数量赋值
+      changeSwitch (row) {
+        if(this.value1 ==false){
+          console.log("输出的是否")
+        }else{
+          console.log(this.detail)
+
+
+        }
+      }
     }
   };
 </script>
