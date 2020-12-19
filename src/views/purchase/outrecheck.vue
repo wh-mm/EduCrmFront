@@ -24,6 +24,18 @@
                      v-if="permission.outrechek_approval"
                      @click="updateStatusNew()">审 批
           </el-button>
+<!--        <el-button type="button"-->
+<!--                     size="small"-->
+<!--                     v-if="permission.outrechek_revocation"-->
+<!--                     @click="updateRevocation()">撤 销-->
+<!--          </el-button>-->
+
+        <el-button type="button"
+                   size="small"
+                   icon="el-icon-mouse"
+                   v-if="permission.outrechek_revocation"
+                   @click="updateRevocation()">撤 销
+        </el-button>
         <el-button type="button"
                    size="small"
                    v-if="status1 == '101'"
@@ -69,6 +81,17 @@
 
      </avue-crud>
     <el-dialog
+      title="审批"
+      :visible.sync="revocationdialogVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateRevocation(104)">同 意</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
       title="商品资质"
       :append-to-body="true"
       :visible.sync="commoditydialogVisible"
@@ -109,12 +132,13 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText,updateRevocation} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import {updateInspector} from "@/api/quality/information";
   export default {
 
     data() {
@@ -139,6 +163,7 @@
         },
         obj:{},
         title: '' ,
+        revocationdialogVisible: false,
         dialogVisible:false,
         commoditydialogVisible:false,
         dialogFormVisible: false,
@@ -866,9 +891,9 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        // if (this.selectionList[0].status != 1){
-        //   return this.$message.error("该任务已经完成");
-        // }
+        if (this.selectionList[0].status == 2){
+          return this.$message.error("该任务已经完成");
+        }
         var id= this.selectionList[0].id;
         let status;
         this.$confirm("请确认是否审批?", {
@@ -893,6 +918,54 @@
           })
         });
       },
+      //审批
+      updateRevocation(status) {
+        if (status === 2 && this.obj0.rejectText === '') {
+          return this.$message.error("请输入驳回理由!");
+        }
+        var id= this.selectionList[0].id;
+        updateRevocation(id,status).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+          this.onLoad(this.page);
+        })
+      },
+      // updateRevocation() {
+      //
+      //   if (this.selectionList.length >1 ){
+      //     return this.$message.error("选中一行数据");
+      //   }
+      //   if (this.selectionList[0].status === 104){
+      //     return this.$message.error("订单已被撤销");
+      //   }
+      //   if (this.selectionList[0].status === 2){
+      //     return this.$message.error("该任务已经完成");
+      //   }
+      //   var id= this.selectionList[0].id;
+      //   let status;
+      //   this.$confirm("请确认是否撤销?", {
+      //     confirmButtonText: "确认",
+      //     cancelButtonText: "驳回",
+      //     type: "warning"
+      //   })
+      //     .then(() => {
+      //       status = 104;
+      //     }).finally(() => {
+      //     updateRevocation(id, status,).then(res => {
+      //       if (res.data.success) {
+      //         this.$message.success(res.data.msg);
+      //       } else {
+      //         this.$message.error(res.data.msg);
+      //       }
+      //       this.refreshChange();
+      //       this.onLoad(this.page);
+      //     })
+      //   });
+      // },
       viewCommodity(goodsId){
         this.commoditydialogVisible = true;
         viewCommodity(goodsId).then(res=>{

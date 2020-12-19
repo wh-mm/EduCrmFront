@@ -285,7 +285,7 @@
           index: true,
           viewBtn: true,
           selection: true,
-          menu:true,
+          menu:false,
           dialogClickModal: false,
           column: [
             {

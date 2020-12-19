@@ -34,8 +34,12 @@
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
         <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
-                   v-if="scope.row.orderStatic!=1"
+                   v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
+        </el-button>
+        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic!=1 &&scope.row.orderStatic!=2"
+                   @click="dayin(scope.row)">补 打
         </el-button>
       </template>
     </avue-crud>

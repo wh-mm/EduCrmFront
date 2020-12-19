@@ -58,6 +58,16 @@ export const updateStatus = (id, status) => {
     }
   })
 }
+export const updateRevocation = (id, status) => {
+  return request({
+    url: '/api/purchase/outputorder/updateRevocation',
+    method: 'post',
+    params:{
+      id,
+      status
+    }
+  })
+}
 export const inventoryToRetrieve = (warehouseId) => { //库存检索
   return request({
     url: '/api/purchase/outputorder/inventoryToRetrieve',
