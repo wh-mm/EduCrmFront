@@ -75,12 +75,13 @@
               search: true,
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
+
             {
               label: "日志时间",
               prop: "createTime",
               type: "datetime",
-              format: "yyyy-MM-dd hh:mm:ss",
-              valueFormat: "yyyy-MM-dd hh:mm:ss",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
               searchRange: true,
               searchSpan: 8,
               addDisplay: false,
