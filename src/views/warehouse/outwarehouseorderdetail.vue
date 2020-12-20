@@ -60,58 +60,24 @@
           dialogClickModal: false,
           column: [
             {
-              label: "入库id",
+              label: "出库id",
               prop: "outputwarehouseId",
               rules: [{
                 required: true,
-                message: "请输入入库id",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "仓库id",
-              prop: "warehouseId",
-              rules: [{
-                required: true,
-                message: "请输入仓库id",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "区id",
-              prop: "storageRegionId",
-              rules: [{
-                required: true,
-                message: "请输入区id",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "储位Id",
-              prop: "storageId",
-              rules: [{
-                required: true,
-                message: "请输入储位Id",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "批号",
-              prop: "batchNumber",
-              rules: [{
-                required: true,
-                message: "请输入批号",
+                message: "请输入采购id",
                 trigger: "blur"
               }]
             },
             {
               label: "商品id",
               prop: "goodsId",
-              rules: [{
-                required: true,
-                message: "请输入商品id",
-                trigger: "blur"
-              }]
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              search:true,
+              dicMethod:"post",
+              dicUrl:'/api/taocao-warehouse/goods/selecListGoods'
             },
             {
               label: "数量",
@@ -119,97 +85,8 @@
               rules: [{
                 required: true,
                 message: "请输入数量",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "复核数量",
-              prop: "recheckGoodsQuantity",
-              rules: [{
-                required: true,
-                message: "请输入复核数量",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "单位",
-              prop: "unit",
-              rules: [{
-                required: true,
-                message: "请输入单位",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "规格",
-              prop: "specification",
-              rules: [{
-                required: true,
-                message: "请输入规格",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "供应商",
-              prop: "supplierName",
-              rules: [{
-                required: true,
-                message: "请输入供应商",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "生产日期",
-              prop: "dateOfManufacture",
-              rules: [{
-                required: true,
-                message: "请输入生产日期",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "有效期至",
-              prop: "periodOfValidity",
-              rules: [{
-                required: true,
-                message: "请输入有效期至",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "生产厂家",
-              prop: "manufacturer",
-              rules: [{
-                required: true,
-                message: "请输入生产厂家",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "产地",
-              prop: "placeOfOrigin",
-              rules: [{
-                required: true,
-                message: "请输入产地",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "出库人",
-              prop: "outputPerson",
-              rules: [{
-                required: true,
-                message: "请输入出库人",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "备注",
-              prop: "remark",
-              rules: [{
-                required: true,
-                message: "请输入备注",
-                trigger: "blur"
+                trigger: "blur",
+
               }]
             },
           ]
