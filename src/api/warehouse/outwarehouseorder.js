@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/warehouse/outwarehouseorder/detail',
+    url: '/api/warehouse/outwarehouseorder/details',
     method: 'get',
     params: {
       id
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/warehouse/outwarehouseorder/submit',
+    url: '/api/warehouse/outwarehouseorder/submits',
     method: 'post',
     data: row
   })
@@ -42,7 +42,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/warehouse/outwarehouseorder/submit',
+    url: '/api/warehouse/outwarehouseorder/submits',
     method: 'post',
     data: row
   })
