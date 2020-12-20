@@ -55,12 +55,11 @@
           searchMenuSpan: 6,
           border: true,
           index: true,
+          viewBtn: true,
           editBtn: false,
           addBtn: false,
           delBtn: false,
-          viewBtn: true,
-          selection: true,
-          menu: false,
+          menuWidth: 120,
           dialogType: 'drawer',
           column: [
             {
@@ -93,6 +92,8 @@
             {
               label: "请求数据",
               prop: "params",
+              //文本域
+              type: "textarea",
               overHidden:true,
               // search: true
             },
@@ -120,7 +121,7 @@
       permissionList() {
         return {
           addBtn: false,
-          viewBtn: false,
+          viewBtn: this.vaildData(this.permission.hospitalapi_view, false),
           delBtn: false,
           editBtn: false
         };
