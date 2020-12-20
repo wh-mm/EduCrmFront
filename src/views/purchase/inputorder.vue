@@ -278,28 +278,44 @@
               }]
             },
             {
-              label: "类型",
-              prop: "type",
-              type: "select",
-              disabled: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+              width: 200,
               props: {
-                label: "dictValue",
-                value: "dictKey"
-              }
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageRegionId','storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl:'/api/erp-wms/warehouse/tree'
             },
-            /*{
-              label: "状态",
-              prop: "statusName",
-              addDisplay:false,
-              editDisplay:false,
-              viewDisplay:false,
-              dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              width: 200,
               props: {
-                label: "dictValue",
-                value: "dictKey"
-              }
-            },*/
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              width: 200,
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+            },
             {
               label:"创建时间",
               prop:"updateTime",

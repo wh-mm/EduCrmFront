@@ -93,7 +93,7 @@
                 label: 'title',
                 value: 'value'
               },
-              cascaderItem: ['storageRegionId'],
+              cascaderItem: ['storageRegionId','storageId'],
               rules: [{
                 required: true,
                 message: "请输入仓库",
@@ -118,7 +118,6 @@
                 label: 'title',
                 value: 'id'
               },
-              cascaderItem: ['storageId'],
               dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
