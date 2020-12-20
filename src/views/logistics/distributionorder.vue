@@ -495,7 +495,7 @@
         this.printData = row;
         console.log(this.printData)
         setTimeout(() => {
-          JsBarcode("#bigcode", row.distributionOrderNumberPrefix + row.distributionOrderNumber, {
+          JsBarcode("#bigcode", row.orderNumber, {
             width: 2,//设置条之间的宽度
             height: 28,//高度
             fontOptions: "bold",//使文字加粗体或变斜体

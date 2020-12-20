@@ -31,6 +31,7 @@
         <el-button  :size="size"
                     :type="type"
                     icon="el-icon-check"
+                    v-if="row.status === 1"
                     @click="updateById(row.id,row.id)">完成
         </el-button>
 
@@ -52,9 +53,6 @@
       <avue-form ref="transportForm" v-model="obj" :option="transportOption" @submit="submitTransport">
       </avue-form>
       <avue-crud :data="selectionList" :option="transportListOption">
-        <template slot="orderNumber" slot-scope="{scope,row}">
-          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-        </template>
       </avue-crud>
     </el-dialog>
     <el-dialog
@@ -65,9 +63,6 @@
       :before-close="handleClose">
       <avue-crud :data="view.data" :option="distributionOption"
                  :page.sync="view.page">
-        <template slot="orderNumber" slot-scope="{scope,row}">
-          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-        </template>
       </avue-crud>
     </el-dialog>
   </basic-container>
@@ -163,7 +158,6 @@
             {
               label: '单号',
               prop: 'orderNumber',
-              slot: true,
             },
             {
               label: "医院名称",
@@ -242,7 +236,6 @@
             {
               label: "单号",
               prop: "orderNumber",
-              slot: true,
               width: 180,
             },
             {
@@ -477,8 +470,8 @@
           });
         }
       },*/
-      updateById(id,distributionOrderid) {
-        updateById(id,distributionOrderid).then(res => {
+      updateById(id) {
+        updateById(id).then(res => {
           if (res.data.success) {
             this.$message.success(res.data.msg);
           } else {

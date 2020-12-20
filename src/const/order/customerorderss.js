@@ -1,3 +1,5 @@
+import {ERP_WMS_NAME} from '@/const/YueConst'
+
 export const phonelength = (rule, value, callback) => {
   if (value.length != 11) {
     callback(new Error('请输入正确手机号'));
@@ -821,7 +823,7 @@ export const option = {
       },
       search: true,
       dicMethod: "post",
-      dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
+      dicUrl: ERP_WMS_NAME + '/goods/selecListGoods'
     },
     {
       label: "订单状态",
