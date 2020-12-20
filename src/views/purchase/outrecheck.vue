@@ -24,11 +24,38 @@
                      v-if="permission.outrechek_approval"
                      @click="updateStatusNew()">审 批
           </el-button>
+<!--        <el-button type="button"-->
+<!--                     size="small"-->
+<!--                     v-if="permission.outrechek_revocation"-->
+<!--                     @click="updateRevocation()">撤 销-->
+<!--          </el-button>-->
+
+        <el-button type="button"
+                   size="small"
+                   icon="el-icon-mouse"
+                   v-if="permission.outrechek_revocation"
+                   @click="updateRevocation()">撤 销
+        </el-button>
         <el-button type="button"
                    size="small"
                    v-if="status1 == '101'"
                    @click="dialogFormVisible = true">填写驳回理由
         </el-button>
+       <el-button
+       size="small"
+       type="text"
+       >
+         <el-switch
+         style="display: block"
+         v-model="value1"
+         active-color="#13ce66"
+         inactive-color="#ff4949"
+         active-text="启用数量同步"
+         inactive-text="关闭数量同步"
+         @change="changeSwitch()">
+       </el-switch>
+       </el-button>
+
       </template>
 
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
@@ -48,20 +75,22 @@
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
 
-        <el-switch
-          style="display: block"
-          v-model="value1"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="启用"
-          inactive-text="关闭"
-          @change="changeSwitch(scope.row)">
 
-        </el-switch>
 
       </template>
 
      </avue-crud>
+    <el-dialog
+      title="审批"
+      :visible.sync="revocationdialogVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateRevocation(104)">同 意</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog
       title="商品资质"
       :append-to-body="true"
@@ -103,12 +132,13 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText,updateRevocation} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import {updateInspector} from "@/api/quality/information";
   export default {
 
     data() {
@@ -133,6 +163,7 @@
         },
         obj:{},
         title: '' ,
+        revocationdialogVisible: false,
         dialogVisible:false,
         commoditydialogVisible:false,
         dialogFormVisible: false,
@@ -319,7 +350,7 @@
                     width:150,
                     rules: [{
                       required: true,
-                      message: "请输入储位",
+                      message: "请输入区域",
                       trigger: "blur"
                     }],
                     props: {
@@ -367,7 +398,22 @@
                     rules: [{
                       validator: validateQuantity,
                       trigger: 'blur'
-                    }]
+                    }],
+                    change: () => {
+                      if(this.value1 == true){
+                        getGoodsDetail().then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outputOrderDetailList.forEach(val => {
+                            var detail = res.data.data;
+                             val.recheckGoodsQuantity = val.goodsQuantity;
+                            val.basicUnit = detail.basicUnit;
+                            val.specification = detail.goodsSpecification;
+
+                          });
+                        });
+                      }
+
+                    },
                   },
                   {
                     label: '复核出库数量(g)',
@@ -845,9 +891,9 @@
         if (this.selectionList.length >1 ){
           return this.$message.error("选中一行数据");
         }
-        // if (this.selectionList[0].status != 1){
-        //   return this.$message.error("该任务已经完成");
-        // }
+        if (this.selectionList[0].status == 2){
+          return this.$message.error("该任务已经完成");
+        }
         var id= this.selectionList[0].id;
         let status;
         this.$confirm("请确认是否审批?", {
@@ -872,6 +918,54 @@
           })
         });
       },
+      //审批
+      updateRevocation(status) {
+        if (status === 2 && this.obj0.rejectText === '') {
+          return this.$message.error("请输入驳回理由!");
+        }
+        var id= this.selectionList[0].id;
+        updateRevocation(id,status).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+          this.onLoad(this.page);
+        })
+      },
+      // updateRevocation() {
+      //
+      //   if (this.selectionList.length >1 ){
+      //     return this.$message.error("选中一行数据");
+      //   }
+      //   if (this.selectionList[0].status === 104){
+      //     return this.$message.error("订单已被撤销");
+      //   }
+      //   if (this.selectionList[0].status === 2){
+      //     return this.$message.error("该任务已经完成");
+      //   }
+      //   var id= this.selectionList[0].id;
+      //   let status;
+      //   this.$confirm("请确认是否撤销?", {
+      //     confirmButtonText: "确认",
+      //     cancelButtonText: "驳回",
+      //     type: "warning"
+      //   })
+      //     .then(() => {
+      //       status = 104;
+      //     }).finally(() => {
+      //     updateRevocation(id, status,).then(res => {
+      //       if (res.data.success) {
+      //         this.$message.success(res.data.msg);
+      //       } else {
+      //         this.$message.error(res.data.msg);
+      //       }
+      //       this.refreshChange();
+      //       this.onLoad(this.page);
+      //     })
+      //   });
+      // },
       viewCommodity(goodsId){
         this.commoditydialogVisible = true;
         viewCommodity(goodsId).then(res=>{
@@ -911,16 +1005,6 @@
           }
         })
       },
-      //按钮控制复核数量赋值
-      changeSwitch (row) {
-        if(this.value1 ==false){
-          console.log("输出的是否")
-        }else{
-          console.log(this.detail)
-
-
-        }
-      }
     }
   };
 </script>

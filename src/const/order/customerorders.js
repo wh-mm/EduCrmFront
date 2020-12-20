@@ -820,6 +820,11 @@ export const option = {
   dialogClickModal: false,
   column: [
     {
+      label: "订单id",
+      prop: "id",
+      search: true,
+    },
+    {
       label: "医院名称",
       prop: "hospitalId",
       type: "select",
@@ -884,7 +889,8 @@ export const option = {
         required: true,
         message: "请输入收件人",
         trigger: "blur"
-      }]
+      }],
+      search: true,
     },
     {
       label: "收件人电话",

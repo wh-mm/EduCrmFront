@@ -24,14 +24,14 @@
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_in"
                    plain
-                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
+                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架
         </el-button>
         <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_out"
                    plain
-                   @click="outdialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
+                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架
         </el-button>
 
 <!--        <el-button type="primary"-->
@@ -285,7 +285,7 @@
           index: true,
           viewBtn: true,
           selection: true,
-          menu:true,
+          menu:false,
           dialogClickModal: false,
           column: [
             {
@@ -338,7 +338,7 @@
             {
               label: "商品",
               prop: "goodsId",
-              type:"select",
+              type:"tree",
               props: {
                 required: true,
                 label: 'goodsName',
@@ -354,6 +354,26 @@
               type: "number",
             },
             {
+              label: "规格",
+              prop: "specification",
+              rules:[{
+                message: "请输入规格",
+                trigger: "blur",
+                required: true,
+              }],
+              // type:'select',
+              // props: {
+              //   label: "dictValue",
+              //   value: "dictKey"
+              // },
+              // dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+            },
+            {
+              label: "供应商",
+              prop: "supplierName"
+            },
+
+            {
               label: "批号",
               prop: "batchNumber",
               required: true,
@@ -362,17 +382,17 @@
             {
               label: "生产日期",
               prop: "dateOfManufacture",
-              type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              type:'date',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
               required: true,
             },
             {
               label: "有效期至",
               prop: "periodOfValidity",
-              type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              type:'date',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
               required: true,
             },
             {
@@ -383,6 +403,16 @@
             {
               label: "产地",
               prop: "placeOfOrigin",
+              required: true,
+            },
+            {
+              label: "采购人",
+              prop: "inputPerson",
+              required: true,
+            },
+            {
+              label: "领料人",
+              prop: "outputPerson",
               required: true,
             },
             {
@@ -514,7 +544,7 @@
               span: 24,
               rules: [{
                 required: true,
-                message: "请输入储位",
+                message: "请输入区域",
                 trigger: "blur"
               }],
               props: {
@@ -530,18 +560,17 @@
               type:'tree',
               row: true,
               span: 24,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入储位",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'title',
                 value: 'id'
               },
               dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
-
             {
               label: "数量(g)",
               prop: "quantity",
@@ -557,6 +586,30 @@
               }]
             },
             {
+              label: "规格",
+              prop: "specification",
+              rules:[{
+                message: "请输入规格",
+                trigger: "blur",
+                required: true,
+              }],
+              // type:'select',
+              // props: {
+              //   label: "dictValue",
+              //   value: "dictKey"
+              // },
+              // dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+            },
+            {
+              label: "供应商",
+              prop: "supplierName",
+              rules:[{
+                message: "请输入供应商",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
               label: "类型",
               prop: "type",
               type: "select",
@@ -568,6 +621,16 @@
                 label: "dictValue",
                 value: "dictKey"
               }
+            },
+            {
+              label: "采购人",
+              prop: "inputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入采购人",
+                trigger: "blur",
+                required: true,
+              }],
             },
             {
               label: "备注",
@@ -672,11 +735,11 @@
               type:'tree',
               row: true,
               span: 24,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入储位",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'title',
                 value: 'id'
@@ -716,6 +779,16 @@
                 label: "dictValue",
                 value: "dictKey"
               }
+            },
+            {
+              label: "领料人",
+              prop: "outputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入领料人",
+                trigger: "blur",
+                required: true,
+              }],
             },
             {
               label: "备注",

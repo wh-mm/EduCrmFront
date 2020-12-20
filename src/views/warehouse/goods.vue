@@ -90,7 +90,6 @@
           total: 0
         },
         selectionList: [],
-        excelBox: false,
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -191,6 +190,7 @@
           ]
         },
         data: [],
+        excelBox: false,
         excelForm: {},
         excelOption: {
           submitBtn: false,

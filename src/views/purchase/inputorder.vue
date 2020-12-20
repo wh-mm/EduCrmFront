@@ -26,53 +26,17 @@
 <!--          </el-button>-->
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size"  v-if="scope.row.status==101" :type="scope.type" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
-        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="printOut(scope.row)"> 打印出库单</el-button>
-        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印领料单</el-button>
-        <el-button :type="scope.type"
+        <el-button :size="scope.size" v-if="scope.row.status===101" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
+        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印入库单</el-button>
+        <el-button type="primary"
                    icon="el-icon-check"
-                   :size="scope.size"
-                   v-if="scope.row.status==101"
+                   size="small"
+                   v-if="scope.row.status===101"
                    plain
-                   @click.stop="handleEdit(scope.row,scope.index)">修改出库单</el-button>
+                   @click.stop="handleEdit(scope.row,scope.index)">修改采购单</el-button>
       </template>
 
-
-      <template slot-scope="scope" slot="inventoryToRetrieveForm">
-        <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
-      </template>
-
-      <template slot-scope="scope" slot="unitForm">
-        <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查 看 资 质</el-button>
-      </template>
      </avue-crud>
-    <el-dialog
-      title="商品资质"
-      :append-to-body="true"
-      :visible.sync="commoditydialogVisible"
-      width="50%"
-      :modal="false"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-      v-dialogDrag
-    >
-      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
-      </avue-crud>
-    </el-dialog>
-
-    <el-dialog
-      title="商品总量"
-      :append-to-body="true"
-      :visible.sync="dialogVisible"
-      width="50%"
-      :modal="false"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-      v-dialogDrag
-    >
-      <avue-crud v-model="form" :data="inventoryToRetrievedata" :option="inventoryToRetrievedataoption"  >
-      </avue-crud>
-    </el-dialog>
 
     <el-dialog
       title="驳回理由"
@@ -89,139 +53,12 @@
     </el-dialog>
 
     <el-dialog
-      title="打印出库单"
-      :append-to-body="true"
-      :visible.sync="printOutDialogVisible"
-      width="800px"
-      :modal="false"
-      :close-on-click-modal="false"
-      v-dialogDrag
-    >
-      <el-button type="primary"
-                 size="small"
-                 icon="el-icon-plus"
-                 plain
-                 v-print="'#printOut'">打印出库单
-      </el-button>
-        <div id="printOut" ref="printOut">
-          <!-- 隐藏打印区域，避免用户看到 -->
-            <div style="padding: 10px;">
-              <el-row>
-                <el-col :span="24">
-                  <div class="grid-content bg-purple-dark"
-                       style="font-size: 24px;text-align: center;margin-bottom: 15px;">
-                    出库单
-                  </div>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple">
-                    <p>出库单号 : <span style="margin-left: 10px;">{{printData.orderNumber}}</span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>部门 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>出库日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
-                  </div>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple">
-                    <p>仓库 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>原因 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-              </el-row>
-              <el-table
-                :data="printData.tableData"
-                border :fit="false"
-                style="width: 709px;margin-top: 15px;margin-right: 0px;">
-                <el-table-column
-                  type="index"
-                  label="序号"
-                  width="60">
-                </el-table-column>
-                <el-table-column
-                  prop="goodsName"
-                  label="品名"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  prop="batchNumber"
-                  label="批号"
-                  width="147">
-                </el-table-column>
-                <el-table-column
-                  prop="specification"
-                  label="规格"
-                  width="90">
-                </el-table-column>
-                <el-table-column
-                  prop="dateOfManufacture"
-                  label="生产日期"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  prop="placeOfOrigin"
-                  label="产地"
-                  width="55">
-                </el-table-column>
-                <el-table-column
-                  prop="manufacturer"
-                  label="生产厂家"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  prop="goodsQuantity"
-                  label="数量"
-                  width="55">
-                </el-table-column>
-              </el-table>
-              <el-row style="margin-top: 20px;">
-                <el-col :span="6">
-                  <div class="grid-content bg-purple">
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div class="grid-content bg-purple-light">
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div class="grid-content bg-purple">
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div class="grid-content bg-purple-light">
-                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-    </el-dialog>
-
-    <el-dialog
-      title="打印领料单"
+      title="打印入库单"
       :append-to-body="true"
       :visible.sync="printDialogVisible"
       width="800px"
       :modal="false"
+      :before-close="handleClose"
       :close-on-click-modal="false"
       v-dialogDrag
     >
@@ -229,23 +66,25 @@
                  size="small"
                  icon="el-icon-plus"
                  plain
-                 v-print="'#print'">打印领料单
+                 v-print="'#print'">打印交接单
       </el-button>
+      <el-form :model="form1">
         <div id="print" ref="print">
           <!-- 隐藏打印区域，避免用户看到 -->
+          <div id="print1" ref="print11">
             <div style="padding: 10px;">
               <el-row>
                 <el-col :span="24">
                   <div class="grid-content bg-purple-dark"
                        style="font-size: 24px;text-align: center;margin-bottom: 15px;">
-                    领料单
+                    入库单
                   </div>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="8">
                   <div class="grid-content bg-purple">
-                    <p>领料单号 : <span style="margin-left: 10px;">{{printData.orderNumber}}</span></p>
+                    <p>入库单号 : <span style="margin-left: 10px;">{{printData.orderNumber}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -255,7 +94,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>领料日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
+                    <p>入库日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -279,7 +118,7 @@
               <el-table
                 :data="printData.tableData"
                 border :fit="false"
-                style="width: 709px;margin-top: 15px;margin-right: 0px;">
+                style="width: 729px;margin-top: 15px;margin-right: 0px;">
                 <el-table-column
                   type="index"
                   label="序号"
@@ -293,7 +132,7 @@
                 <el-table-column
                   prop="batchNumber"
                   label="批号"
-                  width="147">
+                  width="107">
                 </el-table-column>
                 <el-table-column
                   prop="specification"
@@ -303,7 +142,7 @@
                 <el-table-column
                   prop="dateOfManufacture"
                   label="生产日期"
-                  width="100">
+                  width="90">
                 </el-table-column>
                 <el-table-column
                   prop="placeOfOrigin"
@@ -313,7 +152,12 @@
                 <el-table-column
                   prop="manufacturer"
                   label="生产厂家"
-                  width="100">
+                  width="90">
+                </el-table-column>
+                <el-table-column
+                  prop="supplierName"
+                  label="供应商"
+                  width="80">
                 </el-table-column>
                 <el-table-column
                   prop="goodsQuantity"
@@ -342,14 +186,17 @@
               </el-row>
             </div>
           </div>
+        </div>
+      </el-form>
     </el-dialog>
+
 
   </basic-container>
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,selectGoodsGross,viewReason,
-    printOutputorderDetail} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,viewReason,
+  printInputorderDetail} from "@/api/purchase/inputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
@@ -396,11 +243,9 @@
         },
         obj:{},
         title: '' ,
-        dialogVisible:false,
         commoditydialogVisible:false,
         reasonialogVisible:false,
         printDialogVisible:false,
-        printOutDialogVisible:false,
         printData: {
           orderNumber: '',
           tableData: [],
@@ -411,7 +256,7 @@
           calcHeight: 30,
           tip: false,
           searchShow: true,
-          editBtnText:'出库复核',
+          editBtnText:'入库复核',
           searchMenuSpan: 6,
           border: true,
           index: true,
@@ -422,7 +267,7 @@
           dialogWidth: '80%',
           column: [
             {
-              label: "出库单号",
+              label: "入库单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
@@ -443,7 +288,7 @@
                 value: "dictKey"
               }
             },
-            {
+            /*{
               label: "状态",
               prop: "statusName",
               addDisplay:false,
@@ -454,7 +299,7 @@
                 label: "dictValue",
                 value: "dictKey"
               }
-            },
+            },*/
             {
               label:"创建时间",
               prop:"updateTime",
@@ -471,7 +316,7 @@
             },
             {
               label: '商品列表',
-              prop: 'outputOrderDetailList',
+              prop: 'inputOrderDetailList',
               type: 'dynamic',
               span:24,
               children: {
@@ -487,7 +332,6 @@
                      done();
                  },
                 column: [
-
                   {
                     label: '*商品',
                     prop: "goodsId",
@@ -496,134 +340,82 @@
                     filterable: true,
                     remote: true,
                     display:false,
-                    // disabled: true,
                     rules: [{
                       require: true,
                       message: '请选择商品',
                     }],
                     props: {
                       label: 'goodsName',
-                      value: 'goodsId'
+                      value: 'id'
                     },
-                    cascaderItem: ['batchNumber'],
                     dicMethod:'post',
-                    // dicUrl:'/api/erp-wms/goods/selecListGoods',
-                    dicUrl: '/api/erp-wms/repertory/dropDowns',
-                    change: ({value}) => {
-                      console.log(this.form.outputOrderDetailList)
-                      if (value) {
-                        getGoodsDetail(value).then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            if (val.goodsId == value) {
-                              var detail = res.data.data;
-                              val.basicUnit = detail.basicUnit;
-                              val.specification = detail.goodsSpecification;
-
-                            }
-                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                          });
-                        });
-                      }
-                    },
-                  },
-                  // {
-                  //   label: "批号",
-                  //   prop: "batchNumber",
-                  //   type:'select',
-                  //   props: {
-                  //
-                  //     label: 'batchNumber',
-                  //     value: 'batchNumber'
-                  //   },
-                  //   dicMethod:'post',
-                  //   dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
-                  //   change: ({value}) => {
-                  //     selectByBatchNumber(value).then(res => {
-                  //       var detail = res.data.data;
-                  //       detail.forEach(val =>{
-                  //         this.form.outputOrderDetailList.forEach(vals => {
-                  //           if (value==val.batchNumber) {
-                  //             vals.warehouseId = val.warehouseId;
-                  //             vals.storageId = val.storageId;
-                  //             vals.repertoryQuantity  = val.repertoryQuantity
-                  //           }
-                  //         });
-                  //
-                  //       });
-                  //     });
-                  //   },
-                  // },
-                  // {
-                  //   label:'库存数量',
-                  //   prop: 'repertoryQuantity',
-                  //   disabled: true,
-                  // },
-                  // {
-                  //   label: '*出货仓库',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   disabled: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   disabled: true,
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['goodsId'],
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
-                  {
-                    label: "库存检索",
-                    prop: "inventoryToRetrieve",
-                    type:'input',
-                    placeholder: " ",
-                    formslot:true,
-                    width: 100,
+                    dicUrl:'/api/erp-wms/goods/dropDown',
                   },
                   {
-                    label: "批号",
-                    prop: "batchNumber",
-                  },
-                  {
-                    label: '*出库数量(g)',
+                    label: '*入库数量(g)',
                     prop: "goodsQuantity",
                     type: "number",
-                    width: 200,
+                    width: 140,
                     rules: [{
                       required: true,
                       validator: validateQuantity,
                     }]
                   },
-                  // {
-                  //   label: '商品资质',
-                  //   prop: "unit",
-                  //   type:'input',
-                  //   placeholder: " ",
-                  //   formslot:true,
-                  //   width: 200,
-                  // },
                   {
-                  label: '备注',
-                  prop: "remark",
-                  type:"textarea"
-                }],
+                    label: '供应商',
+                    prop: "supplierName",
+                    placeholder: " ",
+                    width: 140,
+                  },
+                  {
+                    label: '规格',
+                    prop: "specification",
+                    placeholder: " ",
+                    width: 140,
+                  },
+                  {
+                    label: "批号",
+                    prop: "batchNumber",
+                    width: 100,
+                  },
+                  {
+                    label: "生产日期",
+                    prop: "dateOfManufacture",
+                    type:'date',
+                    format: "yyyy-MM-dd",
+                    valueFormat: "yyyy-MM-dd",
+                    width: 200,
+                  },
+                  {
+                    label: "有效期至",
+                    prop: "periodOfValidity",
+                    type:'date',
+                    format: "yyyy-MM-dd",
+                    valueFormat: "yyyy-MM-dd",
+                    width: 200,
+                  },
+                  {
+                    label: "生产厂家",
+                    prop: "manufacturer",
+                    width: 100,
+                  },
+                  {
+                    label: "产地",
+                    prop: "placeOfOrigin",
+                    width: 100,
+                  },
+                  {
+                    label: "采购人",
+                    prop: "inputPerson",
+                    width: 100,
+                  },
+                  {
+                    label: '备注',
+                    prop: "remark",
+                    type:"textarea",
+                    width: 100,
+                  }
+                ],
               }
             },
           ]
@@ -836,7 +628,6 @@
             },
           ],
         },
-        inventoryToRetrievedata:[],
         inventoryToRetrievedataoption : {
           addBtn: false,
           menu:false,
@@ -965,7 +756,7 @@
       beforeOpen(done, type) {
         if (["add", "edit"].includes(type)) {
           setTimeout(()=>{
-            this.form.type = 'out';
+            this.form.type = 'in';
           },10);
         }
         if (["edit", "view"].includes(type)) {
@@ -1090,17 +881,6 @@
           }
         })
       },
-      selectGoodsGross(goodsId){
-        this.dialogVisible = true;
-        selectGoodsGross(goodsId).then(res=>{
-          if (res.data.success) {
-            this.inventoryToRetrievedata = res.data.data;
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
       viewReason(id){
         this.reasonialogVisible = true;
         viewReason(id).then(res=>{
@@ -1118,14 +898,7 @@
       print(row){
         this.printDialogVisible = true;
         this.printData.orderNumber = row.orderNumber;
-        printOutputorderDetail(row.id).then( res => {
-          this.printData.tableData = res.data.data;
-        })
-      },
-      printOut(row){
-        this.printOutDialogVisible = true;
-        this.printData.orderNumber = row.orderNumber;
-        printOutputorderDetail(row.id).then( res => {
+        printInputorderDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
         })
       }
@@ -1139,69 +912,35 @@
     font-size: 14px;
   }
 
-  #print td, #print th {
+  #print1 td, #print1 th {
     padding: 2px;
   }
 
-  #print, #print .el-table th, #print .el-table td {
+  #print1, #print1 .el-table th, #print1 .el-table td {
     color: #000000;
     font-size: 12px;
   }
 
-  #print .el-table tr {
+  #print1 .el-table tr {
     border-left: 1px solid #000;
   }
 
-  #print .el-table td {
+  #print1 .el-table td {
     border-top: 1px solid #000;
     border-right: 1px solid #000;
   }
 
-  #print .el-table th {
+  #print1 .el-table th {
     border-top: 1px solid #000;
     border-left: 1px solid #000;
   }
 
-  #print .el-table--border {
+  #print1 .el-table--border {
     border-bottom: 1px solid #000;
     border-right: 1px solid #000;
   }
 
-  #print .el-table__body-wrapper {
+  #print1 .el-table__body-wrapper {
     border-left: 1px solid #000;
   }
-
-
-  #printOut td, #printOut th {
-    padding: 2px;
-  }
-
-  #printOut, #printOut .el-table th, #printOut .el-table td {
-    color: #000000;
-    font-size: 12px;
-  }
-
-  #printOut .el-table tr {
-    border-left: 1px solid #000;
-  }
-
-  #printOut .el-table td {
-    border-top: 1px solid #000;
-    border-right: 1px solid #000;
-  }
-
-  #printOut .el-table th {
-    border-top: 1px solid #000;
-    border-left: 1px solid #000;
-  }
-
-  #printOut .el-table--border {
-    border-bottom: 1px solid #000;
-    border-right: 1px solid #000;
-  }
-
-  #printOut .el-table__body-wrapper {
-    border-left: 1px solid #000;
-  }
-
 </style>

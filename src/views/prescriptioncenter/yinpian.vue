@@ -37,6 +37,10 @@
                    v-if="scope.row.orderStatic!=1"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
+        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic!=1 &&scope.row.orderStatic!=2"
+                   @click="dayin(scope.row)">补 打
+        </el-button>
       </template>
     </avue-crud>
     <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"

@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/purchase/outputorder/page',
+    url: '/api/purchase/input-order/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/purchase/outputorder/detail',
+    url: '/api/purchase/input-order/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/purchase/outputorder/remove',
+    url: '/api/purchase/input-order/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/purchase/outputorder/submit',
+    url: '/api/purchase/input-order/submit',
     method: 'post',
     data: row
   })
@@ -42,7 +42,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/purchase/outputorder/submit',
+    url: '/api/purchase/input-order/submit',
     method: 'post',
     data: row
   })
@@ -50,17 +50,7 @@ export const update = (row) => {
 
 export const updateStatus = (id, status) => {
   return request({
-    url: '/api/purchase/outputorder/updateStatus',
-    method: 'post',
-    params:{
-      id,
-      status
-    }
-  })
-}
-export const updateRevocation = (id, status) => {
-  return request({
-    url: '/api/purchase/outputorder/updateRevocation',
+    url: '/api/purchase/input-order/updateStatus',
     method: 'post',
     params:{
       id,
@@ -70,25 +60,16 @@ export const updateRevocation = (id, status) => {
 }
 export const inventoryToRetrieve = (warehouseId) => { //库存检索
   return request({
-    url: '/api/purchase/outputorder/inventoryToRetrieve',
+    url: '/api/purchase/input-order/inventoryToRetrieve',
     method: 'post',
     params:{
       warehouseId
     }
   })
 }
-export const selectGoodsGross = (goodsId) => { //库存总量
-  return request({
-    url: '/api/purchase/outputorder/selectGoodsGross',
-    method: 'post',
-    params:{
-      goodsId
-    }
-  })
-}
 export const viewReason = (id) => {  //查看驳回理由
   return request({
-    url: '/api/purchase/outputorder/viewReason',
+    url: '/api/purchase/input-order/viewReason',
     method: 'post',
     params:{
       id
@@ -98,7 +79,7 @@ export const viewReason = (id) => {  //查看驳回理由
 
 export const updaterejectText = (ids,rejectText) => { //填写驳回理由
   return request({
-    url: '/api/purchase/outputorder/updaterejectText',
+    url: '/api/purchase/input-order/updaterejectText',
     method: 'post',
     params:{
       ids,
@@ -107,14 +88,13 @@ export const updaterejectText = (ids,rejectText) => { //填写驳回理由
   })
 }
 
-export const printOutputorderDetail = (id) => {
+export const printInputorderDetail = (id) => {
   return request({
-    url: '/api/purchase/outputorder/printOutputorderDetail',
+    url: '/api/purchase/input-order/printInputOrderDetail',
     method: 'get',
     params:{
       id
     }
   })
 }
-
 

@@ -58,8 +58,7 @@
       :modal="false"
       :before-close="handleClose">
       <avue-crud :data="view.data" :option="distributionOption"
-                 :page.sync="view.page"
-                 :table-loading="view.loading">
+                 :page.sync="view.page">
         <template slot="orderNumber" slot-scope="{scope,row}">
           <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
         </template>
@@ -488,12 +487,10 @@
       },
       viewHandover(id){
         this.viewDialogVisible = true;
-        this.view.loading = true;
         view(this.view.page.currentPage, this.view.page.pageSize, id).then(res => {
           const data = res.data.data;
           this.view.page.total = data.total;
           this.view.data = data.records;
-          this.view.loading = false;
         });
       }
     }

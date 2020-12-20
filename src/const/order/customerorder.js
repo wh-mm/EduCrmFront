@@ -135,6 +135,7 @@ export const newAddDrugOption = {
             required: true,
             validator: zhongwen,
           }],
+          search: true,
         },
         {
           label: "性别",
@@ -179,7 +180,6 @@ export const newAddDrugOption = {
           prop: "address",
           span: 6,
           required: true,
-
           trigger: 'blur'
         },
       ]
@@ -437,7 +437,7 @@ export const newAddGrainOption = {
             required: true,
             validator: zhongwen,
           }],
-
+          search: true,
         },
         {
           label: "收件人电话",
@@ -487,6 +487,7 @@ export const newAddGrainOption = {
             required: true,
             validator: zhongwen,
           }],
+          search: true,
         },
         {
           label: "患者性别",
@@ -820,6 +821,11 @@ export const option = {
   dialogClickModal: false,
   column: [
     {
+      label: "订单id",
+      prop: "id",
+      search: true,
+    },
+    {
       label: "医院名称",
       prop: "hospitalId",
       type: "select",
@@ -886,7 +892,8 @@ export const option = {
         required: true,
         message: "请输入收件人",
         trigger: "blur"
-      }]
+      }],
+      search: true,
     },
     {
       label: "收件人电话",
