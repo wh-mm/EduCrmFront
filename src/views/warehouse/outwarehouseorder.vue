@@ -179,7 +179,6 @@
                           this.form.outwarehouseOrderDetailList.forEach(val => {
                             if (val.goodsId == value) {
                               var detail = res.data.data;
-                              val.basicUnit = detail.basicUnit;
                               val.specification = detail.goodsSpecification;
 
                             }
@@ -323,9 +322,10 @@
                           });
                         });
                       }
-
                     },
                   },
+
+
                   {
                     label: "基本单位",
                     prop: "basicUnit",

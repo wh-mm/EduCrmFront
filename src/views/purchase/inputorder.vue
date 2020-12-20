@@ -373,52 +373,6 @@
                     }]
                   },
                   {
-                    label: "仓库",
-                    prop: "warehouseId",
-                    type:"select",
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    cascaderItem: ['storageRegionId'],
-                    dicUrl:'/api/erp-wms/warehouse/tree'
-                  },
-                  {
-                    label: "区域",
-                    prop: "storageRegionId",
-                    type:'tree',
-                    row: true,
-                    span: 24,
-                    rules: [{
-                      required: true,
-                      message: "请输入储位",
-                      trigger: "blur"
-                    }],
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    cascaderItem: ['storageId'],
-                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
-                  },
-                  {
-                    label: "储位",
-                    prop: "storageId",
-                    type:'tree',
-                    row: true,
-                    span: 24,
-                    rules: [{
-                      required: true,
-                      message: "请输入储位",
-                      trigger: "blur"
-                    }],
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  },
-                  {
                     label: '供应商',
                     prop: "supplierName",
                     placeholder: " ",
