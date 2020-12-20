@@ -356,17 +356,17 @@
             {
               label: "规格",
               prop: "specification",
-              type:'select',
               rules:[{
                 message: "请输入规格",
                 trigger: "blur",
                 required: true,
               }],
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+              // type:'select',
+              // props: {
+              //   label: "dictValue",
+              //   value: "dictKey"
+              // },
+              // dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
             },
             {
               label: "供应商",
@@ -588,17 +588,17 @@
             {
               label: "规格",
               prop: "specification",
-              type:'select',
               rules:[{
                 message: "请输入规格",
                 trigger: "blur",
                 required: true,
               }],
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+              // type:'select',
+              // props: {
+              //   label: "dictValue",
+              //   value: "dictKey"
+              // },
+              // dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
             },
             {
               label: "供应商",
