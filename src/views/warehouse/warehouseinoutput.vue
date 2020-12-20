@@ -448,6 +448,16 @@
         optionForm : {
           column: [
             {
+              label: "采购人",
+              prop: "inputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入采购人",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
               label: "商品",
               prop: "goodsId",
               type:'tree',
@@ -623,16 +633,6 @@
               }
             },
             {
-              label: "采购人",
-              prop: "inputPerson",
-              span: 24,
-              rules:[{
-                message: "请输入采购人",
-                trigger: "blur",
-                required: true,
-              }],
-            },
-            {
               label: "备注",
               prop: "remark",
               type: "textarea",
@@ -642,6 +642,16 @@
         },
         outoptionForm : {
           column: [
+            {
+              label: "领料人",
+              prop: "outputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入领料人",
+                trigger: "blur",
+                required: true,
+              }],
+            },
             {
               label: "商品",
               prop: "goodsId",
@@ -779,16 +789,6 @@
                 label: "dictValue",
                 value: "dictKey"
               }
-            },
-            {
-              label: "领料人",
-              prop: "outputPerson",
-              span: 24,
-              rules:[{
-                message: "请输入领料人",
-                trigger: "blur",
-                required: true,
-              }],
             },
             {
               label: "备注",
