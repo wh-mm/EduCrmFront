@@ -72,3 +72,14 @@ export const submitTransport = (carId, driverId, ids) => {
   })
 }
 
+export const updateById = (id,distributionOrderid) => {
+  return request({
+    url: '/api/logistics/handoverform/updateById',
+    method: 'post',
+    params: {
+      id,
+      distributionOrderid
+    }
+  })
+}
+

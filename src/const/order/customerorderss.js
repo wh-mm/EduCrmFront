@@ -395,6 +395,23 @@ export const newAddGrainOption = {
       prop: 'group1',
       column: [
         {
+          label: "医院名称",
+          prop: "hospitalId",
+          type: "select",
+          props: {
+            label: "hospitalName",
+            value: "id"
+          },
+          rules: [{
+            required: true,
+            message: "请选择医院",
+            trigger: "blur",
+          }],
+          span: 6,
+          search: true,
+          dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+        },
+        {
           label: "收件人",
           prop: "addressee",
           span: 6,
@@ -444,6 +461,7 @@ export const newAddGrainOption = {
       collapse: true,
       prop: 'group1',
       column: [
+
         {
           label: "患者姓名",
           prop: "name",
@@ -784,6 +802,27 @@ export const option = {
   selection: true,
   dialogClickModal: false,
   column: [
+    {
+      label: "订单id",
+      prop: "id",
+      search: true,
+    },
+    {
+      label: "医院名称",
+      prop: "hospitalId",
+    },
+    {
+      label: "颗粒名称",
+      prop: "goodsName",
+      type: "tree",
+      props: {
+        label: 'goodsName',
+        value: 'id'
+      },
+      search: true,
+      dicMethod: "post",
+      dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
+    },
     {
       label: "订单状态",
       prop: "orderStatic",

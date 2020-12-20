@@ -85,11 +85,21 @@
                 value: 'id'
               },
               dicMethod: "post",
+              search:true,
               dicUrl:this.ERP_WMS_NAME + '/goods/dropDown'
             },
             {
               label: "养护时间",
-              prop: "maintenanceTime",
+              prop: "createTime",
+              type: "datetime",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              searchRange: true,
+              searchSpan: 8,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              search: true,
               rules: [{
                 required: true,
                 message: "请输入养护时间",
@@ -156,16 +166,30 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
+      //时间
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            startTime: createTime[0],
+            endTime: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
     }
   };
 </script>

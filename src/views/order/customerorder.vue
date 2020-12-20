@@ -168,6 +168,10 @@
             dialogClickModal: false,
             column: [
               {
+                label: "医院名称",
+                prop: "hospitalId",
+              },
+              {
                 label: "颗粒名称",
                 prop: "goodsName",
                 type: "tree",
@@ -240,7 +244,7 @@
       addDialogVisible() {
         if (!this.addDialogVisible) {
           this.activeName = 'jianyao';
-        }
+        }s
       }
     },
     computed: {

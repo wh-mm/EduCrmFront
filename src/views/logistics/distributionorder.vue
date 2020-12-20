@@ -29,19 +29,19 @@
         <el-button  :size="size"
                     :type="type"
                     icon="el-icon-delete"
-                    v-if="permission.distributionorder_delete  && row.distributionStatus === '1'"
+                    v-if="permission.distributionorder_delete  && row.distributionStatus === '2'"
                     @click="rowDel(row)">删 除
         </el-button>
         <el-button icon="el-icon-check"
                    :size="size"
                    :type="type"
-                   v-if="permission.distributionorder_edit  && row.distributionStatus === '1'"
+                   v-if="permission.distributionorder_edit  && row.distributionStatus === '2'"
                    @click.stop="handleEdit(row,index)">编辑
         </el-button>
         <el-button icon="el-icon-check"
                    :size="size"
                    :type="type"
-                   v-if="permission.distributionorder_edit && row.distributionStatus === '1'"
+                   v-if="permission.distributionorder_edit && row.distributionStatus === '2'"
                    @click.stop="handleStart(row.id)">发起
         </el-button>
         <el-button :type="type" :size="size" icon="el-icon-printer"

@@ -19,19 +19,28 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary"
+      <!--  <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    plain
                    @click="viewTransport()">发起运输单
-        </el-button>
+        </el-button>-->
+
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
+        <el-button  :size="size"
+                    :type="type"
+                    icon="el-icon-check"
+                    @click="updateById(row.id,row.id)">完成
+        </el-button>
+
         <el-button  :size="size"
                     :type="type"
                    icon="el-icon-plus"
                    @click="viewHandover(row.id)">详情
         </el-button>
+
+
       </template>
       <template slot="orderNumber" slot-scope="{scope,row}">
         <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
@@ -68,7 +77,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,submitTransport,view} from "@/api/logistics/handoverform";
+  import {getList, getDetail, add, update, remove,submitTransport,view,updateById} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
 
   export default {
@@ -462,7 +471,7 @@
           this.selectionClear();
         });
       },
-      viewTransport() {
+      /*viewTransport() {
         if(this.ids){
           this.dialogVisible = true;
         }else{
@@ -471,7 +480,19 @@
             message: '请选择配送单'
           });
         }
+      },*/
+      updateById(id,distributionOrderid) {
+        updateById(id,distributionOrderid).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+          this.onLoad(this.page);
+        })
       },
+
       submitTransport() {
         submitTransport(this.obj.carId,this.obj.driverId,this.ids).then(res => {
           if(res.data.success){

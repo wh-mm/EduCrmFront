@@ -85,7 +85,6 @@
               searchSpan: 8,
               addDisplay: false,
               editDisplay: false,
-              viewDisplay: false,
               search: true,
             },
 
