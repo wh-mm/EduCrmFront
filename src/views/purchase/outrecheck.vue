@@ -34,7 +34,7 @@
                    size="small"
                    icon="el-icon-mouse"
                    v-if="permission.outrechek_revocation"
-                   @click="updateRevocation()">撤 销
+                   @click="updateRevocation(104)">撤 销
         </el-button>
         <el-button type="button"
                    size="small"
@@ -80,16 +80,7 @@
       </template>
 
      </avue-crud>
-    <el-dialog
-      title="审批"
-      :visible.sync="revocationdialogVisible"
-      width="30%"
-      :modal="false"
-      :before-close="handleClose">
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateRevocation(104)">同 意</el-button>
-      </span>
-    </el-dialog>
+
 
     <el-dialog
       title="商品资质"
@@ -920,18 +911,32 @@
       },
       //审批
       updateRevocation(status) {
-        if (status === 2 && this.obj0.rejectText === '') {
-          return this.$message.error("请输入驳回理由!");
-        }
-        var id= this.selectionList[0].id;
-        updateRevocation(id,status).then(res => {
+        if (this.selectionList[0].status === 2){
+              return this.$message.error("该订单已经出库！");
+            }
+        updateRevocation(this.ids,status).then(res => {
           if (res.data.success) {
             this.$message.success(res.data.msg);
+            this.dialogVisible = false;
+            this.refreshChange();
           } else {
             this.$message.error(res.data.msg);
           }
-          this.refreshChange();
-          this.onLoad(this.page);
+        })
+      },
+
+      updateInspectorNew(operation) {
+        if (operation === 2 && this.obj0.rejectText === '') {
+          return this.$message.error("请输入驳回理由!");
+        }
+        updateInspector( operation, this.obj0.rejectText).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+            this.dialogVisible = false;
+            this.refreshChange();
+          } else {
+            this.$message.error(res.data.msg);
+          }
         })
       },
       // updateRevocation() {

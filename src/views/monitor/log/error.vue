@@ -101,7 +101,7 @@
               prop: "params",
               type: "textarea",
               span: 24,
-              minRows: 2,
+              minRows: 5,
               hide: true
             },
             {

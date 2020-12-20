@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/purchase/outputorder/page',
+    url: '/api/warehouse/outwarehouseorderdetail/list',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/purchase/outputorder/detail',
+    url: '/api/warehouse/outwarehouseorderdetail/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/purchase/outputorder/remove',
+    url: '/api/warehouse/outwarehouseorderdetail/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/purchase/outputorder/submit',
+    url: '/api/warehouse/outwarehouseorderdetail/submit',
     method: 'post',
     data: row
   })
@@ -42,21 +42,9 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/purchase/outputorder/submit',
+    url: '/api/warehouse/outwarehouseorderdetail/submit',
     method: 'post',
     data: row
   })
 }
-
-export const updateStatus = (id, status) => {
-  return request({
-    url: '/api/purchase/outputorder/updateStatus',
-    method: 'post',
-    params:{
-      id,
-      status
-    }
-  })
-}
-
 

@@ -26,15 +26,13 @@
 <!--          </el-button>-->
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size"  v-if="scope.row.status==101" :type="scope.type" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
-        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="printOut(scope.row)"> 打印出库单</el-button>
         <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印领料单</el-button>
         <el-button :type="scope.type"
                    icon="el-icon-check"
                    :size="scope.size"
                    v-if="scope.row.status==101"
                    plain
-                   @click.stop="handleEdit(scope.row,scope.index)">修改出库单</el-button>
+                   @click.stop="handleEdit(scope.row,scope.index)">修改领料单</el-button>
       </template>
 
 
@@ -88,133 +86,6 @@
       </avue-crud>
     </el-dialog>
 
-    <el-dialog
-      title="打印出库单"
-      :append-to-body="true"
-      :visible.sync="printOutDialogVisible"
-      width="800px"
-      :modal="false"
-      :close-on-click-modal="false"
-      v-dialogDrag
-    >
-      <el-button type="primary"
-                 size="small"
-                 icon="el-icon-plus"
-                 plain
-                 v-print="'#printOut'">打印出库单
-      </el-button>
-        <div id="printOut" ref="printOut">
-          <!-- 隐藏打印区域，避免用户看到 -->
-            <div style="padding: 10px;">
-              <el-row>
-                <el-col :span="24">
-                  <div class="grid-content bg-purple-dark"
-                       style="font-size: 24px;text-align: center;margin-bottom: 15px;">
-                    出库单
-                  </div>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple">
-                    <p>出库单号 : <span style="margin-left: 10px;">{{printData.orderNumber}}</span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>部门 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>出库日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
-                  </div>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple">
-                    <p>仓库 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>原因 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-              </el-row>
-              <el-table
-                :data="printData.tableData"
-                border :fit="false"
-                style="width: 709px;margin-top: 15px;margin-right: 0px;">
-                <el-table-column
-                  type="index"
-                  label="序号"
-                  width="60">
-                </el-table-column>
-                <el-table-column
-                  prop="goodsName"
-                  label="品名"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  prop="batchNumber"
-                  label="批号"
-                  width="147">
-                </el-table-column>
-                <el-table-column
-                  prop="specification"
-                  label="规格"
-                  width="90">
-                </el-table-column>
-                <el-table-column
-                  prop="dateOfManufacture"
-                  label="生产日期"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  prop="placeOfOrigin"
-                  label="产地"
-                  width="55">
-                </el-table-column>
-                <el-table-column
-                  prop="manufacturer"
-                  label="生产厂家"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  prop="goodsQuantity"
-                  label="数量"
-                  width="55">
-                </el-table-column>
-              </el-table>
-              <el-row style="margin-top: 20px;">
-                <el-col :span="6">
-                  <div class="grid-content bg-purple">
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div class="grid-content bg-purple-light">
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div class="grid-content bg-purple">
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div class="grid-content bg-purple-light">
-                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-    </el-dialog>
 
     <el-dialog
       title="打印领料单"
@@ -400,7 +271,6 @@
         commoditydialogVisible:false,
         reasonialogVisible:false,
         printDialogVisible:false,
-        printOutDialogVisible:false,
         printData: {
           orderNumber: '',
           tableData: [],
@@ -597,10 +467,10 @@
                     formslot:true,
                     width: 100,
                   },
-                  {
-                    label: "批号",
-                    prop: "batchNumber",
-                  },
+                  // {
+                  //   label: "批号",
+                  //   prop: "batchNumber",
+                  // },
                   {
                     label: '*出库数量(g)',
                     prop: "goodsQuantity",

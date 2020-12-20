@@ -93,7 +93,7 @@
                 label: 'title',
                 value: 'value'
               },
-              cascaderItem: ['storageRegionId'],
+              cascaderItem: ['storageRegionId','storageId'],
               rules: [{
                 required: true,
                 message: "请输入仓库",
@@ -118,7 +118,6 @@
                 label: 'title',
                 value: 'id'
               },
-              cascaderItem: ['storageId'],
               dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
@@ -159,17 +158,17 @@
             },
             {
               label: "生产日期",
-              prop: "warehouseinoutDateOfManufacture",
+              prop: "dateOfManufacture",
               type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
             },
             {
               label: "有效期至",
-              prop: "warehouseinoutPeriodOfValidity",
+              prop: "periodOfValidity",
               type:'datetime',
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
             },
             {
               label: "库存数量",

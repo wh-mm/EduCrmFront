@@ -66,7 +66,7 @@
                  size="small"
                  icon="el-icon-plus"
                  plain
-                 v-print="'#print'">打印交接单
+                 v-print="'#print'">打印入库单
       </el-button>
       <el-form :model="form1">
         <div id="print" ref="print">
@@ -109,11 +109,7 @@
                     <p>原因 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
+
               </el-row>
               <el-table
                 :data="printData.tableData"
@@ -197,7 +193,6 @@
 <script>
   import {getList, add, getDetail,update, remove, updateStatus,viewReason,
   printInputorderDetail} from "@/api/purchase/inputorder";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
@@ -278,28 +273,44 @@
               }]
             },
             {
-              label: "类型",
-              prop: "type",
-              type: "select",
-              disabled: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+              width: 200,
               props: {
-                label: "dictValue",
-                value: "dictKey"
-              }
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageRegionId','storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl:'/api/erp-wms/warehouse/tree'
             },
-            /*{
-              label: "状态",
-              prop: "statusName",
-              addDisplay:false,
-              editDisplay:false,
-              viewDisplay:false,
-              dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              width: 200,
               props: {
-                label: "dictValue",
-                value: "dictKey"
-              }
-            },*/
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              width: 200,
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+            },
             {
               label:"创建时间",
               prop:"updateTime",
@@ -362,6 +373,52 @@
                     }]
                   },
                   {
+                    label: "仓库",
+                    prop: "warehouseId",
+                    type:"select",
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    cascaderItem: ['storageRegionId'],
+                    dicUrl:'/api/erp-wms/warehouse/tree'
+                  },
+                  {
+                    label: "区域",
+                    prop: "storageRegionId",
+                    type:'tree',
+                    row: true,
+                    span: 24,
+                    rules: [{
+                      required: true,
+                      message: "请输入储位",
+                      trigger: "blur"
+                    }],
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    cascaderItem: ['storageId'],
+                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+                  },
+                  {
+                    label: "储位",
+                    prop: "storageId",
+                    type:'tree',
+                    row: true,
+                    span: 24,
+                    rules: [{
+                      required: true,
+                      message: "请输入储位",
+                      trigger: "blur"
+                    }],
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                  },
+                  {
                     label: '供应商',
                     prop: "supplierName",
                     placeholder: " ",
@@ -390,7 +447,7 @@
                     label: "有效期至",
                     prop: "periodOfValidity",
                     type:'date',
-                    format: "yyyy-MM-dd",
+                    format: "yyyy-MM",
                     valueFormat: "yyyy-MM-dd",
                     width: 200,
                   },
