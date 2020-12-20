@@ -19,13 +19,13 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+        <!--<el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.outwarehouseorder_delete"
                    @click="handleDelete">删 除
-        </el-button>
+        </el-button>-->
       </template>
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
         <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
@@ -106,7 +106,7 @@
                 value: "dictKey"
               }
             },
-            {
+            /*{
               label: "状态",
               prop: "statusName",
               addDisplay:false,
@@ -117,7 +117,7 @@
                 label: "dictValue",
                 value: "dictKey"
               }
-            },
+            },*/
             {
               label:"创建时间",
               prop:"updateTime",
@@ -263,11 +263,6 @@
                     row: true,
                     disabled: true,
                     width:150,
-                    rules: [{
-                      required: true,
-                      message: "请输入区域",
-                      trigger: "blur"
-                    }],
                     props: {
                       label: 'title',
                       value: 'id'
@@ -296,14 +291,6 @@
                     formslot:true,
                     width: 100,
                   },
-                  // {
-                  //   label: '商品资质',
-                  //   prop: "unit",
-                  //   type:'input',
-                  //   placeholder: " ",
-                  //   formslot:true,
-                  //   width: 100,
-                  // },
                   {
                     label: '出库数量(g)',
                     prop: "goodsQuantity",
@@ -389,8 +376,8 @@
         return {
           addBtn: this.vaildData(this.permission.outwarehouseorder_add, false),
           viewBtn: this.vaildData(this.permission.outwarehouseorder_view, false),
-          delBtn: this.vaildData(this.permission.outwarehouseorder_delete, false),
-          editBtn: this.vaildData(this.permission.outwarehouseorder_edit, false)
+          delBtn: false,
+          editBtn: false
         };
       },
       ids() {

@@ -18,9 +18,6 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-      <template slot="orderNumber" slot-scope="{scope,row}">
-        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-      </template>
     </avue-crud>
 
   </basic-container>
@@ -59,7 +56,6 @@
             {
               label: "单号",
               prop: "orderNumber",
-              slot: true,
               addDisplay: false,
               editDisplay: false,
               width: 180,

@@ -49,9 +49,6 @@
                    @click="doPrint1(row)">打印配送单
         </el-button>
       </template>
-      <template slot="distributionOrderNumber" slot-scope="{scope,row}">
-        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-      </template>
     </avue-crud>
     <div style="display: none" id="print11">
       <!-- 隐藏打印区域，避免用户看到 -->
@@ -174,17 +171,11 @@
           column: [
             {
               label: "单号",
-              prop: "distributionOrderNumber",
-              slot: true,
+              prop: "orderNumber",
               addDisplay: false,
               editDisplay: false,
               width: 180,
               search: true,
-              rules: [{
-                required: true,
-                message: "请输入单号",
-                trigger: "blur"
-              }]
             },
             {
               label: "状态",
