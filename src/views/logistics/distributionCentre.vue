@@ -25,9 +25,6 @@
                    @click="print">新增并打印交接单
         </el-button>
       </template>
-      <template slot="orderNumber" slot-scope="{scope,row}">
-        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-      </template>
     </avue-crud>
     <el-dialog
       title="打印交接单"
@@ -192,7 +189,6 @@
             {
               label: '单号',
               prop: 'orderNumber',
-              slot: true,
               addDisplay: false,
               editDisplay: false,
               width: 180,

@@ -273,45 +273,6 @@
               }]
             },
             {
-              label: "仓库",
-              prop: "warehouseId",
-              type:'tree',
-              width: 200,
-              props: {
-                label: 'title',
-                value: 'value'
-              },
-              cascaderItem: ['storageRegionId','storageId'],
-              rules: [{
-                required: true,
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
-              dicUrl:'/api/erp-wms/warehouse/tree'
-            },
-            {
-              label: "区域",
-              prop: "storageRegionId",
-              type:'tree',
-              width: 200,
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
-            },
-            {
-              label: "储位",
-              prop: "storageId",
-              type:'tree',
-              width: 200,
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-            },
-            {
               label:"创建时间",
               prop:"updateTime",
               dateDefault: true,
@@ -343,6 +304,45 @@
                      done();
                  },
                 column: [
+                  {
+                    label: "仓库",
+                    prop: "warehouseId",
+                    type:'tree',
+                    width: 200,
+                    props: {
+                      label: 'title',
+                      value: 'value'
+                    },
+                    cascaderItem: ['storageRegionId','storageId'],
+                    rules: [{
+                      required: true,
+                      message: "请输入仓库",
+                      trigger: "blur"
+                    }],
+                    dicUrl:'/api/erp-wms/warehouse/tree'
+                  },
+                  {
+                    label: "区域",
+                    prop: "storageRegionId",
+                    type:'tree',
+                    width: 200,
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+                  },
+                  {
+                    label: "储位",
+                    prop: "storageId",
+                    type:'tree',
+                    width: 200,
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                  },
                   {
                     label: '*商品',
                     prop: "goodsId",

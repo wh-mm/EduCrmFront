@@ -158,27 +158,6 @@ export default {
               },
             ],
           },
- /*         {
-            label: "区类型",
-            prop: "areaType",
-            type: "select",
-            dicData: [],
-            display: true,
-            //hide: true,
-            rules: [
-              {
-                required: true,
-                message: "请选择区类型",
-                trigger: "click",
-              },
-            ],
-            props: {
-              label: 'dictValue',
-              value: 'dictKey'
-            },
-            search: true,
-            dicUrl: "/api/blade-system/dict-biz/dictionary?code=area_type"
-          },*/
           {
             label: "层",
             prop: "layer",
@@ -245,23 +224,19 @@ export default {
         const layer = this.findObject(this.option.column, "layer");
         const lattice = this.findObject(this.option.column, "lattice");
         const parentId = this.findObject(this.option.column, "parentId");
-        const areaType = this.findObject(this.option.column, "areaType");
         if(val === 1){
           parentId.display = false;
           layer.display = false;
           lattice.display = false;
-          areaType.display = true;
         } else if (val === 2) {
           layer.display = true;
           lattice.display = true;
           parentId.display = true;
-          areaType.display = false;
           this.initData(1);
         } else if (val === 3) {
           parentId.display = true;
           layer.display = false;
           lattice.display = false;
-          areaType.display = false;
           this.initData(2);
         }
       },
