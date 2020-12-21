@@ -27,6 +27,10 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+      <template slot="successAndFailure" slot-scope="scope">
+        <div style="color: green" v-if="scope.row.successAndFailure=='1'?true:false">成功</div>
+        <div style="color: red" v-else>失败</div>
+      </template>
     </avue-crud>
   </basic-container>
 </template>
@@ -91,22 +95,26 @@
             {
               label: "请求数据",
               prop: "params",
+
               //文本域
               type: "textarea",
+              maxRows:4,
               overHidden:true,
               // search: true
             },
             {
               label: "成功失败",
               prop: "successAndFailure",
-              //search: true
+              search: true,
               type: 'select',
+              searchLabelWidth:140,
+              searchSpan:7,
+              slot: true,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               //required: true,
-              search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=success_and_failure",
             },
           ]
