@@ -79,6 +79,21 @@
           })
         }
       }
+      var selectCode = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error("请输入编码！"))
+        } else {
+          selectGoodsCode(this.form.id, value).then(res => {
+            if (res.data.success) {
+              callback();
+            } else {
+              callback(new Error(res.data.msg));
+            }
+          }, err => {
+            callback(new Error(err.data.msg));
+          })
+        }
+      }
       return {
         form: {},
         query: {},
@@ -128,16 +143,14 @@
               search: true,
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
-            /*
             {
-              label: "货品编码",
+              label: "货品编号",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,
                 trigger: "blur"
               }]
             },
-            */
             {
               label: "规格",
               prop: "goodsSpecification",
