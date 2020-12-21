@@ -180,6 +180,7 @@
                             if (val.goodsId == value) {
                               var detail = res.data.data;
                               val.specification = detail.goodsSpecification;
+                              val.basicUnit = detail.basicUnit;
 
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
@@ -204,8 +205,10 @@
                       selectByBatchNumber(value).then(res => {
                         var detail = res.data.data;
                         detail.forEach(val =>{
+
                           this.form.outwarehouseOrderDetailList.forEach(vals => {
                             if (value==val.batchNumber) {
+
                               vals.warehouseId = val.warehouseId;
                               vals.storageRegionId = val.storageRegionId;
                               vals.storageId = val.storageId;
