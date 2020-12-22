@@ -399,6 +399,7 @@
       },
       uploadAfter(res, done, loading, column) {
         window.console.log(column);
+        console.log(res);
         this.excelBox = false;
         this.refreshChange();
         done();
