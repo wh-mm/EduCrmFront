@@ -305,7 +305,7 @@
                  },
                 column: [
                   {
-                    label: "仓库",
+                    label: "*仓库",
                     prop: "warehouseId",
                     type:'tree',
                     width: 200,
@@ -354,6 +354,7 @@
                     rules: [{
                       require: true,
                       message: '请选择商品',
+                      trigger: "blur"
                     }],
                     props: {
                       label: 'goodsName',
@@ -361,6 +362,16 @@
                     },
                     dicMethod:'post',
                     dicUrl:'/api/erp-wms/goods/dropDown',
+                  },
+                  {
+                    label: "批号",
+                    prop: "batchNumber",
+                    width: 200,
+                    rules: [{
+                      require: true,
+                      message: '请输入批号',
+                      trigger: "blur"
+                    }],
                   },
                   {
                     label: '*入库数量(g)',
@@ -383,11 +394,6 @@
                     prop: "specification",
                     placeholder: " ",
                     width: 140,
-                  },
-                  {
-                    label: "批号",
-                    prop: "batchNumber",
-                    width: 100,
                   },
                   {
                     label: "生产日期",
@@ -708,14 +714,11 @@
               this.$message.error("商品不可以重复");
               loading();
               return;
-
             }
           }
         }}
 
-
         add(row).then(() => {
-
           this.onLoad(this.page);
           this.$message({
             type: "success",
@@ -726,7 +729,6 @@
           loading();
           window.console.log(error);
         });
-
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
