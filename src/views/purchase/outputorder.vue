@@ -380,7 +380,6 @@
                     // dicUrl:'/api/erp-wms/goods/selecListGoods',
                     dicUrl: '/api/erp-wms/repertory/dropDowns',
                     change: ({value}) => {
-                      console.log(this.form.outputOrderDetailList)
                       if (value) {
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
