@@ -19,22 +19,29 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary"
+      <!--  <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    plain
                    @click="viewTransport()">发起运输单
-        </el-button>
+        </el-button>-->
+
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
+        <el-button  :size="size"
+                    :type="type"
+                    icon="el-icon-check"
+                    v-if="row.status === 1"
+                    @click="updateById(row.id,row.id)">完成
+        </el-button>
+
         <el-button  :size="size"
                     :type="type"
                    icon="el-icon-plus"
                    @click="viewHandover(row.id)">详情
         </el-button>
-      </template>
-      <template slot="orderNumber" slot-scope="{scope,row}">
-        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
+
+
       </template>
     </avue-crud>
     <el-dialog
@@ -46,9 +53,6 @@
       <avue-form ref="transportForm" v-model="obj" :option="transportOption" @submit="submitTransport">
       </avue-form>
       <avue-crud :data="selectionList" :option="transportListOption">
-        <template slot="orderNumber" slot-scope="{scope,row}">
-          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-        </template>
       </avue-crud>
     </el-dialog>
     <el-dialog
@@ -59,16 +63,13 @@
       :before-close="handleClose">
       <avue-crud :data="view.data" :option="distributionOption"
                  :page.sync="view.page">
-        <template slot="orderNumber" slot-scope="{scope,row}">
-          <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
-        </template>
       </avue-crud>
     </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,submitTransport,view} from "@/api/logistics/handoverform";
+  import {getList, getDetail, add, update, remove,submitTransport,view,updateById} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
 
   export default {
@@ -109,7 +110,6 @@
             {
               label: '单号',
               prop: 'orderNumber',
-              slot: true,
               addDisplay: false,
               editDisplay: false,
               width: 180,
@@ -158,7 +158,6 @@
             {
               label: '单号',
               prop: 'orderNumber',
-              slot: true,
             },
             {
               label: "医院名称",
@@ -237,7 +236,6 @@
             {
               label: "单号",
               prop: "orderNumber",
-              slot: true,
               width: 180,
             },
             {
@@ -462,7 +460,7 @@
           this.selectionClear();
         });
       },
-      viewTransport() {
+      /*viewTransport() {
         if(this.ids){
           this.dialogVisible = true;
         }else{
@@ -471,7 +469,19 @@
             message: '请选择配送单'
           });
         }
+      },*/
+      updateById(id) {
+        updateById(id).then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+          this.onLoad(this.page);
+        })
       },
+
       submitTransport() {
         submitTransport(this.obj.carId,this.obj.driverId,this.ids).then(res => {
           if(res.data.success){

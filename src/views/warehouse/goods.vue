@@ -79,6 +79,21 @@
           })
         }
       }
+      var selectCode = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error("请输入编码！"))
+        } else {
+          selectGoodsCode(this.form.id, value).then(res => {
+            if (res.data.success) {
+              callback();
+            } else {
+              callback(new Error(res.data.msg));
+            }
+          }, err => {
+            callback(new Error(err.data.msg));
+          })
+        }
+      }
       return {
         form: {},
         query: {},
@@ -128,16 +143,14 @@
               search: true,
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
-            /*
             {
-              label: "货品编码",
+              label: "货品编号",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,
                 trigger: "blur"
               }]
             },
-            */
             {
               label: "规格",
               prop: "goodsSpecification",
@@ -146,13 +159,13 @@
                 message: "请输入规格",
                 trigger: "blur"
               }],
-              /*type: "select",*/
-             /* props: {
+              type: "select",
+              props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"*/
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
             },
             {
               label: "基本单位",
@@ -386,6 +399,7 @@
       },
       uploadAfter(res, done, loading, column) {
         window.console.log(column);
+        console.log(res);
         this.excelBox = false;
         this.refreshChange();
         done();

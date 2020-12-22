@@ -291,10 +291,10 @@
                     dicMethod:'post',
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
-                      selectByBatchNumber(value).then(res => {
+                      this.form.outputOrderDetailList.forEach(vals => {
+                      selectByBatchNumber(value,vals.goodsId).then(res => {
                         var detail = res.data.data;
                         detail.forEach(val =>{
-                          this.form.outputOrderDetailList.forEach(vals => {
                             if (value==val.batchNumber) {
                                vals.warehouseId = val.warehouseId;
                                vals.storageRegionId = val.storageRegionId;
@@ -302,7 +302,6 @@
                                vals.repertoryQuantity  = val.repertoryQuantity
                             }
                           });
-
                         });
                       });
                     },
@@ -322,7 +321,7 @@
                     width:150,
                     rules: [{
                       required: true,
-                      message: "请输入类型",
+                      message: "请输入仓库",
                       trigger: "blur"
                     }],
                     props: {
@@ -339,11 +338,6 @@
                     row: true,
                     disabled: true,
                     width:150,
-                    rules: [{
-                      required: true,
-                      message: "请输入区域",
-                      trigger: "blur"
-                    }],
                     props: {
                       label: 'title',
                       value: 'id'
@@ -396,10 +390,11 @@
                           this.form.sumMoney = 0;
                           this.form.outputOrderDetailList.forEach(val => {
                             var detail = res.data.data;
-                             val.recheckGoodsQuantity = val.goodsQuantity;
+                              if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
+                                val.recheckGoodsQuantity = val.goodsQuantity;
+                              }
                             val.basicUnit = detail.basicUnit;
                             val.specification = detail.goodsSpecification;
-
                           });
                         });
                       }

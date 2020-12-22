@@ -19,12 +19,21 @@
                    size="small"
                    plain
                    icon="el-icon-upload2"
+                   v-if="permission.repertory_import_init"
+                   @click="handleImportInit">初始化导入
+        </el-button>
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   v-if="permission.repertory_import"
                    @click="handleImport">导入
         </el-button>
         <el-button type="warning"
                    size="small"
                    plain
                    icon="el-icon-download"
+                   v-if="permission.repertory_export"
                    @click="handleExport">导出
         </el-button>
       </template>
@@ -35,6 +44,19 @@
                :visible.sync="excelBox"
                width="555px">
       <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+      </avue-form>
+    </el-dialog>
+
+    <el-dialog title="初始化库存数据导入"
+               append-to-body
+               :visible.sync="excelBoxInit"
+               width="555px">
+      <avue-form :option="excelOptionInit" v-model="excelFormInit" :upload-after="uploadAfterInit">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
       </avue-form>
     </el-dialog>
   </basic-container>
@@ -173,10 +195,18 @@
             {
               label: "库存数量",
               prop: "repertoryQuantity",
-              rules: [{
-                trigger: "blur"
-              },
-              ]
+            },
+            {
+              label: "包装规格",
+              prop: "packageSpecification",
+            },
+            {
+              label: "包装数量",
+              prop: "packageQuantity",
+            },
+            {
+              label: "规格等级",
+              prop: "specificationLevel",
             },
             {
               label: "入库时间",
@@ -213,6 +243,34 @@
               tip: '请上传 .xls,.xlsx 标准格式文件',
               action: this.ERP_WMS_NAME + "/repertory/import"
             },
+          ]
+        },
+
+        excelBoxInit: false,
+        excelFormInit: {},
+        excelOptionInit: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: this.ERP_WMS_NAME + "/repertory/importInit"
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
           ]
         }
       };
@@ -319,7 +377,7 @@
       uploadAfter(res, done, loading, column) {
         window.console.log(column);
         this.excelBox = false;
-        this.refreshChange();
+        this.searchReset();
         done();
       },
       handleExport() {
@@ -330,6 +388,19 @@
         }).then(() => {
           window.open( this.ERP_WMS_NAME + `/repertory/export?${this.website.tokenHeader}=${getToken()}`);
         });
+      },
+
+      handleImportInit() {
+        this.excelBoxInit = true;
+      },
+      uploadAfterInit(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBoxInit = false;
+        this.searchReset();
+        done();
+      },
+      handleTemplate() {
+        window.open(this.ERP_WMS_NAME + `/repertory/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
     }
   };

@@ -148,6 +148,8 @@
               label: "医院操作员名称",
               prop: "hospitalUserId",
               type: 'tree',
+              searchLabelWidth:140,
+              searchSpan:7,
               search: true,
               props: {
                 label: 'name',

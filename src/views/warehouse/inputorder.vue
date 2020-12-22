@@ -273,47 +273,8 @@
               }]
             },
             {
-              label: "仓库",
-              prop: "warehouseId",
-              type:'tree',
-              width: 200,
-              props: {
-                label: 'title',
-                value: 'value'
-              },
-              cascaderItem: ['storageRegionId','storageId'],
-              rules: [{
-                required: true,
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
-              dicUrl:'/api/erp-wms/warehouse/tree'
-            },
-            {
-              label: "区域",
-              prop: "storageRegionId",
-              type:'tree',
-              width: 200,
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
-            },
-            {
-              label: "储位",
-              prop: "storageId",
-              type:'tree',
-              width: 200,
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-            },
-            {
-              label:"创建时间",
-              prop:"updateTime",
+              label:"入库时间",
+              prop:"createTime",
               dateDefault: true,
               addDisplay: false,
               editDisplay: false,
@@ -344,6 +305,45 @@
                  },
                 column: [
                   {
+                    label: "*仓库",
+                    prop: "warehouseId",
+                    type:'tree',
+                    width: 200,
+                    props: {
+                      label: 'title',
+                      value: 'value'
+                    },
+                    cascaderItem: ['storageRegionId','storageId'],
+                    rules: [{
+                      required: true,
+                      message: "请输入仓库",
+                      trigger: "blur"
+                    }],
+                    dicUrl:'/api/erp-wms/warehouse/tree'
+                  },
+                  {
+                    label: "区域",
+                    prop: "storageRegionId",
+                    type:'tree',
+                    width: 200,
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+                  },
+                  {
+                    label: "储位",
+                    prop: "storageId",
+                    type:'tree',
+                    width: 200,
+                    props: {
+                      label: 'title',
+                      value: 'id'
+                    },
+                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                  },
+                  {
                     label: '*商品',
                     prop: "goodsId",
                     type: 'tree',
@@ -354,6 +354,7 @@
                     rules: [{
                       require: true,
                       message: '请选择商品',
+                      trigger: "blur"
                     }],
                     props: {
                       label: 'goodsName',
@@ -361,6 +362,16 @@
                     },
                     dicMethod:'post',
                     dicUrl:'/api/erp-wms/goods/dropDown',
+                  },
+                  {
+                    label: "批号",
+                    prop: "batchNumber",
+                    width: 200,
+                    rules: [{
+                      require: true,
+                      message: '请输入批号',
+                      trigger: "blur"
+                    }],
                   },
                   {
                     label: '*入库数量(g)',
@@ -371,52 +382,6 @@
                       required: true,
                       validator: validateQuantity,
                     }]
-                  },
-                  {
-                    label: "仓库",
-                    prop: "warehouseId",
-                    type:"select",
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    cascaderItem: ['storageRegionId'],
-                    dicUrl:'/api/erp-wms/warehouse/tree'
-                  },
-                  {
-                    label: "区域",
-                    prop: "storageRegionId",
-                    type:'tree',
-                    row: true,
-                    span: 24,
-                    rules: [{
-                      required: true,
-                      message: "请输入储位",
-                      trigger: "blur"
-                    }],
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    cascaderItem: ['storageId'],
-                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
-                  },
-                  {
-                    label: "储位",
-                    prop: "storageId",
-                    type:'tree',
-                    row: true,
-                    span: 24,
-                    rules: [{
-                      required: true,
-                      message: "请输入储位",
-                      trigger: "blur"
-                    }],
-                    props: {
-                      label: 'title',
-                      value: 'id'
-                    },
-                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
                   },
                   {
                     label: '供应商',
@@ -431,11 +396,6 @@
                     width: 140,
                   },
                   {
-                    label: "批号",
-                    prop: "batchNumber",
-                    width: 100,
-                  },
-                  {
                     label: "生产日期",
                     prop: "dateOfManufacture",
                     type:'date',
@@ -447,30 +407,30 @@
                     label: "有效期至",
                     prop: "periodOfValidity",
                     type:'date',
-                    format: "yyyy-MM",
+                    format: "yyyy-MM-dd",
                     valueFormat: "yyyy-MM-dd",
                     width: 200,
                   },
                   {
                     label: "生产厂家",
                     prop: "manufacturer",
-                    width: 100,
+                    width: 200,
                   },
                   {
                     label: "产地",
                     prop: "placeOfOrigin",
-                    width: 100,
+                    width: 200,
                   },
                   {
                     label: "采购人",
                     prop: "inputPerson",
-                    width: 100,
+                    width: 200,
                   },
                   {
                     label: '备注',
                     prop: "remark",
                     type:"textarea",
-                    width: 100,
+                    width: 200,
                   }
                 ],
               }
@@ -746,7 +706,21 @@
     },
     methods: {
       rowSave(row, done, loading) {
+        let goodslist =row.inputOrderDetailList;
+        if(goodslist.length>1){ for (let i = 0; i < goodslist.length; i++) {
+          for (let j = 0; j < goodslist.length; j++) {
+            if(goodslist[i].goodsId==goodslist[j].goodsId){
+              this.onLoad(this.page);
+              this.$message.error("商品不可以重复");
+              loading();
+              return;
+
+            }
+          }
+        }}
+
         add(row).then(() => {
+
           this.onLoad(this.page);
           this.$message({
             type: "success",
@@ -757,9 +731,26 @@
           loading();
           window.console.log(error);
         });
+
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
+          //商品不可重
+          let goodslist =row.inputOrderDetailList;
+          for (let i = 0; i < goodslist.length; i++) {
+            for (let j = 0; j < goodslist.length; j++) {
+
+              if(goodslist[i].goodsId==goodslist[j].goodsId){
+                this.onLoad(this.page);
+                this.$message.warning("商品不可以重复");
+                loading();
+                return
+              }
+            }
+          }
+
+
+
           this.onLoad(this.page);
           this.$message({
             type: "success",
