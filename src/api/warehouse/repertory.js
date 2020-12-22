@@ -20,12 +20,13 @@ export const saveDate = (row) => {
   })
 }
 
-export const selectByBatchNumber = (batchNumber) => {   //根据批号查询商品所在位置
+export const selectByBatchNumber = (batchNumber,goodsId) => {   //根据批号查询商品所在位置
   return request({
     url: ERP_WMS_NAME + '/repertory/selectByBatchNumber',
     method: 'post',
     params: {
-      batchNumber
+      batchNumber,
+      goodsId
     }
   })
 }

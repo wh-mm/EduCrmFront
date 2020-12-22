@@ -291,10 +291,10 @@
                     dicMethod:'post',
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
-                      selectByBatchNumber(value).then(res => {
+                      this.form.outputOrderDetailList.forEach(vals => {
+                      selectByBatchNumber(value,vals.goodsId).then(res => {
                         var detail = res.data.data;
                         detail.forEach(val =>{
-                          this.form.outputOrderDetailList.forEach(vals => {
                             if (value==val.batchNumber) {
                                vals.warehouseId = val.warehouseId;
                                vals.storageRegionId = val.storageRegionId;
@@ -302,7 +302,6 @@
                                vals.repertoryQuantity  = val.repertoryQuantity
                             }
                           });
-
                         });
                       });
                     },
