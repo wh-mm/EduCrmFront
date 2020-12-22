@@ -391,10 +391,11 @@
                           this.form.sumMoney = 0;
                           this.form.outputOrderDetailList.forEach(val => {
                             var detail = res.data.data;
-                             val.recheckGoodsQuantity = val.goodsQuantity;
+                              if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
+                                val.recheckGoodsQuantity = val.goodsQuantity;
+                              }
                             val.basicUnit = detail.basicUnit;
                             val.specification = detail.goodsSpecification;
-
                           });
                         });
                       }
