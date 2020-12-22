@@ -322,7 +322,7 @@
                     width:150,
                     rules: [{
                       required: true,
-                      message: "请输入类型",
+                      message: "请输入仓库",
                       trigger: "blur"
                     }],
                     props: {
@@ -339,11 +339,6 @@
                     row: true,
                     disabled: true,
                     width:150,
-                    rules: [{
-                      required: true,
-                      message: "请输入区域",
-                      trigger: "blur"
-                    }],
                     props: {
                       label: 'title',
                       value: 'id'
