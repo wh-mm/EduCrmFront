@@ -15,7 +15,7 @@ export default {
   tokenTime: 3000,
   tokenHeader: 'Blade-Auth',
   //http的status默认放行列表
-  statusWhiteList: [400],
+  statusWhiteList: [],
   //配置首页不可关闭
   isFirstPage: false,
   fistPage: {
