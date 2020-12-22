@@ -714,11 +714,13 @@
               this.$message.error("商品不可以重复");
               loading();
               return;
+
             }
           }
         }}
 
         add(row).then(() => {
+
           this.onLoad(this.page);
           this.$message({
             type: "success",
@@ -729,21 +731,23 @@
           loading();
           window.console.log(error);
         });
+
       },
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
+          //商品不可重
           let goodslist =row.inputOrderDetailList;
-          if(goodslist.length>1){ for (let i = 0; i < goodslist.length; i++) {
+          for (let i = 0; i < goodslist.length; i++) {
             for (let j = 0; j < goodslist.length; j++) {
+
               if(goodslist[i].goodsId==goodslist[j].goodsId){
                 this.onLoad(this.page);
-                this.$message.error("商品不可以重复");
+                this.$message.warning("商品不可以重复");
                 loading();
-                return;
-
+                return
               }
             }
-          }}
+          }
 
 
 
