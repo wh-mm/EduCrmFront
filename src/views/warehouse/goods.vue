@@ -159,13 +159,13 @@
                 message: "请输入规格",
                 trigger: "blur"
               }],
-              /*type: "select",*/
-             /* props: {
+              type: "select",
+              props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               search: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"*/
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
             },
             {
               label: "基本单位",

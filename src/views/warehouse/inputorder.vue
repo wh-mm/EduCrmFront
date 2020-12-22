@@ -273,8 +273,8 @@
               }]
             },
             {
-              label:"创建时间",
-              prop:"updateTime",
+              label:"入库时间",
+              prop:"createTime",
               dateDefault: true,
               addDisplay: false,
               editDisplay: false,
@@ -401,30 +401,30 @@
                     label: "有效期至",
                     prop: "periodOfValidity",
                     type:'date',
-                    format: "yyyy-MM",
+                    format: "yyyy-MM-dd",
                     valueFormat: "yyyy-MM-dd",
                     width: 200,
                   },
                   {
                     label: "生产厂家",
                     prop: "manufacturer",
-                    width: 100,
+                    width: 200,
                   },
                   {
                     label: "产地",
                     prop: "placeOfOrigin",
-                    width: 100,
+                    width: 200,
                   },
                   {
                     label: "采购人",
                     prop: "inputPerson",
-                    width: 100,
+                    width: 200,
                   },
                   {
                     label: '备注',
                     prop: "remark",
                     type:"textarea",
-                    width: 100,
+                    width: 200,
                   }
                 ],
               }

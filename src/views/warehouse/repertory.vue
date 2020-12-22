@@ -52,6 +52,11 @@
                :visible.sync="excelBoxInit"
                width="555px">
       <avue-form :option="excelOptionInit" v-model="excelFormInit" :upload-after="uploadAfterInit">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
       </avue-form>
     </el-dialog>
   </basic-container>
@@ -190,10 +195,18 @@
             {
               label: "库存数量",
               prop: "repertoryQuantity",
-              rules: [{
-                trigger: "blur"
-              },
-              ]
+            },
+            {
+              label: "包装规格",
+              prop: "packageSpecification",
+            },
+            {
+              label: "包装数量",
+              prop: "packageQuantity",
+            },
+            {
+              label: "规格等级",
+              prop: "specificationLevel",
             },
             {
               label: "入库时间",
@@ -252,6 +265,12 @@
               tip: '请上传 .xls,.xlsx 标准格式文件',
               action: this.ERP_WMS_NAME + "/repertory/importInit"
             },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
           ]
         }
       };
@@ -379,6 +398,9 @@
         this.excelBoxInit = false;
         this.searchReset();
         done();
+      },
+      handleTemplate() {
+        window.open(this.ERP_WMS_NAME + `/repertory/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
     }
   };
