@@ -26,7 +26,16 @@
 <!--          </el-button>-->
 <!--      </template>-->
       <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印领料单</el-button>
+        <el-button :size="scope.size"
+                   v-if="scope.row.status==101"
+                   type="text"
+                   @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
+
+        <el-button :size="scope.size"
+                   icon="el-icon-printer"
+                   :type="scope.type"
+                   @click="print(scope.row)"> 打印领料单</el-button>
+
         <el-button :type="scope.type"
                    icon="el-icon-check"
                    :size="scope.size"
@@ -380,7 +389,6 @@
                     // dicUrl:'/api/erp-wms/goods/selecListGoods',
                     dicUrl: '/api/erp-wms/repertory/dropDowns',
                     change: ({value}) => {
-                      console.log(this.form.outputOrderDetailList)
                       if (value) {
                         getGoodsDetail(value).then(res => {
                           this.form.sumMoney = 0;
@@ -892,61 +900,6 @@
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
-        });
-      },
-      updateStatus(id){
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-          })
-          .catch(() => {
-            status = 3;
-          }).finally(()=>{
-          updateStatus(id,status).then(res => {
-            if(res.data.success){
-              this.$message.success(res.data.msg);
-            }else{
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
-      updateStatusNew() {
-        if (this.selectionList.length >1 ){
-          return this.$message.error("选中一行数据");
-        }
-        // if (this.selectionList[0].status != 1){
-        //   return this.$message.error("该任务已经完成");
-        // }
-        var id= this.selectionList[0].id;
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-          })
-          .catch(() => {
-            status = 101;
-          }).finally(() => {
-          updateStatus(id, status).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
         });
       },
       viewCommodity(goodsId){

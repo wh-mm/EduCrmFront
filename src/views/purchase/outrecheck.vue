@@ -22,29 +22,12 @@
           <el-button type="button"
                      size="small"
                      v-if="permission.outrechek_approval"
-                     @click="updateStatusNew()">审 批
+                     @click="updateRevocation()">审 批
           </el-button>
-<!--        <el-button type="button"-->
-<!--                     size="small"-->
-<!--                     v-if="permission.outrechek_revocation"-->
-<!--                     @click="updateRevocation()">撤 销-->
-<!--          </el-button>-->
 
-        <el-button type="button"
-                   size="small"
-                   icon="el-icon-mouse"
-                   v-if="permission.outrechek_revocation"
-                   @click="updateRevocation(104)">撤 销
-        </el-button>
-        <el-button type="button"
-                   size="small"
-                   v-if="status1 == '101'"
-                   @click="dialogFormVisible = true">填写驳回理由
-        </el-button>
        <el-button
        size="small"
-       type="text"
-       >
+       type="text">
          <el-switch
          style="display: block"
          v-model="value1"
@@ -55,18 +38,14 @@
          @change="changeSwitch()">
        </el-switch>
        </el-button>
-
       </template>
-
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
         <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.warehouseId)">库 存 检 索</el-button>
       </template>
 
       <template slot-scope="scope" slot="unitForm">
         <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查 看 资 质</el-button>
-
       </template>
-
       <template slot-scope="scope" slot="menu">
        <el-button icon="el-icon-check"
                             :size="scope.size"
@@ -74,13 +53,24 @@
                             v-if="scope.row.status==1 || scope.row.status==102|| scope.row.status==103"
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
-
-
-
       </template>
 
      </avue-crud>
 
+    <el-dialog
+      title="审批"
+      :visible.sync="dialogFormVisible"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj0" :option="option0">
+      </avue-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateStatusNew(101)">驳 回</el-button>
+        <el-button @click="updateStatusNew(104)">撤 销</el-button>
+        <el-button type="primary" @click="updateStatusNew(2)">同 意</el-button>
+      </span>
+    </el-dialog>
 
     <el-dialog
       title="商品资质"
@@ -109,27 +99,18 @@
       </avue-crud>
     </el-dialog>
 
-    <el-dialog title="驳回理由" :visible.sync="dialogFormVisible">
-      <avue-form ref="form" v-model="obj0Reason" :option="option0Reason">
-      </avue-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="updaterejectTextNew">提 交</el-button>
-      </div>
-    </el-dialog>
 
 
   </basic-container>
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText,updateRevocation} from "@/api/purchase/outputorder";
+  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
-  import {updateInspector} from "@/api/quality/information";
   export default {
 
     data() {
@@ -284,7 +265,6 @@
                     type:'select',
                     width:170,
                     props: {
-
                       label: 'batchNumber',
                       value: 'batchNumber'
                     },
@@ -697,16 +677,16 @@
             },
           ]
         },
-        obj0Reason:{
-          rejectText:''
+        obj0: {
+          rejectText: ''
         },
-        option0Reason:{
-          emptyBtn:false,
-          submitBtn:false,
+        option0: {
+          emptyBtn: false,
+          submitBtn: false,
           column: [{
             label: "驳回理由",
             prop: "rejectText",
-            type:'textarea',
+            type: 'textarea',
             span: 24,
           }]
         },
@@ -872,100 +852,32 @@
           this.selectionClear();
         });
       },
-      updateStatusNew() {
-
-        if (this.selectionList.length >1 ){
-          return this.$message.error("选中一行数据");
-        }
-        if (this.selectionList[0].status == 2){
-          return this.$message.error("该任务已经完成");
-        }
-        var id= this.selectionList[0].id;
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            status = 2;
-          })
-          .catch(() => {
-            status = 101;
-          }).finally(() => {
-          updateStatus(id, status,).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
-      //审批
-      updateRevocation(status) {
-        if (this.selectionList[0].status === 2){
-              return this.$message.error("该订单已经出库！");
-            }
-        updateRevocation(this.ids,status).then(res => {
-          if (res.data.success) {
-            this.$message.success(res.data.msg);
-            this.dialogVisible = false;
-            this.refreshChange();
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
-
-      updateInspectorNew(operation) {
-        if (operation === 2 && this.obj0.rejectText === '') {
+      updateStatusNew(status) {
+        if (status === 101 && this.obj0.rejectText === '') {
           return this.$message.error("请输入驳回理由!");
         }
-        updateInspector( operation, this.obj0.rejectText).then(res => {
-          if (res.data.success) {
-            this.$message.success(res.data.msg);
-            this.dialogVisible = false;
-            this.refreshChange();
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
+          updateStatus(this.ids, status,this.obj0.rejectText).then(res => {
+            if (res.data.success) {
+              this.dialogFormVisible = false;
+              this.searchReset();
+              this.$message.success(res.data.msg);
+            } else {
+              this.dialogFormVisible = false;
+              this.searchReset();
+              this.$message.error(res.data.msg);
+            }
+          })
+
       },
-      // updateRevocation() {
-      //
-      //   if (this.selectionList.length >1 ){
-      //     return this.$message.error("选中一行数据");
-      //   }
-      //   if (this.selectionList[0].status === 104){
-      //     return this.$message.error("订单已被撤销");
-      //   }
-      //   if (this.selectionList[0].status === 2){
-      //     return this.$message.error("该任务已经完成");
-      //   }
-      //   var id= this.selectionList[0].id;
-      //   let status;
-      //   this.$confirm("请确认是否撤销?", {
-      //     confirmButtonText: "确认",
-      //     cancelButtonText: "驳回",
-      //     type: "warning"
-      //   })
-      //     .then(() => {
-      //       status = 104;
-      //     }).finally(() => {
-      //     updateRevocation(id, status,).then(res => {
-      //       if (res.data.success) {
-      //         this.$message.success(res.data.msg);
-      //       } else {
-      //         this.$message.error(res.data.msg);
-      //       }
-      //       this.refreshChange();
-      //       this.onLoad(this.page);
-      //     })
-      //   });
-      // },
+      //审批
+      updateRevocation() {
+        if (this.selectionList.length === 0) {
+          return this.$message.error("请选择需要的商品");
+        }
+        this.dialogFormVisible = true;
+      },
+
+      //查看资质
       viewCommodity(goodsId){
         this.commoditydialogVisible = true;
         viewCommodity(goodsId).then(res=>{
@@ -977,6 +889,8 @@
           }
         })
       },
+
+      //库存检索
       inventoryToRetrieve(warehouseId){
         this.dialogVisible = true;
         inventoryToRetrieve(warehouseId).then(res=>{
@@ -990,21 +904,7 @@
       },
       handleEdit(row, index) {
         this.$refs.crud.rowEdit(row, index);
-      },
-      updaterejectTextNew() {
-        if(this.status1 === 101 && this.obj0Reason.rejectText === '' ){
-          return this.$message.error("请输入驳回理由!");
-        }
-        updaterejectText(this.ids, this.obj0Reason.rejectText).then(res => {
-          if (res.data.success) {
-            this.$message.success(res.data.msg);
-            this.dialogFormVisible =false;
-            this.refreshChange();
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
+      }
     }
   };
 </script>

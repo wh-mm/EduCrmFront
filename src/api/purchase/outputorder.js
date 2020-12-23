@@ -48,13 +48,14 @@ export const update = (row) => {
   })
 }
 
-export const updateStatus = (id, status) => {
+export const updateStatus = (id, status,rejectText) => {
   return request({
     url: '/api/purchase/outputorder/updateStatus',
     method: 'post',
     params:{
       id,
-      status
+      status,
+      rejectText
     }
   })
 }

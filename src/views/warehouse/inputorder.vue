@@ -707,17 +707,18 @@
     methods: {
       rowSave(row, done, loading) {
         let goodslist =row.inputOrderDetailList;
-        if(goodslist.length>1){ for (let i = 0; i < goodslist.length; i++) {
-          for (let j = 0; j < goodslist.length; j++) {
+        if(goodslist.length>1){
+          for (let i = 0; i < goodslist.length; i++) {
+            for (let j = 0; j < i; j++) {
             if(goodslist[i].goodsId==goodslist[j].goodsId){
               this.onLoad(this.page);
               this.$message.error("商品不可以重复");
               loading();
               return;
-
             }
           }
-        }}
+        }
+        }
 
         add(row).then(() => {
 
