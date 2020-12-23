@@ -280,6 +280,10 @@
                                vals.storageRegionId = val.storageRegionId;
                                vals.storageId = val.storageId;
                                vals.repertoryQuantity  = val.repertoryQuantity
+
+                              vals.dateOfManufacture = val.dateOfManufacture
+                              vals.placeOfOrigin = val.placeOfOrigin
+                              vals.manufacturer = val.manufacturer
                             }
                           });
                         });
@@ -291,6 +295,42 @@
                     prop: 'repertoryQuantity',
                     disabled: true,
                     width:100,
+                  },
+                  {
+                    label: '出库数量(g)',
+                    prop: "goodsQuantity",
+                    type: "number",
+                    width: 130,
+                    disabled: true,
+                    rules: [{
+                      validator: validateQuantity,
+                      trigger: 'blur'
+                    }],
+                    change: () => {
+                      if(this.value1 == true){
+                        getGoodsDetail().then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outputOrderDetailList.forEach(val => {
+                            var detail = res.data.data;
+                            if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
+                              val.recheckGoodsQuantity = val.goodsQuantity;
+                            }
+                            val.basicUnit = detail.basicUnit;
+                            val.specification = detail.goodsSpecification;
+                          });
+                        });
+                      }
+
+                    },
+                  }, {
+                    label: '复核出库数量(g)',
+                    prop: "recheckGoodsQuantity",
+                    type: "number",
+                    width: 130,
+                    rules: [{
+                      validator: validateQuantity,
+                      trigger: 'blur'
+                    }]
                   },
                   {
                     label: '*出货仓库',
@@ -355,47 +395,32 @@
                     width: 100,
                   },
                   {
-                    label: '出库数量(g)',
-                    prop: "goodsQuantity",
-                    type: "number",
-                    width: 130,
+                    label: "生产日期",
+                    prop: "dateOfManufacture",
+                    type:'datetime',
+                    format: "yyyy-MM-dd",
+                    valueFormat: "yyyy-MM-dd",
+                    width:150,
                     disabled: true,
-                    rules: [{
-                      validator: validateQuantity,
-                      trigger: 'blur'
-                    }],
-                    change: () => {
-                      if(this.value1 == true){
-                        getGoodsDetail().then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            var detail = res.data.data;
-                              if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
-                                val.recheckGoodsQuantity = val.goodsQuantity;
-                              }
-                            val.basicUnit = detail.basicUnit;
-                            val.specification = detail.goodsSpecification;
-                          });
-                        });
-                      }
-
-                    },
                   },
                   {
-                    label: '复核出库数量(g)',
-                    prop: "recheckGoodsQuantity",
-                    type: "number",
-                    width: 130,
-                    rules: [{
-                      validator: validateQuantity,
-                      trigger: 'blur'
-                    }]
+                    label: "产地",
+                    prop: "placeOfOrigin",
+                    width:150,
+                    disabled: true,
+                  },
+                  {
+                    label: "生产厂家",
+                    prop: "manufacturer",
+                    width:150,
+                    disabled: true,
                   },
                   {
                     label: "基本单位",
                     prop: "basicUnit",
                     editDisplay: false,
                     disabled: true,
+                    width: 150,
                     type:'select',
                     props: {
                       label: 'dictValue',
@@ -408,7 +433,7 @@
                     prop: "specification",
                     disabled: true,
                     placeholder: " ",
-                    width: 100,
+                    width: 150,
                   },
                   {
                   label: '备注',
