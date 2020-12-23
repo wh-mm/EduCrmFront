@@ -879,8 +879,9 @@
       },
       updateStatusNew(status) {
         if (status === 101 && this.obj0.rejectText === '') {
-          return this.$message.error("请输入驳回理由!");
+          return this.$message.error("请输入驳回理由！");
         }
+
           updateStatus(this.ids, status,this.obj0.rejectText).then(res => {
             if (res.data.success) {
               this.dialogFormVisible = false;
@@ -897,7 +898,13 @@
       //审批
       updateRevocation() {
         if (this.selectionList.length === 0) {
-          return this.$message.error("请选择需要的商品");
+          return this.$message.error("请选择需要的商品！");
+        }if (this.status1 ==2) {
+          return this.$message.error("该订单已经完成无法修改！");
+        }if (this.status1 ==101) {
+          return this.$message.error("该订单已经驳回无法修改！");
+        }if (this.status1 ==104) {
+          return this.$message.error("该订单已被撤销无法修改！");
         }
         this.dialogFormVisible = true;
       },

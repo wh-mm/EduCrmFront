@@ -346,22 +346,18 @@
                   {
                     label: '*商品',
                     prop: "goodsId",
-                    type: 'tree',
+                    type: 'select',
                     width: 200,
                     filterable: true,
                     remote: true,
                     display:false,
-                    rules: [{
-                      require: true,
-                      message: '请选择商品',
-                      trigger: "blur"
-                    }],
                     props: {
                       label: 'goodsName',
                       value: 'id'
                     },
                     dicMethod:'post',
-                    dicUrl:'/api/erp-wms/goods/dropDown',
+                    dicUrl:'/api/erp-wms/goods/selecListGoods',
+
                   },
                   {
                     label: "批号",
