@@ -523,6 +523,7 @@
       rounding(value) {
         return value.toFixed(2)
       },
+      //获取时间
       formatDate: function (value) {
         let date = new Date(value);
         let y = date.getFullYear();
@@ -686,8 +687,6 @@
               {
                 label: "规格",
                 prop: "goodsSpecification",
-
-
               },
               {
                 label: "单价",
