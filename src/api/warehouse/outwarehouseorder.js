@@ -47,4 +47,12 @@ export const update = (row) => {
     data: row
   })
 }
-
+export const printOutWarehouseDetail = (id) => {
+  return request({
+    url: '/api/warehouse/outwarehouseorder/printOutWarehouseDetail',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}

@@ -422,6 +422,21 @@
                     width: 200,
                   },
                   {
+                    label: "包装规格",
+                    prop: "packageSpecification",
+                    width: 140,
+                  },
+                  {
+                    label: "包装数量",
+                    prop: "packageQuantity",
+                    width: 140,
+                  },
+                  {
+                    label: "规格等级",
+                    prop: "specificationLevel",
+                    width: 140,
+                  },
+                  {
                     label: "采购人",
                     prop: "inputPerson",
                     width: 200,

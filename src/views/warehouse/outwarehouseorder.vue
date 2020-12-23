@@ -27,6 +27,12 @@
                    @click="handleDelete">删 除
         </el-button>-->
       </template>
+      <template slot-scope="scope" slot="menu">
+        <el-button :size="scope.size"
+                   icon="el-icon-printer"
+                   :type="scope.type"
+                   @click="print(scope.row)"> 打印出库单</el-button>
+      </template>
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
         <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
       </template>
@@ -47,23 +53,184 @@
       <avue-crud v-model="form" :data="inventoryToRetrievedata" :option="inventoryToRetrievedataoption"  >
       </avue-crud>
     </el-dialog>
+    <el-dialog
+      title="打印出库单"
+      :append-to-body="true"
+      :visible.sync="printDialogVisible"
+      width="800px"
+      :modal="false"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+      v-dialogDrag
+    >
+      <el-button type="primary"
+                 size="small"
+                 icon="el-icon-plus"
+                 plain
+                 v-print="'#print'">打印出库单
+      </el-button>
+      <el-form :model="form1">
+        <div id="print" ref="print">
+          <!-- 隐藏打印区域，避免用户看到 -->
+          <div id="print1" ref="print11">
+            <div style="padding: 10px;">
+              <el-row>
+                <el-col :span="24">
+                  <div class="grid-content bg-purple-dark"
+                       style="font-size: 24px;text-align: center;margin-bottom: 15px;">
+                    出库单
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple">
+                    <p>出库单号 : <span style="margin-left: 10px;">{{printData.orderNumber}}</span></p>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    <p>部门 : <span style="margin-left: 10px;"></span></p>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    <p>出库日期 : <span style="margin-left: 10px;">{{date =new Date()|formatDate}}</span></p>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple">
+                    <p>仓库 : <span style="margin-left: 10px;"></span></p>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    <p>原因 : <span style="margin-left: 10px;"></span></p>
+                  </div>
+                </el-col>
+
+              </el-row>
+              <el-table
+                :data="printData.tableData"
+                border :fit="false"
+                style="width: 729px;margin-top: 15px;margin-right: 0px;">
+                <el-table-column
+                  type="index"
+                  label="序号"
+                  width="60">
+                </el-table-column>
+                <el-table-column
+                  prop="goodsName"
+                  label="品名"
+                  width="100">
+                </el-table-column>
+                <el-table-column
+                  prop="batchNumber"
+                  label="批号"
+                  width="107">
+                </el-table-column>
+                <el-table-column
+                  prop="goodsQuantity"
+                  label="数量"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  prop="specification"
+                  label="规格"
+                  width="90">
+                </el-table-column>
+                <el-table-column
+                  prop="dateOfManufacture"
+                  label="生产日期"
+                  width="90">
+                </el-table-column>
+                <el-table-column
+                  prop="placeOfOrigin"
+                  label="产地"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  prop="manufacturer"
+                  label="生产厂家"
+                  width="90">
+                </el-table-column>
+                <el-table-column
+                  prop="supplierName"
+                  label="供应商"
+                  width="80">
+                </el-table-column>
+              </el-table>
+              <el-row style="margin-top: 20px;">
+                <el-col :span="6">
+                  <div class="grid-content bg-purple">
+                  </div>
+                </el-col>
+                <el-col :span="6">
+                  <div class="grid-content bg-purple-light">
+                  </div>
+                </el-col>
+                <el-col :span="6">
+                  <div class="grid-content bg-purple">
+                  </div>
+                </el-col>
+                <el-col :span="6">
+                  <div class="grid-content bg-purple-light">
+                    <p>出库人 : <span style="margin-left: 10px;"></span></p>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+        </div>
+      </el-form>
+    </el-dialog>
+
+
+
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/outwarehouseorder";
+  import {getList, getDetail, add, update, remove,printOutWarehouseDetail} from "@/api/warehouse/outwarehouseorder";
   import {mapGetters} from "vuex";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
   import {selectGoodsGross} from "@/api/purchase/outputorder";
 
   export default {
+    filters: {
+      rounding(value) {
+        return value.toFixed(2)
+      },
+      formatDate: function (value) {
+        let date = new Date(value);
+        let y = date.getFullYear();
+        let MM = date.getMonth() + 1;
+        MM = MM < 10 ? ('0' + MM) : MM;
+        let d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        let h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        let m = date.getMinutes();
+        m = m < 10 ? ('0' + m) : m;
+        let s = date.getSeconds();
+        s = s < 10 ? ('0' + s) : s;
+        return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+      }
+    },
     data() {
       return {
         form: {},
         query: {},
         loading: true,
         dialogVisible:false,
+        printDialogVisible:false,
+        printData: {
+          orderNumber: '',
+          tableData: [],
+        },
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -213,6 +380,14 @@
                               vals.repertoryQuantity  = val.repertoryQuantity
                               vals.dateOfManufacture = val.dateOfManufacture
                               vals.periodOfValidity = val.periodOfValidity
+
+                              vals.placeOfOrigin = val.placeOfOrigin
+                              vals.manufacturer = val.manufacturer
+                              vals.supplierName = val.supplierName
+
+                              vals.packageSpecification = val.packageSpecification
+                              vals.packageQuantity = val.packageQuantity
+                              vals.specificationLevel = val.specificationLevel
                             }
                           });
                         });
@@ -224,6 +399,26 @@
                     prop: 'repertoryQuantity',
                     disabled: true,
                     width:100,
+                  },
+                  {
+                    label: '出库数量(g)',
+                    prop: "goodsQuantity",
+                    type: "number",
+                    width: 130,
+                    change: () => {
+                      if(this.value1 == true){
+                        getGoodsDetail().then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outwarehouseOrderDetailList.forEach(val => {
+                            var detail = res.data.data;
+                            val.recheckGoodsQuantity = val.goodsQuantity;
+                            val.basicUnit = detail.basicUnit;
+                            val.specification = detail.goodsSpecification;
+
+                          });
+                        });
+                      }
+                    },
                   },
                   {
                     label:'生产日期',
@@ -284,36 +479,6 @@
                     dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
                   },
                   {
-                    label: "库存检索",
-                    prop: "inventoryToRetrieve",
-                    type:'input',
-                    placeholder: " ",
-                    formslot:true,
-                    width: 100,
-                  },
-                  {
-                    label: '出库数量(g)',
-                    prop: "goodsQuantity",
-                    type: "number",
-                    width: 130,
-                    change: () => {
-                      if(this.value1 == true){
-                        getGoodsDetail().then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outwarehouseOrderDetailList.forEach(val => {
-                            var detail = res.data.data;
-                            val.recheckGoodsQuantity = val.goodsQuantity;
-                            val.basicUnit = detail.basicUnit;
-                            val.specification = detail.goodsSpecification;
-
-                          });
-                        });
-                      }
-                    },
-                  },
-
-
-                  {
                     label: "基本单位",
                     prop: "basicUnit",
                     editDisplay: false,
@@ -331,6 +496,42 @@
                     disabled: true,
                     placeholder: " ",
                     width: 100,
+                  },
+                  {
+                    label: "包装规格",
+                    prop: "packageSpecification",
+                    disabled: true,
+                    width:150,
+                  },
+                  {
+                    label: "产地",
+                    prop: "placeOfOrigin",
+                    disabled: true,
+                    width:150,
+                  },
+                  {
+                    label: "生产厂家",
+                    prop: "manufacturer",
+                    disabled: true,
+                    width:150,
+                  },
+                  {
+                    label: "供应商",
+                    prop: "supplierName",
+                    disabled: true,
+                    width:150,
+                  },
+                  {
+                    label: "包装数量",
+                    prop: "packageQuantity",
+                    disabled: true,
+                    width:150,
+                  },
+                  {
+                    label: "规格等级",
+                    prop: "specificationLevel",
+                    disabled: true,
+                    width:150,
                   },
                   {
                     label: '备注',
@@ -514,6 +715,20 @@
           }
         })
       },
+      print(row){
+        this.printDialogVisible = true;
+        this.printData.orderNumber = row.orderNumber;
+        printOutWarehouseDetail(row.id).then( res => {
+          this.printData.tableData = res.data.data;
+        })
+      },
+      printOut(row){
+        this.printOutDialogVisible = true;
+        this.printData.orderNumber = row.orderNumber;
+        printOutWarehouseDetail(row.id).then( res => {
+          this.printData.tableData = res.data.data;
+        })
+      }
     }
   };
 </script>

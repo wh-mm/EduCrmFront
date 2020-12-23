@@ -193,6 +193,18 @@
               valueFormat: "yyyy-MM-dd",
             },
             {
+              label: "产地",
+              prop: "placeOfOrigin",
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "供应商名称",
+              prop: "supplierName",
+            },
+            {
               label: "库存数量",
               prop: "repertoryQuantity",
             },
