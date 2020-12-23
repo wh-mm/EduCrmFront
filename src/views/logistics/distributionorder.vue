@@ -29,28 +29,25 @@
         <el-button  :size="size"
                     :type="type"
                     icon="el-icon-delete"
-                    v-if="permission.distributionorder_delete  && row.distributionStatus === '1'"
+                    v-if="permission.distributionorder_delete  && row.distributionStatus === '2'"
                     @click="rowDel(row)">删 除
         </el-button>
         <el-button icon="el-icon-check"
                    :size="size"
                    :type="type"
-                   v-if="permission.distributionorder_edit  && row.distributionStatus === '1'"
+                   v-if="permission.distributionorder_edit  && row.distributionStatus === '2'"
                    @click.stop="handleEdit(row,index)">编辑
         </el-button>
         <el-button icon="el-icon-check"
                    :size="size"
                    :type="type"
-                   v-if="permission.distributionorder_edit && row.distributionStatus === '1'"
+                   v-if="permission.distributionorder_edit && row.distributionStatus === '2'"
                    @click.stop="handleStart(row.id)">发起
         </el-button>
         <el-button :type="type" :size="size" icon="el-icon-printer"
                    v-if="row.distributionStatus === '2'"
                    @click="doPrint1(row)">打印配送单
         </el-button>
-      </template>
-      <template slot="distributionOrderNumber" slot-scope="{scope,row}">
-        <el-tag>{{row.distributionOrderNumberPrefix+row.distributionOrderNumber}}</el-tag>
       </template>
     </avue-crud>
     <div style="display: none" id="print11">
@@ -174,17 +171,11 @@
           column: [
             {
               label: "单号",
-              prop: "distributionOrderNumber",
-              slot: true,
+              prop: "orderNumber",
               addDisplay: false,
               editDisplay: false,
               width: 180,
               search: true,
-              rules: [{
-                required: true,
-                message: "请输入单号",
-                trigger: "blur"
-              }]
             },
             {
               label: "状态",
@@ -504,7 +495,7 @@
         this.printData = row;
         console.log(this.printData)
         setTimeout(() => {
-          JsBarcode("#bigcode", row.distributionOrderNumberPrefix + row.distributionOrderNumber, {
+          JsBarcode("#bigcode", row.orderNumber, {
             width: 2,//设置条之间的宽度
             height: 28,//高度
             fontOptions: "bold",//使文字加粗体或变斜体

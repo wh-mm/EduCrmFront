@@ -105,7 +105,6 @@
           total: 0
         },
         selectionList: [],
-        excelBox: false,
         option: {
           height: 'auto',
           calcHeight: 30,
@@ -126,6 +125,7 @@
                 validator: selectName,
                 trigger: 'blur',
               }],
+              search: true,
             },
             {
               label: "货物类型",
@@ -143,17 +143,22 @@
               search: true,
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
-            /*{
-              label: "货品编码",
+            {
+              label: "货品编号",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,
                 trigger: "blur"
               }]
-            },*/
+            },
             {
               label: "规格",
               prop: "goodsSpecification",
+              rules: [{
+                required: true,
+                message: "请输入规格",
+                trigger: "blur"
+              }],
               type: "select",
               props: {
                 label: 'dictValue',
@@ -165,14 +170,19 @@
             {
               label: "基本单位",
               prop: "basicUnit",
-              type: "select",
-              searchSpan: 7,
-              props: {
+              rules: [{
+                required: true,
+                message: "请输入基本单位",
+                trigger: "blur"
+              }],
+              /*type: "select",*/
+             /* searchSpan: 7,*/
+             /* props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",*/
             },
             {
               label: "货品价格",
@@ -193,6 +203,7 @@
           ]
         },
         data: [],
+        excelBox: false,
         excelForm: {},
         excelOption: {
           submitBtn: false,
@@ -388,6 +399,7 @@
       },
       uploadAfter(res, done, loading, column) {
         window.console.log(column);
+        console.log(res);
         this.excelBox = false;
         this.refreshChange();
         done();

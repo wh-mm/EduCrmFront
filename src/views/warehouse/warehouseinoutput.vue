@@ -24,31 +24,57 @@
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_in"
                    plain
-                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
+                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架
         </el-button>
         <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    v-if="permission.warehouseinoutput_out"
                    plain
-                   @click="dialogVisible = true,title = '出 库',obj.type = 'out' ">出 库
+                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架
+        </el-button>
+
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   plain-->
+<!--                   @click="outputorderdialogVisible = true,obj.type = 'out' ">出 库 单 出 库-->
+<!--        </el-button>-->
+      </template>
+      <!--<template slot-scope="scope" slot="menu">
+        <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
+      </template>-->
+
+      <template slot-scope="scope" slot="menu">
+        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+
+                   @click="dayin(scope.row)">打 印 订 单
         </el-button>
       </template>
-      <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
-      </template>
-
 
     </avue-crud>
+    <!-- 入库-->
     <el-dialog
       :title="title"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="40%"
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
       </avue-form>
     </el-dialog>
+    <!-- 出库-->
+    <el-dialog
+      :title="title"
+      :visible.sync="outdialogVisible"
+      width="40%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj" :option="outoptionForm" @submit="submit">
+      </avue-form>
+    </el-dialog>
+    <!-- 转区-->
+
 
     <el-dialog
       title="商品资质"
@@ -63,26 +89,176 @@
       <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
       </avue-crud>
     </el-dialog>
+
+    <el-form :model="form">
+      <div style="display: none" id="printyinpian" ref="printyinpian">
+        <!-- 隐藏打印区域，避免用户看到 -->
+        <div style="padding: 1px;height: 100px;">
+          <div class="yinpianhead" style="width: 80%;text-align: center">
+            <el-row>
+              <el-col :span="5" :offset="11">
+                <div class="grid-content bg-purple">
+                  <h2 margin="auto" style="text-align: center;margin-top: 10px;font-size: 40px">入 库 单</h2></div>
+              </el-col>
+
+              <el-col :span="5" :offset="2">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
+            </el-row>
+
+            <el-row>
+              <el-col :span="10" :offset="2">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">出库时间：<span>{{printData.createTime}}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="8" :offset="4">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>{{date =new Date()|formatDate}}</span></p></div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+          <div class="yinpianshou" style="width: 80%">
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  商品批号：<span>{{printData.batchNumber}}</span></p></div>
+              </el-col>
+            </el-row>
+
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  商品名称：<span>{{printData.goodsName}}</span></p></div>
+              </el-col>
+            </el-row>
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  入库数量：<span>{{printData.quantity}}</span></p></div>
+              </el-col>
+            </el-row>
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  生产厂家：<span>{{printData.manufacturer}}</span></p></div>
+              </el-col>
+            </el-row>
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  生产厂家：<span>{{printData.placeOfOrigin}}</span></p></div>
+              </el-col>
+            </el-row>
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  仓库名称：<span>{{printData.warehouseName}}</span></p></div>
+              </el-col>
+            </el-row>
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  区名称：<span>{{printData.regionName}}</span></p></div>
+              </el-col>
+            </el-row>
+
+            <el-row type="flex" class="row-bg">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  储位名称：<span>{{printData.storageName}}</span></p></div>
+              </el-col>
+            </el-row>
+
+          </div>
+
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
+          <div class="yinpianhead" style="width: 80%;text-align: center">
+          <el-row>
+            <el-col :span="10" :offset="2">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">入库人员：<span></span>
+              </p></div>
+            </el-col>
+            <el-col :span="8" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                入库复审员：<span></span></p></div>
+            </el-col>
+          </el-row>
+          </div>
+        </div>
+      </div>
+
+    </el-form>
+
   </basic-container>
 </template>
 
 <script>
-  import {getList,add,updateStatus} from "@/api/warehouse/warehouseinoutput";
+  import {getList,add,updateStatus,selectByWarehouseInoutputId} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
+  import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import JsBarcode from "jsbarcode";
 
   export default {
+    filters: {
+      rounding(value) {
+        return value.toFixed(2)
+      },
+      formatDate: function (value) {
+        let date = new Date(value);
+        let y = date.getFullYear();
+        let MM = date.getMonth() + 1;
+        MM = MM < 10 ? ('0' + MM) : MM;
+        let d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        let h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        let m = date.getMinutes();
+        m = m < 10 ? ('0' + m) : m;
+        let s = date.getSeconds();
+        s = s < 10 ? ('0' + s) : s;
+        return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+      }
+    },
     data() {
       var validateNumber = (rule, value, callback)=>{
+        console.log();
         if (value === '') {
           callback(new Error('请输入数量'));
         } else if(value < 1){
-          callback(new Error('请输入正确的数量'));
+          callback(new Error('数量不能少于1'));
+        } else if(value > this.repertoryQuantity && this.repertoryQuantity !== 0 && this.obj.type === 'out') {
+          callback(new Error('库存数量不足'));
         } else {
           callback();
         }
       };
       return {
+        printData: [
+          {
+            createTime:'', //入库时间
+            goodsName:'', //商品名
+            quantity:'', //入库数量
+            batchNumber:'', //商品批号
+            warehouseName:'', //仓库名
+            regionName:'', //区名
+            storageName:'', //储位名
+            manufacturer:'', //生产厂家
+            placeOfOrigin:'', //产地
+          }
+        ],
+
         form: {},
         query: {},
         loading: true,
@@ -93,7 +269,10 @@
         },
         obj:{},
         title: '' ,
+        repertoryQuantity:0,
         dialogVisible:false,
+        outdialogVisible:false,
+        conversiondialogVisible:false,
         commoditydialogVisible:false,
         selectionList: [],
         option: {
@@ -106,7 +285,7 @@
           index: true,
           viewBtn: true,
           selection: true,
-          menu:true,
+          menu:false,
           dialogClickModal: false,
           column: [
             {
@@ -117,9 +296,27 @@
                 label: 'title',
                 value: 'id'
               },
-              cascaderItem: ['storageId'],
+              cascaderItem: ['storageRegionId'],
              search:true,
              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
               label: "储位",
@@ -129,7 +326,7 @@
               span: 24,
               rules: [{
                 required: true,
-                message: "请输入仓库",
+                message: "请输入储位",
                 trigger: "blur"
               }],
               props: {
@@ -141,20 +338,82 @@
             {
               label: "商品",
               prop: "goodsId",
-              type:"select",
+              type:"tree",
               props: {
+                required: true,
                 label: 'goodsName',
                 value: 'id'
               },
               search:true,
               dicMethod:'post',
               dicUrl:'/api/erp-wms/goods/selecListGoods'
-
             },
             {
               label: "数量(g)",
               prop: "quantity",
               type: "number",
+            },
+            {
+              label: "规格",
+              prop: "specification",
+              rules:[{
+                message: "请输入规格",
+                trigger: "blur",
+                required: true,
+              }],
+              // type:'select',
+              // props: {
+              //   label: "dictValue",
+              //   value: "dictKey"
+              // },
+              // dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+            },
+            {
+              label: "供应商",
+              prop: "supplierName"
+            },
+
+            {
+              label: "批号",
+              prop: "batchNumber",
+              required: true,
+              search:true,
+            },
+            {
+              label: "生产日期",
+              prop: "dateOfManufacture",
+              type:'date',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+              required: true,
+            },
+            {
+              label: "有效期至",
+              prop: "periodOfValidity",
+              type:'date',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+              required: true,
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+              required: true,
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin",
+              required: true,
+            },
+            {
+              label: "采购人",
+              prop: "inputPerson",
+              required: true,
+            },
+            {
+              label: "领料人",
+              prop: "outputPerson",
+              required: true,
             },
             {
               label: "类型",
@@ -189,12 +448,23 @@
         optionForm : {
           column: [
             {
+              label: "采购人",
+              prop: "inputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入采购人",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
               label: "商品",
               prop: "goodsId",
               type:'tree',
               row: true,
               span: 24,
               rules:[{
+                required: true,
                 message: "请输入商品",
                 trigger: "blur",
               }],
@@ -206,6 +476,58 @@
               dicUrl:'/api/erp-wms/goods/selecListGoods'
             },
             {
+              label: "批号",
+              prop: "batchNumber",
+              span: 24,
+              rules:[{
+                message: "请输入批号",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
+              label: "生产日期",
+              prop: "dateOfManufacture",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules:[{
+                message: "请输入生产日期",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
+              label: "有效期至",
+              prop: "periodOfValidity",
+              type:'datetime',
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules:[{
+                message: "请输入有效期",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+              rules:[{
+                message: "请输入生产厂家",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin",
+              rules:[{
+                message: "请输入产地",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
               label: "仓库",
               prop: "warehouseId",
               type:'tree',
@@ -215,7 +537,7 @@
                 label: 'title',
                 value: 'value'
               },
-              cascaderItem: ['storageId'],
+              cascaderItem: ['storageRegionId'],
               rules: [{
                 required: true,
                 message: "请输入仓库",
@@ -223,17 +545,36 @@
               }],
              dicUrl:'/api/erp-wms/warehouse/tree'
             },
+
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入区域",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
             {
               label: "储位",
               prop: "storageId",
               type:'tree',
               row: true,
               span: 24,
-              rules: [{
+              /*rules: [{
                 required: true,
-                message: "请输入仓库",
+                message: "请输入储位",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'title',
                 value: 'id'
@@ -249,8 +590,191 @@
               row: true,
               span: 24,
               rules: [{
+                required: true,
                 validator: validateNumber,
-                trigger: 'change',
+                trigger: 'blur',
+              }]
+            },
+            {
+              label: "规格",
+              prop: "specification",
+              rules:[{
+                message: "请输入规格",
+                trigger: "blur",
+                required: true,
+              }],
+              // type:'select',
+              // props: {
+              //   label: "dictValue",
+              //   value: "dictKey"
+              // },
+              // dicUrl: "/api/blade-system/dict-biz/dictionary?code=specification_code"
+            },
+            {
+              label: "供应商",
+              prop: "supplierName",
+              rules:[{
+                message: "请输入供应商",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
+              label: "类型",
+              prop: "type",
+              type: "select",
+              row: true,
+              span: 24,
+              disabled:true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              }
+            },
+            {
+              label: "备注",
+              prop: "remark",
+              type: "textarea",
+              span: 24,
+            }
+          ]
+        },
+        outoptionForm : {
+          column: [
+            {
+              label: "领料人",
+              prop: "outputPerson",
+              span: 24,
+              rules:[{
+                message: "请输入领料人",
+                trigger: "blur",
+                required: true,
+              }],
+            },
+            {
+              label: "商品",
+              prop: "goodsId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules:[{
+                message: "请输入商品",
+                trigger: "blur",
+                required: true,
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              cascaderItem: ['batchNumber'],
+              dicMethod:'post',
+              dicUrl:'/api/erp-wms/goods/selecListGoods'
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              type:'select',
+              span: 24,
+              rules:[{
+                message: "请输入批号",
+                trigger: "blur",
+                required: true,
+              }],
+              props: {
+                label: 'batchNumber',
+                value: 'batchNumber'
+              },
+              dicMethod:'post',
+              dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
+
+              change: ({value}) => {
+                  selectByBatchNumber(value).then(res => {
+                      var detail = res.data.data;
+                      detail.forEach(val =>{
+                        if (value === val.batchNumber) {
+                            this.obj.warehouseId = val.warehouseId;
+                            this.obj.storageRegionId = val.storageRegionId;
+                            this.obj.storageId = val.storageId;
+                            this.obj.repertoryQuantity = val.repertoryQuantity;
+                        }
+                      });
+                  });
+                },
+            },
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              type:"select",
+              span: 24,
+              rules:[{
+                message: "请输入仓库",
+                trigger: "blur",
+                required: true,
+              }],
+              props: {
+                required: true,
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageRegionId'],
+              search:true,
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['storageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+            {
+              label: "储位",
+              prop: "storageId",
+              type:'tree',
+              row: true,
+              span: 24,
+              /*rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],*/
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+            },
+            {
+              label:'库存数量',
+              prop:'repertoryQuantity',
+              span:24,
+              disabled: true
+            },
+            {
+              label: "数量(g)",
+              prop: "quantity",
+              type: "number",
+              precision: 0,
+              value: 1,
+              row: true,
+              span: 24,
+              rules: [{
+                validator: validateNumber,
+                trigger: 'blur',
+                required: true,
+                message: "请输入数量",
               }]
             },
             {
@@ -274,7 +798,6 @@
             }
           ]
         },
-        commoditydata:[],
         commoditydataoption : {
           addBtn: false,
           menu:false,
@@ -528,10 +1051,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -560,22 +1083,22 @@
           this.selectionClear();
         });
       },
-      submit(form,done){
-        add(form).then( res => {
+      submit(form, done) {
+        add(form).then(res => {
           done();
-          if(res.data.success){
+          if (res.data.success) {
             this.$refs.form.resetForm();
             this.$message.success(res.data.msg);
             this.dialogVisible = false;
             this.onLoad(this.page, this.query);
-          }else {
+          } else {
             this.$message.error(res.data.msg);
           }
         }).catch(() => {
           done();
         })
       },
-      updateStatus(id){
+      updateStatus(id) {
         let status;
         this.$confirm("请确认是否审批?", {
           confirmButtonText: "确认",
@@ -589,12 +1112,12 @@
           .catch(() => {
             console.log(3);
             status = 3;
-          }).finally(()=>{
+          }).finally(() => {
           console.log(status);
-          updateStatus(id,status).then(res => {
-            if(res.data.success){
+          updateStatus(id, status).then(res => {
+            if (res.data.success) {
               this.$message.success(res.data.msg);
-            }else{
+            } else {
               this.$message.error(res.data.msg);
             }
             this.refreshChange();
@@ -602,9 +1125,9 @@
           })
         });
       },
-      viewCommodity(goodsId){
+      viewCommodity(goodsId) {
         this.commoditydialogVisible = true;
-        viewCommodity(goodsId).then(res=>{
+        viewCommodity(goodsId).then(res => {
           if (res.data.success) {
             this.commoditydata = res.data.data;
             this.$message.success(res.data.msg);
@@ -613,8 +1136,38 @@
           }
         })
       },
+      //打印
+      dayin(row) {
+        selectByWarehouseInoutputId(row.id).then(res => {
+            if (res.data.success) {
+              this.printData = res.data.data.data;
+              console.log(this.printData.batchNumber);
+              console.log(this.printData);
+              this.$message.success(res.data.msg);
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          })
+          setTimeout(() => {
+            JsBarcode("#bigcode", row.id, {
+              width: 2,//设置条之间的宽度
+              height: 56,//高度
+              fontOptions: "bold",//使文字加粗体或变斜体
+              textAlign: "center",//设置文本的水平对齐方式
+              textMargin: 5,//设置条形码和文本之间的间距
+              fontSize: 25,//设置文本的大小
+              displayValue: true,//是否在条形码下方显示文字
+              margin: 2
+            });
+            this.$Print(this.$refs.printyinpian);
+
+          }, 100);
+
+      }
     }
   };
+
+
 </script>
 
 <style>

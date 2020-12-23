@@ -27,6 +27,12 @@
                    plain
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExport">导出
+        </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button
@@ -50,6 +56,7 @@
 <script>
   import {getLazyList, remove, update, add, getDetail,getGoodsTypeTree} from "@/api/warehouse/goodstype";
   import {mapGetters} from "vuex";
+  import {getToken} from "@/util/auth";
 
   export default {
     data() {
@@ -296,7 +303,16 @@
         getLazyList(parentId).then(res => {
           resolve(res.data.data);
         });
-      }
+      },
+      handleExport() {
+        this.$confirm("是否导出货品类型数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( this.ERP_WMS_NAME + `/goods-type/export?${this.website.tokenHeader}=${getToken()}`);
+        });
+      },
     }
   };
 </script>

@@ -12,6 +12,20 @@ export const getList = (current, size, params) => {
     }
   })
 };
+//
+export const getListsd = (current, size, params) => {
+  return request({
+    url: '/api/taocao-order/order/page',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+
+//
 export const getLists = (current, size, params) => {
   return request({
     url: '/api/taocao-order/order/pageJianyao',
@@ -102,6 +116,18 @@ export const selectListByDrugCategory = (current, size, params) => {
     }
   })
 };
+export const selecListGoodsByTypeKL = (current, size, params) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/selecListGoodsByTypeKL',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+
 
 export const receiveDecoctingSave = (row) => {
   return request({
@@ -113,6 +139,23 @@ export const receiveDecoctingSave = (row) => {
 export const receiveBlenderSave = (row) => {
   return request({
     url: '/api/taocao-order/order/receiveBlenderSave',
+    method: 'post',
+    data: row
+  })
+};
+
+//调配机诊所保存方法
+export const clinicReceiveBlender = (row) => {
+  return request({
+    url: '/api/taocao-order/order/clinicReceiveBlender',
+    method: 'post',
+    data: row
+  })
+};
+//煎药机诊所保存方法
+export const clinicReceiveDecoctingSave = (row) => {
+  return request({
+    url: '/api/taocao-order/order/clinicReceiveDecoctingSave',
     method: 'post',
     data: row
   })

@@ -1,3 +1,5 @@
+import {ERP_WMS_NAME} from '@/const/YueConst'
+
 export const phonelength = (rule, value, callback) => {
   if (value.length != 11) {
     callback(new Error('请输入正确手机号'));
@@ -72,23 +74,6 @@ export const newAddDrugOption = {
       collapse: true,
       prop: 'group1',
       column: [
-        {
-          label: "医院名称",
-          prop: "hospitalId",
-          type: "select",
-          props: {
-            label: "hospitalName",
-            value: "id"
-          },
-          rules: [{
-            required: true,
-            message: "请选择医院",
-            trigger: "blur",
-          }],
-          span: 6,
-          search: true,
-          dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-        },
         /* {
            label: "处方号",
            prop: "pspnum",
@@ -135,7 +120,6 @@ export const newAddDrugOption = {
             required: true,
             validator: zhongwen,
           }],
-          search: true,
         },
         {
           label: "性别",
@@ -180,6 +164,7 @@ export const newAddDrugOption = {
           prop: "address",
           span: 6,
           required: true,
+
           trigger: 'blur'
         },
       ]
@@ -428,7 +413,6 @@ export const newAddGrainOption = {
           search: true,
           dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
         },
-
         {
           label: "收件人",
           prop: "addressee",
@@ -437,7 +421,7 @@ export const newAddGrainOption = {
             required: true,
             validator: zhongwen,
           }],
-          search: true,
+
         },
         {
           label: "收件人电话",
@@ -479,6 +463,7 @@ export const newAddGrainOption = {
       collapse: true,
       prop: 'group1',
       column: [
+
         {
           label: "患者姓名",
           prop: "name",
@@ -487,7 +472,6 @@ export const newAddGrainOption = {
             required: true,
             validator: zhongwen,
           }],
-          search: true,
         },
         {
           label: "患者性别",
@@ -711,7 +695,7 @@ export const newAddBlenderListOption = {
       prop: "doseHerb",
       slot: true,
     },
-/*    {
+   /* {
       label: "当量",
       prop: "equivalent",
       slot: true,
@@ -795,7 +779,7 @@ export const viewAddBlenderListOption = {
       prop: "doseHerb",
       slot: true,
     },
-/*    {
+   /* {
       label: "当量",
       prop: "equivalent",
       slot: true,
@@ -828,13 +812,18 @@ export const option = {
     {
       label: "医院名称",
       prop: "hospitalId",
-      type: "select",
+    },
+    {
+      label: "颗粒名称",
+      prop: "goodsName",
+      type: "tree",
       props: {
-        label: "hospitalName",
-        value: "id"
+        label: 'goodsName',
+        value: 'id'
       },
       search: true,
-      dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+      dicMethod: "post",
+      dicUrl: ERP_WMS_NAME + '/goods/selecListGoods'
     },
     {
       label: "订单状态",
@@ -892,8 +881,7 @@ export const option = {
         required: true,
         message: "请输入收件人",
         trigger: "blur"
-      }],
-      search: true,
+      }]
     },
     {
       label: "收件人电话",

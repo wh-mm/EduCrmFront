@@ -29,8 +29,9 @@
       </template>
 
       <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size"  @click="viewCommodity(scope.row.commodityId)">查看资质</el-button>
+        <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
       </template>
+
     </avue-crud>
 
     <el-dialog
@@ -60,6 +61,7 @@
         form: {},
         query: {},
         loading: true,
+        commoditydialogVisible:false,
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -76,6 +78,7 @@
           index: true,
           viewBtn: true,
           selection: true,
+
           dialogClickModal: false,
           column: [
             {

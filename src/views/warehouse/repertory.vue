@@ -15,23 +15,48 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary"
+        <el-button type="success"
                    size="small"
-                   v-if="permission.repertory_input"
-                   icon="el-icon-plus"
                    plain
-                   @click="dialogVisible = true,title = '入 库',obj.type = 'in' ">入 库
+                   icon="el-icon-upload2"
+                   v-if="permission.repertory_import_init"
+                   @click="handleImportInit">初始化导入
         </el-button>
-
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   v-if="permission.repertory_import"
+                   @click="handleImport">导入
+        </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   v-if="permission.repertory_export"
+                   @click="handleExport">导出
+        </el-button>
       </template>
     </avue-crud>
-    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :modal="false"
-      :before-close="handleClose">
-      <avue-form ref="form" v-model="obj" :option="optionForm" @submit="submit">
+
+    <el-dialog title="库存数据导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+      </avue-form>
+    </el-dialog>
+
+    <el-dialog title="初始化库存数据导入"
+               append-to-body
+               :visible.sync="excelBoxInit"
+               width="555px">
+      <avue-form :option="excelOptionInit" v-model="excelFormInit" :upload-after="uploadAfterInit">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
       </avue-form>
     </el-dialog>
   </basic-container>
@@ -41,6 +66,7 @@
   import {getList} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
+  import {getToken} from "@/util/auth";
 
   export default {
     data() {
@@ -82,29 +108,62 @@
               label: "仓库",
               prop: "warehouseId",
               type:'tree',
+              row: true,
               search:true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageRegionId','storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type:'tree',
+              search:true,
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
               props: {
                 label: 'title',
                 value: 'id'
               },
-              // cascaderItem: ['storageId'],
-              dicUrl:this.ERP_WMS_NAME + '/warehouse/tree'
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
               label: "储位",
               prop: "storageId",
               type:'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
               props: {
-                label: 'name',
+                label: 'title',
                 value: 'id'
               },
-              search:true,
-              dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
+              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
             {
               label: "商品",
               prop: "goodsId",
-              type:'select',
+              type:'tree',
+              search:true,
               row: true,
               span: 24,
               props: {
@@ -115,16 +174,43 @@
               dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
-              label: "库存数量",
-              prop: "repertoryQuantity",
-              rules: [{
-                trigger: "blur"
-              },
-              ]
+              label: "批号",
+              prop: "batchNumber",
+              search:true,
             },
             {
-              label: "修改时间",
-              prop: "updateTime",
+              label: "生产日期",
+              prop: "dateOfManufacture",
+              type:'datetime',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "有效期至",
+              prop: "periodOfValidity",
+              type:'datetime',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "库存数量",
+              prop: "repertoryQuantity",
+            },
+            {
+              label: "包装规格",
+              prop: "packageSpecification",
+            },
+            {
+              label: "包装数量",
+              prop: "packageQuantity",
+            },
+            {
+              label: "规格等级",
+              prop: "specificationLevel",
+            },
+            {
+              label: "入库时间",
+              prop: "createTime",
               dateDefault: true,
               addDisplay: false,
               viewDisplay: false,
@@ -138,76 +224,51 @@
           ]
         },
         data: [],
-        optionForm : {
+        excelBox: false,
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
           column: [
             {
-              label: "商品",
-              prop: "goodsId",
-              type:'tree',
-              row: true,
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
               span: 24,
-              props: {
-                label: 'goodsName',
-                value: 'id'
+              propsHttp: {
+                res: 'data'
               },
-              rules:[{
-                required: true,
-                message: "请输入商品",
-                trigger: "blur",
-              }],
-
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/goods/dropDown'
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: this.ERP_WMS_NAME + "/repertory/import"
             },
+          ]
+        },
+
+        excelBoxInit: false,
+        excelFormInit: {},
+        excelOptionInit: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
             {
-              label: "仓库",
-              prop: "warehouseId",
-              type:'tree',
-              row: true,
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
               span: 24,
-              props: {
-                label: 'name',
-                value: 'id'
+              propsHttp: {
+                res: 'data'
               },
-              rules: [{
-                required: true,
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
-              dicMethod:"post",
-              dicUrl:'/api/taocao-warehouse/warehouse/dropDown'
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: this.ERP_WMS_NAME + "/repertory/importInit"
             },
             {
-              label: "数量",
-              prop: "quantity",
-              type: "number",
-              precision: 0,
-              value: 1,
-              row: true,
-              span: 24,
-              rules: [{
-                validator: validateNumber,
-                trigger: 'change',
-              }]
-            },
-            {
-              label: "类型",
-              prop: "type",
-              type: "select",
-              row: true,
-              disabled:true,
-              span: 24,
-
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              }
-            },
-            {
-              label: "备注",
-              prop: "remark",
-              type: "textarea",
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
               span: 24,
             }
           ]
@@ -309,6 +370,37 @@
         }).catch(() => {
           done();
         })
+      },
+      handleImport() {
+        this.excelBox = true;
+      },
+      uploadAfter(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBox = false;
+        this.searchReset();
+        done();
+      },
+      handleExport() {
+        this.$confirm("是否导出库存数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( this.ERP_WMS_NAME + `/repertory/export?${this.website.tokenHeader}=${getToken()}`);
+        });
+      },
+
+      handleImportInit() {
+        this.excelBoxInit = true;
+      },
+      uploadAfterInit(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBoxInit = false;
+        this.searchReset();
+        done();
+      },
+      handleTemplate() {
+        window.open(this.ERP_WMS_NAME + `/repertory/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
     }
   };

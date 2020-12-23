@@ -53,6 +53,7 @@
         <template slot="menuLeft">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
           </el-button>
+          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品</el-button>
         </template>
         <template slot="doseHerb" slot-scope="scope">
           <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0" ></el-input>
@@ -121,6 +122,8 @@
     getInfo,
     getList,
     receiveBlenderSave,
+    clinicReceiveBlender,
+    clinicReceiveDecoctingSave,
     receiveDecoctingSave,
     selectListByDrugCategory
   } from "@/api/order/order";
@@ -133,7 +136,7 @@
     option,
     viewAddBlenderListOption,
     viewDrugListOption
-  } from "@/const/order/customerorder"
+  } from "@/const/order/customerorderss"
 
   export default {
     data() {
@@ -165,31 +168,42 @@
             dialogClickModal: false,
             column: [
               {
-                label: "颗粒名称/药品名称",
-                prop: "goodsName",
+                label: "医院名称",
+                prop: "hospitalId",
               },
               {
-                label: "货物类别",
-                prop: "goodsCategory",
+                label: "颗粒名称",
+                prop: "goodsName",
                 type: "tree",
                 props: {
-                  label: 'dictValue',
+                  label: 'goodsName',
                   value: 'id'
                 },
                 search: true,
-                dicFlag: false,
-                dicUrl: "/api/blade-system/dictCategory/dictionaryByName"
+                dicMethod: "post",
+                dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
+              },
+              {
+                label: "货物类型",
+                prop: "goodsType",
+                type: "tree",
+                rules: [{
+                  required: true,
+                  message: "请选择货物类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                search: true,
+                dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
               },
               {
                 label: "规格",
-                prop: "unit",
-                type: 'select',
-                props: {
-                  label: 'dictValue',
-                  value: 'dictKey'
-                },
-                search: true,
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=unit"
+                prop: "goodsSpecification",
+
+
               },
               {
                 label: "单价",
@@ -230,7 +244,7 @@
       addDialogVisible() {
         if (!this.addDialogVisible) {
           this.activeName = 'jianyao';
-        }
+        }s
       }
     },
     computed: {
@@ -290,8 +304,12 @@
           l.tienum = 1;
           l.doseHerb = 1;
           l.equivalent = 1;
+          l.dose = 1;
         })
-        this.addInfo.drugList = this.drugList.selectionList;
+        var drugList = Object.assign([], this.drugList.selectionList);
+        for (let i = 0; i < drugList.length; i++) {
+          this.addInfo.drugList.push(drugList[i]);
+        }
         this.selectDrugDialogVisible = false;
         this.$refs.crud.toggleSelection();
       },
@@ -310,7 +328,7 @@
                 params.orderType = this.activeName;
                 params.drugList = this.addInfo.drugList;
                 if (this.activeName === 'tiaopei') {
-                  receiveBlenderSave(params).then(res => {
+                  clinicReceiveBlender(params).then(res => {
                     if (res.data.code === 200) {
                       this.$message({
                         type: "success",
@@ -330,7 +348,7 @@
                     }
                   });
                 } else if (this.activeName === 'jianyao') {
-                  receiveDecoctingSave(params).then(res => {
+                  clinicReceiveDecoctingSave(params).then(res => {
                     if (res.data.code === 200) {
                       this.$message({
                         type: "success",
@@ -374,6 +392,9 @@
             this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
           });
         }, 20);
+      },
+      delDrug(){
+        this.addInfo.drugList =[];
       },
       //新增 按钮
       newAdd() {

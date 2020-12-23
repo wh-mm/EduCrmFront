@@ -56,6 +56,7 @@
           border: true,
           index: true,
           viewBtn: true,
+          menu: false,
           selection: true,
           dialogClickModal: false,
           column: [

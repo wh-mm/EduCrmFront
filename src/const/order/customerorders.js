@@ -135,7 +135,6 @@ export const newAddDrugOption = {
             required: true,
             validator: zhongwen,
           }],
-          search: true,
         },
         {
           label: "性别",
@@ -180,6 +179,7 @@ export const newAddDrugOption = {
           prop: "address",
           span: 6,
           required: true,
+
           trigger: 'blur'
         },
       ]
@@ -437,7 +437,7 @@ export const newAddGrainOption = {
             required: true,
             validator: zhongwen,
           }],
-          search: true,
+
         },
         {
           label: "收件人电话",
@@ -487,7 +487,6 @@ export const newAddGrainOption = {
             required: true,
             validator: zhongwen,
           }],
-          search: true,
         },
         {
           label: "患者性别",
@@ -711,7 +710,7 @@ export const newAddBlenderListOption = {
       prop: "doseHerb",
       slot: true,
     },
-/*    {
+ /*   {
       label: "当量",
       prop: "equivalent",
       slot: true,
@@ -748,11 +747,11 @@ export const viewDrugListOption = {
       prop: "drugAllnum",
       slot: true,
     },
- /*   {
-      label: "次数",
-      prop: "tienum",
-      slot: true,
-    },*/
+    /*   {
+         label: "次数",
+         prop: "tienum",
+         slot: true,
+       },*/
     {
       label: "总剂量",
       prop: "drugweight",
@@ -853,12 +852,10 @@ export const option = {
     {
       label: "订单类型",
       prop: "orderType",
-      type: "select",
       props: {
         label: 'dictValue',
         value: 'dictKey'
       },
-      search: true,
       required: true,
       dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
       trigger: "blur"
@@ -937,7 +934,7 @@ export const option = {
         trigger: "click"
       }]
     },
-    {
+   /* {
       label: "总价",
       prop: "totalPrices",
       rules: [{
@@ -945,6 +942,6 @@ export const option = {
         message: "请输入总价",
         trigger: "blur"
       }]
-    },
+    },*/
   ]
 }
