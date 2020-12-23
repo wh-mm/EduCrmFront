@@ -154,20 +154,28 @@
               search: true,
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
-
+            {
+              label: "库房药名称",
+              prop: "goodsName",
+              addDisplay: false,
+              editDisplay: false,
+            },
             {
               label: "库房药名称",
               prop: "goodsId",
-              type: "tree",
+              type: "select",
+              hide: true,
+              viewDisplay: true,
               props: {
                 label: 'goodsName',
                 value: 'id'
               },
+              filterable: true,
+              remote: true,
               search: true,
               dicMethod: "post",
-              dicUrl: '/api/erp-wms/goods/selecListGoods'
+              dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}'
             },
-
             {
               label: "HIS药品码",
               prop: "hisDrugsUmber",
