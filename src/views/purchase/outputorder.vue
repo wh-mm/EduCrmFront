@@ -301,7 +301,7 @@
           dialogWidth: '80%',
           column: [
             {
-              label: "出库单号",
+              label: "领料单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
@@ -421,6 +421,14 @@
                     rules: [{
                       required: true,
                       validator: validateQuantity,
+                    }]
+                  },
+                  {
+                    label: '领料人',
+                    prop: "pickingPerson",
+                    width: 200,
+                    rules: [{
+                      required: true,
                     }]
                   },
                   {

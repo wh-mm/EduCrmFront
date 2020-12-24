@@ -155,7 +155,7 @@
           dialogWidth: '80%',
           column: [
             {
-              label: "出库单号",
+              label: "领料出库单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
@@ -220,7 +220,15 @@
                      done();
                  },
                 column: [
-
+                  {
+                    label: '领料人',
+                    prop: "pickingPerson",
+                    disabled:true,
+                    width: 200,
+                    rules: [{
+                      required: true,
+                    }]
+                  },
                   {
                     label: '*商品',
                     prop: "goodsId",
@@ -280,10 +288,13 @@
                                vals.storageRegionId = val.storageRegionId;
                                vals.storageId = val.storageId;
                                vals.repertoryQuantity  = val.repertoryQuantity
+                               vals.periodOfValidity  = val.periodOfValidity
 
                               vals.dateOfManufacture = val.dateOfManufacture
                               vals.placeOfOrigin = val.placeOfOrigin
                               vals.manufacturer = val.manufacturer
+                              vals.supplierName = val.supplierName
+
                             }
                           });
                         });
@@ -404,8 +415,23 @@
                     disabled: true,
                   },
                   {
+                    label: "有效期至",
+                    prop: "periodOfValidity",
+                    type:'datetime',
+                    format: "yyyy-MM-dd",
+                    valueFormat: "yyyy-MM-dd",
+                    width:150,
+                    disabled: true,
+                  },
+                  {
                     label: "产地",
                     prop: "placeOfOrigin",
+                    width:150,
+                    disabled: true,
+                  },
+                  {
+                    label: "供应商",
+                    prop: "supplierName",
                     width:150,
                     disabled: true,
                   },

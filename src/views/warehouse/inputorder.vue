@@ -346,7 +346,7 @@
                   {
                     label: '*商品',
                     prop: "goodsId",
-                    type: 'select',
+                    type: 'tree',
                     width: 200,
                     filterable: true,
                     remote: true,
