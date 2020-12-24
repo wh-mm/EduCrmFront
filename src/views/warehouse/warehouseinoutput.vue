@@ -406,15 +406,15 @@
               required: true,
             },
             {
-              label: "采购人",
+              label: "操作人员",
               prop: "inputPerson",
               required: true,
             },
-            {
-              label: "领料人",
-              prop: "outputPerson",
-              required: true,
-            },
+            // {
+            //   label: "领料/出库人",
+            //   prop: "outputPerson",
+            //   required: true,
+            // },
             {
               label: "类型",
               prop: "type",

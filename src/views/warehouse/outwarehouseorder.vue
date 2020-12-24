@@ -421,6 +421,12 @@
                     },
                   },
                   {
+                    label: "出库人",
+                    prop: "inputPerson",
+                    width:150,
+                    required: true,
+                  },
+                  {
                     label:'生产日期',
                     prop: 'dateOfManufacture',
                     disabled: true,
@@ -536,7 +542,8 @@
                   {
                     label: '备注',
                     prop: "remark",
-                    type:"textarea"
+                    type:"textarea",
+                    width:200
                   }],
               }
             },
