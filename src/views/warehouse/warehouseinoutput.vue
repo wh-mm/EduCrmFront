@@ -19,20 +19,20 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary"
-                   size="small"
-                   icon="el-icon-plus"
-                   v-if="permission.warehouseinoutput_in"
-                   plain
-                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架
-        </el-button>
-        <el-button type="primary"
-                   size="small"
-                   icon="el-icon-plus"
-                   v-if="permission.warehouseinoutput_out"
-                   plain
-                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架
-        </el-button>
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   v-if="permission.warehouseinoutput_in"-->
+<!--                   plain-->
+<!--                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架-->
+<!--        </el-button>-->
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   v-if="permission.warehouseinoutput_out"-->
+<!--                   plain-->
+<!--                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架-->
+<!--        </el-button>-->
 
 <!--        <el-button type="primary"-->
 <!--                   size="small"-->
