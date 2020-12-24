@@ -69,12 +69,12 @@ export const updateRevocation = (id, status) => {
     }
   })
 }
-export const inventoryToRetrieve = (warehouseId) => { //库存检索
+export const inventoryToRetrieve = (goodsId) => { //库存检索
   return request({
     url: '/api/purchase/outputorder/inventoryToRetrieve',
     method: 'post',
     params:{
-      warehouseId
+      goodsId
     }
   })
 }

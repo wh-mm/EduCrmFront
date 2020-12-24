@@ -40,7 +40,7 @@
        </el-button>
       </template>
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
-        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.warehouseId)">库 存 检 索</el-button>
+        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.goodsId)">库 存 检 索</el-button>
       </template>
 
       <template slot-scope="scope" slot="unitForm">
@@ -225,9 +225,7 @@
                     prop: "pickingPerson",
                     disabled:true,
                     width: 200,
-                    rules: [{
-                      required: true,
-                    }]
+
                   },
                   {
                     label: '*商品',
@@ -949,9 +947,9 @@
       },
 
       //库存检索
-      inventoryToRetrieve(warehouseId){
+      inventoryToRetrieve(goodsId){
         this.dialogVisible = true;
-        inventoryToRetrieve(warehouseId).then(res=>{
+        inventoryToRetrieve(goodsId).then(res=>{
           if (res.data.success) {
             this.inventoryToRetrievedata = res.data.data;
             this.$message.success(res.data.msg);
