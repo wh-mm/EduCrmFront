@@ -54,66 +54,148 @@
             {
               label: "仓库",
               prop: "warehouseId",
-              type:'tree',
+              type: 'tree',
+              row: true,
+              search: true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageRegionId', 'storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl: '/api/erp-wms/warehouse/tree'
+            },
+
+            {
+              label: "区域",
+              prop: "storageRegionId",
+              type: 'tree',
+              search: true,
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
               props: {
                 label: 'title',
                 value: 'id'
               },
-              cascaderItem: ['storageId'],
-              search:true,
-              dicUrl:this.ERP_WMS_NAME + '/warehouse/tree'
+              dicUrl: '/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
             },
             {
               label: "储位",
               prop: "storageId",
-              type:'select',
+              type: 'tree',
+              row: true,
+              span: 24,
+              rules: [{
+                required: true,
+                message: "请输入储位",
+                trigger: "blur"
+              }],
               props: {
-                label: 'name',
+                label: 'title',
                 value: 'id'
               },
-              search:true,
-              dicUrl:this.ERP_WMS_NAME + '/storage/dropDown?warehouseId={{key}}'
+              dicUrl: '/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
             {
               label: "商品",
               prop: "goodsId",
-              type:'select',
+              type: 'tree',
+              search: true,
               row: true,
               span: 24,
               props: {
-                label: 'name',
+                label: 'goodsName',
                 value: 'id'
               },
               dicMethod: "post",
-              search:true,
-              dicUrl:this.ERP_WMS_NAME + '/goods/dropDown'
+              dicUrl: 'api/erp-wms/goods/selecListGoods',
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              search: true,
             },
             {
               label: "养护时间",
-              prop: "createTime",
+              prop: "maintenanceTime",
+              dateDefault: true,
               type: "datetime",
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
-              searchRange: true,
-              searchSpan: 8,
-              addDisplay: false,
-              editDisplay: false,
-              viewDisplay: false,
-              search: true,
-              rules: [{
-                required: true,
-                message: "请输入养护时间",
-                trigger: "blur"
-              }]
+              width: 200
             },
             {
-              label: "养护人",
-              prop: "userName",
-              rules: [{
-                required: true,
-                message: "请输入养护人",
-                trigger: "blur"
-              }]
+              label: "养护结果",
+              prop: "maintenanceResults",
+              width: 120
+            },
+            {
+              label: "异常情况",
+              prop: "abnormalPhenomenon",
+              width: 120
+            },
+            {
+              label: "采取措施",
+              prop: "takeSteps",
+              width: 120
+            },
+            {
+              label: "采取措施后的结果",
+              prop: "takeStepsResults",
+              labelWidth: 145,
+              width: 200
+            },
+            {
+              label: "生产日期",
+              prop: "dateOfManufacture",
+              type: 'datetime',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "有效期至",
+              prop: "periodOfValidity",
+              type: 'datetime',
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
+              label: "产地",
+              prop: "placeOfOrigin",
+            },
+            {
+              label: "生产厂家",
+              prop: "manufacturer",
+            },
+            {
+              label: "供应商名称",
+              prop: "supplierName",
+            },
+            {
+              label: "库存数量",
+              prop: "repertoryQuantity",
+            },
+            {
+              label: "包装规格",
+              prop: "packageSpecification",
+            },
+            {
+              label: "包装数量",
+              prop: "packageQuantity",
+            },
+            {
+              label: "规格等级",
+              prop: "specificationLevel",
             },
           ]
         },

@@ -12,12 +12,10 @@ export const getList = (current, size, params) => {
     }
   })
 }
-export const saveMaintenance = (repertoryId) => {
+export const saveMaintenance = (row) => {
   return request({
     url: ERP_WMS_NAME + '/task-maintenance/saveMaintenance',
     method: 'post',
-    params: {
-      repertoryId
-    }
+    data: row
   })
 }
