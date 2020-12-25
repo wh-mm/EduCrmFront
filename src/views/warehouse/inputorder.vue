@@ -427,16 +427,7 @@
                     prop: "packageQuantity",
                     width: 140,
                   },
-                  {
-                    label: "规格等级",
-                    prop: "specificationLevel",
-                    width: 140,
-                  },
-                  {
-                    label: "采购人",
-                    prop: "inputPerson",
-                    width: 200,
-                  },
+
                   {
                     label: '备注',
                     prop: "remark",

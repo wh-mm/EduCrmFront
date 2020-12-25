@@ -70,15 +70,7 @@
 
   export default {
     data() {
-      var validateNumber = (rule, value, callback)=>{
-        if (value === '') {
-          callback(new Error('请输入数量'));
-        } else if(value < 1){
-          callback(new Error('请输入正确的数量'));
-        } else {
-          callback();
-        }
-      };
+
       return {
         form: {},
         query: {},
@@ -217,8 +209,8 @@
               prop: "packageQuantity",
             },
             {
-              label: "规格等级",
-              prop: "specificationLevel",
+              label: "规格",
+              prop: "specification",
             },
             {
               label: "入库时间",

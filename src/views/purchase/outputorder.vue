@@ -423,14 +423,14 @@
                       validator: validateQuantity,
                     }]
                   },
-                  {
-                    label: '领料人',
-                    prop: "pickingPerson",
-                    width: 200,
-                    rules: [{
-                      required: true,
-                    }]
-                  },
+                  // {
+                  //   label: '领料人',
+                  //   prop: "pickingPerson",
+                  //   width: 200,
+                  //   rules: [{
+                  //     required: true,
+                  //   }]
+                  // },
                   {
                   label: '备注',
                   prop: "remark",
