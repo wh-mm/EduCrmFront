@@ -19,38 +19,24 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary"
-                   size="small"
-                   icon="el-icon-plus"
-                   v-if="permission.warehouseinoutput_in"
-                   plain
-                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架
-        </el-button>
-        <el-button type="primary"
-                   size="small"
-                   icon="el-icon-plus"
-                   v-if="permission.warehouseinoutput_out"
-                   plain
-                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架
-        </el-button>
 
 <!--        <el-button type="primary"-->
 <!--                   size="small"-->
 <!--                   icon="el-icon-plus"-->
+<!--                   v-if="permission.warehouseinoutput_in"-->
 <!--                   plain-->
-<!--                   @click="outputorderdialogVisible = true,obj.type = 'out' ">出 库 单 出 库-->
+<!--                   @click="dialogVisible = true,title = '上 架',obj.type = 'in' ">上 架-->
 <!--        </el-button>-->
-      </template>
-      <!--<template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size" :type="type" @click="viewCommodity(scope.row.goodsId)">查看资质</el-button>
-      </template>-->
+<!--        <el-button type="primary"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-plus"-->
+<!--                   v-if="permission.warehouseinoutput_out"-->
+<!--                   plain-->
+<!--                   @click="outdialogVisible = true,title = '下 架',obj.type = 'out' ">下 架-->
+<!--        </el-button>-->
 
-      <template slot-scope="scope" slot="menu">
-        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
-
-                   @click="dayin(scope.row)">打 印 订 单
-        </el-button>
       </template>
+
 
     </avue-crud>
     <!-- 入库-->
@@ -76,139 +62,16 @@
     <!-- 转区-->
 
 
-    <el-dialog
-      title="商品资质"
-      :append-to-body="true"
-      :visible.sync="commoditydialogVisible"
-      width="50%"
-      :modal="false"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-      v-dialogDrag
-    >
-      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
-      </avue-crud>
-    </el-dialog>
-
-    <el-form :model="form">
-      <div style="display: none" id="printyinpian" ref="printyinpian">
-        <!-- 隐藏打印区域，避免用户看到 -->
-        <div style="padding: 1px;height: 100px;">
-          <div class="yinpianhead" style="width: 80%;text-align: center">
-            <el-row>
-              <el-col :span="5" :offset="11">
-                <div class="grid-content bg-purple">
-                  <h2 margin="auto" style="text-align: center;margin-top: 10px;font-size: 40px">入 库 单</h2></div>
-              </el-col>
-
-              <el-col :span="5" :offset="2">
-                <div class="grid-content bg-purple-light">
-                  <svg id="bigcode" style="padding: 1px;"></svg>
-                </div>
-              </el-col>
-            </el-row>
-
-            <el-row>
-              <el-col :span="10" :offset="2">
-                <div class="grid-content bg-purple"><p style="font-size: 15px">出库时间：<span>{{printData.createTime}}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="8" :offset="4">
-                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>{{date =new Date()|formatDate}}</span></p></div>
-              </el-col>
-            </el-row>
-          </div>
-
-          <hr align="center" width="100%" size="1px" length="10" color="black"/>
-
-          <div class="yinpianshou" style="width: 80%">
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  商品批号：<span>{{printData.batchNumber}}</span></p></div>
-              </el-col>
-            </el-row>
-
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  商品名称：<span>{{printData.goodsName}}</span></p></div>
-              </el-col>
-            </el-row>
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  入库数量：<span>{{printData.quantity}}</span></p></div>
-              </el-col>
-            </el-row>
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  生产厂家：<span>{{printData.manufacturer}}</span></p></div>
-              </el-col>
-            </el-row>
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  生产厂家：<span>{{printData.placeOfOrigin}}</span></p></div>
-              </el-col>
-            </el-row>
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  仓库名称：<span>{{printData.warehouseName}}</span></p></div>
-              </el-col>
-            </el-row>
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  区名称：<span>{{printData.regionName}}</span></p></div>
-              </el-col>
-            </el-row>
-
-            <el-row type="flex" class="row-bg">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  储位名称：<span>{{printData.storageName}}</span></p></div>
-              </el-col>
-            </el-row>
-
-          </div>
-
-          <hr align="center" width="100%" size="1px" length="10" color="black"/>
-          <div class="yinpianhead" style="width: 80%;text-align: center">
-          <el-row>
-            <el-col :span="10" :offset="2">
-              <div class="grid-content bg-purple"><p style="font-size: 15px">入库人员：<span></span>
-              </p></div>
-            </el-col>
-            <el-col :span="8" :offset="3">
-              <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                入库复审员：<span></span></p></div>
-            </el-col>
-          </el-row>
-          </div>
-        </div>
-      </div>
-
-    </el-form>
 
   </basic-container>
 </template>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/xlsx.full.min.js"></script>
 <script>
   import {getList,add,updateStatus,selectByWarehouseInoutputId} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
-  import JsBarcode from "jsbarcode";
 
   export default {
     filters: {
@@ -268,14 +131,18 @@
           total: 0
         },
         obj:{},
+
         title: '' ,
         repertoryQuantity:0,
         dialogVisible:false,
         outdialogVisible:false,
         conversiondialogVisible:false,
         commoditydialogVisible:false,
+
         selectionList: [],
         option: {
+          title:'出入库数据',
+          excelBtn:true,
           height:'auto',
           calcHeight: 30,
           tip: false,
@@ -406,15 +273,16 @@
               required: true,
             },
             {
-              label: "采购人",
-              prop: "inputPerson",
+              label: "操作人员",
+              prop: "userName",
               required: true,
             },
-            {
-              label: "领料人",
-              prop: "outputPerson",
-              required: true,
-            },
+
+            // {
+            //   label: "领料/出库人",
+            //   prop: "outputPerson",
+            //   required: true,
+            // },
             {
               label: "类型",
               prop: "type",
@@ -1098,33 +966,6 @@
           done();
         })
       },
-      updateStatus(id) {
-        let status;
-        this.$confirm("请确认是否审批?", {
-          confirmButtonText: "确认",
-          cancelButtonText: "驳回",
-          type: "warning"
-        })
-          .then(() => {
-            console.log(status)
-            status = 2;
-          })
-          .catch(() => {
-            console.log(3);
-            status = 3;
-          }).finally(() => {
-          console.log(status);
-          updateStatus(id, status).then(res => {
-            if (res.data.success) {
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-            this.refreshChange();
-            this.onLoad(this.page);
-          })
-        });
-      },
       viewCommodity(goodsId) {
         this.commoditydialogVisible = true;
         viewCommodity(goodsId).then(res => {
@@ -1136,34 +977,8 @@
           }
         })
       },
-      //打印
-      dayin(row) {
-        selectByWarehouseInoutputId(row.id).then(res => {
-            if (res.data.success) {
-              this.printData = res.data.data.data;
-              console.log(this.printData.batchNumber);
-              console.log(this.printData);
-              this.$message.success(res.data.msg);
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          })
-          setTimeout(() => {
-            JsBarcode("#bigcode", row.id, {
-              width: 2,//设置条之间的宽度
-              height: 56,//高度
-              fontOptions: "bold",//使文字加粗体或变斜体
-              textAlign: "center",//设置文本的水平对齐方式
-              textMargin: 5,//设置条形码和文本之间的间距
-              fontSize: 25,//设置文本的大小
-              displayValue: true,//是否在条形码下方显示文字
-              margin: 2
-            });
-            this.$Print(this.$refs.printyinpian);
 
-          }, 100);
 
-      }
     }
   };
 

@@ -228,7 +228,7 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,selectGoodsGross,viewReason,
+  import {getList, add, getDetail,update, remove,selectGoodsGross,viewReason,
     printOutputorderDetail} from "@/api/purchase/outputorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
@@ -301,7 +301,7 @@
           dialogWidth: '80%',
           column: [
             {
-              label: "出库单号",
+              label: "领料单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
@@ -405,68 +405,6 @@
                       }
                     },
                   },
-                  // {
-                  //   label: "批号",
-                  //   prop: "batchNumber",
-                  //   type:'select',
-                  //   props: {
-                  //
-                  //     label: 'batchNumber',
-                  //     value: 'batchNumber'
-                  //   },
-                  //   dicMethod:'post',
-                  //   dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
-                  //   change: ({value}) => {
-                  //     selectByBatchNumber(value).then(res => {
-                  //       var detail = res.data.data;
-                  //       detail.forEach(val =>{
-                  //         this.form.outputOrderDetailList.forEach(vals => {
-                  //           if (value==val.batchNumber) {
-                  //             vals.warehouseId = val.warehouseId;
-                  //             vals.storageId = val.storageId;
-                  //             vals.repertoryQuantity  = val.repertoryQuantity
-                  //           }
-                  //         });
-                  //
-                  //       });
-                  //     });
-                  //   },
-                  // },
-                  // {
-                  //   label:'库存数量',
-                  //   prop: 'repertoryQuantity',
-                  //   disabled: true,
-                  // },
-                  // {
-                  //   label: '*出货仓库',
-                  //   prop: "warehouseId",
-                  //   type: "tree",
-                  //   rsearch: true,
-                  //   disabled: true,
-                  //   rules: [{
-                  //     required: true,
-                  //     message: "请输入类型",
-                  //     trigger: "blur"
-                  //   }],
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['storageId'],
-                  //   dicUrl: '/api/erp-wms/warehouse/tree'
-                  // },
-                  // {
-                  //   label: "储位",
-                  //   prop: "storageId",
-                  //   type:'tree',
-                  //   disabled: true,
-                  //   props: {
-                  //     label: 'title',
-                  //     value: 'id'
-                  //   },
-                  //   cascaderItem: ['goodsId'],
-                  //   dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  // },
                   {
                     label: "库存检索",
                     prop: "inventoryToRetrieve",
@@ -475,10 +413,6 @@
                     formslot:true,
                     width: 100,
                   },
-                  // {
-                  //   label: "批号",
-                  //   prop: "batchNumber",
-                  // },
                   {
                     label: '*出库数量(g)',
                     prop: "goodsQuantity",
@@ -490,12 +424,12 @@
                     }]
                   },
                   // {
-                  //   label: '商品资质',
-                  //   prop: "unit",
-                  //   type:'input',
-                  //   placeholder: " ",
-                  //   formslot:true,
+                  //   label: '领料人',
+                  //   prop: "pickingPerson",
                   //   width: 200,
+                  //   rules: [{
+                  //     required: true,
+                  //   }]
                   // },
                   {
                   label: '备注',

@@ -387,7 +387,7 @@
 
                               vals.packageSpecification = val.packageSpecification
                               vals.packageQuantity = val.packageQuantity
-                              vals.specificationLevel = val.specificationLevel
+                              vals.specification = val.specification
                             }
                           });
                         });
@@ -420,6 +420,12 @@
                       }
                     },
                   },
+                  // {
+                  //   label: "出库人",
+                  //   prop: "inputPerson",
+                  //   width:150,
+                  //   required: true,
+                  // },
                   {
                     label:'生产日期',
                     prop: 'dateOfManufacture',
@@ -528,15 +534,10 @@
                     width:150,
                   },
                   {
-                    label: "规格等级",
-                    prop: "specificationLevel",
-                    disabled: true,
-                    width:150,
-                  },
-                  {
                     label: '备注',
                     prop: "remark",
-                    type:"textarea"
+                    type:"textarea",
+                    width:200
                   }],
               }
             },

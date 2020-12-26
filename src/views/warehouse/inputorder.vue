@@ -351,17 +351,13 @@
                     filterable: true,
                     remote: true,
                     display:false,
-                    rules: [{
-                      require: true,
-                      message: '请选择商品',
-                      trigger: "blur"
-                    }],
                     props: {
                       label: 'goodsName',
                       value: 'id'
                     },
                     dicMethod:'post',
-                    dicUrl:'/api/erp-wms/goods/dropDown',
+                    dicUrl:'/api/erp-wms/goods/selecListGoods',
+
                   },
                   {
                     label: "批号",
@@ -431,16 +427,7 @@
                     prop: "packageQuantity",
                     width: 140,
                   },
-                  {
-                    label: "规格等级",
-                    prop: "specificationLevel",
-                    width: 140,
-                  },
-                  {
-                    label: "采购人",
-                    prop: "inputPerson",
-                    width: 200,
-                  },
+
                   {
                     label: '备注',
                     prop: "remark",

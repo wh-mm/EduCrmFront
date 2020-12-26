@@ -40,7 +40,7 @@
        </el-button>
       </template>
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
-        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.warehouseId)">库 存 检 索</el-button>
+        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.goodsId)">库 存 检 索</el-button>
       </template>
 
       <template slot-scope="scope" slot="unitForm">
@@ -155,7 +155,7 @@
           dialogWidth: '80%',
           column: [
             {
-              label: "出库单号",
+              label: "领料出库单号",
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
@@ -220,7 +220,13 @@
                      done();
                  },
                 column: [
+                  {
+                    label: '领料人',
+                    prop: "pickingPerson",
+                    disabled:true,
+                    width: 200,
 
+                  },
                   {
                     label: '*商品',
                     prop: "goodsId",
@@ -280,6 +286,13 @@
                                vals.storageRegionId = val.storageRegionId;
                                vals.storageId = val.storageId;
                                vals.repertoryQuantity  = val.repertoryQuantity
+                               vals.periodOfValidity  = val.periodOfValidity
+
+                              vals.dateOfManufacture = val.dateOfManufacture
+                              vals.placeOfOrigin = val.placeOfOrigin
+                              vals.manufacturer = val.manufacturer
+                              vals.supplierName = val.supplierName
+
                             }
                           });
                         });
@@ -291,6 +304,42 @@
                     prop: 'repertoryQuantity',
                     disabled: true,
                     width:100,
+                  },
+                  {
+                    label: '出库数量(g)',
+                    prop: "goodsQuantity",
+                    type: "number",
+                    width: 130,
+                    disabled: true,
+                    rules: [{
+                      validator: validateQuantity,
+                      trigger: 'blur'
+                    }],
+                    change: () => {
+                      if(this.value1 == true){
+                        getGoodsDetail().then(res => {
+                          this.form.sumMoney = 0;
+                          this.form.outputOrderDetailList.forEach(val => {
+                            var detail = res.data.data;
+                            if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
+                              val.recheckGoodsQuantity = val.goodsQuantity;
+                            }
+                            val.basicUnit = detail.basicUnit;
+                            val.specification = detail.goodsSpecification;
+                          });
+                        });
+                      }
+
+                    },
+                  }, {
+                    label: '复核出库数量(g)',
+                    prop: "recheckGoodsQuantity",
+                    type: "number",
+                    width: 130,
+                    rules: [{
+                      validator: validateQuantity,
+                      trigger: 'blur'
+                    }]
                   },
                   {
                     label: '*出货仓库',
@@ -355,47 +404,47 @@
                     width: 100,
                   },
                   {
-                    label: '出库数量(g)',
-                    prop: "goodsQuantity",
-                    type: "number",
-                    width: 130,
+                    label: "生产日期",
+                    prop: "dateOfManufacture",
+                    type:'datetime',
+                    format: "yyyy-MM-dd",
+                    valueFormat: "yyyy-MM-dd",
+                    width:150,
                     disabled: true,
-                    rules: [{
-                      validator: validateQuantity,
-                      trigger: 'blur'
-                    }],
-                    change: () => {
-                      if(this.value1 == true){
-                        getGoodsDetail().then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            var detail = res.data.data;
-                              if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
-                                val.recheckGoodsQuantity = val.goodsQuantity;
-                              }
-                            val.basicUnit = detail.basicUnit;
-                            val.specification = detail.goodsSpecification;
-                          });
-                        });
-                      }
-
-                    },
                   },
                   {
-                    label: '复核出库数量(g)',
-                    prop: "recheckGoodsQuantity",
-                    type: "number",
-                    width: 130,
-                    rules: [{
-                      validator: validateQuantity,
-                      trigger: 'blur'
-                    }]
+                    label: "有效期至",
+                    prop: "periodOfValidity",
+                    type:'datetime',
+                    format: "yyyy-MM-dd",
+                    valueFormat: "yyyy-MM-dd",
+                    width:150,
+                    disabled: true,
+                  },
+                  {
+                    label: "产地",
+                    prop: "placeOfOrigin",
+                    width:150,
+                    disabled: true,
+                  },
+                  {
+                    label: "供应商",
+                    prop: "supplierName",
+                    width:150,
+                    disabled: true,
+                  },
+                  {
+                    label: "生产厂家",
+                    prop: "manufacturer",
+                    width:150,
+                    disabled: true,
                   },
                   {
                     label: "基本单位",
                     prop: "basicUnit",
                     editDisplay: false,
                     disabled: true,
+                    width: 150,
                     type:'select',
                     props: {
                       label: 'dictValue',
@@ -408,7 +457,7 @@
                     prop: "specification",
                     disabled: true,
                     placeholder: " ",
-                    width: 100,
+                    width: 150,
                   },
                   {
                   label: '备注',
@@ -854,8 +903,9 @@
       },
       updateStatusNew(status) {
         if (status === 101 && this.obj0.rejectText === '') {
-          return this.$message.error("请输入驳回理由!");
+          return this.$message.error("请输入驳回理由！");
         }
+
           updateStatus(this.ids, status,this.obj0.rejectText).then(res => {
             if (res.data.success) {
               this.dialogFormVisible = false;
@@ -872,7 +922,13 @@
       //审批
       updateRevocation() {
         if (this.selectionList.length === 0) {
-          return this.$message.error("请选择需要的商品");
+          return this.$message.error("请选择需要的商品！");
+        }if (this.status1 ==2) {
+          return this.$message.error("该订单已经完成无法修改！");
+        }if (this.status1 ==101) {
+          return this.$message.error("该订单已经驳回无法修改！");
+        }if (this.status1 ==104) {
+          return this.$message.error("该订单已被撤销无法修改！");
         }
         this.dialogFormVisible = true;
       },
@@ -891,9 +947,9 @@
       },
 
       //库存检索
-      inventoryToRetrieve(warehouseId){
+      inventoryToRetrieve(goodsId){
         this.dialogVisible = true;
-        inventoryToRetrieve(warehouseId).then(res=>{
+        inventoryToRetrieve(goodsId).then(res=>{
           if (res.data.success) {
             this.inventoryToRetrievedata = res.data.data;
             this.$message.success(res.data.msg);
