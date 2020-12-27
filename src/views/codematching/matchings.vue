@@ -172,7 +172,6 @@
               },
               filterable: true,
               remote: true,
-              search: true,
               dicMethod: "post",
               dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}'
             },
@@ -183,7 +182,8 @@
                 required: true,
                 message: "HIS药品码",
                 trigger: "blur"
-              }]
+              }],
+              search: true,
             },
             {
               label: "HIS药品名称",
@@ -192,7 +192,8 @@
                 required: true,
                 message: "HIS药品名称",
                 trigger: "blur"
-              }]
+              }],
+              search: true,
             }
           ]
         },

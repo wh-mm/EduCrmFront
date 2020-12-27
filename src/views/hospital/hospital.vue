@@ -119,7 +119,8 @@
                 required: true,
                 message: "请输入医院地址",
                 trigger: "blur"
-              }]
+              }],
+              overHidden:true,
             },
             {
               label: "医院联系方式",

@@ -53,6 +53,10 @@
                    @click="doPrint1(row)">补打
         </el-button>
       </template>
+      <template slot="distributionStatus" slot-scope="scope">
+        <div style="color: green" v-if="scope.row.distributionStatus=='2'?'2':'3'">制作完成</div>
+        <div style="color: red" v-else>派送中</div>
+      </template>
     </avue-crud>
     <div style="display: none" id="print11">
       <!-- 隐藏打印区域，避免用户看到 -->
@@ -260,7 +264,8 @@
                 required: true,
                 message: "请输入患者姓名",
                 trigger: "blur"
-              }]
+              }],
+              search: true,
             },
             {
               label: "患者性别",

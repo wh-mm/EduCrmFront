@@ -128,6 +128,10 @@
               search: true,
             },
             {
+              label: "货品ID",
+              prop: "id",
+            },
+            {
               label: "货物类型",
               prop: "goodsType",
               type: "tree",
