@@ -144,7 +144,7 @@
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
             {
-              label: "货品编号",
+              label: "索引码",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,

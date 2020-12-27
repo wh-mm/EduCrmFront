@@ -41,12 +41,16 @@
         <el-button icon="el-icon-check"
                    :size="size"
                    :type="type"
-                   v-if="permission.distributionorder_edit && row.distributionStatus === '2'"
+                   v-if="permission.distributionorder_edit && row.distributionStatus === '1'"
                    @click.stop="handleStart(row.id)">发起
         </el-button>
         <el-button :type="type" :size="size" icon="el-icon-printer"
                    v-if="row.distributionStatus === '2'"
                    @click="doPrint1(row)">打印配送单
+        </el-button>
+        <el-button :type="type" :size="size" icon="el-icon-printer"
+                   v-if="parseInt(row.distributionStatus) > 2"
+                   @click="doPrint1(row)">补打
         </el-button>
       </template>
     </avue-crud>
@@ -493,7 +497,6 @@
       },
       doPrint1(row) {
         this.printData = row;
-        console.log(this.printData)
         setTimeout(() => {
           JsBarcode("#bigcode", row.orderNumber, {
             width: 2,//设置条之间的宽度
