@@ -40,8 +40,11 @@
                    icon="el-icon-plus"
                    @click="viewHandover(row.id)">详情
         </el-button>
-
-
+        <el-button :size="size"
+                   :type="type"
+                   icon="el-icon-plus"
+                   @click="print(row)">补打
+        </el-button>
       </template>
     </avue-crud>
     <el-dialog
@@ -65,12 +68,132 @@
                  :page.sync="view.page">
       </avue-crud>
     </el-dialog>
+    <el-dialog
+      title="打印交接单"
+      :visible.sync="handoverDialogVisible"
+      width="800px"
+      :modal="false"
+      :before-close="handleClose">
+      <el-button type="primary"
+                 size="small"
+                 icon="el-icon-plus"
+                 plain
+                 v-print="'#print1'"
+                 @click="printSave">打印交接单
+      </el-button>
+      <div id="print1" ref="print11">
+        <div style="padding: 10px;">
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-dark"
+                   style="font-size: 24px;text-align: center;margin-bottom: 15px;">
+                配送交接单
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-dark">
+                <p>医院名称 : <span style="margin-left: 10px;">{{printData.hospitalName}}</span></p>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="18">
+              <div class="grid-content bg-purple">
+                <p>医院地址 : <span style="margin-left: 10px;">{{printData.hospitalAddress}}</span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <p>联系方式 : <span style="margin-left: 10px;">{{printData.hospitalTel}}</span></p>
+              </div>
+            </el-col>
+          </el-row>
+          <el-table
+            :data="printData.tableData"
+            border :fit="false"
+            style="width: 707px;margin-top: 15px;margin-right: 0px;">
+            <el-table-column
+              type="index"
+              label="序号"
+              width="60">
+            </el-table-column>
+            <el-table-column
+              prop="receivingDate"
+              label="接方日期"
+              width="100">
+            </el-table-column>
+            <el-table-column
+              prop="pspnum"
+              label="处方编号"
+              width="150">
+            </el-table-column>
+            <el-table-column
+              prop="addresseeName"
+              label="患者姓名"
+              width="90">
+            </el-table-column>
+            <el-table-column
+              prop="addresseeSex"
+              label="性别"
+              width="55">
+              <template slot-scope="scope">
+                {{ scope.row.addresseeSex === '1'?'男':'女' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="addresseeAge"
+              label="年龄"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              prop="dose"
+              label="剂数"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              prop="remark"
+              label="备注">
+            </el-table-column>
+            <el-table-column
+              label=""
+              width="60">
+            </el-table-column>
+          </el-table>
+          <el-row style="margin-top: 20px;">
+            <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <p>日期 : <span style="margin-left: 10px;">{{printData.time}}</span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <p>送货人 : <span style="margin-left: 10px;"></span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <p>收货人 : <span style="margin-left: 10px;"></span></p>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <p>收货日期 : <span style="margin-left: 10px;"></span></p>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove,submitTransport,view,updateById} from "@/api/logistics/handoverform";
+  import {getList, getDetail, add, update, remove,
+    submitTransport,view,viewList,updateById} from "@/api/logistics/handoverform";
   import {mapGetters} from "vuex";
+  import {getHospitalDetail} from "@/api/hisHospital/hospital";
 
   export default {
     data() {
@@ -330,6 +453,14 @@
             },
           ]
         },
+        handoverDialogVisible:false,
+        printData: {
+          hospitalName: '',
+          time: '',
+          hospitalAddress: '',
+          hospitalTel: '',
+          tableData: [],
+        },
       };
     },
     computed: {
@@ -502,7 +633,24 @@
           this.view.page.total = data.total;
           this.view.data = data.records;
         });
-      }
+      },
+      print(row) {
+        getHospitalDetail(row.hospitalId).then(res => {
+          let data = res.data.data;
+          this.printData.hospitalName = data.hospitalName;
+          this.printData.hospitalAddress = data.hospitalProfile;
+          this.printData.hospitalTel = data.hospitalTel;
+        })
+        viewList(row.id).then(res => {
+          let date = new Date();
+          let year = date.getFullYear(); // 年
+          let month = date.getMonth() + 1; // 月
+          let day = date.getDate(); // 日
+          this.printData.time = year + '-' + month + '-' + day;
+          this.printData.tableData = res.data.data;
+          this.handoverDialogVisible = true;
+        });
+      },
     }
   };
 </script>
