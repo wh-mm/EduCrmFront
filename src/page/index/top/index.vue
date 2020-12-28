@@ -79,18 +79,18 @@
            :src="userInfo.avatar">
       <el-dropdown>
         <span class="el-dropdown-link">
-          {{userInfo.userName}}
+          {{ userInfo.userName }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>
-            <router-link to="/">{{$t('navbar.dashboard')}}</router-link>
+            <router-link to="/">{{ $t('navbar.dashboard') }}</router-link>
           </el-dropdown-item>
           <el-dropdown-item>
-            <router-link to="/info/index">{{$t('navbar.userinfo')}}</router-link>
+            <router-link to="/info/index">{{ $t('navbar.userinfo') }}</router-link>
           </el-dropdown-item>
           <el-dropdown-item @click.native="logout"
-                            divided>{{$t('navbar.logOut')}}
+                            divided>{{ $t('navbar.logOut') }}
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -98,98 +98,98 @@
   </div>
 </template>
 <script>
-  import {resetRouter} from '@/router/router'
-  import {mapGetters, mapState} from "vuex";
-  import {fullscreenToggel, listenfullscreen} from "@/util/util";
-  import topLock from "./top-lock";
-  import topMenu from "./top-menu";
-  import topSearch from "./top-search";
-  import topTheme from "./top-theme";
-  import topLogs from "./top-logs";
-  import topColor from "./top-color";
-  import topNotice from './top-notice'
-  import topLang from "./top-lang";
-  import {clearCache} from "@/api/user";
+import {resetRouter} from '@/router/router'
+import {mapGetters, mapState} from "vuex";
+import {fullscreenToggel, listenfullscreen} from "@/util/util";
+import topLock from "./top-lock";
+import topMenu from "./top-menu";
+import topSearch from "./top-search";
+import topTheme from "./top-theme";
+import topLogs from "./top-logs";
+import topColor from "./top-color";
+import topNotice from './top-notice'
+import topLang from "./top-lang";
+import {clearCache} from "@/api/user";
 
-  export default {
-    components: {
-      topLock,
-      topMenu,
-      topSearch,
-      topTheme,
-      topLogs,
-      topColor,
-      topNotice,
-      topLang
+export default {
+  components: {
+    topLock,
+    topMenu,
+    topSearch,
+    topTheme,
+    //topLogs,
+    //topColor,
+    topNotice,
+    topLang
+  },
+  name: "top",
+  data() {
+    return {};
+  },
+  filters: {},
+  created() {
+  },
+  mounted() {
+    listenfullscreen(this.setScreen);
+  },
+  computed: {
+    ...mapState({
+      showDebug: state => state.common.showDebug,
+      showTheme: state => state.common.showTheme,
+      showLock: state => state.common.showLock,
+      showFullScren: state => state.common.showFullScren,
+      showCollapse: state => state.common.showCollapse,
+      showSearch: state => state.common.showSearch,
+      showMenu: state => state.common.showMenu,
+      showColor: state => state.common.showColor
+    }),
+    ...mapGetters([
+      "userInfo",
+      "isFullScren",
+      "tagWel",
+      "tagList",
+      "isCollapse",
+      "tag",
+      "logsLen",
+      "logsFlag"
+    ])
+  },
+  methods: {
+    handleScreen() {
+      fullscreenToggel();
     },
-    name: "top",
-    data() {
-      return {};
+    setCollapse() {
+      this.$store.commit("SET_COLLAPSE");
     },
-    filters: {},
-    created() {
+    setScreen() {
+      this.$store.commit("SET_FULLSCREN");
     },
-    mounted() {
-      listenfullscreen(this.setScreen);
-    },
-    computed: {
-      ...mapState({
-        showDebug: state => state.common.showDebug,
-        showTheme: state => state.common.showTheme,
-        showLock: state => state.common.showLock,
-        showFullScren: state => state.common.showFullScren,
-        showCollapse: state => state.common.showCollapse,
-        showSearch: state => state.common.showSearch,
-        showMenu: state => state.common.showMenu,
-        showColor: state => state.common.showColor
-      }),
-      ...mapGetters([
-        "userInfo",
-        "isFullScren",
-        "tagWel",
-        "tagList",
-        "isCollapse",
-        "tag",
-        "logsLen",
-        "logsFlag"
-      ])
-    },
-    methods: {
-      handleScreen() {
-        fullscreenToggel();
-      },
-      setCollapse() {
-        this.$store.commit("SET_COLLAPSE");
-      },
-      setScreen() {
-        this.$store.commit("SET_FULLSCREN");
-      },
-      logout() {
-        this.$confirm(this.$t("logoutTip"), this.$t("tip"), {
-          confirmButtonText: this.$t("submitText"),
-          cancelButtonText: this.$t("cancelText"),
-          type: "warning"
-        }).then(() => {
-          this.$store.dispatch("LogOut").then(() => {
-            resetRouter();
-            this.$router.push({path: "/login"});
-          });
+    logout() {
+      this.$confirm(this.$t("logoutTip"), this.$t("tip"), {
+        confirmButtonText: this.$t("submitText"),
+        cancelButtonText: this.$t("cancelText"),
+        type: "warning"
+      }).then(() => {
+        this.$store.dispatch("LogOut").then(() => {
+          resetRouter();
+          this.$router.push({path: "/login"});
         });
-      },
-      clearCacheTags() {
-        this.$confirm("是否需要清除缓存?", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(() => {
-          clearCache().then(() => {
-            this.contextmenuFlag = false;
-            this.$message.success('清除完毕');
-          })
-        });
-      }
+      });
+    },
+    clearCacheTags() {
+      this.$confirm("是否需要清除缓存?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        clearCache().then(() => {
+          this.contextmenuFlag = false;
+          this.$message.success('清除完毕');
+        })
+      });
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss" scoped>

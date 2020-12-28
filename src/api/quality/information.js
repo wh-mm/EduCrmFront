@@ -128,3 +128,20 @@ export function isInteger(rule, value, callback) {
     }
   }, 0);
 }
+
+/**
+ * 查重名字
+ * @param id
+ * @param name
+ * @returns {AxiosPromise}
+ */
+export const selectName = (id,name) => {
+  return request({
+    url: '/api/quality/information/selectName',
+    method: 'get',
+    params: {
+      id,
+      name
+    }
+  })
+}

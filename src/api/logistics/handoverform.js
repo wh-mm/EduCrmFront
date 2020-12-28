@@ -23,6 +23,15 @@ export const view = (current, size, id) => {
     }
   })
 }
+export const viewList = (id) => {
+  return request({
+    url: '/api/logistics/handoverform/viewList',
+    method: 'get',
+    params: {
+      id,
+    }
+  })
+}
 
 export const getDetail = (id) => {
   return request({

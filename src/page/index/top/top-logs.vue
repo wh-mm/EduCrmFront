@@ -1,3 +1,4 @@
+<!--
 <template>
   <span @click="logsFlag?'':handleOpen()">
     <el-badge :value="logsFlag?'':logsLen"
@@ -19,7 +20,7 @@
   import logs from "@/page/logs/index";
 
   export default {
-    name: "top-logs",
+    /*name: "top-logs",
     components: {logs},
     data() {
       return {
@@ -38,9 +39,10 @@
       handleOpen() {
         this.box = true;
       }
-    }
+    }*/
   };
 </script>
 
 <style lang="scss" scoped>
 </style>
+-->
