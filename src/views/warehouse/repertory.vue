@@ -121,8 +121,6 @@
               prop: "storageRegionId",
               type:'tree',
               search:true,
-              row: true,
-              span: 24,
               rules: [{
                 required: true,
                 message: "请输入储位",
@@ -138,8 +136,6 @@
               label: "储位",
               prop: "storageId",
               type:'tree',
-              row: true,
-              span: 24,
               rules: [{
                 required: true,
                 message: "请输入储位",
@@ -156,14 +152,17 @@
               prop: "goodsId",
               type:'tree',
               search:true,
-              row: true,
-              span: 24,
               props: {
                 label: 'goodsName',
                 value: 'id'
               },
               dicMethod:"post",
               dicUrl: 'api/erp-wms/goods/selecListGoods',
+            },
+            {
+              label: "商品索引码",
+              prop: "goodsCode",
+              search:true,
             },
             {
               label: "批号",

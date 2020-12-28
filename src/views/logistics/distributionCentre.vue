@@ -225,7 +225,8 @@
                 required: true,
                 message: "请输入收件人",
                 trigger: "blur"
-              }]
+              }],
+              search: true,
             },
             {
               label: "收件人地址",

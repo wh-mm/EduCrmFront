@@ -115,6 +115,7 @@
             {
               label: "患者姓名",
               prop: "addresseeName",
+              search: true,
             },
             {
               label: "患者性别",

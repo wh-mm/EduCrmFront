@@ -128,6 +128,10 @@
               search: true,
             },
             {
+              label: "货品ID",
+              prop: "id",
+            },
+            {
               label: "货物类型",
               prop: "goodsType",
               type: "tree",
@@ -144,7 +148,7 @@
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },
             {
-              label: "货品编号",
+              label: "索引码",
               prop: "goodsCode",
               rules: [{
                 validator: selectCode,
