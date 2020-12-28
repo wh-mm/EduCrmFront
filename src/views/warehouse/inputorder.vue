@@ -313,7 +313,7 @@
                       label: 'title',
                       value: 'value'
                     },
-                    cascaderItem: ['storageRegionId','storageId'],
+                    cascaderItem: ['storageRegionId'],
                     rules: [{
                       required: true,
                       message: "请输入仓库",
@@ -330,6 +330,7 @@
                       label: 'title',
                       value: 'id'
                     },
+                    cascaderItem: ['storageId'],
                     dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
                   },
                   {
@@ -341,7 +342,7 @@
                       label: 'title',
                       value: 'id'
                     },
-                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                    dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
                   },
                   {
                     label: '*商品',

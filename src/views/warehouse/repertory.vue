@@ -136,20 +136,10 @@
             },
             {
               label: "储位",
-              prop: "storageId",
+              prop: "storageName",
               type:'tree',
               row: true,
               span: 24,
-              rules: [{
-                required: true,
-                message: "请输入储位",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
             },
             {
               label: "商品",
