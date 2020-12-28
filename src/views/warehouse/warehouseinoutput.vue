@@ -19,7 +19,12 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExports()" >导出
+        </el-button>
 <!--        <el-button type="primary"-->
 <!--                   size="small"-->
 <!--                   icon="el-icon-plus"-->
@@ -72,6 +77,7 @@
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import {getToken} from "@/util/auth";
 
   export default {
     filters: {
@@ -141,8 +147,6 @@
 
         selectionList: [],
         option: {
-          title:'出入库数据',
-          excelBtn:true,
           height:'auto',
           calcHeight: 30,
           tip: false,
@@ -983,7 +987,15 @@
           }
         })
       },
-
+      handleExports() {
+        this.$confirm("是否导出库存数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( `/api/taocao-warehouse/warehouseinoutput/export?${this.website.tokenHeader}=${getToken()}`);
+        });
+      },
 
     }
   };
