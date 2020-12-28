@@ -19,7 +19,24 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExports('in')" >导出入库记录
+        </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExports('out')" >导出出库记录
+        </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExports('picking')" >导出领料出库记录
+        </el-button>
 <!--        <el-button type="primary"-->
 <!--                   size="small"-->
 <!--                   icon="el-icon-plus"-->
@@ -59,19 +76,26 @@
       <avue-form ref="form" v-model="obj" :option="outoptionForm" @submit="submit">
       </avue-form>
     </el-dialog>
-    <!-- 转区-->
+    <el-dialog
+      :title="title"
+      :visible.sync="outdialogVisible"
+      width="40%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj" :option="outoptionForm" @submit="submit">
+      </avue-form>
+    </el-dialog>
 
 
 
   </basic-container>
 </template>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/xlsx.full.min.js"></script>
 <script>
-  import {getList,add,updateStatus,selectByWarehouseInoutputId} from "@/api/warehouse/warehouseinoutput";
+  import {getList,add,updateStatus,selectByWarehouseInoutputId,} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import {getToken} from "@/util/auth";
 
   export default {
     filters: {
@@ -141,8 +165,6 @@
 
         selectionList: [],
         option: {
-          title:'出入库数据',
-          excelBtn:true,
           height:'auto',
           calcHeight: 30,
           tip: false,
@@ -983,7 +1005,16 @@
           }
         })
       },
+      handleExports(type) {
+        this.$confirm("是否导出仓库记录?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+            window.open( `/api/taocao-warehouse/warehouseinoutput/export?${this.website.tokenHeader}=${getToken()}&type=${type}`);
 
+        });
+      },
 
     }
   };
