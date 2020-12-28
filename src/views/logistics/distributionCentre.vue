@@ -219,7 +219,7 @@
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptalByName?name={{key}}"
             },
             {
-              label: "收件人",
+              label: "患者姓名",
               prop: "addresseeName",
               rules: [{
                 required: true,
@@ -229,7 +229,7 @@
               search: true,
             },
             {
-              label: "收件人地址",
+              label: "患者地址",
               prop: "addresseeAddress",
               rules: [{
                 required: true,
@@ -238,7 +238,7 @@
               }]
             },
             {
-              label: "收件人手机号",
+              label: "患者手机号",
               prop: "addresseePhone",
               rules: [{
                 required: true,
