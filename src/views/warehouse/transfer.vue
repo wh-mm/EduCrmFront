@@ -50,6 +50,15 @@
 
   export default {
     data() {
+      var validateQuantity = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入数量'));
+        } else if (value <= 0) {
+          callback(new Error('数量不能小于0'));
+        } else {
+          callback();
+        }
+      };
       return {
         form: {},
         query: {},
@@ -80,7 +89,7 @@
               filterable: true,
               // disabled: true,
               rules: [{
-                require: true,
+                required: true,
                 message: '请选择商品',
               }],
               props: {
@@ -96,8 +105,11 @@
               prop: "batchNumber",
               type:'select',
               width:170,
+              rules: [{
+                required: true,
+                message: '请选择批号',
+              }],
               props: {
-
                 label: 'batchNumber',
                 value: 'id'
               },
@@ -121,13 +133,12 @@
               },
             },
             {
-              label: "旧仓库id",
+              label: "旧仓库",
               prop: "oldWarehouseId",
               type: "tree",
               disabled: true,
               rules: [{
-                required: true,
-                message: "请输入旧仓库id",
+                message: "请输入旧仓库",
                 trigger: "blur"
               }],
               props: {
@@ -138,16 +149,16 @@
               dicUrl: '/api/erp-wms/warehouse/tree'
             },
             {
-              label: "旧区id",
+              label: "旧区",
               prop: "oldStorageRegionId",
               type: "select",
               disabled: true,
               rules: [{
-
-                message: "请输入旧区id",
+                message: "请输入旧区",
                 trigger: "blur"
               }],
               props: {
+
                 label: 'title',
                 value: 'id'
               },
@@ -159,7 +170,7 @@
               type: "select",
               disabled: true,
               rules: [{
-                message: "请输入旧储位id",
+                message: "请输入旧储位",
                 trigger: "blur"
               }],
               props: {
@@ -182,6 +193,7 @@
               prop: "oldQuantity",
               rules: [{
                 required: true,
+                validator: validateQuantity,
                 message: "请输变动数量",
                 trigger: "blur"
               }]
@@ -194,7 +206,7 @@
               width:150,
               rules: [{
                 required: true,
-                message: "请输入类型",
+                message: "请输入仓库",
                 trigger: "blur"
               }],
               props: {
