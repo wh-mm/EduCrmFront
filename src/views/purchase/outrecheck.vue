@@ -248,22 +248,7 @@
                     dicMethod:'post',
                     // dicUrl:'/api/erp-wms/goods/selecListGoods',
                     dicUrl: '/api/erp-wms/repertory/dropDowns',
-                    change: ({value}) => {
-                      if (value) {
-                        getGoodsDetail(value).then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            if (val.goodsId == value) {
-                              var detail = res.data.data;
-                              val.basicUnit = detail.basicUnit;
-                              val.specification = detail.goodsSpecification;
 
-                            }
-                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                          });
-                        });
-                      }
-                    },
                   },
                   {
                     label: "批号",
@@ -292,12 +277,19 @@
                               vals.placeOfOrigin = val.placeOfOrigin
                               vals.manufacturer = val.manufacturer
                               vals.supplierName = val.supplierName
-
+                              vals.packageQuantity = val.packageQuantity
+                              vals.specification = val.specification
                             }
                           });
                         });
                       });
                     },
+                  },
+                  {
+                    label: "商品索引码",
+                    prop: "goodsCode",
+                    disabled:true,
+                    width:150
                   },
                   {
                     label:'库存数量(g)',
@@ -325,7 +317,6 @@
                               val.recheckGoodsQuantity = val.goodsQuantity;
                             }
                             val.basicUnit = detail.basicUnit;
-                            val.specification = detail.goodsSpecification;
                           });
                         });
                       }
@@ -439,19 +430,19 @@
                     width:150,
                     disabled: true,
                   },
-                  {
-                    label: "基本单位",
-                    prop: "basicUnit",
-                    editDisplay: false,
-                    disabled: true,
-                    width: 150,
-                    type:'select',
-                    props: {
-                      label: 'dictValue',
-                      value: 'dictKey'
-                    },
-                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
-                  },
+                  // {
+                  //   label: "基本单位",
+                  //   prop: "basicUnit",
+                  //   editDisplay: false,
+                  //   disabled: true,
+                  //   width: 150,
+                  //   type:'select',
+                  //   props: {
+                  //     label: 'dictValue',
+                  //     value: 'dictKey'
+                  //   },
+                  //   dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
+                  // },
                   {
                     label: '规格',
                     prop: "specification",
