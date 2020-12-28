@@ -26,7 +26,7 @@ export const getListsd = (current, size, params) => {
 };
 
 //
-export const getLists = (current, size, params) => {
+export const getListJianyao = (current, size, params) => {
   return request({
     url: '/api/taocao-order/order/pageJianyao',
     method: 'get',
@@ -37,7 +37,7 @@ export const getLists = (current, size, params) => {
     }
   })
 };
-export const getListd = (current, size, params) => {
+export const getListTiaopei = (current, size, params) => {
   return request({
     url: '/api/taocao-order/order/pagetiaopei',
     method: 'get',

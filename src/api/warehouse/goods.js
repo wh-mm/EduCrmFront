@@ -88,11 +88,11 @@ export const dropDowns = (name) => {
   })
 }
 
-export const  selecListGoodsName = (id) => {
+export const  selectListGoodsByName = (name) => {
   return request({
-    url: ERP_WMS_NAME + '/goods/selecListGoodsName',
+    url: ERP_WMS_NAME + '/goods/selectListGoodsByName',
     params: {
-      id
+      name
     }
   })
 }
