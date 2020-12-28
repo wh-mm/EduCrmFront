@@ -10,6 +10,16 @@
         <el-button @click="addNextRow(index)" :size="size" :type="type">向下添加</el-button>
       </template>
     </avue-crud>
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content bg-purple-dark">
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="bcBtn()">保 存</el-button>
+            <el-button type="primary" @click="reject()">取 消</el-button>
+          </span>
+        </div>
+      </el-col>
+    </el-row>
   </basic-container>
 </template>
 
