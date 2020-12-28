@@ -56,7 +56,7 @@ export default {
               label: 'goodsName',
               value: 'id'
             },
-            dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
+            dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeKL?name={{key}}',
             cell: true,
             change: ({value}) => {
               if (value) {
@@ -71,8 +71,8 @@ export default {
             },
           },
           {
-            label: "单剂量",
-            prop: "drugAllnum",
+            label: "单剂量/g",
+            prop: "doseHerb",
             cell: true
           },
           {
@@ -99,6 +99,23 @@ export default {
             collapse: true,
             prop: 'group1',
             column: [
+              {
+                label: "医院名称",
+                prop: "hospitalId",
+                type: "select",
+                props: {
+                  label: "hospitalName",
+                  value: "id"
+                },
+                rules: [{
+                  required: true,
+                  message: "请选择医院",
+                  trigger: "blur",
+                }],
+                span: 6,
+                search: true,
+                dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+              },
               {
                 label: "收件人",
                 prop: "addressee",
@@ -219,7 +236,7 @@ export default {
                 span: 6,
               },
               {
-                label: "处方付数",
+                label: "处方付数（几副药）",
                 prop: "quantity",
                 span: 6,
                 rules: [{
@@ -229,7 +246,7 @@ export default {
                 }],
               },
               {
-                label: "分服次数",
+                label: "日服（每日吃几次）",
                 prop: "separateFrequency",
                 span: 6,
               },

@@ -9,7 +9,6 @@
 <script>
 
 import {isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
-import {getGoodsDetail} from "@/api/warehouse/goods";
 
 
 export default {
@@ -30,7 +29,7 @@ export default {
             width: 130,
           },
           {
-            label: "单剂量",
+            label: "单剂量/g",
             prop: "drugAllnum",
           },
           {
@@ -369,6 +368,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

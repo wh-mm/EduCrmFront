@@ -9,8 +9,6 @@
 <script>
 
 import {isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
-import {getGoodsDetail} from "@/api/warehouse/goods";
-import {clinicReceiveBlender} from "@/api/order/order";
 
 export default {
   name: "viewKeLi",
@@ -30,7 +28,7 @@ export default {
             prop: "drugName",
           },
           {
-            label: "单剂量",
+            label: "*单剂量/g",
             prop: "doseHerb",
           },
           {
@@ -177,18 +175,12 @@ export default {
                 span: 6,
               },
               {
-                label: "处方付数",
+                label: "处方付数（几副药）",
                 prop: "quantity",
-                //type: "select",
                 span: 6,
-                props: {
-                  label: "dictValue",
-                  value: "dictKey"
-                },
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
               },
               {
-                label: "分服次数",
+                label: "日服（每日吃几次）",
                 prop: "separateFrequency",
                 span: 6,
               },

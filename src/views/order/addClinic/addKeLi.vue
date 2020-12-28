@@ -73,7 +73,7 @@ export default {
           },
           {
             label: "单剂量",
-            prop: "drugAllnum",
+            prop: "doseHerb",
             cell: true
           },
           {
@@ -219,7 +219,7 @@ export default {
                 span: 6,
               },
               {
-                label: "处方付数",
+                label: "处方付数（几副药）",
                 prop: "quantity",
                 span: 6,
                 rules: [{
@@ -229,7 +229,7 @@ export default {
                 }],
               },
               {
-                label: "分服次数",
+                label: "日服（每日吃几次）",
                 prop: "separateFrequency",
                 span: 6,
               },

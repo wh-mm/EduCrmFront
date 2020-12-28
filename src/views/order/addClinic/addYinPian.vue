@@ -116,40 +116,9 @@ export default {
             prop: 'group1',
             column: [
               {
-                label: "医院名称",
-                prop: "hospitalId",
-                type: "select",
-                props: {
-                  label: "hospitalName",
-                  value: "id"
-                },
-                rules: [{
-                  required: true,
-                  message: "请选择医院",
-                  trigger: "blur",
-                }],
-                span: 6,
-                search: true,
-                dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-              },
-              /* {
-                 label: "处方号",
-                 prop: "pspnum",
-                 span: 6,
-                 rules: [{
-                   required: true,
-                   message: "请输入处方号",
-                   trigger: "blur",
-                 }],
-               },*/
-              {
                 label: "医生姓名",
                 prop: "doctor",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
               },
               {
                 label: "医生脚注",
@@ -251,17 +220,6 @@ export default {
                   value: 'dictKey'
                 },
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=boil_medicine_scheme"
-              },
-              {
-                label: "药品总味数",
-                prop: "drugCount",
-                span: 6,
-                rules: [{
-                  message: "药品总味数",
-                  trigger: "blur",
-                  required: true,
-                  //validator: isInteger,
-                }],
               },
               {
                 label: "贴数",

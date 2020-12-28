@@ -191,7 +191,7 @@ export default {
         ],
         color:['#37A2DA','#32C5E9','#67E0E3','#FFDB5C','#FF9F7F','#FB7293','#E062AE','#E690D1','#E7BCF3','#9D96F5','#67E0E3','#96BFFF',]
       });
-      // 双统计
+      // 双统计 订单
       statistics.setOption({
         title: { text: "医院统计" },
         tooltip: {
@@ -232,7 +232,7 @@ export default {
           },
         ],
         series: [
-          {
+/*          {
             name: "金额",
             type: "bar",
             itemStyle: {
@@ -241,7 +241,7 @@ export default {
               color: "#00C9FF",
             },
             data: this.orderList,
-          },
+          },*/
           {
             name: "订单",
             type: "bar",
@@ -253,7 +253,9 @@ export default {
             data: this.orderList,
           },
         ],
+
       });
+
     },
   },
 };
