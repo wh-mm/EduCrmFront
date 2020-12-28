@@ -247,24 +247,6 @@ export const newAddDrugOption = {
             trigger: "blur",
           }],
         },
-        /*
-        {
-                  label: "一煎时间(分)",
-                  prop: "oncetime",
-                  labelWidth: 130,
-                  rules: [{
-                    message: "请填写一煎时间",
-                    trigger: "blur",
-                  }],
-                  span: 6,
-                },*/
-        /*
-         {
-                  label: "二煎时间(分)",
-                  labelWidth: 130,
-                  prop: "twicetime",
-                  span: 6,
-                },*/
         {
           label: "浸泡加水量(ml)",
           labelWidth: 130,
@@ -391,6 +373,8 @@ export const newAddDrugOption = {
         },
       ]
     }
+
+
   ],
 }
 

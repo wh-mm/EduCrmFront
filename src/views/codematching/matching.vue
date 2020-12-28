@@ -174,7 +174,7 @@
               remote: true,
               search: true,
               dicMethod: "post",
-              dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}'
+              dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeYP?name={{key}}'
             },
             {
               label: "HIS药品码",

@@ -14,7 +14,6 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-
       <template slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAdd()">新 增
         </el-button>
@@ -25,7 +24,7 @@
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
       </template>
     </avue-crud>
-    <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
+<!--    <el-dialog title="药品列表" :visible.sync="selectDrugDialogVisible" width="80%" :modal="false"
                v-if="selectDrugDialogVisible"
                :close-on-click-modal="false">
       <avue-crud :option="drugList.option" :table-loading="drugList.loading" :data="drugList.data"
@@ -38,7 +37,7 @@
         <el-button type="primary" @click="selectDrugBtn()">保 存</el-button>
         <el-button @click="toggleSelection()">清 空</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog title="新 增" :visible.sync="addDialogVisible" v-if="addDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false"
                :before-close="handleClose">
@@ -49,35 +48,8 @@
         </el-tab-pane>
       </el-tabs>
       <avue-form ref="addForm" v-model="addInfo.form" :option="addOption"></avue-form>
-      <avue-crud ref="addCrud" :data="addInfo.drugList" :option="addCrudOption">
-        <template slot="menuLeft">
-          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="selectDrug">选择药品
-          </el-button>
-          <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="delDrug">清空药品
-          </el-button>
-        </template>
-        <template slot="doseHerb" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.doseHerb" placeholder="请输入饮片剂量" min="0"></el-input>
-        </template>
-        <template slot="equivalent" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.equivalent" placeholder="请输入当量" min="0"></el-input>
-        </template>
-        <template slot="drugAllnum" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.drugAllnum" min=0 placeholder="请输入单剂量"></el-input>
-        </template>
-        <template slot="tienum" slot-scope="scope">
-          <el-input type="number" v-model="scope.row.tienum" min=0 placeholder="请输入贴数"></el-input>
-        </template>
-        <template slot="drugweight" slot-scope="scope">
-          {{ scope.row.drugAllnum * scope.row.tienum }}
-        </template>
-        <template slot="drugDescription" slot-scope="scope">
-          <avue-input type="textarea" size="mini" placeholder="请输入" v-model="scope.row.drugDescription"></avue-input>
-        </template>
-        <template slot="description" slot-scope="scope">
-          <avue-input type="textarea" size="mini" placeholder="说明" v-model="scope.row.description"></avue-input>
-        </template>
-      </avue-crud>
+     <avue-form ref="addCrud" v-model="addInfo.drugList" :option="addCrudOption">
+     </avue-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="bcBtn()">保 存</el-button>
         <el-button @click="reject()">取 消</el-button>
@@ -119,17 +91,16 @@
 
 <script>
 import {
-  dictionaryByName,
   getInfo,
   getList,
-  receiveBlenderSave,
   clinicReceiveBlender,
   clinicReceiveDecoctingSave,
-  receiveDecoctingSave,
   selectListByDrugCategory
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
-import {
+import {getGoodsDetail} from "@/api/warehouse/goods";
+import {isOneToNinetyNine, phonelength, zhongwen} from "../../const/order/customerorder";
+/*import {
   newAddBlenderListOption,
   newAddDrugListOption,
   newAddDrugOption,
@@ -137,82 +108,13 @@ import {
   option,
   viewAddBlenderListOption,
   viewDrugListOption
-} from "@/const/order/customerorderss"
+} from "@/const/order/customerorderss"*/
 
 export default {
   data() {
     return {
       selectDrugDialogVisible: false,
       activeName: 'jianyao',
-      drugList: {
-        form: {},
-        query: {},
-        loading: true,
-        page: {
-          pageSize: 10,
-          currentPage: 1,
-          total: 0
-        },
-        data: [],
-        selectionList: [],
-        option: {
-          height: 'auto',
-          calcHeight: 30,
-          tip: false,
-          searchShow: true,
-          searchMenuSpan: 6,
-          border: true,
-          index: false,
-          menu: false,
-          header: false,
-          selection: true,
-          dialogClickModal: false,
-          column: [
-            {
-              label: "医院名称",
-              prop: "hospitalId",
-            },
-            {
-              label: "颗粒名称",
-              prop: "goodsName",
-              type: "tree",
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              search: true,
-              dicMethod: "post",
-              dicUrl: this.ERP_WMS_NAME + '/goods/selecListGoods'
-            },
-            {
-              label: "货物类型",
-              prop: "goodsType",
-              type: "tree",
-              rules: [{
-                required: true,
-                message: "请选择货物类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
-            },
-            {
-              label: "规格",
-              prop: "goodsSpecification",
-
-
-            },
-            {
-              label: "单价",
-              prop: "unitPrice",
-            }
-          ]
-        },
-      },
       addDialogVisible: false,
       dialogVisible: false,
       addInfo: {
@@ -236,8 +138,762 @@ export default {
         currentPage: 1,
         total: 0
       },
+
       selectionList: [],
-      option: option,
+      option: {
+        addBtn: false,
+        height: "auto",
+        calcHeight: 30,
+        tip: false,
+        searchShow: true,
+        searchMenuSpan: 6,
+        border: true,
+        index: true,
+        viewBtn: false,
+        selection: true,
+        dialogClickModal: false,
+        column: [
+          {
+            label: "订单id",
+            prop: "id",
+            search: true,
+          },
+          {
+            label: "医院名称",
+            prop: "hospitalId",
+            type: "select",
+            props: {
+              label: "hospitalName",
+              value: "id"
+            },
+            search: true,
+            dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+          },
+          {
+            label: "订单状态",
+            prop: "orderStatic",
+            type: "select",
+            props: {
+              label: 'dictValue',
+              value: 'dictKey'
+            },
+            search: true,
+            required: true,
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
+            trigger: "blur"
+          },
+
+          {
+            label: "订单类型",
+            prop: "orderType",
+            type: "select",
+            props: {
+              label: 'dictValue',
+              value: 'dictKey'
+            },
+            search: true,
+            required: true,
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
+            trigger: "blur"
+          },
+          {
+            label: "订单区分",
+            prop: "orderDifferentiation",
+            type: "select",
+            props: {
+              label: 'dictValue',
+              value: 'dictKey'
+            },
+            search: true,
+            required: true,
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
+            trigger: "blur"
+          },
+          {
+            label: "收货地址",
+            prop: "address",
+            rules: [{
+              required: true,
+              message: "请输入收货地址",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "收件人",
+            prop: "addressee",
+            rules: [{
+              required: true,
+              message: "请输入收件人",
+              trigger: "blur"
+            }],
+            search: true,
+          },
+          {
+            label: "收件人电话",
+            prop: "addresseePhone",
+            rules: [{
+              required: true,
+              validator: phonelength,
+              trigger: 'blur'
+            }],
+            labelWidth: 100,
+          },
+          {
+            label: "订单时间",
+            prop: "releaseTimeRange",
+            type: "datetime",
+            format: "yyyy-MM-dd hh:mm:ss",
+            valueFormat: "yyyy-MM-dd hh:mm:ss",
+            searchRange: true,
+            searchSpan: 12,
+            hide: true,
+            addDisplay: false,
+            editDisplay: false,
+            viewDisplay: false,
+            search: true,
+            rules: [{
+              required: true,
+              message: "请输入通知时间",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "订单时间",
+            prop: "orderTime",
+            type: "date",
+            width: 150,
+            format: "yyyy-MM-dd HH:mm:ss",
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            rules: [{
+              required: true,
+              message: "请输入通知日期",
+              trigger: "click"
+            }]
+          },
+          {
+            label: "总价",
+            prop: "totalPrices",
+            rules: [{
+              required: true,
+              message: "请输入总价",
+              trigger: "blur"
+            }]
+          },
+        ]
+      },
+      //煎药
+      newAddDrugOption :{
+        height: "auto",
+        calcHeight: 30,
+        tip: false,
+        border: true,
+        index: true,
+        viewBtn: false,
+        selection: true,
+        dialogClickModal: false,
+        menuBtn: false,
+        group: [
+          {
+            icon: 'el-icon-info',
+            label: '基本信息',
+            collapse: true,
+            prop: 'group1',
+            column: [
+              {
+                label: "医院名称",
+                prop: "hospitalId",
+                type: "select",
+                props: {
+                  label: "hospitalName",
+                  value: "id"
+                },
+                rules: [{
+                  required: true,
+                  message: "请选择医院",
+                  trigger: "blur",
+                }],
+                span: 6,
+                search: true,
+                dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+              },
+              /* {
+                 label: "处方号",
+                 prop: "pspnum",
+                 span: 6,
+                 rules: [{
+                   required: true,
+                   message: "请输入处方号",
+                   trigger: "blur",
+                 }],
+               },*/
+              {
+                label: "医生姓名",
+                prop: "doctor",
+                span: 6,
+                rules: [{
+                  required: true,
+                  validator: zhongwen,
+                }],
+              },
+              {
+                label: "医生脚注",
+                prop: "footnote",
+                span: 6,
+              },
+              {
+                label: "医嘱",
+                prop: "yizhu",
+                span: 6,
+              },
+
+            ]
+          },
+          {
+            icon: 'el-icon-info',
+            label: '患者信息',
+            collapse: true,
+            prop: 'group2',
+            column: [
+              {
+                label: "患者姓名",
+                prop: "name",
+                span: 6,
+                rules: [{
+                  required: true,
+                  validator: zhongwen,
+                }],
+                search: true,
+              },
+              {
+                label: "性别",
+                prop: "sex",
+                span: 6,
+                rules: [{
+                  required: true,
+                  message: "请选择性别",
+                  trigger: "blur",
+                }],
+                type: "select",
+                props: {
+                  label: "dictValue",
+                  value: "dictKey"
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex_a"
+              },
+              {
+                label: "年龄",
+                prop: "age",
+                span: 6,
+                rules: [{
+                  required: true,
+                  validator: isOneToNinetyNine,
+
+                },
+                  {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
+                ],
+              },
+              {
+                label: "电话",
+                prop: "phone",
+                span: 6,
+                rules: [{
+                  required: true,
+                  validator: phonelength,
+                  trigger: 'blur'
+                }],
+              },
+              {
+                label: "地址",
+                prop: "address",
+                span: 6,
+                required: true,
+                trigger: 'blur'
+              },
+            ]
+          },
+          {
+            icon: 'el-icon-info',
+            label: '煎药信息',
+            collapse: true,
+            prop: 'group3',
+            column: [
+              {
+                label: "煎药方案",
+                prop: "decscheme",
+                span: 6,
+                rules: [{
+                  required: true,
+                  message: "请选择煎药方案",
+                  trigger: "blur",
+                }],
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=boil_medicine_scheme"
+              },
+              {
+                label: "药品总味数",
+                prop: "drugCount",
+                span: 6,
+                rules: [{
+                  message: "药品总味数",
+                  trigger: "blur",
+                  //validator: isInteger,
+                }],
+              },
+              {
+                label: "贴数",
+                prop: "dose",
+                span: 6,
+                rules: [{
+                  //required: true,
+                  //validator: isInteger,
+                  trigger: "blur",
+                }],
+              },
+              {
+                label: "次数",
+                prop: "takenum",
+                span: 6,
+                row: true,
+                rules: [{
+                  //required: true,
+                  //validator: isInteger,
+                  trigger: "blur",
+                }],
+              },
+              {
+                label: "包装量",
+                prop: "packagenum",
+                span: 6,
+                rules: [{
+                  //required: true,
+                  //validator: isInteger,
+                  trigger: "blur",
+                }],
+              },
+              {
+                label: "浸泡加水量(ml)",
+                labelWidth: 130,
+                prop: "soakwater",
+                span: 6,
+              },
+              {
+                label: "浸泡时间(分)",
+                labelWidth: 130,
+                prop: "soaktime",
+                span: 6,
+              },
+              {
+                label: "煎药方式",
+                prop: "decmothed",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=decmothed"
+              },
+              {
+                label: "服用方式",
+                prop: "takemethod",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=takemethod"
+              },
+              {
+                label: "服用方法",
+                prop: "takeway",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=takeway"
+              },
+              {
+                label: "是否代煎",
+                prop: "isDaijian",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=isDaijian"
+              },
+              {
+                label: "加工类型",
+                prop: "processtype",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=processing_type"
+              },
+              {
+                label: "处方类型",
+                prop: "ptype",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_type"
+              },
+            ]
+          },
+          {
+            icon: 'el-icon-info',
+            label: '快递信息',
+            collapse: true,
+            prop: 'group3',
+            column: [
+              {
+                label: "收件方",
+                prop: "dtbcompany",
+                span: 6,
+                rules: [{
+                  required: true,
+                  validator: zhongwen,
+                }],
+
+              },
+              {
+                label: "收件地址",
+                prop: "dtbaddress",
+                span: 18,
+                required: true,
+                message: "请输入收货地址",
+                trigger: 'blur'
+              },
+              {
+                label: "联系电话",
+                prop: "dtbphone",
+                span: 6,
+                rules: [{
+                  /*validator: phonelength,*/
+                  trigger: 'blur'
+                }],
+              },
+              {
+                label: "快递类型",
+                prop: "dtbtype",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=dtbtype"
+              },
+            ]
+          }
+
+
+        ],
+      },
+      //煎药详情
+      newAddDrugListOption : {
+        labelWidth: 110,
+        submitBtn:false,
+        column: [
+          {
+            label: '子表单',
+            prop: 'dynamic',
+            type: 'dynamic',
+            span:24,
+            children: {
+              align: 'center',
+              headerAlign: 'center',
+              rowAdd:(done)=>{
+     /*           this.$message.success('新增回调');*/
+                done({
+                  input:'默认值'
+                });
+              },
+              rowDel:(row,done)=>{
+/*                this.$message.success('删除回调'+JSON.stringify(row));*/
+                done();
+              },
+              column: [
+                {
+                  label: '*商品',
+                  prop: "goodsName",
+                  type: 'select',
+                  width: 130,
+                  filterable: true,
+                  remote: true,
+                  display:false,
+                  // disabled: true,
+                  rules: [{
+                    require: true,
+                    message: '请选择商品',
+                  }],
+                  props: {
+                    label: 'goodsName',
+                    value: 'id'
+                  },
+                  /*dicMethod:'post',*/
+                  dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeYP?name={{key}}',
+                  change: ({value}) => {
+                    if (value) {
+                      getGoodsDetail(value).then(res => {
+                        var detail = res.data.data;
+                        console.log(detail)
+                        let dynamicList=this.addInfo.drugList.dynamic;
+                        for (let i = 0; i <dynamicList.length ; i++) {
+                          if (value===dynamicList[i].goodsName){
+                            dynamicList[i].unitPrice = detail.unitPrice;
+                            dynamicList[i].unit = detail.basicUnit;
+                          }
+                        }
+                      });
+                    }
+                  },
+                },
+                {
+                  label: "规格",
+                  prop: "unit",
+                  width: 120,
+                  disabled:true,
+
+                },
+                {
+                  label: "单剂量",
+                  prop: "drugAllnum",
+                  slot: true,
+                },
+                {
+                  label: "总剂量",
+                  prop: "drugweight",
+                  slot: true,
+                },
+                {
+                  label: "药品脚注",
+                  prop: "drugDescription",
+                  slot: true,
+                },
+                {
+                  label: "说明",
+                  prop: "description",
+                  slot: true,
+                },
+                {
+                  label: "单价",
+                  prop: "unitPrice",
+                  disabled:true,
+                },
+              ]
+            }
+          },
+
+        ]
+      },
+
+      newAddGrainOption : {
+        height: "auto",
+        calcHeight: 30,
+        tip: true,
+        border: true,
+        index: true,
+        viewBtn: false,
+        selection: true,
+        dialogClickModal: false,
+        menuBtn: false,
+        group: [
+          {
+            icon: 'el-icon-info',
+            label: '基本信息',
+            collapse: true,
+            prop: 'group1',
+            column: [
+              {
+                label: "收件人",
+                prop: "addressee",
+                span: 6,
+                rules: [{
+                  required: true,
+                  validator: zhongwen,
+                }],
+                search: true,
+              },
+              {
+                label: "收件人电话",
+                prop: "addresseePhone",
+                labelWidth: 100,
+                rules: [{
+                  required: true,
+                  validator: phonelength,
+                  trigger: 'blur'
+                }],
+                span: 6,
+              },
+              {
+                label: "快递类型",
+                prop: "dtbtype",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=dtbtype"
+              },
+            ]
+          },
+              {
+                icon: 'el-icon-info',
+                label: '患者信息',
+                collapse: true,
+                prop: 'group1',
+                column: [
+                  {
+                    label: "患者姓名",
+                    prop: "name",
+                    span: 6,
+                    rules: [{
+                      required: true,
+                      validator: zhongwen,
+                    }],
+                    search: true,
+                  },
+                  {
+                    label: "患者性别",
+                    prop: "sex",
+                    type: "select",
+                    span: 6,
+                    rules: [{
+                      required: true,
+                      message: "请选择性别",
+                      trigger: "blur",
+                    }],
+                    props: {
+                      label: "dictValue",
+                      value: "dictKey"
+                    },
+                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex_a"
+                  },
+                  {
+                    label: "患者年龄",
+                    prop: "age",
+                    span: 6,
+                    rules: [{
+                      required: true,
+                      validator: isOneToNinetyNine,
+
+                    },
+                      {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
+                    ],
+                  },
+                  {
+                    label: "详细年龄",
+                    prop: "detailedAge",
+                    span: 6,
+                    rules: [{
+                      validator: isOneToNinetyNine,
+                    },
+                      {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
+                    ],
+                  },
+                  {
+                    label: "患者联系电话",
+                    prop: "tele",
+                    span: 6,
+                    labelWidth: 110,
+                    rules: [{
+                      required: true,
+                      validator: phonelength,
+                      trigger: 'blur'
+                    }],
+                  },
+                  {
+                    label: "患者联系地址",
+                    prop: "address",
+                    span: 6,
+                    labelWidth: 110,
+                  },
+                ]
+              },
+              {
+                icon: 'el-icon-info',
+                label: '药方信息',
+                collapse: true,
+                prop: 'group1',
+                column: [
+                  {
+                    label: "处方名称",
+                    prop: "presName",
+                    span: 6,
+                  },
+                  {
+                    label: "处方付数",
+                    prop: "quantity",
+                    //type: "select",
+                    span: 6,
+                    props: {
+                    label: "dictValue",
+                    value: "dictKey"
+                  },
+                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+                  },
+                  {
+                    label: "分服次数",
+                    prop: "separateFrequency",
+                    span: 6,
+                  },
+                  {
+                    label: "医生姓名",
+                    prop: "doctorName",
+                    span: 6,
+                    rules: [{
+                    //required: true,
+                    validator: zhongwen,
+                  }],
+                  },
+                  ]
+                 },
+             ],
+      },
+
+      newAddBlenderListOption : {
+        calcHeight: 200,
+        border: true,
+        index: true,
+        viewBtn: false,
+        addBtn: false,
+        menu: false,
+        page: false,
+        dialogClickModal: false,
+        menuBtn: false,
+        column: [
+          {
+            label: "药品名称",
+            prop: "goodsName",
+          },
+          {
+            label: "单剂量",
+            prop: "doseHerb",
+            slot: true,
+          },
+          {
+            label: "单价",
+            prop: "unitPrice",
+          },
+        ],
+      },
+
       data: []
     };
   },
@@ -246,7 +902,7 @@ export default {
       if (!this.addDialogVisible) {
         this.activeName = 'jianyao';
       }
-      s
+
     }
   },
   computed: {
@@ -298,22 +954,6 @@ export default {
     },
     refreshChange() {
       this.onLoad(this.page, this.query);
-    },
-    //确认选择
-    selectDrugBtn() {
-      this.drugList.selectionList.forEach(l => {
-        l.drugAllnum = 1;
-        l.tienum = 1;
-        l.doseHerb = 1;
-        l.equivalent = 1;
-        l.dose = 1;
-      })
-      var drugList = Object.assign([], this.drugList.selectionList);
-      for (let i = 0; i < drugList.length; i++) {
-        this.addInfo.drugList.push(drugList[i]);
-      }
-      this.selectDrugDialogVisible = false;
-      this.$refs.crud.toggleSelection();
     },
     //保存
     bcBtn() {
@@ -381,23 +1021,6 @@ export default {
       this.$refs.addCrud.toggleSelection();
       this.addDialogVisible = false;
     },
-    //清空选择
-    toggleSelection() {
-      this.$refs.crud.toggleSelection();
-    },
-    //选择药品
-    selectDrug() {
-      this.selectDrugDialogVisible = true;
-      this.drugRefreshChange();
-      setTimeout(() => {
-        dictionaryByName(this.activeName).then(res => {
-          this.$refs.crudDrug.updateDic("goodsCategory", res.data.data);
-        });
-      }, 20);
-    },
-    delDrug() {
-      this.addInfo.drugList = [];
-    },
     //新增 按钮
     newAdd() {
       this.addDialogVisible = true;
@@ -406,11 +1029,12 @@ export default {
     },
     tabFrom() {
       if (this.activeName === 'jianyao') {
-        this.addOption = Object.assign({}, newAddDrugOption);
-        this.addCrudOption = Object.assign({}, newAddDrugListOption);
+        this.addOption = Object.assign({}, this.newAddDrugOption);
+        this.addCrudOption = Object.assign({}, this.newAddDrugListOption);
+
       } else if (this.activeName === 'tiaopei') {
-        this.addOption = Object.assign({}, newAddGrainOption);
-        this.addCrudOption = Object.assign({}, newAddBlenderListOption);
+        this.addOption = Object.assign({}, this.newAddGrainOption);
+        this.addCrudOption = Object.assign({}, this.newAddBlenderListOption);
         setTimeout(() => {
           this.$refs.addForm.updateDic("quantity");
         }, 20);
@@ -454,15 +1078,15 @@ export default {
       let url = '';
       this.dialogVisible = true;
       if (row.orderType === "jianyao") {
-        this.viewOption = Object.assign({}, newAddDrugOption);
-        this.viewCrudOption = Object.assign({}, viewDrugListOption);
+        this.viewOption = Object.assign({}, this.newAddDrugOption);
+        this.viewCrudOption = Object.assign({}, this.viewDrugListOption);
         url = "/api/taocao-order/order/decoctingSelectByOrderId"
         setTimeout(() => {
           this.$refs.addForm.updateDic("decscheme");
         }, 20);
       } else if (row.orderType === "tiaopei") {
-        this.viewOption = Object.assign({}, newAddGrainOption);
-        this.viewCrudOption = Object.assign({}, viewAddBlenderListOption);
+        this.viewOption = Object.assign({}, this.newAddGrainOption);
+        this.viewCrudOption = Object.assign({}, this.viewAddBlenderListOption);
         url = "/api/taocao-order/order/blenderSelectByOrderId"
       } else {
         this.$message({

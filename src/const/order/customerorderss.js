@@ -1,4 +1,5 @@
-import {ERP_WMS_NAME} from '@/const/YueConst'
+
+
 
 export const phonelength = (rule, value, callback) => {
   if (value.length != 11) {
@@ -74,16 +75,6 @@ export const newAddDrugOption = {
       collapse: true,
       prop: 'group1',
       column: [
-        /* {
-           label: "处方号",
-           prop: "pspnum",
-           span: 6,
-           rules: [{
-             required: true,
-             message: "请输入处方号",
-             trigger: "blur",
-           }],
-         },*/
         {
           label: "医生姓名",
           prop: "doctor",
@@ -103,7 +94,6 @@ export const newAddDrugOption = {
           prop: "yizhu",
           span: 6,
         },
-
       ]
     },
     {
@@ -164,7 +154,6 @@ export const newAddDrugOption = {
           prop: "address",
           span: 6,
           required: true,
-
           trigger: 'blur'
         },
       ]
@@ -206,8 +195,6 @@ export const newAddDrugOption = {
           prop: "dose",
           span: 6,
           rules: [{
-            //required: true,
-            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -217,8 +204,6 @@ export const newAddDrugOption = {
           span: 6,
           row: true,
           rules: [{
-            //required: true,
-            //validator: isInteger,
             trigger: "blur",
           }],
         },
@@ -227,29 +212,10 @@ export const newAddDrugOption = {
           prop: "packagenum",
           span: 6,
           rules: [{
-            //required: true,
-            //validator: isInteger,
             trigger: "blur",
           }],
         },
-        /*
-        {
-                  label: "一煎时间(分)",
-                  prop: "oncetime",
-                  labelWidth: 130,
-                  rules: [{
-                    message: "请填写一煎时间",
-                    trigger: "blur",
-                  }],
-                  span: 6,
-                },*/
-        /*
-         {
-                  label: "二煎时间(分)",
-                  labelWidth: 130,
-                  prop: "twicetime",
-                  span: 6,
-                },*/
+
         {
           label: "浸泡加水量(ml)",
           labelWidth: 130,
@@ -375,7 +341,7 @@ export const newAddDrugOption = {
           dicUrl: "/api/blade-system/dict-biz/dictionary?code=dtbtype"
         },
       ]
-    }
+    },
   ],
 }
 
@@ -624,55 +590,97 @@ export const newAddListOption = {
 };
 
 export const newAddDrugListOption = {
-  calcHeight: 200,
-  border: true,
-  index: true,
-  viewBtn: false,
-  addBtn: false,
-  menu: false,
-  page: false,
-  dialogClickModal: false,
-  menuBtn: false,
-  column: [
-    {
-      label: "药品名称",
-      prop: "goodsName",
-    },
-    {
-      label: "规格",
-      prop: "unit",
-      width: 120,
-    },
-    {
-      label: "单剂量",
-      prop: "drugAllnum",
-      slot: true,
-    },
-    /*{
-      label: "次数",
-      prop: "tienum",
-      slot: true,
-    },*/
-    {
-      label: "总剂量",
-      prop: "drugweight",
-      slot: true,
-    },
-    {
-      label: "药品脚注",
-      prop: "drugDescription",
-      slot: true,
-    },
-    {
-      label: "说明",
-      prop: "description",
-      slot: true,
-    },
-    {
-      label: "单价",
-      prop: "unitPrice",
-    },
-  ],
+        labelWidth: 110,
+        column: [
+          {
+            label: '药品详情',
+            prop: 'dynamic',
+            type: 'dynamic',
+            span:24,
+            children: {
+              align: 'center',
+              headerAlign: 'center',
+              rowAdd:(done)=>{
+                //this.$message.success('新增回调');
+                done({
+                  input:'默认值'
+                });
+              },
+              rowDel:(row,done)=>{
+              //  this.$message.success('删除回调'+JSON.stringify(row));
+                done();
+              },
+              column: [
+                {
+                  label: '*商品',
+                  prop: "goodsId",
+                  type: 'tree',
+                  width: 130,
+                  filterable: true,
+                  remote: true,
+                  display:false,
+                  // disabled: true,
+                  rules: [{
+                    require: true,
+                    message: '请选择商品',
+                  }],
+                  props: {
+                    label: 'goodsName',
+                    value: 'id'
+                  },
+             /*     cascaderItem: ['batchNumber'],*/
+                  /*dicMethod:'post',*/
+                  // dicUrl:'/api/erp-wms/goods/selecListGoods',
+                  dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeYP',
+                  change: ({value}) => {
+                    if (value) {
+                      getGoodsDetail(value).then(res => {
+
+                        this.obj.unitPrice=res.data.data.unitPrice;
+                      });
+                    }
+                  },
+                },
+                {
+                  label: "规格",
+                  prop: "unit",
+                  width: 120,
+
+                },
+                {
+                  label: "单剂量",
+                  prop: "drugAllnum",
+                  slot: true,
+                },
+                {
+                  label: "贴数",
+                  prop: "tienum",
+                  slot: true,
+                },
+                {
+                  label: "总剂量",
+                  prop: "drugweight",
+                  slot: true,
+                },
+                {
+                  label: "药品脚注",
+                  prop: "drugDescription",
+                  slot: true,
+                },
+                {
+                  label: "说明",
+                  prop: "description",
+                  slot: true,
+                },
+                {
+                  label: "单价",
+                  prop: "unitPrice",
+                },
+              ]
+            }
+          },
+
+        ]
 };
 
 export const newAddBlenderListOption = {
@@ -791,148 +799,4 @@ export const viewAddBlenderListOption = {
   ],
 };
 
-export const option = {
-  addBtn: false,
-  height: "auto",
-  calcHeight: 30,
-  tip: false,
-  searchShow: true,
-  searchMenuSpan: 6,
-  border: true,
-  index: true,
-  viewBtn: false,
-  selection: true,
-  dialogClickModal: false,
-  column: [
-    {
-      label: "订单id",
-      prop: "id",
-      search: true,
-    },
-    {
-      label: "医院名称",
-      prop: "hospitalId",
-    },
-    {
-      label: "颗粒名称",
-      prop: "goodsName",
-      type: "tree",
-      props: {
-        label: 'goodsName',
-        value: 'id'
-      },
-      search: true,
-      dicMethod: "post",
-      dicUrl: ERP_WMS_NAME + '/goods/selecListGoods'
-    },
-    {
-      label: "订单状态",
-      prop: "orderStatic",
-      type: "select",
-      props: {
-        label: 'dictValue',
-        value: 'dictKey'
-      },
-      search: true,
-      required: true,
-      dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
-      trigger: "blur"
-    },
 
-    {
-      label: "订单类型",
-      prop: "orderType",
-      type: "select",
-      props: {
-        label: 'dictValue',
-        value: 'dictKey'
-      },
-      search: true,
-      required: true,
-      dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
-      trigger: "blur"
-    },
-    {
-      label: "订单区分",
-      prop: "orderDifferentiation",
-      type: "select",
-      props: {
-        label: 'dictValue',
-        value: 'dictKey'
-      },
-      search: true,
-      required: true,
-      dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
-      trigger: "blur"
-    },
-    {
-      label: "收货地址",
-      prop: "address",
-      rules: [{
-        required: true,
-        message: "请输入收货地址",
-        trigger: "blur"
-      }]
-    },
-    {
-      label: "收件人",
-      prop: "addressee",
-      rules: [{
-        required: true,
-        message: "请输入收件人",
-        trigger: "blur"
-      }]
-    },
-    {
-      label: "收件人电话",
-      prop: "addresseePhone",
-      rules: [{
-        required: true,
-        validator: phonelength,
-        trigger: 'blur'
-      }],
-      labelWidth: 100,
-    },
-    {
-      label: "订单时间",
-      prop: "releaseTimeRange",
-      type: "datetime",
-      format: "yyyy-MM-dd hh:mm:ss",
-      valueFormat: "yyyy-MM-dd hh:mm:ss",
-      searchRange: true,
-      searchSpan: 12,
-      hide: true,
-      addDisplay: false,
-      editDisplay: false,
-      viewDisplay: false,
-      search: true,
-      rules: [{
-        required: true,
-        message: "请输入通知时间",
-        trigger: "blur"
-      }]
-    },
-    {
-      label: "订单时间",
-      prop: "orderTime",
-      type: "date",
-      width: 150,
-      format: "yyyy-MM-dd HH:mm:ss",
-      valueFormat: "yyyy-MM-dd HH:mm:ss",
-      rules: [{
-        required: true,
-        message: "请输入通知日期",
-        trigger: "click"
-      }]
-    },
-    {
-      label: "总价",
-      prop: "totalPrices",
-      rules: [{
-        required: true,
-        message: "请输入总价",
-        trigger: "blur"
-      }]
-    },
-  ]
-}
