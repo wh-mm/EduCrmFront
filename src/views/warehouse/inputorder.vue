@@ -89,7 +89,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>部门 : <span style="margin-left: 10px;"></span></p>
+                    <p>供应商 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -106,7 +106,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>原因 : <span style="margin-left: 10px;"></span></p>
+                    <p>备注 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
 
@@ -118,31 +118,46 @@
                 <el-table-column
                   type="index"
                   label="序号"
-                  width="60">
+                  width="50">
+                </el-table-column>
+                <el-table-column
+                  prop="goodsCode"
+                  label="索引码"
+                  width="65">
                 </el-table-column>
                 <el-table-column
                   prop="goodsName"
                   label="品名"
-                  width="100">
+                  width="95">
                 </el-table-column>
                 <el-table-column
                   prop="batchNumber"
                   label="批号"
-                  width="107">
+                  width="80">
                 </el-table-column>
                 <el-table-column
-                  prop="specification"
-                  label="规格"
-                  width="90">
+                  prop="goodsQuantity"
+                  label="数量"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  prop="packageSpecification"
+                  label="包装规格"
+                  width="60">
+                </el-table-column>
+                <el-table-column
+                  prop="packageQuantity"
+                  label="包装数量"
+                  width="60">
                 </el-table-column>
                 <el-table-column
                   prop="dateOfManufacture"
                   label="生产日期"
-                  width="90">
+                  width="70">
                 </el-table-column>
                 <el-table-column
-                  prop="placeOfOrigin"
-                  label="产地"
+                  prop="specification"
+                  label="规格"
                   width="55">
                 </el-table-column>
                 <el-table-column
@@ -151,13 +166,8 @@
                   width="90">
                 </el-table-column>
                 <el-table-column
-                  prop="supplierName"
-                  label="供应商"
-                  width="80">
-                </el-table-column>
-                <el-table-column
-                  prop="goodsQuantity"
-                  label="数量"
+                  prop="placeOfOrigin"
+                  label="产地"
                   width="55">
                 </el-table-column>
               </el-table>
@@ -168,15 +178,16 @@
                 </el-col>
                 <el-col :span="6">
                   <div class="grid-content bg-purple-light">
+                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="3">
                   <div class="grid-content bg-purple">
                   </div>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="5">
                   <div class="grid-content bg-purple-light">
-                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
+                    <p>保管员 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -196,6 +207,7 @@
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
+  import {getGoodsDetail} from "@/api/warehouse/goods";
   export default {
     filters: {
       rounding(value) {
@@ -243,6 +255,7 @@
         printDialogVisible:false,
         printData: {
           orderNumber: '',
+
           tableData: [],
         },
         selectionList: [],
@@ -313,7 +326,7 @@
                       label: 'title',
                       value: 'value'
                     },
-                    cascaderItem: ['storageRegionId','storageId'],
+                    cascaderItem: ['storageRegionId'],
                     rules: [{
                       required: true,
                       message: "请输入仓库",
@@ -330,6 +343,7 @@
                       label: 'title',
                       value: 'id'
                     },
+                    cascaderItem: ['storageId'],
                     dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
                   },
                   {
@@ -341,7 +355,7 @@
                       label: 'title',
                       value: 'id'
                     },
-                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                    dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
                   },
                   {
                     label: '*商品',
@@ -357,6 +371,18 @@
                     },
                     dicMethod:'post',
                     dicUrl:'/api/erp-wms/goods/selecListGoods',
+                    change: ({value}) => {
+                        getGoodsDetail(value).then(res => {
+                          var selectValue = res.data.data;
+                            this.form.inputOrderDetailList.forEach(vals => {
+                              if(vals.goodsId == value){
+                                vals.goodsCode = selectValue.goodsCode
+                              }
+
+                        });
+                        });
+
+                    },
 
                   },
                   {
@@ -368,6 +394,12 @@
                       message: '请输入批号',
                       trigger: "blur"
                     }],
+                  },
+                  {
+                    label: "商品索引码",
+                    prop: "goodsCode",
+                    disabled:true,
+                    width:150
                   },
                   {
                     label: '*入库数量(g)',

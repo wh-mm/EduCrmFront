@@ -247,6 +247,12 @@
               search:true,
             },
             {
+              label: "商品索引码",
+              prop: "goodsCode",
+              disabled:true,
+              width:150
+            },
+            {
               label: "生产日期",
               prop: "dateOfManufacture",
               type:'date',

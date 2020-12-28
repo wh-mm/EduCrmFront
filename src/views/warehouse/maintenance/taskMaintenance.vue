@@ -31,9 +31,14 @@
         </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
-        <el-button :size="scope.size" :type="scope.type"
+        <el-button :size="scope.size" :type="scope.type" v-if="scope.row.statusTime === '1'||scope.row.statusTime === '3'"
                    @click="maintenanceShow(scope.row.repertoryId)">养护结果
         </el-button>
+      </template>
+      <template slot="statusTime" slot-scope="scope">
+        <span v-if="scope.row.statusTime === '1'" style="color: #1f94f4">等待保养</span>
+        <span v-if="scope.row.statusTime === '2'" style="color: #e1aa10">时间未到</span>
+        <span v-if="scope.row.statusTime === '3'" style="color: #ed0909">超时</span>
       </template>
     </avue-crud>
 
@@ -88,6 +93,11 @@
           editBtn: false,
           dialogClickModal: false,
           column: [
+            {
+              label: "状态",
+              prop : "statusTime",
+              slot : true,
+            },
             {
               label: "仓库",
               prop: "warehouseId",
@@ -163,16 +173,28 @@
               search: true,
             },
             {
+              label: "养护时间",
+              prop: "maintainTime",
+              dateDefault: true,
+              type: "date",
+              searchSpan: 12,
+              searchRange: true,
+              search: true,
+              width : 150,
+              format: "yyyy-MM-dd",
+              valueFormat: "yyyy-MM-dd",
+            },
+            {
               label: "生产日期",
               prop: "dateOfManufacture",
-              type: 'datetime',
+              type: 'date',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
             },
             {
               label: "有效期至",
               prop: "periodOfValidity",
-              type: 'datetime',
+              type: 'date',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
             },
@@ -207,13 +229,7 @@
             {
               label: "入库时间",
               prop: "createTime",
-              dateDefault: true,
-              addDisplay: false,
-              viewDisplay: false,
               type: "datetime",
-              searchSpan: 12,
-              searchRange: true,
-              search: true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
@@ -314,7 +330,20 @@
       },
       onLoad(page, params = {}) {
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        const {maintainTime} = params;
+        let values = {
+          ...params,
+        };
+        if (maintainTime) {
+          values = {
+            ...params,
+            startTime: maintainTime[0],
+            endTime: maintainTime[1],
+          };
+          values.maintainTime = null;
+          this.query.maintainTime = null;
+        }
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

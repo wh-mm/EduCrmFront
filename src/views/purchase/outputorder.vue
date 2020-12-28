@@ -118,7 +118,7 @@
                 <el-col :span="24">
                   <div class="grid-content bg-purple-dark"
                        style="font-size: 24px;text-align: center;margin-bottom: 15px;">
-                    领料单
+                    领料出库单
                   </div>
                 </el-col>
               </el-row>
@@ -147,12 +147,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>原因 : <span style="margin-left: 10px;"></span></p>
-                  </div>
-                </el-col>
-                <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
+                    <p>备注 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -208,15 +203,16 @@
                 </el-col>
                 <el-col :span="6">
                   <div class="grid-content bg-purple-light">
+                    <p>领料人 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="3">
                   <div class="grid-content bg-purple">
                   </div>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="5">
                   <div class="grid-content bg-purple-light">
-                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
+                    <p>保管员 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -386,24 +382,25 @@
                     },
                     cascaderItem: ['batchNumber'],
                     dicMethod:'post',
-                    // dicUrl:'/api/erp-wms/goods/selecListGoods',
                     dicUrl: '/api/erp-wms/repertory/dropDowns',
                     change: ({value}) => {
-                      if (value) {
-                        getGoodsDetail(value).then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            if (val.goodsId == value) {
-                              var detail = res.data.data;
-                              val.basicUnit = detail.basicUnit;
-                              val.specification = detail.goodsSpecification;
+                      getGoodsDetail(value).then(res => {
+                        var selectValue = res.data.data;
+                        this.form.outputOrderDetailList.forEach(vals => {
+                          if(vals.goodsId == value){
+                            vals.goodsCode = selectValue.goodsCode
+                          }
 
-                            }
-                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                          });
                         });
-                      }
+                      });
+
                     },
+                  },
+                  {
+                    label: "商品索引码",
+                    prop: "goodsCode",
+                    disabled:true,
+                    width:150
                   },
                   {
                     label: "库存检索",
@@ -423,14 +420,6 @@
                       validator: validateQuantity,
                     }]
                   },
-                  // {
-                  //   label: '领料人',
-                  //   prop: "pickingPerson",
-                  //   width: 200,
-                  //   rules: [{
-                  //     required: true,
-                  //   }]
-                  // },
                   {
                   label: '备注',
                   prop: "remark",
