@@ -272,16 +272,16 @@
                     width:170,
                     props: {
                       label: 'batchNumber',
-                      value: 'batchNumber'
+                      value: 'id'
                     },
                     dicMethod:'post',
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
                       this.form.outputOrderDetailList.forEach(vals => {
-                      selectByBatchNumber(value,vals.goodsId).then(res => {
+                      selectByBatchNumber(null,vals.goodsId,value).then(res => {
                         var detail = res.data.data;
                         detail.forEach(val =>{
-                            if (value==val.batchNumber) {
+                            if (value==vals.batchNumber) {
                                vals.warehouseId = val.warehouseId;
                                vals.storageRegionId = val.storageRegionId;
                                vals.storageId = val.storageId;

@@ -37,6 +37,19 @@
         <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
       </template>
 
+      <template slot-scope="scope" slot="batchNumberForm">
+        <el-select v-model="selectValues"
+                   multiple
+                   placeholder="请选择批号">
+          <el-option
+            v-for="item in selectValue"
+            :key="item.batchNumber"
+            :label="item.batchNumber"
+            :value="item.batchNumber">
+          </el-option>
+        </el-select>
+      </template>
+
 
     </avue-crud>
 
@@ -222,6 +235,8 @@
     },
     data() {
       return {
+        selectValue:[],
+        selectValues:[],
         form: {},
         query: {},
         loading: true,
@@ -341,17 +356,9 @@
                     dicUrl: '/api/erp-wms/repertory/dropDowns',
                     change: ({value}) => {
                       if (value) {
-                        getGoodsDetail(value).then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outwarehouseOrderDetailList.forEach(val => {
-                            if (val.goodsId == value) {
-                              var detail = res.data.data;
-                              val.specification = detail.goodsSpecification;
-                              val.basicUnit = detail.basicUnit;
-
-                            }
-                            this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
-                          });
+                        selectByBatchNumber(null,value).then(res => {
+                          this.selectValue = res.data.data;
+                          console.log(this.selectValue);
                         });
                       }
                     },
@@ -359,21 +366,21 @@
                   {
                     label: "批号",
                     prop: "batchNumber",
-                    type:'select',
+                    type:"select",
+                    // formslot:true,
                     width:170,
                     props: {
-
                       label: 'batchNumber',
-                      value: 'batchNumber'
+                      value: 'id'
                     },
                     dicMethod:'post',
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
                       this.form.outwarehouseOrderDetailList.forEach(vals => {
-                        selectByBatchNumber(value,vals.goodsId).then(res => {
+                        selectByBatchNumber(null,vals.goodsId,vals.batchNumber).then(res => {
                           var detail = res.data.data;
                           detail.forEach(val =>{
-                            if (value==val.batchNumber) {
+                            if (value==vals.batchNumber) {
                               vals.warehouseId = val.warehouseId;
                               vals.storageRegionId = val.storageRegionId;
                               vals.storageId = val.storageId;
@@ -391,7 +398,8 @@
                             }
                           });
                         });
-                      });
+                        });
+
                     },
                   },
                   {
@@ -420,12 +428,6 @@
                       }
                     },
                   },
-                  // {
-                  //   label: "出库人",
-                  //   prop: "inputPerson",
-                  //   width:150,
-                  //   required: true,
-                  // },
                   {
                     label:'生产日期',
                     prop: 'dateOfManufacture',
@@ -439,7 +441,7 @@
                     width:100,
                   },
                   {
-                    label: '*出货仓库',
+                    label: '出库仓库',
                     prop: "warehouseId",
                     type: "tree",
                     rsearch: true,
@@ -454,16 +456,15 @@
                       label: 'title',
                       value: 'id'
                     },
-                    cascaderItem: ['storageId'],
+                    cascaderItem: ['storageRegionId'],
                     dicUrl: '/api/erp-wms/warehouse/tree'
                   },
                   {
                     label:'区域',
                     prop: "storageRegionId",
                     type:'tree',
-                    row: true,
-                    disabled: true,
                     width:150,
+                    disabled: true,
                     props: {
                       label: 'title',
                       value: 'id'
@@ -476,13 +477,12 @@
                     prop: "storageId",
                     type:'tree',
                     disabled: true,
-                    width:150,
+                    width: 150,
                     props: {
                       label: 'title',
                       value: 'id'
                     },
-                    // cascaderItem: ['goodsId'],
-                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
+                    dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
                   },
                   {
                     label: "基本单位",
