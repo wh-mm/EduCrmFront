@@ -217,8 +217,12 @@ export default {
                 label: "地址",
                 prop: "address",
                 span: 6,
-                required: true,
-                trigger: 'blur'
+                rules: [{
+                  required: true,
+                  trigger: 'blur',
+                  message: "请输入地址",
+                }],
+
               },
             ]
           },
@@ -249,6 +253,7 @@ export default {
                 prop: "drugCount",
                 span: 6,
                 rules: [{
+                  required: true,
                   message: "药品总味数",
                   trigger: "blur",
                   //validator: isInteger,
@@ -270,8 +275,8 @@ export default {
                 span: 6,
                 row: true,
                 rules: [{
-                  //required: true,
-                  //validator: isInteger,
+                  required: true,
+                  validator: isInteger,
                   trigger: "blur",
                 }],
               },
@@ -280,8 +285,8 @@ export default {
                 prop: "packagenum",
                 span: 6,
                 rules: [{
-                  //required: true,
-                  //validator: isInteger,
+                  required: true,
+                  validator: isInteger,
                   trigger: "blur",
                 }],
               },

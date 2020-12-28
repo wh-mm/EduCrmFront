@@ -25,7 +25,7 @@
 
 <script>
 
-import {isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
+import {isOneToNinetyNine, phonelength, zhongwen,isInteger} from "@/const/order/customerorder";
 import {getGoodsDetail} from "@/api/warehouse/goods";
 import {clinicReceiveBlender} from "@/api/order/order";
 
@@ -73,7 +73,7 @@ export default {
           },
           {
             label: "单剂量",
-            prop: "doseHerb",
+            prop: "drugAllnum",
             cell: true
           },
           {
@@ -221,13 +221,12 @@ export default {
               {
                 label: "处方付数",
                 prop: "quantity",
-                //type: "select",
                 span: 6,
-                props: {
-                  label: "dictValue",
-                  value: "dictKey"
-                },
-                dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_payment"
+                rules: [{
+                  required: true,
+                  validator: isInteger,
+                  trigger: 'blur'
+                }],
               },
               {
                 label: "分服次数",

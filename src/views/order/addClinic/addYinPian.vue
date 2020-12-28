@@ -222,8 +222,11 @@ export default {
                 label: "地址",
                 prop: "address",
                 span: 6,
-                required: true,
-                trigger: 'blur'
+                rules: [{
+                  required: true,
+                  trigger: 'blur',
+                  message: "请输入地址",
+                }],
               },
             ]
           },
@@ -256,6 +259,7 @@ export default {
                 rules: [{
                   message: "药品总味数",
                   trigger: "blur",
+                  required: true,
                   //validator: isInteger,
                 }],
               },
