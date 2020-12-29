@@ -16,7 +16,6 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
@@ -45,218 +44,17 @@
 
 
 
-    <!-- 新增饮片 -->
-    <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
-               width="90%" :modal="false" :close-on-click-modal="false">
-      <addYinPian @reject="rejectYin" ></addYinPian>
-    </el-dialog>
 
     <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <addKeLi @reject="rejectKe" ></addKeLi>
     </el-dialog>
 
-    <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
-               width="90%" :modal="false" :close-on-click-modal="false">
-      <viewYinPian :orderInfo="orderInfo"></viewYinPian>
-    </el-dialog>
     <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewKeLi :orderInfo="orderInfo"></viewKeLi>
     </el-dialog>
 
-    <el-form :model="form">
-      <div style="display: none" id="printyinpian" ref="printyinpian">
-        <!-- 隐藏打印区域，避免用户看到 -->
-        <div style="padding: 1px;height: 100px;">
-          <div class="yinpianhead" style="width: 100%">
-            <el-row>
-              <el-col :span="5" :offset="9">
-                <div class="grid-content bg-purple">
-                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
-              </el-col>
-
-              <el-col :span="5" :offset="1">
-                <div class="grid-content bg-purple-light">
-                  <svg id="bigcode" style="padding: 1px;"></svg>
-                </div>
-              </el-col>
-            </el-row>
-
-            <el-row>
-              <el-col :span="10" :offset="3">
-                <div class="grid-content bg-purple"><p style="font-size: 15px">
-                  接方时间：<span>{{ printJianYaoData.createTime }}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="8" :offset="3">
-                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
-                  打印时间：<span>{{ time }}</span></p></div>
-              </el-col>
-            </el-row>
-          </div>
-
-          <hr align="center" width="100%" size="1px" length="10" color="black"/>
-
-          <div class="yinpianshou" style="width: 100%">
-
-            <el-row :gutter="5" style="">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  医院名称：<span>{{ printJianYaoData.hospitalName }}</span></p></div>
-              </el-col>
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  姓名：<span>{{ printJianYaoData.name }}</span></p></div>
-              </el-col>
-              <el-col :span="4" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  性别：<span>{{ printJianYaoData.sex == 1 ? '男' : '女' }}</span></p></div>
-              </el-col>
-              <el-col :span="4" :offset="1">
-                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
-                  年龄：<span>{{ printJianYaoData.age }}</span></p></div>
-              </el-col>
-            </el-row>
-
-            <el-row :gutter="5" style="margin-top:-200px;margin-bottom:-200px">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
-                  处方号：<span>{{ printJianYaoData.delnum }}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
-                  包装量：<span>{{ printJianYaoData.packagenum }}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="4" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
-                  剂数/贴数：<span>{{ printJianYaoData.dose }}</span>
-                </p></div>
-              </el-col>
-              <!--<el-col :span="4" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">次数：<span>{{printJianYaoData.takenum}}</span>
-                </p></div>
-              </el-col>-->
-            </el-row>
-
-            <el-row :gutter="5" style="margin-top:-15px;margin-bottom:-15px">
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
-                  浸泡加水量：<span>{{ printJianYaoData.soakwater }}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="6" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
-                  煎药方案：<span>{{ printJianYaoData.decscheme }}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="4" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
-                  服用方式：<span>{{ printJianYaoData.takemethod }}</span>
-                </p></div>
-              </el-col>
-              <el-col :span="4" :offset="1">
-                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-
-
-          <div class="yinpianfooter" style="width: 100%">
-            <el-table
-              :data="printJianYaoDrugData"
-              :row-style="{height: '0'}"
-              :cell-style="{padding: '0'}"
-              style="border-color: #000000;border-top: 1px solid;font-size: 30px">
-              <el-table-column
-                label="序号"
-                type="index"
-                width="90"
-                align="center"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="shelf_number"
-                label="货位号"
-                width="80"
-                align="center"
-              >
-              </el-table-column>
-
-              <el-table-column
-                prop="drug_name"
-                label="药品名称"
-                width="168"
-                align="center"
-              >
-              </el-table-column>
-
-              <el-table-column
-                prop="drug_description"
-                label="脚注"
-                width="168"
-                align="center"
-              >
-              </el-table-column>
-
-              <el-table-column
-                prop="description"
-                label="说明"
-                width="165"
-                align="center"
-              >
-              </el-table-column>
-
-              <el-table-column
-                label="单剂量"
-                width="165"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <span>{{ scope.row.drug_allnum / 1 | rounding }}</span>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                label="总剂量"
-                width="166"
-                align="center">
-                <template slot-scope="scope">
-                  {{ scope.row.tienum * scope.row.drug_allnum }}
-
-                </template>
-              </el-table-column>
-
-            </el-table>
-
-            <hr align="center" width="100%" size="1px" length="10" color="black"/>
-
-            <el-col :span="3" :offset="1">
-              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
-            </el-col>
-            <el-col :span="2" :offset="2">
-              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
-            </el-col>
-            <el-col :span="2" :offset="3">
-              <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
-            </el-col>
-            <el-col :span="2" :offset="3">
-              <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
-            </el-col>
-            <el-col :span="2" :offset="3">
-              <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
-            </el-col>
-
-          </div>
-
-
-        </div>
-      </div>
-
-    </el-form>
 
     <el-form :model="form">
       <div style="display: none" id="printkeli" ref="printkeli">
@@ -415,23 +213,19 @@
 <script>
 import {
   getInfo,
-  getList,
+  getListTiaopei,
   selectByOrderId,
   updateOrderStatic
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
 
-import addYinPian from "./add/addYinPian";
 import addKeLi from "./add/addKeLi";
-import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
 
 export default {
   components:{
-    addYinPian,
     addKeLi,
-    viewYinPian,
     viewKeLi
   },
   filters: {
@@ -456,10 +250,8 @@ export default {
   },
   data() {
     return {
-      addYinDialogVisible: false,
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
-      viewYinDialogVisible: false,
       dialogFormVisible: false,
       time: '',
       printJianYaoData: [
@@ -883,7 +675,7 @@ export default {
         this.query.releaseTimeRange = null;
       }
       this.loading = true;
-      getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+      getListTiaopei(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
         const data = res.data.data;
         this.page.total = data.total;
         this.data = data.records;
