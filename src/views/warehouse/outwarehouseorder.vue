@@ -718,8 +718,21 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
+        const {updateTime} = params;
+        let values = {
+          ...params,
+        };
+        if (updateTime) {
+          values = {
+            ...params,
+            start_time: updateTime[0],
+            end_time: updateTime[1],
+          };
+          values.updateTime = null;
+          this.query.updateTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

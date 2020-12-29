@@ -88,6 +88,7 @@
               width: 130,
               filterable: true,
               // disabled: true,
+              search:true,
               rules: [{
                 required: true,
                 message: '请选择商品',
@@ -116,7 +117,6 @@
               dicMethod:'post',
               dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
               change: ({value}) => {
-
                   selectByBatchNumber(null,this.form.goodsId,value).then(ress => {
                     var detail = ress.data.data;
                     detail.forEach(val =>{
@@ -245,6 +245,20 @@
               addDisplay: false,
               editDisplay: false,
               width:150,
+            },
+            {
+              label:"创建时间",
+              prop:"createTime",
+              dateDefault: true,
+              addDisplay: false,
+              editDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              search:true,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
 
           ]
@@ -381,8 +395,21 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            start_time: createTime[0],
+            end_time: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
