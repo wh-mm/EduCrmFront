@@ -1,14 +1,12 @@
 <template>
   <basic-container>
-    <avue-form ref="addForm" v-model="orderInfo.form" :option="addOption"></avue-form>
+    <avue-form ref="addForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="orderInfo.drugList">
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-
-import {isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
 
 export default {
   name: "viewKeLi",
@@ -38,7 +36,7 @@ export default {
         ]
       },
       //煎药
-      addOption :{
+      viewOption :{
         detail: true,
         height: "auto",
         calcHeight: 30,
@@ -60,21 +58,12 @@ export default {
                 label: "收件人",
                 prop: "addressee",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
                 search: true,
               },
               {
                 label: "收件人电话",
                 prop: "addresseePhone",
                 labelWidth: 100,
-                rules: [{
-                  required: true,
-                  validator: phonelength,
-                  trigger: 'blur'
-                }],
                 span: 6,
               },
               {
@@ -100,10 +89,6 @@ export default {
                 label: "患者姓名",
                 prop: "name",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
                 search: true,
               },
               {
@@ -111,11 +96,6 @@ export default {
                 prop: "sex",
                 type: "select",
                 span: 6,
-                rules: [{
-                  required: true,
-                  message: "请选择性别",
-                  trigger: "blur",
-                }],
                 props: {
                   label: "dictValue",
                   value: "dictKey"
@@ -126,34 +106,17 @@ export default {
                 label: "患者年龄",
                 prop: "age",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: isOneToNinetyNine,
-
-                },
-                  {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
-                ],
               },
               {
                 label: "详细年龄",
                 prop: "detailedAge",
                 span: 6,
-                rules: [{
-                  validator: isOneToNinetyNine,
-                },
-                  {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
-                ],
               },
               {
                 label: "患者联系电话",
                 prop: "tele",
                 span: 6,
                 labelWidth: 110,
-                rules: [{
-                  required: true,
-                  validator: phonelength,
-                  trigger: 'blur'
-                }],
               },
               {
                 label: "患者联系地址",
@@ -188,10 +151,6 @@ export default {
                 label: "医生姓名",
                 prop: "doctorName",
                 span: 6,
-                rules: [{
-                  //required: true,
-                  validator: zhongwen,
-                }],
               },
             ]
           },

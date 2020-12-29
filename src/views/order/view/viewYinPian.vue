@@ -1,15 +1,12 @@
 <template>
   <basic-container>
-    <avue-form ref="addForm" v-model="orderInfo.form" :option="addOption"></avue-form>
+    <avue-form ref="addForm" v-model="orderInfo.form" :option="viewOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="orderInfo.drugList">
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-
-import {isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
-
 
 export default {
   name: "viewYinPian",
@@ -47,7 +44,7 @@ export default {
         ]
       },
       //煎药
-      addOption :{
+      viewOption :{
         detail: true,
         height: "auto",
         calcHeight: 30,
@@ -73,11 +70,6 @@ export default {
                   label: "hospitalName",
                   value: "id"
                 },
-                rules: [{
-                  required: true,
-                  message: "请选择医院",
-                  trigger: "blur",
-                }],
                 span: 6,
                 search: true,
                 dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
@@ -86,10 +78,6 @@ export default {
                 label: "医生姓名",
                 prop: "doctor",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
               },
               {
                 label: "医生脚注",
@@ -114,10 +102,6 @@ export default {
                 label: "患者姓名",
                 prop: "name",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
                 search: true,
               },
               {
@@ -140,30 +124,16 @@ export default {
                 label: "年龄",
                 prop: "age",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: isOneToNinetyNine,
-
-                },
-                  {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
-                ],
               },
               {
                 label: "电话",
                 prop: "phone",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: phonelength,
-                  trigger: 'blur'
-                }],
               },
               {
                 label: "地址",
                 prop: "address",
                 span: 6,
-                required: true,
-                trigger: 'blur'
               },
             ]
           },
@@ -177,11 +147,6 @@ export default {
                 label: "煎药方案",
                 prop: "decscheme",
                 span: 6,
-                rules: [{
-                  required: true,
-                  message: "请选择煎药方案",
-                  trigger: "blur",
-                }],
                 type: 'select',
                 props: {
                   label: 'dictValue',
@@ -193,42 +158,22 @@ export default {
                 label: "药品总味数",
                 prop: "drugCount",
                 span: 6,
-                rules: [{
-                  message: "药品总味数",
-                  trigger: "blur",
-                  //validator: isInteger,
-                }],
               },
               {
                 label: "贴数",
                 prop: "dose",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: isInteger,
-                  trigger: "blur",
-                }],
               },
               {
                 label: "次数",
                 prop: "takenum",
                 span: 6,
                 row: true,
-                rules: [{
-                  //required: true,
-                  //validator: isInteger,
-                  trigger: "blur",
-                }],
               },
               {
                 label: "包装量",
                 prop: "packagenum",
                 span: 6,
-                rules: [{
-                  //required: true,
-                  //validator: isInteger,
-                  trigger: "blur",
-                }],
               },
               {
                 label: "浸泡加水量(ml)",
@@ -320,11 +265,6 @@ export default {
                 label: "收件方",
                 prop: "dtbcompany",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
-
               },
               {
                 label: "收件地址",
@@ -338,10 +278,6 @@ export default {
                 label: "联系电话",
                 prop: "dtbphone",
                 span: 6,
-                rules: [{
-                  /*validator: phonelength,*/
-                  trigger: 'blur'
-                }],
               },
               {
                 label: "快递类型",
