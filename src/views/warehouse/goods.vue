@@ -31,13 +31,13 @@
                    size="small"
                    plain
                    icon="el-icon-upload2"
-                   @click="handleImport">导入
+                   @click="handleImport">导 入
         </el-button>
         <el-button type="warning"
                    size="small"
                    plain
                    icon="el-icon-download"
-                   @click="handleExport">导出
+                   @click="handleExport">导 出
         </el-button>
       </template>
     </avue-crud>
@@ -130,6 +130,7 @@
             {
               label: "货品ID",
               prop: "id",
+              addDisplay: false,
             },
             {
               label: "货物类型",
@@ -196,14 +197,14 @@
                 trigger: "blur"
               }]
             },
-            {
+            /*{
               label: "货架号",
               prop: "shelfNumber",
               rules: [{
                 message: "请输入货品价格",
                 trigger: "blur"
               }]
-            },
+            },*/
           ]
         },
         data: [],
