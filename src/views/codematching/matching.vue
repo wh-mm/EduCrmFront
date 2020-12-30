@@ -173,7 +173,6 @@
               filterable: true,
               remote: true,
               search: true,
-              dicMethod: "post",
               dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeYP?name={{key}}'
             },
             {
