@@ -20,11 +20,8 @@
                search="true"
                @search-reset="searchReset"
                @refresh-change="refreshChange"
-               @on-load="onLoad"
-    >
-
+               @on-load="onLoad">
     </avue-crud>
-
   </basic-container>
 </template>
 
