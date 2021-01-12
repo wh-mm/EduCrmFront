@@ -347,6 +347,28 @@ export default {
                 },
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=prescription_type"
               },
+              {
+                label: "特殊处方",
+                prop: "isrepetition",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=isrepetition"
+              },
+              {
+                label: "特殊群体",
+                prop: "particular",
+                span: 6,
+                type: 'select',
+                props: {
+                  label: 'dictValue',
+                  value: 'dictKey'
+                },
+                dicUrl: "/api/blade-system/dict-biz/dictionary?code=particular"
+              },
             ]
           },
           {
@@ -393,6 +415,7 @@ export default {
                 },
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=dtbtype"
               },
+
             ]
           }
 
