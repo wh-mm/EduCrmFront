@@ -46,7 +46,7 @@ export default {
           {
             label: '*商品',
             prop: "goodsName",
-            type: 'select',
+            type: 'tree',
             width: 130,
             filterable: true,
             remote: true,

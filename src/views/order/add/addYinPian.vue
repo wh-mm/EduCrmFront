@@ -47,7 +47,7 @@ export default {
             label: '*药品',
             prop: "goodsName",
             width: 130,
-            type: 'select',
+            type: 'tree',
             filterable: true,
             remote: true,
             rules: [{
