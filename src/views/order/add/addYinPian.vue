@@ -1,9 +1,10 @@
 <template>
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
-    <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate" >
+    <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
+        <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
       <template slot="menu" slot-scope="{row,index,size,type}">
         <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
@@ -25,21 +26,22 @@
 
 <script>
 
-import {isOneToNinetyNine, phonelength, zhongwen,isInteger} from "@/const/order/customerorder";
-import {getGoodsDetail,selectListGoodsByName} from "@/api/warehouse/goods";
+import {isOneToNinetyNine, phonelength, zhongwen, isInteger} from "@/const/order/customerorder";
+import {getGoodsDetail, selectListGoodsByName} from "@/api/warehouse/goods";
 import {receiveDecoctingSave} from "@/api/order/order";
+import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
 
 
 export default {
   name: "addYinPian",
-  data(){
+  data() {
     return {
-      data:[],
-      option:{
-        addBtn:false,
-        editBtn:false,
-        addRowBtn:true,
-        cellBtn:true,
+      data: [],
+      option: {
+        addBtn: false,
+        editBtn: false,
+        addRowBtn: true,
+        cellBtn: true,
         column: [
           {
             label: '*药品',
@@ -56,13 +58,12 @@ export default {
               label: 'goodsName',
               value: 'id'
             },
-            dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
-            cell: true,
+            dicUrl: '/api/erp-wms/goods/likeListYP',
             change: ({value}) => {
               if (value) {
                 getGoodsDetail(value).then(res => {
-                  for (let i = 0; i<this.data.length; i++){
-                    if(this.data[i].goodsName === value){
+                  for (let i = 0; i < this.data.length; i++) {
+                    if (this.data[i].goodsName === value) {
                       this.data[i].unitPrice = res.data.data.unitPrice;
                     }
                   }
@@ -88,12 +89,12 @@ export default {
           {
             label: "单价",
             prop: "unitPrice",
-            disabled:true,
+            disabled: true,
           },
         ]
       },
       //煎药
-      addOption :{
+      addOption: {
         height: "auto",
         calcHeight: 30,
         tip: false,
@@ -417,7 +418,46 @@ export default {
               },
 
             ]
-          }
+          },
+          {
+            icon: 'el-icon-info',
+            label: '协定方',
+            collapse: true,
+            prop: 'group3',
+            column: [
+              {
+                label: "协定方类型",
+                prop: "partiesCategory",
+                type: 'tree',
+                labelWidth: 130,
+                rules: [{
+                  message: "请选择协定方类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                search: true,
+                cascaderItem: ['partiesName'],
+                dicUrl: "/api/parties/orderpartiescategory/tree",
+              },
+              {
+                label: "协定方名称",
+                prop: "partiesName",
+                type: "select",
+                labelWidth: 130,
+                props: {
+                  label: 'partiesName',
+                  value: 'id'
+                },
+                dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByPrescriptionCategoryID?partiesCategory={{key}}',
+              },
+
+
+            ]
+          },
 
 
         ],
@@ -425,16 +465,39 @@ export default {
     }
   },
 
-  created: function  () {
-    selectListGoodsByName().then( res =>{
+  created: function () {
+    selectListGoodsByName().then(res => {
       this.goodsList = res.data.data;
       console.log(this.goodsList)
     })
   },
-  methods:{
-    addUpdate(form,index,done,loading){
+  methods: {
+    addUpdate(form, index, done, loading) {
       done();
     },
+
+    //协定方
+    addXdf() {
+      //获取值然后进行查询
+      this.$message.success('正在添加，请稍后')
+      setTimeout(() => {
+        let leibieID = this.form.partiesName;
+        getSelectListByDrug(leibieID).then(res => {
+          let data = res.data.data;
+          console.log(res)
+          console.log(data)
+          for (let i = 0; i < data.length; i++) {
+            this.$refs.crud.rowCellAdd({
+              goodsName: data[i].goodsId,
+              drugAllnum: data[i].consumption,
+              unitPrice: data[i].goodsPrice,
+            });
+          }
+        });
+      }, 500)
+    },
+
+
     addRow() {
       this.$message.success('正在添加，请稍后')
       setTimeout(() => {
@@ -445,14 +508,14 @@ export default {
         }
       }, 500)
     },
-    addNextRow(index){
-      this.data.splice(index+1,0,{
-        $cellEdit:true
+    addNextRow(index) {
+      this.data.splice(index + 1, 0, {
+        $cellEdit: true
       })
     },
-    addBreakRow(index){
-      this.data.splice(index==0?0:(index-1),0,{
-        $cellEdit:true
+    addBreakRow(index) {
+      this.data.splice(index == 0 ? 0 : (index - 1), 0, {
+        $cellEdit: true
       })
     },
     //保存

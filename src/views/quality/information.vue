@@ -368,7 +368,6 @@ export default {
               trigger: "blur"
             }]
           },
-
           /*{
             label: "国家",
             prop: "country",
