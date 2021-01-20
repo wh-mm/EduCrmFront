@@ -362,7 +362,6 @@
                      done();
                  },
                 column: [
-
                   {
                     label: '*商品',
                     prop: "goodsId",
@@ -390,10 +389,8 @@
                           if(vals.goodsId == value){
                             vals.goodsCode = selectValue.goodsCode
                           }
-
                         });
                       });
-
                     },
                   },
                   {

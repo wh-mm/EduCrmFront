@@ -1,5 +1,4 @@
 <template>
-  <!--医院接口-->
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
@@ -7,6 +6,7 @@
                :page.sync="page"
                :permission="permissionList"
                :before-open="beforeOpen"
+               :row-style="rowStyle"
                v-model="form"
                ref="crud"
                @row-update="rowUpdate"
@@ -24,49 +24,20 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospital_delete"
+                   v-if="permission.orderparties_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-      <!--<template slot="hospitalSwitch" slot-scope="scope,row">
-        <el-tag>{{scope.row.hospitalSwitch}}
-        </el-tag>
-      </template>-->
-      <template slot="hospitalSwitch" slot-scope="scope">
-        <div style="color: green" v-if="scope.row.hospitalSwitch=='true'?true:false">开</div>
-        <div style="color: red" v-else>关</div>
-      </template>
-
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-import {
-  getList, getDetail, add, update, remove,
-  selectHosptalByHospintl
-} from "@/api/hisHospital/hospital";
+import {getList, getDetail, add, update, remove} from "@/api/parties/orderparties";
 import {mapGetters} from "vuex";
 
 export default {
   data() {
-
-    var hospitalName = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error("医院名称重复,请从新输入!"))
-      } else {
-        selectHosptalByHospintl(this.form.id, value).then(res => {
-          if (res.data.success) {
-            callback();
-          } else {
-            callback(new Error(res.data.msg));
-          }
-        }, err => {
-          callback(new Error(err.data.msg));
-        })
-      }
-    }
-
     return {
       form: {},
       query: {},
@@ -87,79 +58,151 @@ export default {
         index: true,
         viewBtn: true,
         selection: true,
-        cancelBtn: false,
         dialogClickModal: false,
         column: [
           {
-            label: "医院名字",
+            label: "医院名称",
             prop: "hospitalName",
-            search: true,
+            type: "select",
+            labelWidth: 130,
             rules: [{
               required: true,
-              message: "请输入医院名字",
-              validator: hospitalName,
-              trigger: 'blur'
-            }],
-          },
-          {
-            label: "key",
-            prop: "id",
-            /*append: "供应商唯一编号",*/
-            labelWidth: 110,
-            addDisplay: false,
-            editDisplay: false,
-            viewDisplay: false,
-            search: true,
-            rules: [{
-              required: true,
-              trigger: "blur"
-            }]
-          },
-          {
-            label: "医院地址",
-            prop: "hospitalProfile",
-            rules: [{
-              required: true,
-              message: "请输入医院地址",
+              message: "请选择医院名称",
               trigger: "blur"
             }],
-            overHidden: true,
-          },
-          {
-            label: "医院联系方式",
-            prop: "hospitalTel",
-            rules: [{
-              required: true,
-              message: "医院联系方式",
-              trigger: "blur"
-            }]
-          },
-          {
-            label: "医院接口开关",
-            prop: "hospitalSwitch",
-            type: 'select',
-            searchLabelWidth: 140,
-            searchSpan: 7,
-            search: true,
-            slot: true,
             props: {
-              label: 'dictValue',
-              value: 'dictKey',
+              label: "hospitalName",
+              value: "id"
             },
-            dicUrl: "/api/blade-system/dict-biz/dictionary?code=hospital_switch",
+            search: true,
+            dicUrl: '/api/taocao-hisHospital/hospital/selectHosptal'
           },
           {
-            label: "医院操作员名称",
-            prop: "hospitalUserId",
+            label: "协定方名称",
+            prop: "partiesName",
+            labelWidth: 130,
+            rules: [{
+              required: true,
+              message: "请输入协定方名称",
+              trigger: "blur"
+            }],
+            search: true,
+          },
+          {
+            label: "协定方类型",
+            prop: "partiesCategory",
             type: 'tree',
-            searchLabelWidth: 140,
-            searchSpan: 7,
-            search: true,
+            labelWidth: 130,
+            rules: [{
+              required: true,
+              message: "请选择协定方类型",
+              trigger: "blur"
+            }],
             props: {
-              label: 'name',
-              value: 'id',
+              label: 'title',
+              value: 'id'
             },
-            dicUrl: "/api/blade-user/selectAllUser",
+            search: true,
+            dicUrl: "/api/parties/orderpartiescategory/tree",
+          },
+          {
+            label: "功能/治疗原则",
+            prop: "therapeuticPrinciples",
+            labelWidth: 130,
+            rules: [{
+              required: true,
+              message: "请输入功能/治疗原则",
+              trigger: "blur"
+            }],
+            search: true,
+          },
+          {
+            label: "主治",
+            prop: "indications",
+            labelWidth: 130,
+            rules: [{
+              required: true,
+              message: "请输入主治",
+              trigger: "blur"
+            }],
+            search: true,
+          },
+          {
+            label: "疗程",
+            prop: "courseOfTreatment",
+            labelWidth: 130,
+            rules: [{
+              required: true,
+              message: "请输入疗程",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "服法",
+            prop: "dosage",
+            labelWidth: 130,
+            rules: [{
+              required: true,
+              message: "请输入服法",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: "备注",
+            prop: "remarks",
+            labelWidth: 130,
+            rules: [{
+              message: "请输入备注",
+              trigger: "blur"
+            }]
+          },
+          {
+            label: '药品组成',
+            prop: 'orderPartiesDrugs',
+            type: 'dynamic',
+            span: 24,
+            children: {
+              align: 'center',
+              headerAlign: 'center',
+              rowAdd: (done) => {
+                // this.$message.success('新增');
+                done({
+                  input: '默认值'
+                });
+              },
+              rowDel: (row, done) => {
+                // this.$message.success('删除');
+                done();
+              },
+              column: [
+                {
+                  label: "*药品",
+                  prop: "drugName",
+                  type: 'select',
+                  filterable: true,
+                  display:false,
+                  rules: [{
+                    require: true,
+                    message: '请选择药品',
+                  }],
+                  props: {
+                    label: 'goodsName',
+                    value: 'id'
+                  },
+                  remote: true,
+                  dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}'
+                },
+                {
+                  label: "药品规格(克/g)",
+                  prop: "drugSpecs",
+                  rules: [{
+                    required: true,
+                    message: "请输入药品规格",
+                    trigger: "blur"
+                  }]
+                },
+              ]
+            }
           },
         ]
       },
@@ -170,10 +213,10 @@ export default {
     ...mapGetters(["permission"]),
     permissionList() {
       return {
-        addBtn: this.vaildData(this.permission.hospital_add, false),
-        viewBtn: this.vaildData(this.permission.hospital_view, false),
-        delBtn: this.vaildData(this.permission.hospital_delete, false),
-        editBtn: this.vaildData(this.permission.hospital_edit, false)
+        addBtn: this.vaildData(this.permission.orderparties_add, false),
+        viewBtn: this.vaildData(this.permission.orderparties_view, false),
+        delBtn: this.vaildData(this.permission.orderparties_delete, false),
+        editBtn: this.vaildData(this.permission.orderparties_edit, false)
       };
     },
     ids() {
@@ -184,48 +227,8 @@ export default {
       return ids.join(",");
     }
   },
-  //医院开关
+
   methods: {
-    /*      handleRowClick(row) {
-            this.$confirm("请在此确认", {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning"
-            })
-              .then(() => {
-               // return remove(row.id);
-
-                let params = {
-                  hospitalSwitch: !row.hospitalSwitch,
-                  id: row.id
-                }
-                add(params).then((res)=>{
-                  console.log(res)
-                  if (res.data.code == 200){
-                    this.$message({
-                      type: "success",
-                      message: res.data.msg
-                    });
-                    this.refreshChange();
-                  }else{
-                    this.$message({
-                      type: "error",
-                      message: res.data.msg
-                    });
-                  }
-                })
-              })
-              .then(() => {
-                this.onLoad(this.page);
-                this.$message({
-                  type: "success",
-                  message: "操作成功!"
-                });
-              });
-    /!*        console.log(row.hospitalSwitch);
-            console.log(row.id);*!/
-
-          },*/
     rowSave(row, done, loading) {
       add(row).then(() => {
         this.onLoad(this.page);
@@ -330,9 +333,6 @@ export default {
       getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
         const data = res.data.data;
         this.page.total = data.total;
-        data.records.forEach((value) => {
-          value.$cellEdit = true
-        })
         this.data = data.records;
         this.loading = false;
         this.selectionClear();
@@ -343,10 +343,4 @@ export default {
 </script>
 
 <style>
-/* .el-switch.is-disabled {
-   opacity: 1;
- }
- .el-switch.is-disabled .el-switch__core, .el-switch.is-disabled .el-switch__label {
-   cursor: pointer !important;;
- }*/
 </style>
