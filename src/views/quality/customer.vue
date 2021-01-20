@@ -191,15 +191,6 @@
                 trigger: "blur"
               }]
             },
-            /*{
-              label: "国家",
-              prop: "country",
-              rules: [{
-                required: true,
-                message: "请输入国家",
-                trigger: "blur"
-              }]
-            },*/
             {
               label: "省份",
               prop: "regionArea",
