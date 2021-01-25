@@ -60,7 +60,7 @@
           selection: true,
           dialogClickModal: false,
           column: [
-            {
+           /* {
               label: "审核id",
               prop: "auditId",
               rules: [{
@@ -68,25 +68,34 @@
                 message: "请输入审核id",
                 trigger: "blur"
               }]
-            },
+            },*/
             {
               label: "审核人",
               prop: "reviewer",
+              searchLabelWidth:130,
               rules: [{
                 required: true,
                 message: "请输入审核人",
                 trigger: "blur"
-              }]
+              }],
+           //   search: true
             },
             {
-              label: "操作 1.同意, 2.拒绝",
+              label: "操作",
               prop: "operation",
-              rules: [{
-                required: true,
-                message: "请输入操作 1.同意, 2.拒绝",
-                trigger: "blur"
-              }]
+              searchLabelWidth:130,
+              type: 'select',
+             // addDisplay: false,
+             // editDisplay: false,
+              //viewDisplay: false,
+              search: true,
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict/dictionary?code=operation"
             },
+
             {
               label: "驳回理由",
               prop: "rejectText",
@@ -99,6 +108,7 @@
             {
               label: "旧审批状态",
               prop: "oldStatus",
+              searchLabelWidth:130,
               type: 'select',
               addDisplay: false,
               editDisplay: false,
@@ -107,12 +117,13 @@
                 label: 'dictValue',
                 value: 'dictKey'
               },
-              search: true,
+             // search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
             {
               label: "新审核状态",
               prop: "newStatus",
+              searchLabelWidth:130,
               type: 'select',
               addDisplay: false,
               editDisplay: false,
@@ -121,7 +132,7 @@
                 label: 'dictValue',
                 value: 'dictKey'
               },
-              search: true,
+             // search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
             {
@@ -131,7 +142,7 @@
                 required: true,
                 message: "请输入类型",
                 trigger: "blur"
-              }]
+              }],
             },
             /*{
               label: "表名",
@@ -145,6 +156,14 @@
             {
               label: "创建时间",
               prop: "createTime",
+              type: "datetime",
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              searchRange: true,
+              searchSpan: 8,
+              addDisplay: false,
+              editDisplay: false,
+              search: true,
             },
           ]
         },
@@ -269,16 +288,30 @@
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
+      //时间
       onLoad(page, params = {}) {
+        const {createTime} = params;
+        let values = {
+          ...params,
+        };
+        if (createTime) {
+          values = {
+            ...params,
+            startTime: createTime[0],
+            endTime: createTime[1],
+          };
+          values.createTime = null;
+          this.query.createTime = null;
+        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      }
+      },
     }
   };
 </script>

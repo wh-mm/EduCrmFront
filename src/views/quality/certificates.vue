@@ -19,13 +19,13 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="danger"
+<!--        <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
                    plain
                    v-if="permission.certificates_delete"
                    @click="handleDelete">删 除
-        </el-button>
+        </el-button>-->
       </template>
     </avue-crud>
   </basic-container>
@@ -113,10 +113,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.certificates_add, false),
+          addBtn: false,
           viewBtn: this.vaildData(this.permission.certificates_view, false),
-          delBtn: this.vaildData(this.permission.certificates_delete, false),
-          editBtn: this.vaildData(this.permission.certificates_edit, false)
+          delBtn:false,
+          editBtn: false,
         };
       },
       ids() {

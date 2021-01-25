@@ -1,9 +1,10 @@
 <template>
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
-    <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate" >
+    <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
+        <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
       <template slot="menu" slot-scope="{row,index,size,type}">
         <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
@@ -28,23 +29,24 @@
 import {isInteger, isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
 import {getGoodsDetail} from "@/api/warehouse/goods";
 import {receiveBlenderSave} from "@/api/order/order";
+import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
 
 export default {
   name: "addKeLi",
-  data(){
+  data() {
     return {
-      data:[],
-      option:{
-        addBtn:false,
-        editBtn:false,
-        addRowBtn:true,
-        cellBtn:true,
-        menuWidth:250,
+      data: [],
+      option: {
+        addBtn: false,
+        editBtn: false,
+        addRowBtn: true,
+        cellBtn: true,
+        menuWidth: 250,
         column: [
           {
             label: '*商品',
             prop: "goodsName",
-            type: 'select',
+            type: 'tree',
             width: 130,
             filterable: true,
             remote: true,
@@ -56,14 +58,13 @@ export default {
               label: 'goodsName',
               value: 'id'
             },
-            dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeKL?name={{key}}',
-            cell: true,
+            dicUrl: '/api/erp-wms/goods/likeListKL',
             change: ({value}) => {
               if (value) {
                 getGoodsDetail(value).then(res => {
-                  for (let i = 0; i<this.data.length; i++){
-                    if(this.data[i].goodsName === value){
-                      this.data[i].unitPrice = res.data.data.unitPrice;
+                  for (let i = 0; i < this.data.length; i++) {
+                    if (this.data[i].goodsName === value) {
+                      this.data[i].unitPrice = res.data.data.goodsPrice;
                     }
                   }
                 });
@@ -78,11 +79,12 @@ export default {
           {
             label: "单价",
             prop: "unitPrice",
+            disabled: true,
           },
         ]
       },
       //煎药
-      addOption :{
+      addOption: {
         height: "auto",
         calcHeight: 30,
         tip: true,
@@ -182,6 +184,7 @@ export default {
                 },
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=sex_a"
               },
+
               {
                 label: "患者年龄",
                 prop: "age",
@@ -261,13 +264,71 @@ export default {
               },
             ]
           },
+          {
+            icon: 'el-icon-info',
+            label: '药方信息',
+            collapse: true,
+            prop: 'group1',
+            column: [
+              {
+                label: "协定方类型",
+                prop: "partiesCategory",
+                type: 'tree',
+                labelWidth: 130,
+                rules: [{
+                  message: "请选择协定方类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                parent:false,
+                search: true,
+                cascaderItem: ['partiesName'],
+                dicUrl: "/api/parties/orderpartiescategory/tree",
+              },
+              {
+                label: "协定方名称",
+                prop: "partiesName",
+                type: "tree",
+                labelWidth: 130,
+                props: {
+                  label: 'partiesName',
+                  value: 'id'
+                },
+                dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByPrescriptionCategoryID?partiesCategory={{key}}',
+              },
+            ]
+          },
         ],
       },
     }
   },
-  methods:{
-    addUpdate(form,index,done,loading){
+  methods: {
+    addUpdate(form, index, done, loading) {
       done();
+    },
+    //协定方
+    addXdf() {
+      //获取值然后进行查询
+      this.$message.success('正在添加，请稍后')
+      setTimeout(() => {
+        let leibieID = this.form.partiesName;
+        getSelectListByDrug(leibieID).then(res => {
+          let data = res.data.data;
+          console.log(res)
+          console.log(data)
+          for (let i = 0; i < data.length; i++) {
+            this.$refs.crud.rowCellAdd({
+              goodsName: data[i].goodsId,
+              doseHerb: data[i].consumption,
+              unitPrice: data[i].goodsPrice,
+            });
+          }
+        });
+      }, 500)
     },
     addRow() {
       this.$message.success('正在添加，请稍后')
@@ -279,14 +340,14 @@ export default {
         }
       }, 500)
     },
-    addNextRow(index){
-      this.data.splice(index+1,0,{
-        $cellEdit:true
+    addNextRow(index) {
+      this.data.splice(index + 1, 0, {
+        $cellEdit: true
       })
     },
-    addBreakRow(index){
-      this.data.splice(index==0?0:(index-1),0,{
-        $cellEdit:true
+    addBreakRow(index) {
+      this.data.splice(index == 0 ? 0 : (index - 1), 0, {
+        $cellEdit: true
       })
     },
     //保存

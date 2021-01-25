@@ -147,6 +147,7 @@
               label: "医院名称",
               prop: "hospitalId",
               type: "tree",
+              sortable:true,
               props: {
                 label: "hospitalName",
                 value: "id"
@@ -159,11 +160,13 @@
               prop: "goodsName",
               addDisplay: false,
               editDisplay: false,
+              sortable:true,
             },
             {
               label: "库房药名称",
               prop: "goodsId",
               type: "select",
+              sortable:true,
               hide: true,
               viewDisplay: true,
               props: {
@@ -178,6 +181,7 @@
             {
               label: "HIS药品码",
               prop: "hisDrugsUmber",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "HIS药品码",
@@ -188,6 +192,7 @@
             {
               label: "HIS药品名称",
               prop: "hisDrugsName",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "HIS药品名称",

@@ -92,8 +92,8 @@
             v-for="(activity, index) in activities"
             :key="index"
             :timestamp="activity.createTime">
-            {{activity.userName}} {{activity.operation === 1 ?'同意了您的申请':'驳回了您的申请,驳回理由:'}}
-            {{activity.operation === 2?activity.rejectText:''}}
+            {{activity.userName}} {{activity.operation === "1" ?'同意了您的申请':'驳回了您的申请,驳回理由:'}}
+            {{activity.operation === "2"?activity.rejectText:''}}
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -150,11 +150,13 @@
             {
               label: "公司名称",
               prop: "companyId",
+              labelWidth: 140,
+              sortable:true,
               type: 'select',
-              rules: [{
+             /* rules: [{
                 required: true,
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'supplierName',
                 value: 'id'
@@ -165,36 +167,42 @@
             {
               label: "通用名",
               prop: "commonName",
-              tip: '通用名',
-              rules: [{
+              labelWidth: 140,
+              sortable:true,
+             // tip: '通用名',
+              /*rules: [{
                 required: true,
                 message: "通用名",
                 trigger: "blur"
-              }],
+              }],*/
               maxlength: 10,
               showWordLimit: true
             },
             {
               label: "商品名",
               prop: "tradeName",
-              tip: '商品名',
-              rules: [{
+              sortable:true,
+              labelWidth: 140,
+             // tip: '商品名',
+              /*rules: [{
                 message: "商品名",
                 trigger: "blur"
-              }],
+              }],*/
               maxlength: 10,
               showWordLimit: true
             },
             {
               label: "基本单位",
               prop: "basicUnit",
+              labelWidth: 140,
+              sortable:true,
               type: 'tree',
               hide: true,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "商品名",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -206,50 +214,57 @@
             {
               label: "产地",
               prop: "placeOfOrigin",
-              rules: [{
+              labelWidth: 140,
+              sortable:true,
+              /*rules: [{
                 message: "请输入产地",
                 trigger: "blur"
-              }]
+              }]*/
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
+              labelWidth: 140,
+              sortable:true,
               hide: true,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入生产厂家",
                 trigger: "blur"
-              }]
+              }]*/
             },
 
             {
               label: "规格(型号)",
               prop: "specifications",
+              labelWidth: 140,
               hide: true,
-              rules: [{
+              sortable:true,
+             /* rules: [{
                 required: true,
                 message: "请输入规格(型号)",
                 trigger: "blur"
-              }]
+              }]*/
 
             },
             {
               label: "最小销售包装规格",
               prop: "minimumSalesSpecification",
               labelWidth: 140,
-              type: 'select',
+              sortable:true,
+           /*   type: 'select',*/
               hide: true,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入规格(型号)",
                 trigger: "blur"
-              }],
-              props: {
+              }],*/
+             /* props: {
                 label: 'dictValue',
                 value: 'dictKey'
               },
               required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",*/
             },
 
             /*{
@@ -259,7 +274,8 @@
             {
               label: "进项税",
               prop: "inputTax",
-              type: 'number',
+              labelWidth: 140,
+              sortable:true,
               hide: true,
               /*rules: [{
                 validator: isInteger,
@@ -269,8 +285,9 @@
             {
               label: "销项税",
               prop: "outputTax",
-              type: 'number',
+              labelWidth: 140,
               hide: true,
+              sortable:true,
               /*rules: [{
                 validator: isInteger,
                 trigger: "blur"
@@ -278,13 +295,15 @@
             },
             {
               label: "剂型",
+              labelWidth: 140,
               prop: "dosageForm",
               type: 'tree',
-              rules: [{
+              sortable:true,
+             /* rules: [{
                 required: true,
                 message: "请选择剂型",
                 trigger: "blur",
-              }],
+              }],*/
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -293,13 +312,15 @@
             },
             {
               label: "产品分类",
+              labelWidth: 140,
+              sortable:true,
               prop: "productClassification",
               type: 'tree',
-              rules: [{
+              /*rules: [{
                 required: true,
-                message: "请输入产品分类",
+                message: "请选择产品分类",
                 trigger: "blur"
-              }],
+              }],*/
               props: {
                 label: 'title',
                 value: 'id'
@@ -311,6 +332,7 @@
               label: "审批状态",
               prop: "purchasingStatus",
               type: 'select',
+              sortable:true,
               addDisplay: false,
               editDisplay: false,
               viewDisplay: false,
@@ -324,6 +346,8 @@
             {
               label: "存储期限",
               prop: "storageLife",
+              labelWidth: 140,
+              sortable:true,
               hide: true,
               tip: '按每月',
             },
@@ -331,13 +355,16 @@
               label: "存储期限类型",
               prop: "storagePeriodType",
               hide: true,
-              labelWidth: 110,
+              labelWidth: 140,
+              sortable:true,
             },
             {
               label: "特管药品",
               prop: "specialDrugs",
               hide: true,
               type: 'select',
+              sortable:true,
+              labelWidth: 140,
               props: {
                 label: 'dictValue',
                 value: 'dictKey'
@@ -346,8 +373,10 @@
             },
             {
               label: "特殊药品",
+              sortable:true,
               prop: "specialDrug",
               hide: true,
+              labelWidth: 140,
               type: 'select',
               props: {
                 label: 'dictValue',
@@ -358,23 +387,29 @@
 
             {
               label: "存储条件",
+              sortable:true,
               prop: "storageConditions",
+              labelWidth: 140,
               hide: true,
-              rules: [{
+              /*rules: [{
                 required: true,
                 message: "请输入产品分类",
                 trigger: "blur"
-              }],
+              }],*/
             },
             {
               label: "税收分类",
               prop: "taxClassification",
               hide: true,
+              sortable:true,
+              labelWidth: 140,
             },
             {
               label: "是否可拆零",
               prop: "scattered",
               type: 'radio',
+              labelWidth: 140,
+              sortable:true,
               hide: true,
               value: 0,
               dicData: [{
@@ -389,7 +424,9 @@
               label: "OTC标志",
               prop: "sign",
               type: 'radio',
+              sortable:true,
               viewDisplay: true,
+              labelWidth: 140,
               hide: true,
               value: '1',
               dicData: [{
@@ -403,6 +440,8 @@
             {
               label: 'OTC标志',
               prop: 'signTow',
+              sortable:true,
+              labelWidth: 140,
               display: true,
               rules: [],
               hide: true,
@@ -415,9 +454,10 @@
             },
             {
               label: '国产/进口标示',
+              sortable:true,
               prop: 'domesticImportIndication',
               type: 'radio',
-              labelWidth: 110,
+              labelWidth: 140,
               // viewDisplay: true,   true是可已查看
               hide: true,
               value: '1',
@@ -431,29 +471,34 @@
             },
             {
               label: "批准文号",
+              sortable:true,
               prop: "approvalNumber",
               display: true,
               hide: true,
+              labelWidth: 140,
               rules: [],
             },
             {
               label: "进口注册证",
-              labelWidth: 110,
+              labelWidth: 140,
               hide: true,
+              sortable:true,
               prop: "importRegistrationCertificate",
               rules: [],
             },
             {
               label: "分包装企业",
               prop: "subPackagingEnterprises",
-              labelWidth: 110,
+              labelWidth: 140,
               hide: true,
+              sortable:true,
               rules: [],
             },
             {
               label: "分包装批准文号",
-              labelWidth: 130,
+              labelWidth: 140,
               hide: true,
+              sortable:true,
               prop: "approvalNumberOfSubPackage",
               rules: [],
             },
@@ -488,9 +533,9 @@
             signTow.display = true
             // signTow.viewDisplay = true
             signTow.rules = [{
-              required: true,
+            /*  required: true,
               message: "请选择OTC标志",
-              trigger: "blur"
+              trigger: "blur"*/
             }]
           } else {
             signTow.display = false
@@ -511,9 +556,9 @@
             approvalNumber.display = true
             approvalNumberOfSubPackage.viewDisplay = false
             approvalNumber.rules = [{
-              required: true,
+              /*required: true,
               message: "请输入批准文号",
-              trigger: "blur"
+              trigger: "blur"*/
             }];
             importRegistrationCertificate.display = false
             importRegistrationCertificate.rules = []
@@ -526,19 +571,19 @@
             approvalNumber.rules = [];
             importRegistrationCertificate.display = true
             importRegistrationCertificate.rules = [{
-              required: true,
+              /*required: true,
               message: "请输入进口注册证",
-              trigger: "blur"
+              trigger: "blur"*/
             }];
             subPackagingEnterprises.display = true
             subPackagingEnterprises.rules = [{
-              message: "请输入分包装企业",
-              trigger: "blur"
+            /*  message: "请输入分包装企业",
+              trigger: "blur"*/
             }];
             approvalNumberOfSubPackage.display = true
             approvalNumberOfSubPackage.rules = [{
-              message: "请输入分包装批准文号",
-              trigger: "blur"
+          /*    message: "请输入分包装批准文号",
+              trigger: "blur"*/
             }];
           }
         },
@@ -645,6 +690,7 @@
             this.$message.success(res.data.msg);
             this.dialogVisible = false;
             this.refreshChange();
+            this.obj0.rejectText = "";
           } else {
             this.$message.error(res.data.msg);
           }

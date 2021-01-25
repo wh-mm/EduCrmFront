@@ -4,6 +4,7 @@
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
+        <el-button @click="addXdf" size="small">添加协定发</el-button>
       </template>
       <template slot="menu" slot-scope="{row,index,size,type}">
         <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
@@ -28,6 +29,7 @@
 import {isOneToNinetyNine, phonelength, zhongwen,isInteger} from "@/const/order/customerorder";
 import {getGoodsDetail} from "@/api/warehouse/goods";
 import {clinicReceiveBlender} from "@/api/order/order";
+import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
 
 export default {
   name: "addKeLi",
@@ -45,8 +47,7 @@ export default {
           {
             label: '*药品',
             prop: "goodsName",
-            type: 'select',
-            width: 130,
+            type: 'tree',
             filterable: true,
             remote: true,
             rules: [{
@@ -57,14 +58,13 @@ export default {
               label: 'goodsName',
               value: 'id'
             },
-            dicUrl: '/api/erp-wms/goods/selecListGoodsByTypeYP?name={{key}}',
-            cell: true,
+            dicUrl: '/api/erp-wms/goods/likeListKL',
             change: ({value}) => {
               if (value) {
                 getGoodsDetail(value).then(res => {
                   for (let i = 0; i<this.data.length; i++){
                     if(this.data[i].goodsName === value){
-                      this.data[i].unitPrice = res.data.data.unitPrice;
+                      this.data[i].unitPrice = res.data.data.goodsPrice;
                     }
                   }
                 });
@@ -74,11 +74,12 @@ export default {
           {
             label: "单剂量",
             prop: "doseHerb",
-            cell: true
+            cell: true,
           },
           {
             label: "单价",
             prop: "unitPrice",
+            disabled:true,
           },
         ]
       },
@@ -244,6 +245,45 @@ export default {
               },
             ]
           },
+          {
+            icon: 'el-icon-info',
+            label: '药方信息',
+            collapse: true,
+            prop: 'group1',
+            column: [
+              {
+                label: "协定方类型",
+                prop: "partiesCategory",
+                type: 'tree',
+                labelWidth: 130,
+                rules: [{
+                  message: "请选择协定方类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                search: true,
+                cascaderItem: ['partiesName'],
+                dicUrl: "/api/parties/orderpartiescategory/tree",
+              },
+              {
+                label: "协定方名称",
+                prop: "partiesName",
+                type: "tree",
+                labelWidth: 130,
+                props: {
+                  label: 'partiesName',
+                  value: 'id'
+                },
+                dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByPrescriptionCategoryID?partiesCategory={{key}}',
+              },
+
+            ],
+          },
+
         ],
       },
     }
@@ -251,6 +291,25 @@ export default {
   methods:{
     addUpdate(form,index,done,loading){
       done();
+    },
+    addXdf() {
+      //获取值然后进行查询
+      this.$message.success('正在添加，请稍后')
+      setTimeout(() => {
+        let leibieID = this.form.partiesName;
+        getSelectListByDrug(leibieID).then(res => {
+          let data = res.data.data;
+          console.log(res)
+          console.log(data)
+          for (let i = 0; i < data.length; i++) {
+            this.$refs.crud.rowCellAdd({
+              goodsName: data[i].goodsId,
+              doseHerb: data[i].consumption,
+              unitPrice: data[i].goodsPrice,
+            });
+          }
+        });
+      }, 500)
     },
     addRow() {
       this.$message.success('正在添加，请稍后')
