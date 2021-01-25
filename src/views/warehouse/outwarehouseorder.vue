@@ -54,6 +54,47 @@
     </avue-crud>
 
     <el-dialog
+      title="即将过期商品"
+      :visible.sync="expireDialog"
+      width="80%"
+      :append-to-body="true"
+      :modal="false">
+      <template>
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column
+            prop="goodsName"
+            label="商品名称"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="batchNumber"
+            label="商品批号"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="repertoryQuantity"
+            label="库存数量">
+          </el-table-column>
+          <el-table-column
+            prop="expire"
+            label="剩余天数">
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="selectGoods(scope.$index, scope.row)">选择</el-button>
+
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-dialog>
+
+
+    <el-dialog
       title="商品总量"
       :append-to-body="true"
       :visible.sync="dialogVisible"
@@ -222,6 +263,7 @@
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
   import {selectGoodsGross} from "@/api/purchase/outputorder";
+  import {selectExpireGoods} from "@/api/warehouse/repertory";
 
   export default {
     filters: {
@@ -253,6 +295,7 @@
         loading: true,
         dialogVisible:false,
         printDialogVisible:false,
+        expireDialog:false,
         printData: {
           orderNumber: '',
           tableData: [],
@@ -327,7 +370,7 @@
             },
             {
               label: '商品列表',
-              prop: 'outwarehouseOrderDetailList',
+              prop: 'outputOrderDetailList',
               type: 'dynamic',
               span:24,
               children: {
@@ -368,14 +411,17 @@
                     change: ({value}) => {
                       getGoodsDetail(value).then(res => {
                         var selectValue = res.data.data;
-                        this.form.outwarehouseOrderDetailList.forEach(vals => {
+                        this.form.outputOrderDetailList.forEach(vals => {
                           if(vals.goodsId == value){
                             vals.goodsCode = selectValue.goodsCode
                           }
 
                         });
                       });
-
+                      selectExpireGoods(value).then(res=>{
+                        let expireGoods = res.data.data;
+                        this.expireGoodsHint(expireGoods);
+                      });
                     },
                   },
                   {
@@ -764,7 +810,19 @@
         printOutWarehouseDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
         })
-      }
+      },
+      expireGoodsHint(expireGoods) {
+        this.tableData = expireGoods
+        if(expireGoods.length>0){
+          this.expireDialog = true;
+        }
+      },
+      selectGoods(index,row) {
+        this.form.outputOrderDetailList.forEach(vals => {
+          vals.batchNumber = row.id
+        });
+        this.expireDialog=false;
+      },
     }
   };
 </script>

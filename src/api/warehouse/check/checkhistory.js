@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/purchase/purchaseorder/page',
+    url: '/api/wh-check-history/checkhistory/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/purchase/purchaseorder/detail',
+    url: '/api/wh-check-history/checkhistory/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/purchase/purchaseorder/remove',
+    url: '/api/wh-check-history/checkhistory/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/purchase/purchaseorder/submit',
+    url: '/api/wh-check-history/checkhistory/saveInWarehouse',
     method: 'post',
     data: row
   })
@@ -42,32 +42,17 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/purchase/purchaseorder/submit',
+    url: '/api/wh-check-history/checkhistory/saveInWarehouse',
     method: 'post',
     data: row
   })
 }
 
-export const updateStatus = (id, status) => {
+export const saveCheckHistory = (check) => {
   return request({
-    url: '/api/purchase/purchaseorder/updateStatus',
+    url: '/api/wh-check-history/checkhistory/saveCheckHistory',
     method: 'post',
-    params:{
-      id,
-      status
-    }
+    data:check
   })
 }
-export const updateApply = (id, status) => {
-  return request({
-    url: '/api/purchase/purchaseorder/updateApply',
-    method: 'post',
-    params:{
-      id,
-      status
-    }
-  })
-}
-
-
 

@@ -20,6 +20,7 @@
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
+<!--修改-->
       </template>
 
       <template slot-scope="scope" slot="menu">

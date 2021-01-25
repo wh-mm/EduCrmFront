@@ -19,6 +19,17 @@ export const saveDate = (row) => {
     data:row
   })
 }
+export const saveRepertoryWarning = (id,warningQuantity,cycleToRemind) => { //保存预警信息
+  return request({
+    url: ERP_WMS_NAME + '/repertory/saveRepertoryWarning',
+    method: 'get',
+    params: {
+      id,
+      warningQuantity,
+      cycleToRemind
+    }
+  })
+}
 
 export const selectByBatchNumber = (batchNumber,goodsId,id) => {   //根据批号查询商品所在位置
   return request({
@@ -28,6 +39,15 @@ export const selectByBatchNumber = (batchNumber,goodsId,id) => {   //根据批�
       batchNumber,
       goodsId,
       id
+    }
+  })
+}
+export const selectExpireGoods = (goodsId) => {   //查询即将过期商品
+  return request({
+    url: ERP_WMS_NAME + '/repertory/selectExpireGoods',
+    method: 'post',
+    params: {
+      goodsId
     }
   })
 }
