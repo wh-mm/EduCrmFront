@@ -27,6 +27,13 @@
                    v-if="permission.hospital_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   v-if="permission.hospital_export"
+                   @click="handleExport">导出
+        </el-button>
       </template>
       <!--<template slot="hospitalSwitch" slot-scope="scope,row">
         <el-tag>{{scope.row.hospitalSwitch}}
@@ -47,6 +54,7 @@ import {
   selectHosptalByHospintl
 } from "@/api/hisHospital/hospital";
 import {mapGetters} from "vuex";
+import {getToken} from "@/util/auth";
 
 export default {
   data() {
@@ -92,6 +100,7 @@ export default {
         column: [
           {
             label: "医院名字",
+            sortable:true,
             prop: "hospitalName",
             search: true,
             rules: [{
@@ -104,6 +113,7 @@ export default {
           {
             label: "key",
             prop: "id",
+            sortable:true,
             /*append: "供应商唯一编号",*/
             labelWidth: 110,
             addDisplay: false,
@@ -117,6 +127,7 @@ export default {
           },
           {
             label: "医院地址",
+            sortable:true,
             prop: "hospitalProfile",
             rules: [{
               required: true,
@@ -128,6 +139,7 @@ export default {
           {
             label: "医院联系方式",
             prop: "hospitalTel",
+            sortable:true,
             rules: [{
               required: true,
               message: "医院联系方式",
@@ -137,6 +149,7 @@ export default {
           {
             label: "医院接口开关",
             prop: "hospitalSwitch",
+            sortable:true,
             type: 'select',
             searchLabelWidth: 140,
             searchSpan: 7,
@@ -151,6 +164,7 @@ export default {
           {
             label: "医院操作员名称",
             prop: "hospitalUserId",
+            sortable:true,
             type: 'tree',
             searchLabelWidth: 140,
             searchSpan: 7,
@@ -268,6 +282,23 @@ export default {
             message: "操作成功!"
           });
         });
+    },
+    uploadAfter(res, done, loading, column) {
+      window.console.log(column);
+      console.log(res);
+      this.excelBox = false;
+      this.refreshChange();
+      done();
+    },
+    //导出
+    handleExport() {
+      this.$confirm("是否导出医院信息?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        window.open(`/api/taocao-hisHospital/hospital/export-hosptal?${this.website.tokenHeader}=${getToken()}`);
+      });
     },
     handleDelete() {
       if (this.selectionList.length === 0) {

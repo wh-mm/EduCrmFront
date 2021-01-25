@@ -271,7 +271,7 @@ export default {
               {
                 label: "协定方名称",
                 prop: "partiesName",
-                type: "select",
+                type: "tree",
                 labelWidth: 130,
                 props: {
                   label: 'partiesName',

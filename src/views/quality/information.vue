@@ -94,9 +94,9 @@
             :key="index"
             :timestamp="activity.createTime">
             {{ activity.userName }}
-            {{ activity.operation === 0 ? activity.rejectText : '' }}
-            {{ activity.operation === 1 ? '同意了您的申请' : '' }}
-            {{ activity.operation === 2 ? '驳回了您的申请,驳回理由:' + activity.rejectText : '' }}
+            {{ activity.operation === "0" ? activity.rejectText : '' }}
+            {{ activity.operation === "1" ? '同意了您的申请' : '' }}
+            {{ activity.operation === "2" ? '驳回了您的申请,驳回理由:' + activity.rejectText : '' }}
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -115,74 +115,15 @@ import {
   shenfen,
   validateContacts,
   isInteger,
-  selectGoodsCode,
-  submitInspector
+  submitInspector,
+  validlegalbizLicNum
 } from "@/api/quality/information";
 import {timeLine} from "@/api/log/approvalrecord"
 import {mapGetters} from "vuex";
-import {selectGoodsName} from "@/api/warehouse/goods";
 
 
 export default {
   data() {
-    var selectByNames = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error("请输入商品名称！"))
-      } else {
-        selectName(this.form.id, value).then(res => {
-          if (res.data.success) {
-            callback();
-          } else {
-            callback(new Error(res.data.msg));
-          }
-        }, err => {
-          callback(new Error(err.data.msg));
-        })
-      }
-    }
-    const validlegalbizLicNum = (rule, value, callback) => {
-      let Ancode;//统一社会信用代码的每一个值
-      let Ancodevalue;//统一社会信用代码每一个值的权重
-      let total = 0;
-      let weightedfactors = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];//加权因子
-      //不用I、O、S、V、Z
-      let str = '0123456789ABCDEFGHJKLMNPQRTUWXY';
-      for (let i = 0; i < value.length - 1; i++) {
-        Ancode = value.substring(i, i + 1);
-        Ancodevalue = str.indexOf(Ancode);
-        total = total + Ancodevalue * weightedfactors[i];
-        //权重与加权因子相乘之和
-      }
-      let logiccheckcode = 31 - total % 31;
-      if (logiccheckcode == 31) {
-        logiccheckcode = 0;
-      }
-      let Str = "0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,T,U,W,X,Y";
-      let Array_Str = Str.split(',');
-      logiccheckcode = Array_Str[logiccheckcode];
-
-      let checkcode = value.substring(17, 18);
-      if (logiccheckcode != checkcode) {
-        return callback(new Error('请输入正确的统一社会信用代码！'));
-      }
-      return callback();
-    };
-
-    var selectCode = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error("请输入编码！"))
-      } else {
-        selectGoodsCode(this.form.id, value).then(res => {
-          if (res.data.success) {
-            callback();
-          } else {
-            callback(new Error(res.data.msg));
-          }
-        }, err => {
-          callback(new Error(err.data.msg));
-        })
-      }
-    }
     return {
       form: {},
       query: {},
@@ -209,127 +150,105 @@ export default {
         dialogClickModal: false,
         column: [
           {
-            label: "名称",
+            label: "供应商名称",
             prop: "supplierName",
-            labelWidth: 110,
+            sortable:true,
+            searchLabelWidth:130,
+            labelWidth: 130,
             maxlength: 20,
             showWordLimit: true,
             rules: [{
-              required: true,
-              validator: selectByNames,
-              trigger: "blur"
-            }]
+              message: "请输入供应商名称",
+            }],
+            search: true,
           },
           {
             label: "企业负责人",
             prop: "enterprisePrincipal",
+            sortable:true,
             hide: true,
-            labelWidth: 110,
-            rules: [{
-              required: true,
-              validator: validateContacts,
-              trigger: "blur"
-            }]
+            labelWidth: 130,
           },
           {
             label: "法人代表",
             prop: "legalRepresentative",
+            sortable:true,
             hide: true,
-            rules: [{
-              required: true,
-              validator: validateContacts,
-              trigger: "blur"
-            }]
+            labelWidth: 130,
           },
           {
             label: "质量负责人",
             prop: "qualityPrincipal",
             hide: true,
-            labelWidth: 110,
-            rules: [{
-              required: true,
-              validator: validateContacts,
-              trigger: "blur"
-            }]
+            sortable:true,
+            labelWidth: 130,
           },
-          {
-            label: "编码",
-            prop: "id",
-            /*append: "供应商唯一编号",*/
-            labelWidth: 110,
-            addDisplay: false,
-            editDisplay: false,
-            viewDisplay: false,
-            search: true,
-            rules: [{
-              required: true,
-              trigger: "blur"
-            }]
-          },
+          /*
+                    {
+                      label: "编码",
+                      prop: "id",
+                      /!*append: "供应商唯一编号",*!/
+                      labelWidth: 110,
+                      addDisplay: false,
+                      editDisplay: false,
+                      viewDisplay: false,
+                      search: true,
+                      rules: [{
+                        required: true,
+                        trigger: "blur"
+                      }]
+                    },
+          */
 
           {
             label: "联系人",
             prop: "contacts",
-            validator: validateContacts,
-            rules: [{
-              required: true,
-              trigger: "blur"
-            }],
+            labelWidth: 130,
             search: true,
+            sortable:true,
           },
           {
             label: "联系人电话",
             prop: "contactPhoneNumber",
-            labelWidth: 120,
+            labelWidth: 130,
             maxlength: 11,
+            sortable:true,
             showWordLimit: true,
-            rules: [{
-              required: true,
-              validator: isInteger,
-              trigger: "blur"
-            }]
           },
           {
+
             label: "联系人身份证",
+            sortable:true,
             prop: "contactIdCard",
-            labelWidth: 120,
+            labelWidth: 130,
             maxlength: 18,
             showWordLimit: true,
             hide: true,
-            rules: [{
-              required: true,
-              validator: shenfen,
-              trigger: "blur"
-            }]
           },
           {
             label: "组织代码",
             prop: "organizationCode",
             hide: true,
+            sortable:true,
             maxlength: 18,
+            labelWidth: 130,
             showWordLimit: true,
-            rules: [{
-              required: true,
-              message: "组织代码",
-              trigger: "blur"
-            }]
           },
           {
             label: "税号",
             prop: "dutyParagraph",
+            labelWidth: 130,
             hide: true,
+            sortable:true,
             maxlength: 18,
             showWordLimit: true,
-            rules: [{
-              message: "税号",
-              trigger: "blur"
-            }]
           },
           {
             label: "社会统一信用码",
             prop: "socialUniformCreditCode",
             labelWidth: 130,
             maxlength: 18,
+            sortable:true,
             showWordLimit: true,
             rules: [{
               required: true,
@@ -340,83 +259,40 @@ export default {
           {
             label: "注册地址",
             prop: "registeredAddress",
+            labelWidth: 130,
             hide: true,
-            rules: [{
-              required: true,
+            sortable:true,
+            /*rules: [{
               validator: validateContacts,
               trigger: "blur"
-            }]
+            }]*/
           },
           {
             label: "生产或仓库地址",
             labelWidth: 130,
             hide: true,
+            sortable:true,
             prop: "productionOrWarehouseAddress",
-            rules: [{
-              required: true,
+           /* rules: [{
               validator: validateContacts,
               trigger: "blur"
-            }]
+            }]*/
           },
-          {
+         /* {
             label: "承付模式",
             prop: "commitmentModel",
+            labelWidth: 130,
             hide: true,
             rules: [{
-              required: true,
               message: "承付模式",
-              trigger: "blur"
-            }]
-          },
-          /*{
-            label: "国家",
-            prop: "country",
-            rules: [{
-              required: true,
-              message: "请输入国家",
               trigger: "blur"
             }]
           },*/
           {
-            label: "省份",
-            prop: "regionArea",
-            type: 'select',
-            hide: true,
-            props: {
-              label: 'name',
-              value: 'code'
-            },
-            cascaderItem: ['metropolitanArea', 'countyArea'],
-            dicUrl: '/api/blade-system/region/select',
-          },
-          {
-            label: "地市",
-            prop: "metropolitanArea",
-            type: 'select',
-            hide: true,
-            props: {
-              label: 'name',
-              value: 'code'
-            },
-            dicFlag: false,
-            dicUrl: '/api/blade-system/region/select?code={{key}}',
-          },
-          {
-            label: "区县",
-            prop: "countyArea",
-            type: 'select',
-            hide: true,
-            props: {
-              label: 'name',
-              value: 'code'
-            },
-            dicFlag: false,
-            dicUrl: '/api/blade-system/region/select?code={{key}}',
-          },
-          {
             label: "审核状态",
             prop: "stateExamine",
             type: 'select',
+            sortable:true,
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
@@ -431,6 +307,7 @@ export default {
             label: "使用状态",
             prop: "useState",
             type: 'select',
+            sortable:true,
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
@@ -464,16 +341,19 @@ export default {
               column: [{
                 label: "供应商证件照名称",
                 prop: "nameOfCertificatePhoto",
-                labelWidth: 140,
-                rules: [{
+                labelWidth: 130,
+                sortable:true,
+                /*rules: [{
                   validator: validateContacts,
                   trigger: "blur"
-                }]
+                }]*/
               },
                 {
                   label: "经营范围",
                   prop: "natureOfBusiness",
                   hide: true,
+                  sortable:true,
+                  labelWidth: 130,
                   row: true,
                   type: 'tree',
                   multiple: true,
@@ -484,23 +364,27 @@ export default {
                   dicUrl: "/api/erp-base/scope/tree",
                 },
                 {
-                  label: "签发日期",
+                  label: "发证日期",
                   prop: "dateOfIssue",
+                  sortable:true,
+                  labelWidth: 130,
                   type: "date",
                   format: "yyyy-MM-dd HH:mm:ss",
                   valueFormat: "yyyy-MM-dd HH:mm:ss",
                 },
-                {
-                  label: "期限",
+                /*{
+                  label: "有效期",
                   prop: "term",
-                  type: "month",
-                  format: "yyyy-MM-dd HH:mm:ss",
-                  valueFormat: "yyyy-MM-dd HH:mm:ss",
-                },
+                  type: "date",
+                  format: "yyyy-MM-dd ",
+                  valueFormat: "yyyy-MM-dd ",
+                },*/
                 {
                   label: "期限至",
                   prop: "termTo",
                   type: "date",
+                  sortable:true,
+                  labelWidth: 130,
                   format: "yyyy-MM-dd HH:mm:ss",
                   valueFormat: "yyyy-MM-dd HH:mm:ss",
                 },
@@ -508,7 +392,8 @@ export default {
                   label: "供应商证件照",
                   prop: "supplierCertificatePhoto",
                   dataType: 'array',
-                  labelWidth: 110,
+                  labelWidth: 130,
+                  sortable:true,
                   type: 'upload',
                   propsHttp: {
                     res: 'data',
@@ -562,7 +447,6 @@ export default {
   },
   methods: {
     rowSave(row, done, loading) {
-      console.log(row.certificates);
       for (let i = 0; i < row.certificates.length; i++) {
         if (row.certificates[i].supplierCertificatePhoto instanceof Array) {
           row.certificates[i].supplierCertificatePhoto = row.certificates[i].supplierCertificatePhoto.join(",");
@@ -586,7 +470,7 @@ export default {
     //审批选择按钮
     openInspectorNew() {
       if (this.selectionList.length === 0) {
-        return this.$message.error("请选择需要的商品");
+        return this.$message.error("请选择审批的信息");
       }
       this.dialogVisible = true;
     },
@@ -644,6 +528,7 @@ export default {
           this.$message.success(res.data.msg);
           this.dialogVisible = false;
           this.refreshChange();
+          this.obj0.rejectText = "";
         } else {
           this.$message.error(res.data.msg);
         }

@@ -283,6 +283,7 @@ export default {
                   label: 'title',
                   value: 'id'
                 },
+                parent:false,
                 search: true,
                 cascaderItem: ['partiesName'],
                 dicUrl: "/api/parties/orderpartiescategory/tree",
@@ -290,7 +291,7 @@ export default {
               {
                 label: "协定方名称",
                 prop: "partiesName",
-                type: "select",
+                type: "tree",
                 labelWidth: 130,
                 props: {
                   label: 'partiesName',

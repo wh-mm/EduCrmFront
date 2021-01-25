@@ -64,6 +64,7 @@ export default {
           {
             label: "医院名称",
             prop: "hospitalName",
+            sortable:true,
             type: "select",
             labelWidth: 130,
             rules: [{
@@ -80,6 +81,7 @@ export default {
           },
           {
             label: "协定方名称",
+            sortable:true,
             prop: "partiesName",
             labelWidth: 130,
             rules: [{
@@ -91,6 +93,7 @@ export default {
           },
           {
             label: "协定方类型",
+            sortable:true,
             prop: "partiesCategory",
             type: 'tree',
             labelWidth: 130,
@@ -108,6 +111,7 @@ export default {
           },
           {
             label: "功能/治疗原则",
+            sortable:true,
             prop: "therapeuticPrinciples",
             labelWidth: 130,
             rules: [{
@@ -120,6 +124,7 @@ export default {
           {
             label: "主治",
             prop: "indications",
+            sortable:true,
             labelWidth: 130,
             rules: [{
               required: true,
@@ -131,6 +136,7 @@ export default {
           {
             label: "疗程",
             prop: "courseOfTreatment",
+            sortable:true,
             labelWidth: 130,
             rules: [{
               required: true,
@@ -141,6 +147,7 @@ export default {
           {
             label: "服法",
             prop: "dosage",
+            sortable:true,
             labelWidth: 130,
             rules: [{
               required: true,
@@ -151,6 +158,7 @@ export default {
           {
             label: "备注",
             prop: "remarks",
+            sortable:true,
             labelWidth: 130,
             rules: [{
               message: "请输入备注",
@@ -192,6 +200,7 @@ export default {
                 {
                   label: "*药品",
                   prop: "drugName",
+                  sortable:true,
                   type: 'select',
                   filterable: true,
                   display:false,
@@ -209,6 +218,7 @@ export default {
                 {
                   label: "药品规格(克/g)",
                   prop: "drugSpecs",
+                  sortable:true,
                   rules: [{
                     required: true,
                     message: "请输入药品规格",

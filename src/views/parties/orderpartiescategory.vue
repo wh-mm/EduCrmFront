@@ -83,6 +83,7 @@ export default {
           {
             label: "协定方类别",
             prop: "name",
+            sortable:true,
             search: true,
             rules: [
               {

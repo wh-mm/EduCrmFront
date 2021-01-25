@@ -43,7 +43,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/parties/orderparties/submit',
+    url: '/api/parties/orderparties/submitAll',
     method: 'post',
     data: row
   })

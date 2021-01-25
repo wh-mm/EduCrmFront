@@ -147,7 +147,6 @@ export default {
               value: 'dictKey'
             },
             search: true,
-            required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
             trigger: "blur"
           },
@@ -175,6 +174,8 @@ export default {
             prop: "addresseePhone",
             labelWidth: 100,
           },
+
+
           {
             label: "订单时间",
             prop: "releaseTimeRange",
