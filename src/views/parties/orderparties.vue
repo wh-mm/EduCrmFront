@@ -34,6 +34,7 @@
 
 <script>
 import {getList, getDetail, add, update, remove} from "@/api/parties/orderparties";
+import {zremove} from "@/api/parties/orderpartiesdrug";
 import {mapGetters} from "vuex";
 
 export default {
@@ -171,10 +172,23 @@ export default {
                 });
               },
               rowDel: (row, done) => {
-                // this.$message.success('删除');
+                if (row.id==""||row.id==null){
+                  alert("id为空");
+                }else{
+                  zremove(row.id);
+                  this.$message({
+                    type: "success",
+                    message: "操作成功!"
+                  });
+                }
                 done();
               },
               column: [
+                {
+                  label: "id",
+                  prop: "id",
+                  hide:true,
+                },
                 {
                   label: "*药品",
                   prop: "drugName",

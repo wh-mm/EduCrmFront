@@ -31,6 +31,16 @@ export const remove = (ids) => {
     }
   })
 }
+//真删除
+export const zremove = (id) => {
+  return request({
+    url: '/api/parties/orderpartiesdrug/zremove',
+    method: 'post',
+    params: {
+      id
+    }
+  })
+}
 
 export const add = (row) => {
   return request({
