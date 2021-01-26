@@ -187,6 +187,7 @@
               },
               cascaderItem: ['storageRegionId'],
              search:true,
+              sortable:true,
              dicUrl:'/api/erp-wms/warehouse/tree'
             },
             {
@@ -194,6 +195,7 @@
               prop: "storageRegionId",
               type:'tree',
               row: true,
+              sortable:true,
               span: 24,
               rules: [{
                 required: true,
@@ -212,6 +214,7 @@
               prop: "storageId",
               type:'tree',
               row: true,
+              sortable:true,
               span: 24,
               rules: [{
                 required: true,
@@ -228,6 +231,7 @@
               label: "商品",
               prop: "goodsId",
               type:"tree",
+              sortable:true,
               props: {
                 required: true,
                 label: 'goodsName',
@@ -241,10 +245,12 @@
               label: "数量(g)",
               prop: "quantity",
               type: "number",
+              sortable:true,
             },
             {
               label: "规格",
               prop: "specification",
+              sortable:true,
               rules:[{
                 message: "请输入规格",
                 trigger: "blur",
@@ -259,7 +265,8 @@
             },
             {
               label: "供应商",
-              prop: "supplierName"
+              prop: "supplierName",
+              sortable:true,
             },
 
             {
@@ -267,11 +274,13 @@
               prop: "batchNumber",
               required: true,
               search:true,
+              sortable:true,
             },
             {
               label: "商品索引码",
               prop: "goodsCode",
               disabled:true,
+              sortable:true,
               width:150
             },
             {
@@ -281,6 +290,7 @@
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
               required: true,
+              sortable:true,
             },
             {
               label: "有效期至",
@@ -289,21 +299,25 @@
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
               required: true,
+              sortable:true,
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
               required: true,
+              sortable:true,
             },
             {
               label: "产地",
               prop: "placeOfOrigin",
               required: true,
+              sortable:true,
             },
             {
               label: "操作人员",
               prop: "userName",
               required: true,
+              sortable:true,
             },
 
             // {
@@ -317,6 +331,7 @@
               type: "select",
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               search:true,
+              sortable:true,
               props: {
                 label: "dictValue",
                 value: "dictKey"
@@ -330,6 +345,7 @@
               type: "datetime",
               searchSpan:12,
               searchRange:true,
+              sortable:true,
               search:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -603,6 +619,7 @@
               prop: "warehouseId",
               type:"select",
               span: 24,
+              sortable:true,
               rules:[{
                 message: "请输入仓库",
                 trigger: "blur",
@@ -622,6 +639,7 @@
               prop: "storageRegionId",
               type:'tree',
               row: true,
+              sortable:true,
               span: 24,
               rules: [{
                 required: true,
@@ -640,6 +658,7 @@
               prop: "storageId",
               type:'tree',
               row: true,
+              sortable:true,
               span: 24,
               /*rules: [{
                 required: true,
@@ -656,7 +675,8 @@
               label:'库存数量',
               prop:'repertoryQuantity',
               span:24,
-              disabled: true
+              disabled: true,
+              sortable:true,
             },
             {
               label: "数量(g)",
@@ -664,6 +684,7 @@
               type: "number",
               precision: 0,
               value: 1,
+              sortable:true,
               row: true,
               span: 24,
               rules: [{
@@ -680,6 +701,7 @@
               row: true,
               span: 24,
               disabled:true,
+              sortable:true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               props: {
                 label: "dictValue",
@@ -691,6 +713,7 @@
               prop: "remark",
               type: "textarea",
               span: 24,
+              sortable:true,
             }
           ]
         },

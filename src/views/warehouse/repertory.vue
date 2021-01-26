@@ -37,6 +37,19 @@
                    @click="handleExport">导出
         </el-button>
       </template>
+      <template slot="warningQuantity" slot-scope="scope">
+        <el-input-number size="mini" v-model="scope.row.warningQuantity"></el-input-number>
+      </template>
+      <template slot="cycleToRemind" slot-scope="scope">
+        <el-input-number size="mini" v-model="scope.row.cycleToRemind"></el-input-number>
+      </template>
+
+    <template slot="menu" slot-scope="scope">
+      <el-button type="text" size="small" @click="saveRepertoryWarning(scope.row.id,scope.row.warningQuantity,scope.row.cycleToRemind)" >预警信息</el-button>
+
+    </template>
+
+
     </avue-crud>
 
     <el-dialog title="库存数据导入"
@@ -63,7 +76,7 @@
 </template>
 
 <script>
-  import {getList} from "@/api/warehouse/repertory";
+  import {getList,saveRepertoryWarning} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
@@ -75,6 +88,7 @@
         form: {},
         query: {},
         loading: true,
+        checkStatus:0,
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -83,6 +97,8 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        dialogOne:false,
+        dialogAll:false,
         selectionList: [],
         option: {
           height:'auto',
@@ -92,7 +108,7 @@
           searchMenuSpan: 6,
           border: true,
           index: true,
-          menu: false,
+          menu: true,
           selection: true,
           dialogClickModal: false,
           column: [
@@ -102,6 +118,7 @@
               type:'tree',
               row: true,
               search:true,
+              sortable:true,
               span: 24,
               props: {
                 label: 'title',
@@ -121,6 +138,7 @@
               prop: "storageRegionId",
               type:'tree',
               search:true,
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入储位",
@@ -136,6 +154,7 @@
               label: "储位",
               prop: "storageName",
               type:'tree',
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入储位",
@@ -148,6 +167,7 @@
               prop: "goodsId",
               type:'tree',
               search:true,
+              sortable:true,
               props: {
                 label: 'goodsName',
                 value: 'id'
@@ -159,11 +179,13 @@
               label: "商品索引码",
               prop: "goodsCode",
               search:true,
+              sortable:true,
             },
             {
               label: "批号",
               prop: "batchNumber",
               search:true,
+              sortable:true,
             },
             {
               label: "生产日期",
@@ -171,6 +193,7 @@
               type:'datetime',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
+              sortable:true,
             },
             {
               label: "有效期至",
@@ -178,34 +201,62 @@
               type:'datetime',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
+              sortable:true,
             },
             {
               label: "产地",
               prop: "placeOfOrigin",
+              sortable:true,
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
+              sortable:true,
             },
             {
               label: "供应商名称",
               prop: "supplierName",
+              sortable:true,
             },
             {
               label: "库存数量",
               prop: "repertoryQuantity",
+              sortable:true,
             },
             {
               label: "包装规格",
               prop: "packageSpecification",
+              sortable:true,
             },
             {
               label: "包装数量",
               prop: "packageQuantity",
+              sortable:true,
             },
             {
               label: "规格",
               prop: "specification",
+              sortable:true,
+            },
+            {
+              label: "距离有效期(天)",
+              prop: "expire",
+              sortable:true,
+            },
+            {
+              label: "预警数量(g)",
+              prop: "warningQuantity",
+              width: 150,
+              slot:true,
+              sortable:true,
+
+            },
+            {
+              label: "日期预警(天)",
+              prop: "cycleToRemind",
+              width: 150,
+              slot:true,
+              sortable:true,
             },
             {
               label: "入库时间",
@@ -216,6 +267,7 @@
               type: "datetime",
               searchSpan:12,
               searchRange:true,
+              sortable:true,
               search:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -351,6 +403,9 @@
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
+          data.records.forEach( (d) => {
+            d.checkStatus=0;
+          })
           this.loading = false;
           this.selectionClear();
         });
@@ -401,6 +456,15 @@
       handleTemplate() {
         window.open(this.ERP_WMS_NAME + `/repertory/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
+      saveRepertoryWarning(id,warningQuantity,cycleToRemind) {
+        saveRepertoryWarning(id,warningQuantity,cycleToRemind).then(res =>{
+          this.$message({
+            type:'info',
+            message:res.data.msg
+          })
+        })
+      },
+
     }
   };
 </script>

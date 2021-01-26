@@ -33,6 +33,7 @@
                    @click="updateInspectorNew()">审 批
         </el-button>
       </template>
+
     </avue-crud>
   </basic-container>
 </template>

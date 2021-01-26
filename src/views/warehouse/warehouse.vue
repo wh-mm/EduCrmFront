@@ -27,6 +27,20 @@
                    v-if="permission.warehouse_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   v-if="permission.repertory_import_init"
+                   @click="handleImportInit">导入
+        </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   v-if="permission.repertory_export"
+                   @click="handleExport">导出
+        </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button
@@ -44,6 +58,26 @@
         </div>
       </template>
     </avue-crud>
+    <el-dialog title="库存数据导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+      </avue-form>
+    </el-dialog>
+
+    <el-dialog title="初始化仓库信息导入"
+               append-to-body
+               :visible.sync="excelBoxInit"
+               width="555px">
+      <avue-form :option="excelOptionInit" v-model="excelFormInit" :upload-after="uploadAfterInit">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
@@ -53,6 +87,7 @@
     getWarehouseTree
   } from "@/api/warehouse/warehouse";
   import {mapGetters} from "vuex";
+  import {getToken} from "@/util/auth";
 
   export default {
     data() {
@@ -101,6 +136,7 @@
           height: 'auto',
           calcHeight: 30,
           tip: false,
+          printBtn:true,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
@@ -115,6 +151,7 @@
               label: "仓库名称",
               prop: "name",
               search: true,
+              sortable:true,
               rules: [{
                 required: true,
                 validator: selectWarehouseName,
@@ -129,6 +166,7 @@
               type: "tree",
               dicData: [],
               hide: true,
+              sortable:true,
               props: {
                 label: "title",
                 value: "id"
@@ -145,6 +183,7 @@
               label: "编码",
               prop: "code",
               append: "仓库唯一编号",
+              sortable:true,
               rules: [{
                 required: true,
                 validator: codeTestingOnly,
@@ -159,6 +198,7 @@
               label: "类型",
               prop: "type",
               type: "select",
+              sortable:true,
               rules: [
                 {
                   required: true,
@@ -177,6 +217,7 @@
               label: "地址",
               prop: "addressArray",
               type: "cascader",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入地址",
@@ -191,6 +232,7 @@
             {
               label: "详细地址",
               prop: "addressDetail",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入详细地址",
@@ -202,7 +244,57 @@
               prop: "updateTime",
               editDisplay: false,
               addDisplay: false,
+              sortable:true,
             },
+          ]
+        },
+        excelBox: false,
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: this.ERP_WMS_NAME + "/repertory/import"
+            },
+          ]
+        },
+
+        excelBoxInit: false,
+        excelFormInit: {},
+        excelOptionInit: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: this.ERP_WMS_NAME + "/warehouse/importInit"
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
           ]
         },
         data: []
@@ -215,7 +307,8 @@
           addBtn: this.vaildData(this.permission.warehouse_add, false),
           viewBtn: this.vaildData(this.permission.warehouse_view, false),
           delBtn: this.vaildData(this.permission.warehouse_delete, false),
-          editBtn: this.vaildData(this.permission.warehouse_edit, false)
+          editBtn: this.vaildData(this.permission.warehouse_edit, false),
+          printBtn: this.vaildData(this.permission.warehouse_print, false)
         };
       },
       ids() {
@@ -358,7 +451,36 @@
         getLazyList(parentId).then(res => {
           resolve(res.data.data);
         });
-      }
+      },
+
+      uploadAfter(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBox = false;
+        this.searchReset();
+        done();
+      },
+      handleExport() {
+        this.$confirm("是否导出仓库信息?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( this.ERP_WMS_NAME + `/warehouse/export?${this.website.tokenHeader}=${getToken()}`);
+        });
+      },
+
+      handleImportInit() {
+        this.excelBoxInit = true;
+      },
+      uploadAfterInit(res, done, loading, column) {
+        window.console.log(column);
+        this.excelBoxInit = false;
+        this.searchReset();
+        done();
+      },
+      handleTemplate() {
+        window.open(this.ERP_WMS_NAME + `/warehouse/export-template?${this.website.tokenHeader}=${getToken()}`);
+      },
 
     }
   };

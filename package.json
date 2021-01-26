@@ -24,6 +24,7 @@
     "js-md5": "^0.7.3",
     "jsbarcode": "^3.11.3",
     "mockjs": "^1.0.1-beta3",
+    "moment": "^2.29.1",
     "node-gyp": "^5.0.6",
     "nprogress": "^0.2.0",
     "portfinder": "^1.0.23",
@@ -32,9 +33,9 @@
     "vue": "^2.6.12",
     "vue-axios": "^2.1.2",
     "vue-i18n": "^8.7.0",
+    "vue-print-nb": "^1.5.0",
     "vue-router": "^3.0.1",
-    "vuex": "^3.1.1",
-    "vue-print-nb": "^1.5.0"
+    "vuex": "^3.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.1.1",

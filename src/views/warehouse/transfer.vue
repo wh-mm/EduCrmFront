@@ -74,6 +74,8 @@
           calcHeight: 30,
           tip: false,
           searchShow: true,
+          excelBtn:true,
+          printBtn:true,
           searchMenuSpan: 6,
           border: true,
           index: true,
@@ -86,6 +88,7 @@
               prop: "goodsId",
               type: 'tree',
               width: 130,
+              sortable:true,
               filterable: true,
               // disabled: true,
               search:true,
@@ -106,6 +109,7 @@
               prop: "batchNumber",
               type:'select',
               width:170,
+              sortable:true,
               rules: [{
                 required: true,
                 message: '请选择批号',
@@ -137,6 +141,7 @@
               prop: "oldWarehouseId",
               type: "tree",
               disabled: true,
+              sortable:true,
               rules: [{
                 message: "请输入旧仓库",
                 trigger: "blur"
@@ -153,6 +158,7 @@
               prop: "oldStorageRegionId",
               type: "select",
               disabled: true,
+              sortable:true,
               rules: [{
                 message: "请输入旧区",
                 trigger: "blur"
@@ -169,6 +175,7 @@
               prop: "oldStorageId",
               type: "select",
               disabled: true,
+              sortable:true,
               rules: [{
                 message: "请输入旧储位",
                 trigger: "blur"
@@ -186,11 +193,13 @@
               disabled: true,
               hide:true,
               row:true,
+              sortable:true,
               width:100,
             },
             {
               label: "变动数量",
               prop: "oldQuantity",
+              sortable:true,
               rules: [{
                 required: true,
                 validator: validateQuantity,
@@ -203,6 +212,7 @@
               prop: "newWarehouseId",
               type: "tree",
               rsearch: true,
+              sortable:true,
               width:150,
               rules: [{
                 required: true,
@@ -221,6 +231,7 @@
               prop: "newStorageRegionId",
               type:'tree',
               width:150,
+              sortable:true,
               props: {
                 label: 'title',
                 value: 'id'
@@ -232,7 +243,7 @@
               label: "新储位",
               prop: "newStorageId",
               type:'tree',
-
+              sortable:true,
               props: {
                 label: 'title',
                 value: 'id'
@@ -245,6 +256,7 @@
               addDisplay: false,
               editDisplay: false,
               width:150,
+              sortable:true,
             },
             {
               label:"创建时间",
@@ -256,6 +268,7 @@
               type: "datetime",
               searchSpan:12,
               searchRange:true,
+              sortable:true,
               search:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -273,7 +286,9 @@
           addBtn: this.vaildData(this.permission.transfer_add, false),
           viewBtn: this.vaildData(this.permission.transfer_view, false),
           delBtn: this.vaildData(this.permission.transfer_delete, false),
-          editBtn: false
+          editBtn: false,
+          excelBtn: this.vaildData(this.permission.transfer_excel,false),
+          printBtn: this.vaildData(this.permission.transfer_print,false),
         };
       },
       ids() {

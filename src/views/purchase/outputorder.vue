@@ -301,6 +301,7 @@
               prop: "orderNumber",
               editDisplay: false,
               addDisplay: false,
+              sortable:true,
               search:true,
               rules: [{
                 required: true,
@@ -312,6 +313,7 @@
               prop: "type",
               type: "select",
               disabled: true,
+              sortable:true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               props: {
                 label: "dictValue",
@@ -324,6 +326,7 @@
               addDisplay:false,
               editDisplay:false,
               viewDisplay:false,
+              sortable:true,
               dicUrl: "/api/blade-system/dict/dictionary?code=purchases_status",
               props: {
                 label: "dictValue",
@@ -341,6 +344,7 @@
               searchSpan:12,
               searchRange:true,
               search:true,
+              sortable:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
@@ -391,6 +395,8 @@
                           }
                         });
                       });
+
+
                     },
                   },
                   {

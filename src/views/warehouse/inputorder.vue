@@ -280,6 +280,7 @@
               editDisplay: false,
               addDisplay: false,
               search:true,
+              sortable:true,
               rules: [{
                 required: true,
                 trigger: "blur"
@@ -296,6 +297,7 @@
               searchSpan:12,
               searchRange:true,
               search:true,
+              sortable:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
