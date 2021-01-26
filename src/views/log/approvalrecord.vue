@@ -60,15 +60,16 @@
           selection: true,
           dialogClickModal: false,
           column: [
-           /* {
+            {
               label: "审核id",
               prop: "auditId",
+              hide:false,
               rules: [{
                 required: true,
                 message: "请输入审核id",
                 trigger: "blur"
               }]
-            },*/
+            },
             {
               label: "审核人",
               prop: "reviewer",

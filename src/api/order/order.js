@@ -25,6 +25,18 @@ export const getListsd = (current, size, params) => {
   })
 };
 
+export const getListjr = (current, size, params) => {
+  return request({
+    url: '/api/taocao-order/order/jrpage',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+
 //
 export const getListJianyao = (current, size, params) => {
   return request({

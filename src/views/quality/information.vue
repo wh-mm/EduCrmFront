@@ -155,8 +155,8 @@ export default {
             sortable:true,
             searchLabelWidth:130,
             labelWidth: 130,
-            maxlength: 20,
-            showWordLimit: true,
+            //maxlength: 20,
+            //showWordLimit: true,
             rules: [{
               message: "请输入供应商名称",
             }],

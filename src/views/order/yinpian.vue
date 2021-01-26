@@ -392,6 +392,8 @@ export default {
       option: {
         addBtn: false,
         height: "auto",
+        excelBtn:true,
+        printBtn:true,
         calcHeight: 30,
         tip: false,
         searchShow: true,
@@ -404,6 +406,7 @@ export default {
         column: [
           {
             label: "订单id",
+            sortable:true,
             prop: "id",
             search: true,
           },

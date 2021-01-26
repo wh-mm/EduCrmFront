@@ -83,6 +83,8 @@ export default {
       },
       selectionList: [],
       option: {
+        excelBtn:true,
+        printBtn:true,
         addBtn: false,
         height: "auto",
         calcHeight: 30,
@@ -97,6 +99,7 @@ export default {
         column: [
           {
             label: "订单id",
+            sortable:true,
             prop: "id",
             search: true,
           },

@@ -556,6 +556,8 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
+        excelBtn:true,
+        printBtn:true,
         height: "auto",
         calcHeight: 30,
         tip: false,
@@ -570,6 +572,7 @@ export default {
           {
             label: "订单id",
             prop: "id",
+            sortable:true,
             search: true,
           },
           {

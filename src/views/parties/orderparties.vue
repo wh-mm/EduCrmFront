@@ -27,6 +27,13 @@
                    v-if="permission.orderparties_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   v-if="permission.orderparties_export"
+                   @click="handleExport">导出
+        </el-button>
       </template>
     </avue-crud>
   </basic-container>
@@ -36,6 +43,7 @@
 import {getList, getDetail, add, update, remove} from "@/api/parties/orderparties";
 import {zremove} from "@/api/parties/orderpartiesdrug";
 import {mapGetters} from "vuex";
+import {getToken} from "@/util/auth";
 
 export default {
   data() {
@@ -181,7 +189,6 @@ export default {
               },
               rowDel: (row, done) => {
                 if (row.id==""||row.id==null){
-                  alert("id为空");
                 }else{
                   zremove(row.id);
                   this.$message({
@@ -193,7 +200,7 @@ export default {
               },
               column: [
                 {
-                  label: "id",
+                  label: "药品id",
                   prop: "id",
                   hide:true,
                 },
@@ -240,7 +247,7 @@ export default {
         addBtn: this.vaildData(this.permission.orderparties_add, false),
         viewBtn: this.vaildData(this.permission.orderparties_view, false),
         delBtn: this.vaildData(this.permission.orderparties_delete, false),
-        editBtn: this.vaildData(this.permission.orderparties_edit, false)
+        editBtn: this.vaildData(this.permission.orderparties_edit, false),
       };
     },
     ids() {
@@ -295,6 +302,16 @@ export default {
             message: "操作成功!"
           });
         });
+    },
+    //导出
+    handleExport() {
+      this.$confirm("是否导出协定方信息?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        window.open(`/api/parties/orderparties/export-orderParties?${this.website.tokenHeader}=${getToken()}`);
+      });
     },
     handleDelete() {
       if (this.selectionList.length === 0) {
