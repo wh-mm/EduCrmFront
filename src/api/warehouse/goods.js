@@ -119,6 +119,17 @@ export const saveMaintenanceCycle = (id,maintenanceCycle) => {
     }
   })
 }
+export const updatePrice = (id,goodsCode,unitPrice) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/updatePrice',
+    method: 'get',
+    params: {
+      id,
+      goodsCode,
+      unitPrice
+    }
+  })
+}
 
 
 

@@ -110,6 +110,7 @@
             {
               label: "仓库",
               prop: "warehouseName",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入仓库id",
@@ -119,6 +120,7 @@
             {
               label: "商品",
               prop: "goodsName",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入商品id",
@@ -128,6 +130,7 @@
             {
               label: "盈亏数量",
               prop: "profitAndLoss",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入盈亏数量",
@@ -137,6 +140,7 @@
             {
               label: "盈亏状态",
               prop: "profitAndLossStatus",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入盈亏状态",
@@ -149,6 +153,7 @@
               prop: "createTime",
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入有效期至",

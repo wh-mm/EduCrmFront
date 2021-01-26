@@ -118,6 +118,7 @@
               type:'tree',
               row: true,
               search:true,
+              sortable:true,
               span: 24,
               props: {
                 label: 'title',
@@ -137,6 +138,7 @@
               prop: "storageRegionId",
               type:'tree',
               search:true,
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入储位",
@@ -152,6 +154,7 @@
               label: "储位",
               prop: "storageName",
               type:'tree',
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入储位",
@@ -164,6 +167,7 @@
               prop: "goodsId",
               type:'tree',
               search:true,
+              sortable:true,
               props: {
                 label: 'goodsName',
                 value: 'id'
@@ -175,11 +179,13 @@
               label: "商品索引码",
               prop: "goodsCode",
               search:true,
+              sortable:true,
             },
             {
               label: "批号",
               prop: "batchNumber",
               search:true,
+              sortable:true,
             },
             {
               label: "生产日期",
@@ -187,6 +193,7 @@
               type:'datetime',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
+              sortable:true,
             },
             {
               label: "有效期至",
@@ -194,51 +201,62 @@
               type:'datetime',
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
+              sortable:true,
             },
             {
               label: "产地",
               prop: "placeOfOrigin",
+              sortable:true,
             },
             {
               label: "生产厂家",
               prop: "manufacturer",
+              sortable:true,
             },
             {
               label: "供应商名称",
               prop: "supplierName",
+              sortable:true,
             },
             {
               label: "库存数量",
               prop: "repertoryQuantity",
+              sortable:true,
             },
             {
               label: "包装规格",
               prop: "packageSpecification",
+              sortable:true,
             },
             {
               label: "包装数量",
               prop: "packageQuantity",
+              sortable:true,
             },
             {
               label: "规格",
               prop: "specification",
+              sortable:true,
             },
             {
               label: "距离有效期(天)",
               prop: "expire",
+              sortable:true,
             },
             {
               label: "预警数量(g)",
               prop: "warningQuantity",
               width: 150,
-              slot:true
+              slot:true,
+              sortable:true,
 
             },
             {
               label: "日期预警(天)",
               prop: "cycleToRemind",
               width: 150,
-              slot:true
+              slot:true,
+              sortable:true,
             },
             {
               label: "入库时间",
@@ -249,6 +267,7 @@
               type: "datetime",
               searchSpan:12,
               searchRange:true,
+              sortable:true,
               search:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",

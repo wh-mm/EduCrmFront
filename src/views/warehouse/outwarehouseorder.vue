@@ -326,6 +326,7 @@
               editDisplay: false,
               addDisplay: false,
               search:true,
+              sortable:true,
               rules: [{
                 required: true,
                 trigger: "blur"
@@ -336,6 +337,7 @@
               prop: "type",
               type: "select",
               disabled:true,
+              sortable:true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               props: {
                 label: "dictValue",
@@ -365,6 +367,7 @@
               searchSpan:12,
               searchRange:true,
               search:true,
+              sortable:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },

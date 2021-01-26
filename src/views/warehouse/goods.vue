@@ -40,7 +40,27 @@
                    @click="handleExport">导 出
         </el-button>
       </template>
+
+      <template slot="menu" slot-scope="scope">
+<el-button  type="text"
+            size="small"
+            plain
+            @click="openDialog(scope.row)"
+            v-if="permission.update_price"
+           >价格与索引码维护</el-button>
+
+      </template>
+
     </avue-crud>
+    <el-dialog title="价格与编码维护"
+               append-to-body
+               :visible.sync="priceDialog"
+               width="555px">
+      <avue-form :option="priceOption" v-model="priceForm" @submit="updatePrice">
+      </avue-form>
+    </el-dialog>
+
+
     <el-dialog title="货品数据导入"
                append-to-body
                :visible.sync="excelBox"
@@ -57,7 +77,7 @@
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode} from "@/api/warehouse/goods";
+  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode,updatePrice} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
 
@@ -98,7 +118,9 @@
         form: {},
         query: {},
         search: {},
+        Id:'',
         loading: true,
+        priceDialog: false,
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -120,6 +142,7 @@
             {
               label: "商品名称",
               prop: "goodsName",
+              sortable:true,
               rules: [{
                 required: true,
                 validator: selectName,
@@ -131,11 +154,13 @@
               label: "货品ID",
               prop: "id",
               addDisplay: false,
+              sortable:true,
             },
             {
               label: "货物类型",
               prop: "goodsType",
               type: "tree",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请选择货物类型",
@@ -151,6 +176,7 @@
             {
               label: "索引码",
               prop: "goodsCode",
+              sortable:true,
               rules: [{
                 validator: selectCode,
                 trigger: "blur"
@@ -159,6 +185,7 @@
             {
               label: "规格",
               prop: "goodsSpecification",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入规格",
@@ -175,6 +202,7 @@
             {
               label: "基本单位",
               prop: "basicUnit",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入基本单位",
@@ -192,6 +220,7 @@
             {
               label: "货品价格",
               prop: "unitPrice",
+              sortable:true,
               rules: [{
                 message: "请输入货品价格",
                 trigger: "blur"
@@ -259,6 +288,27 @@
               formslot: true,
               span: 24,
             }
+          ]
+        },
+        priceForm:{},
+        priceOption:{
+          column: [
+            {
+              label: "索引码",
+              prop: "goodsCode",
+              rules: [{
+
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "货品价格",
+              prop: "unitPrice",
+              rules: [{
+                message: "请输入货品价格",
+                trigger: "blur"
+              }]
+            },
           ]
         }
       };
@@ -421,6 +471,23 @@
       handleTemplate() {
         window.open(this.ERP_WMS_NAME + `/goods/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
+      openDialog(row){
+        this.Id = row.id;
+        this.priceDialog=true;
+        this.priceForm.unitPrice = row.unitPrice;
+        this.priceForm.goodsCode = row.goodsCode;
+      },
+      updatePrice(row, done){
+        updatePrice(this.Id,this.priceForm.goodsCode,this.priceForm.unitPrice).then(res => {
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
+          this.priceDialog=false;
+          this.refreshChange();
+          done();
+        });
+      }
+
     }
   };
 </script>

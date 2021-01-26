@@ -136,6 +136,7 @@
           height: 'auto',
           calcHeight: 30,
           tip: false,
+          printBtn:true,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
@@ -150,6 +151,7 @@
               label: "仓库名称",
               prop: "name",
               search: true,
+              sortable:true,
               rules: [{
                 required: true,
                 validator: selectWarehouseName,
@@ -164,6 +166,7 @@
               type: "tree",
               dicData: [],
               hide: true,
+              sortable:true,
               props: {
                 label: "title",
                 value: "id"
@@ -180,6 +183,7 @@
               label: "编码",
               prop: "code",
               append: "仓库唯一编号",
+              sortable:true,
               rules: [{
                 required: true,
                 validator: codeTestingOnly,
@@ -194,6 +198,7 @@
               label: "类型",
               prop: "type",
               type: "select",
+              sortable:true,
               rules: [
                 {
                   required: true,
@@ -212,6 +217,7 @@
               label: "地址",
               prop: "addressArray",
               type: "cascader",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入地址",
@@ -226,6 +232,7 @@
             {
               label: "详细地址",
               prop: "addressDetail",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入详细地址",
@@ -237,6 +244,7 @@
               prop: "updateTime",
               editDisplay: false,
               addDisplay: false,
+              sortable:true,
             },
           ]
         },
@@ -299,7 +307,8 @@
           addBtn: this.vaildData(this.permission.warehouse_add, false),
           viewBtn: this.vaildData(this.permission.warehouse_view, false),
           delBtn: this.vaildData(this.permission.warehouse_delete, false),
-          editBtn: this.vaildData(this.permission.warehouse_edit, false)
+          editBtn: this.vaildData(this.permission.warehouse_edit, false),
+          printBtn: this.vaildData(this.permission.warehouse_print, false)
         };
       },
       ids() {

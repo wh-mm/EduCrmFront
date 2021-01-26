@@ -105,22 +105,27 @@
           dialogClickModal: false,
           column: [
             {
-              label: "仓库id",
+              label: "仓库",
               prop: "warehouseId",
+              search :true,
+              sortable:true,
+              type:'select',
               props: {
                 label: 'title',
                 value: 'value'
               },
               rules: [{
                 required: true,
+
                 message: "请输入仓库",
                 trigger: "blur"
               }],
               dicUrl:'/api/erp-wms/warehouse/tree'
             },
             {
-              label: "商品id",
+              label: "商品",
               prop: "goodsId",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入商品id",
@@ -136,6 +141,7 @@
             {
               label: "库存总量",
               prop: "repertoryQuantity",
+              sortable:true,
             },
             {
               label: "实际库存总量",
