@@ -1,6 +1,6 @@
 import request from '@/router/axios';
 
-export const getList = (current, size, params) => {
+export const getLists = (current, size, params) => {
   return request({
     url: '/api/purchase/input-order/page',
     method: 'get',

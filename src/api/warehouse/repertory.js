@@ -51,5 +51,14 @@ export const selectExpireGoods = (goodsId) => {   //查询即将过期商品
     }
   })
 }
+export const deleteRepertory = (id) => {   //查询即将过期商品
+  return request({
+    url: ERP_WMS_NAME + '/repertory/deleteRepertory',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
 
 

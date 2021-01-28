@@ -47,6 +47,7 @@
     <template slot="menu" slot-scope="scope">
       <el-button type="text" size="small" @click="saveRepertoryWarning(scope.row.id,scope.row.warningQuantity,scope.row.cycleToRemind)" >预警信息</el-button>
 
+      <el-button type="text" size="small"  icon="el-icon-warning" @click="deleteRepertory(scope.row.id)">删除</el-button>
     </template>
 
 
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-  import {getList,saveRepertoryWarning} from "@/api/warehouse/repertory";
+  import {getList,saveRepertoryWarning,deleteRepertory} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
@@ -217,6 +218,12 @@
               label: "供应商名称",
               prop: "supplierName",
               sortable:true,
+              type:'select',
+              props:{
+                label:'supplierName',
+                value:'id'
+              },
+              dicUrl: '/api/quality/information/dropDownsss'
             },
             {
               label: "库存数量",
@@ -462,6 +469,15 @@
             type:'info',
             message:res.data.msg
           })
+        })
+      },
+      deleteRepertory(id) {
+        deleteRepertory(id).then(res =>{
+          this.$message({
+            type:'info',
+            message:res.data.msg
+          })
+          this.searchReset();
         })
       },
 

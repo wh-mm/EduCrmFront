@@ -267,6 +267,12 @@
               label: "供应商",
               prop: "supplierName",
               sortable:true,
+              type:'select',
+              props:{
+                label:'supplierName',
+                value:'id'
+              },
+              dicUrl: '/api/quality/information/dropDownsss'
             },
 
             {

@@ -100,7 +100,7 @@
                 label: 'goodsName',
                 value: 'goodsId'
               },
-              cascaderItem: ['batchNumber'],
+              cascaderItem: ['batchNumber' ],
               dicMethod:'post',
               dicUrl: '/api/erp-wms/repertory/dropDowns',
             },
@@ -135,6 +135,21 @@
                   });
 
               },
+            }, {
+              label: "新批号",
+              prop: "newBatchNumber",
+              type:'select',
+              width:170,
+              rules: [{
+                required: true,
+                message: '请选择批号',
+              }],
+              props: {
+                label: 'batchNumber',
+                value: 'id'
+              },
+              dicMethod:'post',
+              dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
             },
             {
               label: "旧仓库",

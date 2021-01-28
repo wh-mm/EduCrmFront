@@ -18,25 +18,34 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-<!--      <template slot="menuLeft">-->
-<!--          <el-button type="button"-->
-<!--                     size="small"-->
-<!--                     v-if="permission.output_approval"-->
-<!--                     @click="updateStatusNew()">审 批-->
-<!--          </el-button>-->
-<!--      </template>-->
+      <template slot="menuLeft">
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   v-if="permission.repertory_import"
+                   @click="handleImport">导入
+        </el-button>
+      </template>
       <template slot-scope="scope" slot="menu">
         <el-button :size="scope.size" v-if="scope.row.status===101" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
         <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印入库单</el-button>
-        <el-button type="primary"
-                   icon="el-icon-check"
-                   size="small"
-                   v-if="scope.row.status===101"
-                   plain
-                   @click.stop="handleEdit(scope.row,scope.index)">修改采购单</el-button>
       </template>
 
      </avue-crud>
+
+    <el-dialog title="入库数据导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
 
     <el-dialog
       title="驳回理由"
@@ -89,7 +98,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>供应商 : <span style="margin-left: 10px;"></span></p>
+                    <p>供应商 : <span style="margin-left: 10px;">{{printData.detailData.sname}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -101,13 +110,10 @@
               <el-row>
                 <el-col :span="8">
                   <div class="grid-content bg-purple">
-                    <p>仓库 : <span style="margin-left: 10px;"></span></p>
+                    <p>仓库 : <span style="margin-left: 10px;">{{printData.detailData.warehouseName}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>备注 : <span style="margin-left: 10px;"></span></p>
-                  </div>
                 </el-col>
 
               </el-row>
@@ -202,12 +208,15 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,viewReason,
+  import {getLists, add, getDetail,update, remove, updateStatus,viewReason,
   printInputorderDetail} from "@/api/purchase/inputorder";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
   import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {ERP_WMS_NAME} from '@/const/YueConst';
+  import {getToken} from "@/util/auth";
+
   export default {
     filters: {
       rounding(value) {
@@ -243,6 +252,7 @@
         form: {},
         query: {},
         loading: true,
+        excelBox: false,
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -255,7 +265,7 @@
         printDialogVisible:false,
         printData: {
           orderNumber: '',
-
+          detailData:[],
           tableData: [],
         },
         selectionList: [],
@@ -418,12 +428,19 @@
                     prop: "supplierName",
                     placeholder: " ",
                     width: 140,
+                    type:'select',
+                    props:{
+                      label:'supplierName',
+                      value:'id'
+                    },
+                    dicUrl: '/api/quality/information/dropDownsss'
                   },
                   {
                     label: '规格',
                     prop: "specification",
                     placeholder: " ",
                     width: 140,
+
                   },
                   {
                     label: "生产日期",
@@ -445,11 +462,27 @@
                     label: "生产厂家",
                     prop: "manufacturer",
                     width: 200,
+                    type:'select',
+                    allowCreate:true,
+                    filterable:true,
+                    props:{
+                      label:'manufacturer',
+                      value:'manufacturer',
+                    },
+                    dicUrl: ERP_WMS_NAME + '/repertory/selectManufacturer',
                   },
                   {
                     label: "产地",
                     prop: "placeOfOrigin",
                     width: 200,
+                    type:'select',
+                    allowCreate:true,
+                    filterable:true,
+                    props:{
+                      label:'placeOfOrigin',
+                      value:'placeOfOrigin',
+                    },
+                    dicUrl: ERP_WMS_NAME + '/repertory/selectPlaceOfOrigin',
                   },
                   {
                     label: "包装规格",
@@ -720,6 +753,33 @@
             }
           ]
         },
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: "/api/purchase/input-order/import"
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
+          ]
+        },
+
       };
     },
     computed: {
@@ -892,7 +952,7 @@
           this.query.updateTime = null;
         }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        getLists(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
@@ -985,8 +1045,17 @@
         this.printData.orderNumber = row.orderNumber;
         printInputorderDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
+          this.printData.tableData.forEach(detail=>{
+             this.printData.detailData = detail;
+          })
         })
-      }
+      },
+      handleImport() {
+        this.excelBox = true;
+      },
+      handleTemplate() {
+        window.open( `/api/purchase/input-order/export-template?${this.website.tokenHeader}=${getToken()}`);
+      },
     }
   };
 </script>
