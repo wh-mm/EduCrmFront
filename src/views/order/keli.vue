@@ -413,7 +413,6 @@ export default {
               label: 'dictValue',
               value: 'dictKey'
             },
-            search: true,
             required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
             trigger: "blur"

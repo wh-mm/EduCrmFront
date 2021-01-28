@@ -662,7 +662,6 @@ export default {
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
-            search: true,
             rules: [{
               required: true,
               message: "请输入通知时间",

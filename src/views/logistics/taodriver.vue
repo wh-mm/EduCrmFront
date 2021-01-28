@@ -126,6 +126,7 @@
             {
               label: "名字",
               prop: "name",
+              labelWidth: 140,
               rules: [{
                 required: true,
                 message: "请输入名字",
@@ -135,6 +136,7 @@
             {
               label: "年龄",
               prop: "age",
+              labelWidth: 140,
               rules: [{
                 validator: validateYear,
                 trigger: "blur"
@@ -154,6 +156,7 @@
             {
               label: "手机号",
               prop: "phone",
+              labelWidth: 140,
               maxlength:11,
               showWordLimit:true,
               rules: [{
@@ -164,6 +167,7 @@
             {
               label: "驾龄",
               prop: "driveAge",
+              labelWidth: 140,
               rules: [{
                 validator:validateDriverYear,
                 trigger: "blur"
@@ -175,7 +179,7 @@
               labelWidth: 140,
               type: "datetime",
               format: "yyyy-MM-dd HH:mm:ss",
-
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules: [{
                 required: true,
                 message: "请输入驾驶证开始时间",
@@ -188,6 +192,7 @@
               labelWidth: 140,
               type: "datetime",
               format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
               rules: [{
                 required: true,
                 message: "请输入驾驶证结束时间",

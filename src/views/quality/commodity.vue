@@ -168,7 +168,6 @@
               label: "通用名",
               prop: "commonName",
               labelWidth: 140,
-              sortable:true,
              // tip: '通用名',
               /*rules: [{
                 required: true,
@@ -181,7 +180,6 @@
             {
               label: "商品名",
               prop: "tradeName",
-              sortable:true,
               labelWidth: 140,
              // tip: '商品名',
               /*rules: [{
@@ -195,7 +193,6 @@
               label: "基本单位",
               prop: "basicUnit",
               labelWidth: 140,
-              sortable:true,
               type: 'tree',
               hide: true,
               /*rules: [{
@@ -215,7 +212,6 @@
               label: "产地",
               prop: "placeOfOrigin",
               labelWidth: 140,
-              sortable:true,
               /*rules: [{
                 message: "请输入产地",
                 trigger: "blur"
@@ -239,7 +235,6 @@
               prop: "specifications",
               labelWidth: 140,
               hide: true,
-              sortable:true,
              /* rules: [{
                 required: true,
                 message: "请输入规格(型号)",
@@ -251,7 +246,6 @@
               label: "最小销售包装规格",
               prop: "minimumSalesSpecification",
               labelWidth: 140,
-              sortable:true,
            /*   type: 'select',*/
               hide: true,
               /*rules: [{
@@ -275,7 +269,6 @@
               label: "进项税",
               prop: "inputTax",
               labelWidth: 140,
-              sortable:true,
               hide: true,
               /*rules: [{
                 validator: isInteger,
@@ -287,7 +280,6 @@
               prop: "outputTax",
               labelWidth: 140,
               hide: true,
-              sortable:true,
               /*rules: [{
                 validator: isInteger,
                 trigger: "blur"
@@ -298,7 +290,6 @@
               labelWidth: 140,
               prop: "dosageForm",
               type: 'tree',
-              sortable:true,
              /* rules: [{
                 required: true,
                 message: "请选择剂型",
@@ -313,7 +304,6 @@
             {
               label: "产品分类",
               labelWidth: 140,
-              sortable:true,
               prop: "productClassification",
               type: 'tree',
               /*rules: [{
@@ -332,7 +322,6 @@
               label: "审批状态",
               prop: "purchasingStatus",
               type: 'select',
-              sortable:true,
               addDisplay: false,
               editDisplay: false,
               viewDisplay: false,
@@ -347,7 +336,6 @@
               label: "存储期限",
               prop: "storageLife",
               labelWidth: 140,
-              sortable:true,
               hide: true,
               tip: '按每月',
             },
@@ -363,7 +351,6 @@
               prop: "specialDrugs",
               hide: true,
               type: 'select',
-              sortable:true,
               labelWidth: 140,
               props: {
                 label: 'dictValue',
@@ -373,7 +360,6 @@
             },
             {
               label: "特殊药品",
-              sortable:true,
               prop: "specialDrug",
               hide: true,
               labelWidth: 140,
@@ -387,7 +373,6 @@
 
             {
               label: "存储条件",
-              sortable:true,
               prop: "storageConditions",
               labelWidth: 140,
               hide: true,
@@ -409,7 +394,6 @@
               prop: "scattered",
               type: 'radio',
               labelWidth: 140,
-              sortable:true,
               hide: true,
               value: 0,
               dicData: [{
@@ -424,7 +408,6 @@
               label: "OTC标志",
               prop: "sign",
               type: 'radio',
-              sortable:true,
               viewDisplay: true,
               labelWidth: 140,
               hide: true,
@@ -440,7 +423,6 @@
             {
               label: 'OTC标志',
               prop: 'signTow',
-              sortable:true,
               labelWidth: 140,
               display: true,
               rules: [],
@@ -454,7 +436,6 @@
             },
             {
               label: '国产/进口标示',
-              sortable:true,
               prop: 'domesticImportIndication',
               type: 'radio',
               labelWidth: 140,
@@ -471,7 +452,6 @@
             },
             {
               label: "批准文号",
-              sortable:true,
               prop: "approvalNumber",
               display: true,
               hide: true,
@@ -482,7 +462,6 @@
               label: "进口注册证",
               labelWidth: 140,
               hide: true,
-              sortable:true,
               prop: "importRegistrationCertificate",
               rules: [],
             },
@@ -491,14 +470,12 @@
               prop: "subPackagingEnterprises",
               labelWidth: 140,
               hide: true,
-              sortable:true,
               rules: [],
             },
             {
               label: "分包装批准文号",
               labelWidth: 140,
               hide: true,
-              sortable:true,
               prop: "approvalNumberOfSubPackage",
               rules: [],
             },

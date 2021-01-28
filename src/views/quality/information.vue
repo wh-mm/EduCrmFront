@@ -56,6 +56,7 @@
         <el-button icon="el-icon-check"
                    :size="scope.size"
                    :type="scope.type"
+
                    @click.stop="handleTimeline (scope.row.id)">审 批 查 看
         </el-button>
       </template>
@@ -115,15 +116,48 @@ import {
   shenfen,
   validateContacts,
   isInteger,
+  selectName,
+  selectTongyi,
   submitInspector,
   validlegalbizLicNum
 } from "@/api/quality/information";
 import {timeLine} from "@/api/log/approvalrecord"
 import {mapGetters} from "vuex";
+import {selectHosptalByHospintl} from "@/api/hisHospital/hospital";
 
 
 export default {
   data() {
+    var supplierName = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error("供应商名称重复,请从新输入!"))
+      } else {
+        selectName(this.form.id, value).then(res => {
+          if (res.data.success && res.data.msg === "成功") {
+            callback();
+          } else {
+            callback(new Error(res.data.msg));
+          }
+        }, err => {
+          callback(new Error(err.data.msg));
+        })
+      }
+    }
+    var Tongyi = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error("社会统一码重复,请从新输入!"))
+      } else {
+        selectTongyi(this.form.id, value).then(res => {
+          if (res.data.success && res.data.msg === "成功") {
+            callback();
+          } else {
+            callback(new Error(res.data.msg));
+          }
+        }, err => {
+          callback(new Error(err.data.msg));
+        })
+      }
+    }
     return {
       form: {},
       query: {},
@@ -152,27 +186,27 @@ export default {
           {
             label: "供应商名称",
             prop: "supplierName",
-            sortable:true,
-            searchLabelWidth:130,
+            sortable: true,
+            searchLabelWidth: 130,
             labelWidth: 130,
             //maxlength: 20,
             //showWordLimit: true,
             rules: [{
-              message: "请输入供应商名称",
+              required: true,
+              validator: supplierName,
+              trigger: 'blur'
             }],
             search: true,
           },
           {
             label: "企业负责人",
             prop: "enterprisePrincipal",
-            sortable:true,
             hide: true,
             labelWidth: 130,
           },
           {
             label: "法人代表",
             prop: "legalRepresentative",
-            sortable:true,
             hide: true,
             labelWidth: 130,
           },
@@ -180,7 +214,6 @@ export default {
             label: "质量负责人",
             prop: "qualityPrincipal",
             hide: true,
-            sortable:true,
             labelWidth: 130,
           },
           /*
@@ -205,20 +238,17 @@ export default {
             prop: "contacts",
             labelWidth: 130,
             search: true,
-            sortable:true,
           },
           {
             label: "联系人电话",
             prop: "contactPhoneNumber",
             labelWidth: 130,
             maxlength: 11,
-            sortable:true,
             showWordLimit: true,
           },
           {
 
             label: "联系人身份证",
-            sortable:true,
             prop: "contactIdCard",
             labelWidth: 130,
             maxlength: 18,
@@ -229,7 +259,6 @@ export default {
             label: "组织代码",
             prop: "organizationCode",
             hide: true,
-            sortable:true,
             maxlength: 18,
             labelWidth: 130,
             showWordLimit: true,
@@ -239,7 +268,6 @@ export default {
             prop: "dutyParagraph",
             labelWidth: 130,
             hide: true,
-            sortable:true,
             maxlength: 18,
             showWordLimit: true,
           },
@@ -248,20 +276,25 @@ export default {
             prop: "socialUniformCreditCode",
             labelWidth: 130,
             maxlength: 18,
-            sortable:true,
             showWordLimit: true,
-            rules: [{
-              required: true,
-              validator: validlegalbizLicNum,
-              trigger: "blur"
-            }]
+            rules: [
+              {
+                required: true,
+                validator: validlegalbizLicNum,
+                trigger: "blur"
+              },
+              {
+                required: true,
+                validator: Tongyi,
+                trigger: "blur"
+              },
+            ]
           },
           {
             label: "注册地址",
             prop: "registeredAddress",
             labelWidth: 130,
             hide: true,
-            sortable:true,
             /*rules: [{
               validator: validateContacts,
               trigger: "blur"
@@ -271,28 +304,26 @@ export default {
             label: "生产或仓库地址",
             labelWidth: 130,
             hide: true,
-            sortable:true,
             prop: "productionOrWarehouseAddress",
-           /* rules: [{
-              validator: validateContacts,
-              trigger: "blur"
-            }]*/
+            /* rules: [{
+               validator: validateContacts,
+               trigger: "blur"
+             }]*/
           },
-         /* {
-            label: "承付模式",
-            prop: "commitmentModel",
-            labelWidth: 130,
-            hide: true,
-            rules: [{
-              message: "承付模式",
-              trigger: "blur"
-            }]
-          },*/
+          /* {
+             label: "承付模式",
+             prop: "commitmentModel",
+             labelWidth: 130,
+             hide: true,
+             rules: [{
+               message: "承付模式",
+               trigger: "blur"
+             }]
+           },*/
           {
             label: "审核状态",
             prop: "stateExamine",
             type: 'select',
-            sortable:true,
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
@@ -307,7 +338,6 @@ export default {
             label: "使用状态",
             prop: "useState",
             type: 'select',
-            sortable:true,
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
@@ -342,7 +372,6 @@ export default {
                 label: "供应商证件照名称",
                 prop: "nameOfCertificatePhoto",
                 labelWidth: 130,
-                sortable:true,
                 /*rules: [{
                   validator: validateContacts,
                   trigger: "blur"
@@ -352,7 +381,6 @@ export default {
                   label: "经营范围",
                   prop: "natureOfBusiness",
                   hide: true,
-                  sortable:true,
                   labelWidth: 130,
                   row: true,
                   type: 'tree',
@@ -366,11 +394,10 @@ export default {
                 {
                   label: "发证日期",
                   prop: "dateOfIssue",
-                  sortable:true,
                   labelWidth: 130,
                   type: "date",
-                  format: "yyyy-MM-dd HH:mm:ss",
-                  valueFormat: "yyyy-MM-dd HH:mm:ss",
+                  format: "yyyy-MM-dd",
+                  valueFormat: "yyyy-MM-dd",
                 },
                 /*{
                   label: "有效期",
@@ -383,17 +410,15 @@ export default {
                   label: "期限至",
                   prop: "termTo",
                   type: "date",
-                  sortable:true,
                   labelWidth: 130,
-                  format: "yyyy-MM-dd HH:mm:ss",
-                  valueFormat: "yyyy-MM-dd HH:mm:ss",
+                  format: "yyyy-MM-dd",
+                  valueFormat: "yyyy-MM-dd",
                 },
                 {
                   label: "供应商证件照",
                   prop: "supplierCertificatePhoto",
                   dataType: 'array',
                   labelWidth: 130,
-                  sortable:true,
                   type: 'upload',
                   propsHttp: {
                     res: 'data',

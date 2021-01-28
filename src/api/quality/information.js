@@ -135,16 +135,27 @@ export function isInteger(rule, value, callback) {
  * @param name
  * @returns {AxiosPromise}
  */
-export const selectName = (id,name) => {
+export const selectName = (id,supplierName) => {
   return request({
     url: '/api/quality/information/selectName',
     method: 'get',
     params: {
       id,
-      name
+      supplierName
     }
   })
 }
+export const selectTongyi = (id,socialUniformCreditCode) => {
+  return request({
+    url: '/api/quality/information/selectTongyi',
+    method: 'get',
+    params: {
+      id,
+      socialUniformCreditCode
+    }
+  })
+}
+
 /**
  * 社会统一码校验
  * @param rule
@@ -153,7 +164,8 @@ export const selectName = (id,name) => {
  * @returns {*}
  */
 export const validlegalbizLicNum = (rule, value, callback) => {
-  let Ancode;//统一社会信用代码的每一个值
+
+ let Ancode;//统一社会信用代码的每一个值
   let Ancodevalue;//统一社会信用代码每一个值的权重
   let total = 0;
   let weightedfactors = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];//加权因子
@@ -172,10 +184,13 @@ export const validlegalbizLicNum = (rule, value, callback) => {
   let Str = "0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,T,U,W,X,Y";
   let Array_Str = Str.split(',');
   logiccheckcode = Array_Str[logiccheckcode];
-
   let checkcode = value.substring(17, 18);
   if (logiccheckcode != checkcode) {
     return callback(new Error('请输入正确的统一社会信用代码！'));
   }
+
   return callback();
-};
+  };
+
+
+

@@ -184,12 +184,14 @@
               editDisplay: false,
               width: 180,
               search: true,
+              labelWidth: 130,
             },
             {
               label: "状态",
               prop: "distributionStatus",
               addDisplay: false,
               editDisplay: false,
+              labelWidth: 130,
               dicUrl: "/api/blade-system/dict/dictionary?code=distribution_status",
               props: {
                 label: "dictValue",
@@ -200,6 +202,7 @@
               label: "医院",
               prop: "hospitalId",
               type: "tree",
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请选择医院",
@@ -215,6 +218,7 @@
             {
               label: "处方号",
               prop: "pspnum",
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入处方号",
@@ -224,6 +228,7 @@
             {
               label: "剂数",
               prop: "dose",
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入剂数",
@@ -234,6 +239,7 @@
               label: "类型",
               prop: "orderType",
               type: 'select',
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请选择类型",
@@ -247,6 +253,7 @@
             },
             {
               label: "接方时间",
+              labelWidth: 130,
               prop: "receivingDate",
               type: "date",
               format: "yyyy-MM-dd",
@@ -260,6 +267,7 @@
             {
               label: "患者姓名",
               prop: "addresseeName",
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入患者姓名",
@@ -270,6 +278,7 @@
             {
               label: "患者性别",
               prop: "addresseeSex",
+              labelWidth: 130,
               type: "radio",
               dicData: [{
                 label: '男',
@@ -282,11 +291,13 @@
             {
               label: "患者年龄",
               prop: "addresseeAge",
+              labelWidth: 130,
               type:'number'
             },
             {
               label: "患者地址",
               prop: "addresseeAddress",
+              labelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入收件人地址",
@@ -296,6 +307,7 @@
             {
               label: "患者手机号",
               prop: "addresseePhone",
+              labelWidth: 130,
               maxlength:11,
               showWordLimit:true,
               rules: [{
@@ -307,6 +319,7 @@
             {
               label: "寄件时间",
               prop: "senderTime",
+              labelWidth: 130,
               type: "datetime",
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -316,6 +329,7 @@
             {
               label: "收件时间",
               prop: "addresseeTime",
+              labelWidth: 130,
               type: "datetime",
               addDisplay: false,
               editDisplay: false,
@@ -325,6 +339,7 @@
             {
               label: "备注",
               prop: "remark",
+              labelWidth: 130,
             },
           ]
         },
