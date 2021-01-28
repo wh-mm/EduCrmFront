@@ -4,7 +4,7 @@
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
-        <el-button @click="addXdf" size="small">添加协定发</el-button>
+        <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
       <template slot="menu" slot-scope="{row,index,size,type}">
         <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>

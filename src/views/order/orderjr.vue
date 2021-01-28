@@ -16,7 +16,8 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
+<!--        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>-->
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
       </template>
@@ -25,10 +26,10 @@
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
         <!--处方中心打印功能-->
-        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+<!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
                    @click.stop="updateOrderStatic(scope.row)">接 单
-        </el-button>
+        </el-button>-->
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
         <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
@@ -50,10 +51,18 @@
       <addYinPian @reject="rejectYin" ></addYinPian>
     </el-dialog>
 
+    <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <addKeLi @reject="rejectKe" ></addKeLi>
+    </el-dialog>
 
     <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewYinPian :orderInfo="orderInfo"></viewYinPian>
+    </el-dialog>
+    <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <viewKeLi :orderInfo="orderInfo"></viewKeLi>
     </el-dialog>
 
     <el-form :model="form">
@@ -249,6 +258,156 @@
 
     </el-form>
 
+    <el-form :model="form">
+      <div style="display: none" id="printkeli" ref="printkeli">
+        <!-- 隐藏打印区域，避免用户看到 -->
+        <div style="padding: 1px;height: 100px;width: 100%">
+          <div class="kelihead" style="width: 100%">
+            <el-row>
+              <el-col :span="5" :offset="9">
+                <div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
+              </el-col>
+              <el-col :span="5" :offset="1">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode2" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">
+                  接方时间：<span>{{ printData.createTime }}</span></p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>{{ time }}</span></p></div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+          <div class="kelishou" style="width: 100%">
+
+            <el-row :gutter="5" style="">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  医院名称：<span>{{ printData.hospitalName }}</span></p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  姓名：<span>{{ printData.name }}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  性别：<span>{{ printData.sex == 1 ? '男' : '女' }}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  年龄：<span>{{ printData.age }}</span></p></div>
+              </el-col>
+            </el-row>
+            <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  处方号：<span>{{ printData.presId }}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  处方名称：<span>{{ printData.presName }}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  处方付数：<span>{{ printData.quantity == 1 ? '贴数' : '剂数' }}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  分服次数：<span>{{ printData.separateFrequency }}</span>
+                </p></div>
+              </el-col>
+            </el-row>
+            <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <div class="kelifooter" style="width: 100%">
+
+            <el-table
+              :data="printDrugData"
+              :row-style="{height: '1'}"
+              :cell-style="{padding: '0'}"
+              style="border-color: #000000;border-top: 1px solid">
+              <el-table-column
+                label="序号"
+                type="index"
+                width="122"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="shelf_number"
+                label="货位号"
+                width="125"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="drug_name"
+                label="药品名称"
+                width="250"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="dose_herb"
+                label="饮片剂量"
+                width="250"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="equivalent"
+                label="当量"
+                width="247"
+                align="center">
+              </el-table-column>
+            </el-table>
+
+            <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+            <el-col :span="3" :offset="1">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
+            </el-col>
+          </div>
+
+
+        </div>
+      </div>
+    </el-form>
 
   </basic-container>
 </template>
@@ -256,7 +415,7 @@
 <script>
 import {
   getInfo,
-  getListJianyao,
+  getListjr,
   selectByOrderId,
   updateOrderStatic
 } from "@/api/order/order";
@@ -264,12 +423,16 @@ import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
 
 import addYinPian from "./add/addYinPian";
+import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
+import viewKeLi from "./view/viewKeLi";
 
 export default {
   components:{
     addYinPian,
+    addKeLi,
     viewYinPian,
+    viewKeLi
   },
   filters: {
     rounding(value) {
@@ -294,6 +457,8 @@ export default {
   data() {
     return {
       addYinDialogVisible: false,
+      addKeDialogVisible: false,
+      viewKeDialogVisible: false,
       viewYinDialogVisible: false,
       dialogFormVisible: false,
       time: '',
@@ -391,9 +556,9 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
-        height: "auto",
         excelBtn:true,
         printBtn:true,
+        height: "auto",
         calcHeight: 30,
         tip: false,
         searchShow: true,
@@ -406,8 +571,8 @@ export default {
         column: [
           {
             label: "订单id",
-            sortable:true,
             prop: "id",
+            sortable:true,
             search: true,
           },
           {
@@ -456,6 +621,7 @@ export default {
               label: 'dictValue',
               value: 'dictKey'
             },
+            search: true,
             required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
             trigger: "blur"
@@ -496,7 +662,6 @@ export default {
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
-            search: true,
             rules: [{
               required: true,
               message: "请输入通知时间",
@@ -541,7 +706,7 @@ export default {
     ...mapGetters(["permission"]),
     permissionList() {
       return {
-        addBtn: this.vaildData(this.permission.order_add, false),
+        addBtn: false,
         viewBtn: this.vaildData(this.permission.order_view, false),
         delBtn: false,
         editBtn: false
@@ -720,7 +885,7 @@ export default {
         this.query.releaseTimeRange = null;
       }
       this.loading = true;
-      getListJianyao(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+      getListjr(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
         const data = res.data.data;
         this.page.total = data.total;
         this.data = data.records;

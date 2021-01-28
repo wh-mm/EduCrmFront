@@ -348,6 +348,8 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
+        excelBtn:true,
+        printBtn:true,
         height: "auto",
         calcHeight: 30,
         tip: false,
@@ -362,6 +364,7 @@ export default {
           {
             label: "订单id",
             prop: "id",
+            sortable:true,
             search: true,
           },
           {
@@ -410,7 +413,6 @@ export default {
               label: 'dictValue',
               value: 'dictKey'
             },
-            search: true,
             required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
             trigger: "blur"

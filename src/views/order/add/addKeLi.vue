@@ -191,8 +191,8 @@ export default {
                 span: 6,
                 rules: [{
                   required: true,
-                  validator: isOneToNinetyNine,
-
+                  validator:isOneToNinetyNine,
+                  trigger: "blur"
                 },
                   {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
                 ],
@@ -203,7 +203,8 @@ export default {
                 span: 6,
                 rules: [{
                   required: true,
-                  validator: isOneToNinetyNine,
+                  validator:isOneToNinetyNine,
+                  trigger: "blur"
                 },
                   {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
                 ],

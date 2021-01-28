@@ -23,20 +23,16 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.hospitalapi_delete"
+                   v-if="permission.review_delete"
                    @click="handleDelete">删 除
         </el-button>
-      </template>
-      <template slot="successAndFailure" slot-scope="scope">
-        <div style="color: green" v-if="scope.row.successAndFailure=='1'?true:false">成功</div>
-        <div style="color: red" v-else>失败</div>
       </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/log/hospitalapi";
+  import {getList, getDetail, add, update, remove} from "@/api/prescription/review";
   import {mapGetters} from "vuex";
 
   export default {
@@ -52,7 +48,7 @@
         },
         selectionList: [],
         option: {
-          height: 'auto',
+          height:'auto',
           calcHeight: 30,
           tip: false,
           searchShow: true,
@@ -60,66 +56,37 @@
           border: true,
           index: true,
           viewBtn: true,
-          editBtn: false,
-          addBtn: false,
-          delBtn: false,
-          menuWidth: 120,
-          dialogType: 'drawer',
+          selection: true,
+          dialogClickModal: false,
           column: [
             {
-              label: "医院名称",
-              sortable:true,
-              prop: "hospitalId",
-              type: "tree",
-              cascaderItem: ['excelFile'],
-              props: {
-                label: "hospitalName",
-                value: "id"
-              },
-              search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
-            },
-
-            {
-              label: "日志时间",
-              prop: "createTime",
-              type: "datetime",
-              format: "yyyy-MM-dd HH:mm:ss",
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              searchRange: true,
-              searchSpan: 8,
-              addDisplay: false,
-              editDisplay: false,
-              search: true,
-            },
-
-            {
-              label: "请求数据",
-              prop: "params",
-
-              //文本域
-              type: "textarea",
-              maxRows:4,
-              overHidden:true,
-              // search: true
+              label: "审核方名字",
+              prop: "prescriptionName",
+              rules: [{
+                required: true,
+                message: "请输入审核方名字",
+                trigger: "blur"
+              }]
             },
             {
-              label: "成功失败",
-              prop: "successAndFailure",
-              search: true,
-              type: 'select',
-              searchLabelWidth:140,
-              searchSpan:7,
-              slot: true,
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              //required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=success_and_failure",
+              label: "药品ID",
+              prop: "drugsIds",
+              rules: [{
+                required: true,
+                message: "请输入药品ID",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "备注",
+              prop: "remarks",
+              rules: [{
+                required: true,
+                message: "请输入备注",
+                trigger: "blur"
+              }]
             },
           ]
-
         },
         data: []
       };
@@ -128,10 +95,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: false,
-          viewBtn: this.vaildData(this.permission.hospitalapi_view, false),
-          delBtn: false,
-          editBtn: false
+          addBtn: this.vaildData(this.permission.review_add, false),
+          viewBtn: this.vaildData(this.permission.review_view, false),
+          delBtn: this.vaildData(this.permission.review_delete, false),
+          editBtn: this.vaildData(this.permission.review_edit, false)
         };
       },
       ids() {
@@ -186,14 +153,6 @@
             });
           });
       },
-      beforeOpen(done, type) {
-        if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
-            this.form = res.data.data;
-          });
-        }
-        done();
-      },
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -216,6 +175,14 @@
             this.$refs.crud.toggleSelection();
           });
       },
+      beforeOpen(done, type) {
+        if (["edit", "view"].includes(type)) {
+          getDetail(this.form.id).then(res => {
+            this.form = res.data.data;
+          });
+        }
+        done();
+      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
@@ -233,39 +200,25 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage) {
+      currentChange(currentPage){
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize) {
+      sizeChange(pageSize){
         this.page.pageSize = pageSize;
       },
       refreshChange() {
         this.onLoad(this.page, this.query);
       },
-      //时间
       onLoad(page, params = {}) {
-        const {createTime} = params;
-        let values = {
-          ...params,
-        };
-        if (createTime) {
-          values = {
-            ...params,
-            startTime: createTime[0],
-            endTime: createTime[1],
-          };
-          values.createTime = null;
-          this.query.createTime = null;
-        }
         this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
-      },
+      }
     }
   };
 </script>

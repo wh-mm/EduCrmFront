@@ -36,10 +36,10 @@ export function isOneToNinetyNine(rule, value, callback) {
     if (!Number(value)) {
       callback(new Error('请输入正确年龄'));
     } else {
-      const re = /^[1-9][0-9]{0,1}$/;
+      const re = /^([1-9]|[1-9]\d|1\d{2}|200)$/;
       const rsCheck = re.test(value);
       if (!rsCheck) {
-        callback(new Error('请输入正整数，值为1-99'));
+        callback(new Error('请输入正整数，值为1-200'));
       } else {
         callback();
       }

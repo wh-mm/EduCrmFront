@@ -60,9 +60,10 @@
           selection: true,
           dialogClickModal: false,
           column: [
-           /* {
+            /*{
               label: "审核id",
               prop: "auditId",
+              hide:false,
               rules: [{
                 required: true,
                 message: "请输入审核id",
@@ -71,6 +72,7 @@
             },*/
             {
               label: "审核人",
+              sortable:true,
               prop: "reviewer",
               searchLabelWidth:130,
               rules: [{
@@ -96,15 +98,7 @@
               dicUrl: "/api/blade-system/dict/dictionary?code=operation"
             },
 
-            {
-              label: "驳回理由",
-              prop: "rejectText",
-              rules: [{
-                required: true,
-                message: "请输入驳回理由",
-                trigger: "blur"
-              }]
-            },
+
             {
               label: "旧审批状态",
               prop: "oldStatus",
@@ -117,6 +111,7 @@
                 label: 'dictValue',
                 value: 'dictKey'
               },
+
              // search: true,
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=quality_audit",
             },
@@ -153,6 +148,10 @@
                 trigger: "blur"
               }]
             },*/
+            {
+              label: "备注",
+              prop: "rejectText",
+            },
             {
               label: "创建时间",
               prop: "createTime",
