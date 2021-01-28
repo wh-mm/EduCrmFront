@@ -201,12 +201,14 @@ export default {
           {
             label: "企业负责人",
             prop: "enterprisePrincipal",
+            sortable:true,
             hide: true,
             labelWidth: 130,
           },
           {
             label: "法人代表",
             prop: "legalRepresentative",
+            sortable:true,
             hide: true,
             labelWidth: 130,
           },
@@ -214,6 +216,7 @@ export default {
             label: "质量负责人",
             prop: "qualityPrincipal",
             hide: true,
+            sortable:true,
             labelWidth: 130,
           },
           /*
@@ -238,17 +241,20 @@ export default {
             prop: "contacts",
             labelWidth: 130,
             search: true,
+            sortable:true,
           },
           {
             label: "联系人电话",
             prop: "contactPhoneNumber",
             labelWidth: 130,
             maxlength: 11,
+            sortable:true,
             showWordLimit: true,
           },
           {
 
             label: "联系人身份证",
+            sortable:true,
             prop: "contactIdCard",
             labelWidth: 130,
             maxlength: 18,
@@ -259,6 +265,7 @@ export default {
             label: "组织代码",
             prop: "organizationCode",
             hide: true,
+            sortable:true,
             maxlength: 18,
             labelWidth: 130,
             showWordLimit: true,
@@ -268,6 +275,7 @@ export default {
             prop: "dutyParagraph",
             labelWidth: 130,
             hide: true,
+            sortable:true,
             maxlength: 18,
             showWordLimit: true,
           },
@@ -276,6 +284,7 @@ export default {
             prop: "socialUniformCreditCode",
             labelWidth: 130,
             maxlength: 18,
+            sortable:true,
             showWordLimit: true,
             rules: [
               {
@@ -295,6 +304,7 @@ export default {
             prop: "registeredAddress",
             labelWidth: 130,
             hide: true,
+            sortable:true,
             /*rules: [{
               validator: validateContacts,
               trigger: "blur"
@@ -304,6 +314,7 @@ export default {
             label: "生产或仓库地址",
             labelWidth: 130,
             hide: true,
+            sortable:true,
             prop: "productionOrWarehouseAddress",
             /* rules: [{
                validator: validateContacts,
@@ -372,6 +383,7 @@ export default {
                 label: "供应商证件照名称",
                 prop: "nameOfCertificatePhoto",
                 labelWidth: 130,
+                sortable:true,
                 /*rules: [{
                   validator: validateContacts,
                   trigger: "blur"
@@ -381,6 +393,7 @@ export default {
                   label: "经营范围",
                   prop: "natureOfBusiness",
                   hide: true,
+                  sortable:true,
                   labelWidth: 130,
                   row: true,
                   type: 'tree',
@@ -394,6 +407,7 @@ export default {
                 {
                   label: "发证日期",
                   prop: "dateOfIssue",
+                  sortable:true,
                   labelWidth: 130,
                   type: "date",
                   format: "yyyy-MM-dd",
