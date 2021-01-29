@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/wh-check/check/page',
+    url: '/api/business_repertory_detail/checkdetail/list',
     method: 'get',
     params: {
       ...params,
@@ -12,10 +12,9 @@ export const getList = (current, size, params) => {
   })
 }
 
-
 export const getDetail = (id) => {
   return request({
-    url: '/api/wh-check/check/detail',
+    url: '/api/business_repertory_detail/checkdetail/detail',
     method: 'get',
     params: {
       id
@@ -25,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/wh-check/check/remove',
+    url: '/api/business_repertory_detail/checkdetail/remove',
     method: 'post',
     params: {
       ids,
@@ -35,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/wh-check/check/submit',
+    url: '/api/business_repertory_detail/checkdetail/submit',
     method: 'post',
     data: row
   })
@@ -43,25 +42,9 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/wh-check/check/submit',
+    url: '/api/business_repertory_detail/checkdetail/submit',
     method: 'post',
     data: row
-  })
-}
-export const selectCheck = (id) => {
-  return request({
-    url: '/api/wh-check/check/selectCheck',
-    method: 'get',
-    params: {
-      id
-    }
-  })
-}
-export const checkData = () => {
-  return request({
-    url: '/api/wh-check/check/importInit',
-    method: 'post',
-
   })
 }
 

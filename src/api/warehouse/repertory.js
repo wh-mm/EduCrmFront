@@ -60,5 +60,10 @@ export const deleteRepertory = (id) => {   //查询即将过期商品
     }
   })
 }
-
+export const selectWarningGoods = () => {  //查询预警库存
+  return request({
+    url: ERP_WMS_NAME + '/repertory/selectWarningGoods',
+    method: 'post',
+  })
+}
 

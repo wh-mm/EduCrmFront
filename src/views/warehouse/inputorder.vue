@@ -273,6 +273,8 @@
           height:'auto',
           calcHeight: 30,
           tip: false,
+          printBtn:true,
+          excelBtn:true,
           searchShow: true,
           editBtnText:'入库复核',
           searchMenuSpan: 6,
@@ -789,7 +791,9 @@
           addBtn: this.vaildData(this.permission.outputorder_add, false),
           viewBtn: this.vaildData(this.permission.outputorder_view, false),
           delBtn: this.vaildData(this.permission.outputorder_delete, false),
-          editBtn: this.vaildData(this.permission.outputorder_edit, false)
+          editBtn: this.vaildData(this.permission.outputorder_edit, false),
+          printBtn: this.vaildData(this.permission.inputorder_print, false),
+          excelBtn: this.vaildData(this.permission.inputorder_excel,false),
         };
       },
       ids() {

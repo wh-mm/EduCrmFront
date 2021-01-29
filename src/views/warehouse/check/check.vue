@@ -11,7 +11,6 @@
                @row-update="rowUpdate"
                @row-save="rowSave"
                @row-del="rowDel"
-               @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
                @current-change="currentChange"
@@ -26,6 +25,11 @@
                    plain
                    v-if="permission.check_delete"
                    :open="handleDelete">删 除
+        </el-button>
+        <el-button type="danger"
+                   size="small"
+                   plain
+                   @click="opencheckDialog()">创建盘点单
         </el-button>
       </template>
 
@@ -50,16 +54,48 @@
         {{scope.row.realRepertoryQuantity - scope.row.repertoryQuantity }}
       </template>
 
-
-
     </avue-crud>
+    <el-dialog title="开启盘点"
+               append-to-body
+               :visible.sync="checkDialog"
+               width="1600px">
+      <avue-crud ref="crud" :option="option0"  v-loadmore="handelLoadmore"  :data="filteredData"   @row-save="rowSave"
+                 @row-del="rowDel"  @search-change="searchChange" :data-size="tableData.length" >
+
+        <template slot="menuLeft">
+          <el-button @click="open()">按钮</el-button>
+        </template>
+
+
+
+        <template slot="realRepertoryQuantity" slot-scope="scope">
+          <el-input-number :disabled="datas" size="mini" v-model="scope.row.realRepertoryQuantity" ></el-input-number>
+        </template>
+
+        <template slot="profitAndLoss" slot-scope="scope">
+          {{scope.row.realRepertoryQuantity - scope.row.repertoryQuantity }}
+        </template>
+
+
+      </avue-crud>
+    </el-dialog>
+
+    <el-dialog title="盘点模板导入"
+               append-to-body
+               :visible.sync="infoDialog"
+               width="555px"
+    >
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="importCheckData">
+      </avue-form>
+      <el-button @click="a">赋值</el-button>
+    </el-dialog>
 
   </basic-container>
 
 
 </template>
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/warehouse/check/check";
+  import {getList,getDetail, add, update, remove,checkData} from "@/api/warehouse/check/check";
   import {dropDown,lock} from "@/api/warehouse/warehouse";
   import {saveCheckHistory} from "@/api/warehouse/check/checkhistory";
   import {mapGetters} from "vuex";
@@ -68,6 +104,7 @@
     data() {
       return {
         datas:false,
+        tableData: [],
         checkStatus:0,
         warehouseDetail:[
           {
@@ -83,8 +120,9 @@
         warehouseForm: {},
         query: {},
         checkDialog:false,
+        infoDialog:false,
         lockDialog:false,
-
+        data1: {},
         loading: true,
         page: {
           pageSize: 10,
@@ -107,6 +145,7 @@
             {
               label: "仓库",
               prop: "warehouseId",
+              cell: true,
               search :true,
               sortable:true,
               type:'select',
@@ -123,9 +162,15 @@
               dicUrl:'/api/erp-wms/warehouse/tree'
             },
             {
+              label:'商品编码',
+              prop:'goodsCode'
+            },
+            {
               label: "商品",
               prop: "goodsId",
+              type:'select',
               sortable:true,
+              cell: true,
               rules: [{
                 required: true,
                 message: "请输入商品id",
@@ -139,25 +184,161 @@
               dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
+              label:'单位',
+              prop:'unit'
+            },
+            {
+              label:'规格',
+              prop:'specification'
+            },
+            {
+              label:'生产商',
+              prop:'manufacturer'
+            },
+            {
+              label:'包装规格',
+              prop:'packageSpecification'
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              cell: true,
+            },
+            {
               label: "库存总量",
               prop: "repertoryQuantity",
               sortable:true,
             },
             {
-              label: "实际库存总量",
+              label: "实际数量",
               prop: "realRepertoryQuantity",
               slot:true,
               cell: true,
             },
             {
-              label: "盈亏数量",
+              label: "差值",
               prop: "profitAndLoss",
               slot:true,
             },
 
           ]
         },
-        data: []
+        option0: {
+          height:'auto',
+          calcHeight: 30,
+          tip: false,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: true,
+          selection: true,
+          rowKey:"goodsCode",
+          dialogClickModal: false,
+          column: [
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              cell: true,
+              sortable:true,
+              type:'select',
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              rules: [{
+                required: true,
+
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label:'商品编码',
+              prop:'goodsCode'
+            },
+            {
+              label: "商品",
+              prop: "goodsId",
+              type:'select',
+              sortable:true,
+              cell: true,
+              rules: [{
+                required: true,
+                message: "请输入商品id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod:"post",
+              dicUrl: 'api/erp-wms/goods/selecListGoods',
+            },
+            {
+              label:'单位',
+              prop:'unit'
+            },
+            {
+              label:'规格',
+              prop:'specification'
+            },
+            {
+              label:'生产商',
+              prop:'manufacturer'
+            },
+            {
+              label:'包装规格',
+              prop:'packageSpecification'
+            },
+            {
+              label: "批号",
+              prop: "batchNumber",
+              cell: true,
+            },
+            {
+              label: "库存总量",
+              prop: "repertoryQuantity",
+              sortable:true,
+            },
+            {
+              label: "实际数量",
+              prop: "realRepertoryQuantity",
+              slot:true,
+              cell: true,
+            },
+            {
+              label: "差值",
+              prop: "profitAndLoss",
+              slot:true,
+            },
+
+          ]
+        },
+
+        data: [],
+        dataNew: [],
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              // propsHttp: {
+              //   res: 'data'
+              // },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: "/api/wh-check/check/importInit"
+            }
+          ]
+        },
       };
     },
     computed: {
@@ -176,9 +357,79 @@
           ids.push(ele.id);
         });
         return ids.join(",");
+      },
+      filteredData() {
+        let list = this.tableData.filter((item, index) => {
+          if (index < this.currentStartIndex) {
+            return false;
+          } else if (index > this.currentEndIndex) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+        return list
+      }
+    },
+    directives:{
+      loadmore:{
+        componentUpdated: function (el, binding, vnode, oldVnode) {
+          // 设置默认溢出显示数量
+          var spillDataNum = 20;
+
+          // 设置隐藏函数
+          var timeout = false;
+          let setRowDisableNone = function (topNum, showRowNum, binding) {
+            if (timeout) {
+              clearTimeout(timeout);
+            }
+            timeout = setTimeout(() => {
+              binding.value.call(null, topNum, topNum + showRowNum + spillDataNum);
+            });
+          };
+          setTimeout(() => {
+            const dataSize = vnode.data.attrs['data-size'];
+            const oldDataSize = oldVnode.data.attrs['data-size'];
+            if (dataSize === oldDataSize) return;
+            const selectWrap = el.querySelector('.el-table__body-wrapper');
+            const selectTbody = selectWrap.querySelector('table tbody');
+            const selectRow = selectWrap.querySelector('table tr');
+            if (!selectRow) {
+              return;
+            }
+            const rowHeight = selectRow.clientHeight;
+            let showRowNum = Math.round(selectWrap.clientHeight / rowHeight);
+
+            const createElementTR = document.createElement('tr');
+            let createElementTRHeight = (dataSize - showRowNum - spillDataNum) * rowHeight;
+            createElementTR.setAttribute('style', `height: ${createElementTRHeight}px;`);
+            selectTbody.append(createElementTR);
+
+            // 监听滚动后事件
+            selectWrap.addEventListener('scroll', function () {
+              let topPx = this.scrollTop - spillDataNum * rowHeight;
+              let topNum = Math.round(topPx / rowHeight);
+              let minTopNum = dataSize - spillDataNum - showRowNum;
+              if (topNum > minTopNum) {
+                topNum = minTopNum;
+              }
+              if (topNum < 0) {
+                topNum = 0;
+                topPx = 0;
+              }
+              selectTbody.setAttribute('style', `transform: translateY(${topPx}px)`);
+              createElementTR.setAttribute('style', `height: ${createElementTRHeight - topPx > 0 ? createElementTRHeight - topPx : 0}px;`);
+              setRowDisableNone(topNum, showRowNum, binding);
+            })
+          });
+        }
       }
     },
     methods: {
+      handelLoadmore(currentStartIndex, currentEndIndex) {
+        this.currentStartIndex = currentStartIndex;
+        this.currentEndIndex = currentEndIndex;
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -337,7 +588,23 @@
       updateCheckStatus(row) {
         row.checkStatus=0;
       },
+      opencheckDialog() {
+        this.checkDialog=true;
+      },
+      open() {
+        this.infoDialog=true;
+      },
+      importCheckData(res,done){
+        console.log( res);
+        this.data1 = res;
+        done();
 
+      },
+      a(){
+        //this.dataNew = this.excelForm;
+        console.log( this.data1);
+        this.tableData = this.data1.data;
+      }
     }
   };
 </script>

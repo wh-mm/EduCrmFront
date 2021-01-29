@@ -36,6 +36,13 @@
                    v-if="permission.repertory_export"
                    @click="handleExport">导出
         </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   v-if="permission.repertory_export"
+                   @click="handleCheckExportDialog">导出盘点模板
+        </el-button>
       </template>
       <template slot="warningQuantity" slot-scope="scope">
         <el-input-number size="mini" v-model="scope.row.warningQuantity"></el-input-number>
@@ -58,6 +65,19 @@
                :visible.sync="excelBox"
                width="555px">
       <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+      </avue-form>
+    </el-dialog>
+
+    <el-dialog title="盘点模板导出"
+               append-to-body
+               :visible.sync="checkDialog"
+               width="555px">
+      <avue-form :option="excelCheckOption" v-model="excelCheckForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleCheckExport">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
       </avue-form>
     </el-dialog>
 
@@ -98,6 +118,7 @@
         obj:{},
         title: '' ,
         dialogVisible:false,
+        checkDialog:false,
         dialogOne:false,
         dialogAll:false,
         selectionList: [],
@@ -241,8 +262,13 @@
               sortable:true,
             },
             {
-              label: "规格",
-              prop: "specification",
+              label: "规格等级",
+              prop: "specificationLevel",
+              sortable:true,
+            },
+            {
+              label: "备注",
+              prop: "remark",
               sortable:true,
             },
             {
@@ -301,6 +327,39 @@
               tip: '请上传 .xls,.xlsx 标准格式文件',
               action: this.ERP_WMS_NAME + "/repertory/import"
             },
+          ]
+        },
+        excelCheckForm: {},
+        excelCheckOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+            {
+              label: "仓库",
+              prop: "warehouseId",
+              type:'tree',
+              row: true,
+              search:true,
+              sortable:true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['storageRegionId','storageId'],
+              rules: [{
+                required: true,
+                message: "请输入仓库",
+                trigger: "blur"
+              }],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
           ]
         },
 
@@ -448,6 +507,18 @@
           type: "warning"
         }).then(() => {
           window.open( this.ERP_WMS_NAME + `/repertory/export?${this.website.tokenHeader}=${getToken()}`);
+        });
+      },
+      handleCheckExportDialog(){
+        this.checkDialog = true;
+      },
+      handleCheckExport() {
+        this.$confirm("是否导出盘点库存数据模板?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( this.ERP_WMS_NAME + `/repertory/exportCheck?${this.website.tokenHeader}=${getToken()}&warehouseId=${this.excelCheckForm.warehouseId}`);
         });
       },
 

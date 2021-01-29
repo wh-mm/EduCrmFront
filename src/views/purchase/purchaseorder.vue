@@ -19,6 +19,7 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot-scope="scope"  slot="menuLeft">
+<el-button type="primary" size="small" @click="openWarningGoods()">查看预警商品</el-button>
       </template>
 
       <template slot-scope="{row}" slot="totalPriceForm">
@@ -82,13 +83,39 @@
       <avue-crud v-model="form" :data="reasondata" :option="reasondataoption"  >
       </avue-crud>
     </el-dialog>
+    <el-dialog
+      title="阈值商品"
+      :visible.sync="dialogFormVisible"
+      width="80%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form"
+                 v-model="inputdetail"
+                 :option="option0"
+                 @row-update="rowUpdate"
+                 @change="selectWarningGoods">
 
+        <template slot="text">
+          <el-table
+            size="medium"
+            :fit="true"
+            :data="warningData" style="width: 100%;margin-left: 160px">
+            <el-table-column prop="warehouseName" label="仓库" width="200"></el-table-column>
+            <el-table-column prop="goodsName" label="商品" width="200"></el-table-column>
+            <el-table-column prop="repertoryQuantity" width="200" label="现有库存数量"></el-table-column>
+            <el-table-column prop="warningQuantity" width="200" label="库存预警数量"></el-table-column>
+          </el-table>
+        </template>
+
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
   import {getList, add, getDetail, update, remove, updateStatus,viewCommodity,viewReason} from "@/api/purchase/purchaseorder";
   import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {selectWarningGoods} from "@/api/warehouse/repertory";
   import {mapGetters} from "vuex";
   import '@/views/purchase/dialogdrag.ts'
   export default {
@@ -115,6 +142,7 @@
         title: '' ,
         dialogVisible:false,
         commoditydialogVisible:false,
+        dialogFormVisible:false,
         reasonialogVisible:false,
         selectionList: [],
         option: {
@@ -375,6 +403,34 @@
               }
             },
           ]
+        },
+        warningData:[],
+        option0: {
+          height: 'auto',
+          calcHeight: 30,
+          tabs: true,
+          searchShow: true,
+          searchMenuSpan: 6,
+          border: true,
+          index: true,
+          viewBtn: true,
+          selection: true,
+          addRowBtn:true,
+          cellBtn:true,
+          dialogClickModal: false,
+          group:[
+            {
+              label: '预警商品',
+              icon: 'van-icon-like-o',
+              column: [
+                {
+                  prop: 'text',
+                  formslot:true,
+                },
+              ]
+            }
+          ]
+
         },
         data: [],
         commoditydata:[],
@@ -917,6 +973,17 @@
       handleEdit (row, index) {
         this.$refs.crud.rowEdit(row, index);
       },
+      selectWarningGoods() {
+        this.loading = true;
+        selectWarningGoods().then(res => {
+          this.warningData = res.data.data;
+          this.loading = false;
+          this.selectionClear();
+        });
+      },
+      openWarningGoods(){
+        this.dialogFormVisible=true;
+      }
     }
   };
 </script>
