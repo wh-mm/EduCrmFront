@@ -19,12 +19,12 @@
 <!--        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>-->
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
-         </el-button>-->
+         </el-button> -->
       </template>
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-
+        <el-button type="text" icon="el-icon-view" size="small" @click="openDialog(scope.row)">审 批 </el-button>
         <!--处方中心打印功能-->
 <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
@@ -42,7 +42,21 @@
         </el-button>
       </template>
     </avue-crud>
-
+    <!--弹窗-->
+    <el-dialog
+      title="审批"
+      :visible.sync="dialogUpadate"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj0" :option="option0">
+      </avue-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="updateStatusNew(101)">驳 回</el-button>
+            <el-button @click="updateStatusNew(104)">撤 销</el-button>
+            <el-button type="primary" @click="updateStatusNew(2)">同 意</el-button>
+         </span>
+    </el-dialog>
 
 
     <!-- 新增饮片 -->
@@ -461,6 +475,7 @@ export default {
       viewKeDialogVisible: false,
       viewYinDialogVisible: false,
       dialogFormVisible: false,
+      dialogUpadate:false,
       time: '',
       printJianYaoData: [
         {
@@ -692,7 +707,20 @@ export default {
           },
         ]
       },
-      data: []
+      data: [],
+      obj0: {
+        rejectText: ''
+      },
+      option0: {
+        emptyBtn: false,
+        submitBtn: false,
+        column: [{
+          label: "驳回理由",
+          prop: "rejectText",
+          type: 'textarea',
+          span: 24,
+        }]
+      },
     };
   },
   watch: {
@@ -747,7 +775,6 @@ export default {
     refreshChange() {
       this.onLoad(this.page, this.query);
     },
-
     //取消
     rejectYin() {
       this.addYinDialogVisible = false;
@@ -762,6 +789,10 @@ export default {
       this.addKeDialogVisible = true;
     },
 
+    //审批
+    updateRevocation() {
+      this.dialogFormVisible = true;
+    },
 
     //清空选择
     toggleSelection() {
@@ -859,7 +890,9 @@ export default {
         })
       }
     },
-
+    newshenfang(){
+      this.addYinDialogVisible = true;
+    },
 
     //抓药
     prescription() {
@@ -893,7 +926,9 @@ export default {
         this.selectionClear();
       });
     },
-
+    openDialog(){
+      this.dialogUpadate = true;
+    },
     //查看
     lockInfo(row) {
       let url = '';
