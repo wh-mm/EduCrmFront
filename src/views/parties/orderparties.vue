@@ -34,8 +34,26 @@
                    v-if="permission.orderparties_export"
                    @click="handleExport">导出
         </el-button>
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   @click="handleImport">导 入
+        </el-button>
       </template>
     </avue-crud>
+    <el-dialog title="协定方导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
@@ -189,6 +207,10 @@ export default {
               },
               rowDel: (row, done) => {
                 if (row.id==""||row.id==null){
+                  this.$message({
+                    type: "success",
+                    message: "操作成功!"
+                  });
                 }else{
                   zremove(row.id);
                   this.$message({
@@ -313,6 +335,13 @@ export default {
         window.open(`/api/parties/orderparties/export-orderParties?${this.website.tokenHeader}=${getToken()}`);
       });
     },
+    uploadAfter(res, done, loading, column) {
+      window.console.log(column);
+      console.log(res);
+      this.excelBox = false;
+      this.refreshChange();
+      done();
+    },
     handleDelete() {
       if (this.selectionList.length === 0) {
         this.$message.warning("请选择至少一条数据");
@@ -342,6 +371,13 @@ export default {
         });
       }
       done();
+    },
+
+    handleTemplate() {
+      window.open(this.ERP_WMS_NAME + `/goods/export-template?${this.website.tokenHeader}=${getToken()}`);
+    },
+    handleImport() {
+      this.excelBox = true;
     },
     searchReset() {
       this.query = {};
