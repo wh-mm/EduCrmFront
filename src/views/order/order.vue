@@ -856,11 +856,12 @@ export default {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
+          this.refreshChange();
+          this.obj0.auditorText = "";
         } else {
           this.$message.error(res.data.msg);
         }
-        this.refreshChange();
-        this.onLoad(this.page);
+
       })
     },
     //打印

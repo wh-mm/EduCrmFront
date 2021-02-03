@@ -820,14 +820,23 @@ export default {
           cancelButtonText: "取消",
           type: "warning",
         })
+          .then(() => {
+            return remove(this.ids);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+            this.$refs.crud.toggleSelection();
+          });
         if (res.data.success) {
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
         }
-
       })
-
     },
 
     //打印
