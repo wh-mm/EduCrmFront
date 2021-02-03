@@ -75,6 +75,7 @@ export default {
             sortable:true,
             type: "select",
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请选择医院名称",
@@ -92,6 +93,7 @@ export default {
             sortable:true,
             prop: "partiesName",
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请输入协定方名称",
@@ -105,6 +107,7 @@ export default {
             prop: "partiesCategory",
             type: 'tree',
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请选择协定方类型",
@@ -122,6 +125,7 @@ export default {
             sortable:true,
             prop: "therapeuticPrinciples",
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请输入功能/治疗原则",
@@ -134,6 +138,7 @@ export default {
             prop: "indications",
             sortable:true,
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请输入主治",
@@ -223,12 +228,12 @@ export default {
                   dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}'
                 },
                 {
-                  label: "药品规格(克/g)",
+                  label: "数量(克/g)",
                   prop: "drugSpecs",
                   sortable:true,
                   rules: [{
                     required: true,
-                    message: "请输入药品规格",
+                    message: "请输入数量规格",
                     trigger: "blur"
                   }]
                 },

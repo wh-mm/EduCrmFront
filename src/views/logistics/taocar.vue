@@ -52,6 +52,7 @@
           height: 'auto',
           calcHeight: 30,
           tip: false,
+          excelBtn:true,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,

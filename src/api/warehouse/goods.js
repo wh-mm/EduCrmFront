@@ -88,6 +88,26 @@ export const dropDowns = (name) => {
   })
 }
 
+export const likeListKL = (name) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/likeListKL',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
+
+export const likeListYP = (name) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/likeListYP',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
+
 export const  selectListGoodsByName = (name) => {
   return request({
     url: ERP_WMS_NAME + '/goods/selectListGoodsByName',

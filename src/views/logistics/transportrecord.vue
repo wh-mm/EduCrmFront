@@ -55,6 +55,7 @@
           searchMenuSpan: 6,
           border: true,
           index: true,
+          excelBtn:true,
           viewBtn: true,
           selection: true,
           dialogClickModal: false,

@@ -67,6 +67,7 @@
               label: "医院名称",
               prop: "hospitalId",
               type: "tree",
+
               cascaderItem:['excelFile'],
               props: {
                 label: "hospitalName",
@@ -148,6 +149,7 @@
               prop: "hospitalId",
               type: "tree",
               sortable:true,
+              searchLabelWidth: 130,
               props: {
                 label: "hospitalName",
                 value: "id"
@@ -166,6 +168,7 @@
               label: "库房药名称",
               prop: "goodsId",
               type: "select",
+              searchLabelWidth: 130,
               sortable:true,
               hide: true,
               viewDisplay: true,
@@ -182,6 +185,7 @@
               label: "HIS药品码",
               prop: "hisDrugsUmber",
               sortable:true,
+              searchLabelWidth: 130,
               rules: [{
                 required: true,
                 message: "HIS药品码",
@@ -193,6 +197,7 @@
               label: "HIS药品名称",
               prop: "hisDrugsName",
               sortable:true,
+              searchLabelWidth: 130,
               rules: [{
                 required: true,
                 message: "HIS药品名称",
@@ -256,7 +261,6 @@
       handleImport() {
         this.excelBox = true;
       },
-      //导入
       uploadAfter(res, done, loading, column) {
         window.console.log(column);
         this.excelBox = false;

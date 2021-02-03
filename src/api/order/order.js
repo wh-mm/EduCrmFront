@@ -37,6 +37,19 @@ export const getListjr = (current, size, params) => {
   })
 };
 
+
+export const getListHs = (current, size, params) => {
+  return request({
+    url: '/api/taocao-order/order/hspage',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+};
+
 //
 export const getListJianyao = (current, size, params) => {
   return request({
@@ -182,9 +195,32 @@ export const selectByOrderId = (orderId) => {
 
   })
 };
-export const updateOrderStatic = (orderId) => {
+export const updateOrderStatic = (orderId,zt) => {
   return request({
     url: '/api/taocao-order/order/updateOrderStatic',
+    params: {
+      orderId,
+      zt
+    }
+
+  })
+};
+
+export const updateOrderStaticBh = (orderId,zt,auditorText) => {
+  return request({
+    url: '/api/taocao-order/order/updateOrderStaticBh',
+    params: {
+      orderId,
+      zt,
+      auditorText
+    }
+
+  })
+};
+
+export const updateOrderStaticH = (orderId) => {
+  return request({
+    url: '/api/taocao-order/order/updateOrderStaticH',
     params: {
       orderId
     }
@@ -192,4 +228,14 @@ export const updateOrderStatic = (orderId) => {
   })
 };
 
+export const updateApply = (id, status) => {
+  return request({
+    url: '/api/taocao-order/order/updateApply',
+    method: 'post',
+    params:{
+      id,
+      status
+    }
+  })
+}
 

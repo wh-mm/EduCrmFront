@@ -56,10 +56,20 @@
         <el-button icon="el-icon-check"
                    :size="scope.size"
                    :type="scope.type"
-
                    @click.stop="handleTimeline (scope.row.id)">审 批 查 看
         </el-button>
       </template>
+
+      <template slot="useState" slot-scope="scope">
+        <div style="color: green" v-if="scope.row.useState=='1'?true:false">正常使用</div>
+        <div style="color: red" v-else>已过期</div>
+      </template>
+
+<!--      <template slot="stateExamine" slot-scope="scope">
+        <div style="color: green" v-if="scope.row.stateExamine=='1'&'51'&'11'&'21'&'31'&'31'"></div>
+        <div style="color: red"  v-else="scope.row.stateExamine=='52' & '12'& '22'& '32'& '42' "></div>
+      </template>-->
+
     </avue-crud>
     <el-dialog
       title="审批"
@@ -102,6 +112,7 @@
         </el-timeline>
       </div>
     </el-dialog>
+
   </basic-container>
 </template>
 
@@ -335,6 +346,7 @@ export default {
             label: "审核状态",
             prop: "stateExamine",
             type: 'select',
+            //slot: true,
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
@@ -349,6 +361,7 @@ export default {
             label: "使用状态",
             prop: "useState",
             type: 'select',
+            slot: true,
             addDisplay: false,
             editDisplay: false,
             viewDisplay: false,
@@ -475,6 +488,11 @@ export default {
         delBtn: false,
         editBtn: false,
       };
+    },
+    cellStyle({row, columnIndex}){
+      if (columnIndex === 1 || columnIndex ===11){
+        let prpo = columnIndex === 1 ? "stateExamine" : ""
+      }
     },
     ids() {
       let ids = [];

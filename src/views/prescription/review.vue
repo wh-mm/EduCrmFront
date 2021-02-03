@@ -62,6 +62,7 @@
             {
               label: "审核方名字",
               prop: "prescriptionName",
+              labelWidth: 110,
               rules: [{
                 required: true,
                 message: "请输入审核方名字",
@@ -80,10 +81,18 @@
               multiple:true,
         /*      dicMethod:'post',*/
               dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
+              prop: "drugsIds",
+              labelWidth: 110,
+              rules: [{
+                required: true,
+                message: "请输入药品ID",
+                trigger: "blur"
+              }]
             },
             {
               label: "备注",
               prop: "remarks",
+              labelWidth: 110,
               rules: [{
                 required: true,
                 message: "请输入备注",

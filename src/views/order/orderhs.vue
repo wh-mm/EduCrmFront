@@ -16,39 +16,57 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
+        <el-button type="danger"
+                   size="small"
+                   icon="el-icon-delete"
+                   plain
+                   v-if="permission.order_delete"
+                   @click="handleDelete">删 除
+        </el-button>
+<!--
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
+-->
+
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
+<!--修改-->
       </template>
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
+        <el-button type="text" icon="el-icon-refresh-left" size="small"  v-if="scope.row.orderStatic==6"
+                   @click="updateOrderStaticH(scope.row)">还 原</el-button>
+
+
         <!--处方中心打印功能-->
-
-        <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
-                   @click="openDialog(scope.row)">审 方
-        </el-button>
-
+<!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                   v-if="scope.row.orderStatic==1"
+                   @click.stop="updateOrderStatic(scope.row)">审 方
+        </el-button>-->
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
         <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
-        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+<!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic!=1 &&scope.row.orderStatic!=2"
                    @click="dayin(scope.row)">补 打
-        </el-button>
+        </el-button>-->
       </template>
 
       <template slot="orderDifferentiation" slot-scope="scope">
-        <div style="color:#f391a9" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
+        <div style="color: #2a5caa " font-weight="900" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
         <div style="color: #009ad6" v-else>医院下单</div>
       </template>
 
+      <template slot="orderType" slot-scope="scope">
+        <div style="color: #1d1626" v-if="scope.row.orderType =='tiaopei'?true:false">颗粒</div>
+        <div style="color: #ef5b9c" v-else>饮片</div>
+      </template>
     </avue-crud>
-
 
 
     <!-- 新增饮片 -->
@@ -57,27 +75,18 @@
       <addYinPian @reject="rejectYin" ></addYinPian>
     </el-dialog>
 
-
+    <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <addKeLi @reject="rejectKe" ></addKeLi>
+    </el-dialog>
 
     <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewYinPian :orderInfo="orderInfo"></viewYinPian>
     </el-dialog>
-
-    <!--弹窗-->
-    <el-dialog
-      title="审批"
-      :visible.sync="dialogUpadate"
-      width="30%"
-      :modal="false"
-      :before-close="handleClose">
-      <avue-form ref="form" v-model="obj0" :option="option0">
-        <div> 十八反</div>
-      </avue-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
-        <el-button type="primary" @click="updateOrderStatic(2)">同 意</el-button>
-         </span>
+    <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <viewKeLi :orderInfo="orderInfo"></viewKeLi>
     </el-dialog>
 
     <el-form :model="form">
@@ -273,6 +282,156 @@
 
     </el-form>
 
+    <el-form :model="form">
+      <div style="display: none" id="printkeli" ref="printkeli">
+        <!-- 隐藏打印区域，避免用户看到 -->
+        <div style="padding: 1px;height: 100px;width: 100%">
+          <div class="kelihead" style="width: 100%">
+            <el-row>
+              <el-col :span="5" :offset="9">
+                <div class="grid-content bg-purple">
+                  <h1 margin="auto" style="text-align: center;margin-top: 10px;font-size: 50px">调配单</h1></div>
+              </el-col>
+              <el-col :span="5" :offset="1">
+                <div class="grid-content bg-purple-light">
+                  <svg id="bigcode2" style="padding: 1px;"></svg>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="10" :offset="3">
+                <div class="grid-content bg-purple"><p style="font-size: 15px">
+                  接方时间：<span>{{ printData.createTime }}</span></p></div>
+              </el-col>
+              <el-col :span="8" :offset="3">
+                <div class="grid-content bg-purple-light"><p style="font-size: 15px">
+                  打印时间：<span>{{ time }}</span></p></div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+          <div class="kelishou" style="width: 100%">
+
+            <el-row :gutter="5" style="">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  医院名称：<span>{{ printData.hospitalName }}</span></p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  姓名：<span>{{ printData.name }}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  性别：<span>{{ printData.sex == 1 ? '男' : '女' }}</span></p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple" style="margin-bottom: 0px"><p style="font-size: 15px;margin: 0px;">
+                  年龄：<span>{{ printData.age }}</span></p></div>
+              </el-col>
+            </el-row>
+            <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  处方号：<span>{{ printData.presId }}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  处方名称：<span>{{ printData.presName }}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  处方付数：<span>{{ printData.quantity == 1 ? '贴数' : '剂数' }}</span>
+                </p></div>
+              </el-col>
+              <el-col :span="4" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">
+                  分服次数：<span>{{ printData.separateFrequency }}</span>
+                </p></div>
+              </el-col>
+            </el-row>
+            <el-row :gutter="5" style="margin-top: 0;margin-bottom:0">
+              <el-col :span="6" :offset="1">
+                <div class="grid-content bg-purple"><p style="font-size: 15px;margin: 0px;">快递类型：<span>厂内配送</span></p>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <div class="kelifooter" style="width: 100%">
+
+            <el-table
+              :data="printDrugData"
+              :row-style="{height: '1'}"
+              :cell-style="{padding: '0'}"
+              style="border-color: #000000;border-top: 1px solid">
+              <el-table-column
+                label="序号"
+                type="index"
+                width="122"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="shelf_number"
+                label="货位号"
+                width="125"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="drug_name"
+                label="药品名称"
+                width="250"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="dose_herb"
+                label="饮片剂量"
+                width="250"
+                align="center"
+              >
+              </el-table-column>
+
+              <el-table-column
+                prop="equivalent"
+                label="当量"
+                width="247"
+                align="center">
+              </el-table-column>
+            </el-table>
+
+            <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
+            <el-col :span="3" :offset="1">
+              <div class="grid-content bg-purple"><p style="font-size: 15px">接方员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">调配员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">浸泡员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">煎煮员：<span></span></p></div>
+            </el-col>
+            <el-col :span="2" :offset="3">
+              <div class="grid-content bg-purple-light"><p style="font-size: 15px">包装员：<span></span></p></div>
+            </el-col>
+          </div>
+
+
+        </div>
+      </div>
+    </el-form>
 
   </basic-container>
 </template>
@@ -280,20 +439,26 @@
 <script>
 import {
   getInfo,
-  getListJianyao,
   selectByOrderId,
-  updateOrderStatic, updateOrderStaticBh
+  updateOrderStaticH,
+  getListHs,
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
 
 import addYinPian from "./add/addYinPian";
+import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
+import viewKeLi from "./view/viewKeLi";
+import {remove} from "@/api/quality/customer";
+
 
 export default {
   components:{
     addYinPian,
+    addKeLi,
     viewYinPian,
+    viewKeLi
   },
   filters: {
     rounding(value) {
@@ -317,11 +482,12 @@ export default {
   },
   data() {
     return {
-      id:'',
       addYinDialogVisible: false,
+      addKeDialogVisible: false,
+      viewKeDialogVisible: false,
       viewYinDialogVisible: false,
       dialogFormVisible: false,
-      dialogUpadate: false,
+      dialogUpadate:false,
       time: '',
       printJianYaoData: [
         {
@@ -417,14 +583,14 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
-        height: "auto",
         excelBtn:true,
         printBtn:true,
+        border:true,
+        height: "auto",
         calcHeight: 30,
         tip: false,
         searchShow: true,
         searchMenuSpan: 6,
-        border: true,
         index: true,
         viewBtn: false,
         selection: true,
@@ -432,8 +598,8 @@ export default {
         column: [
           {
             label: "订单id",
-            sortable:true,
             prop: "id",
+            sortable:true,
             search: true,
           },
           {
@@ -455,7 +621,7 @@ export default {
               label: 'dictValue',
               value: 'dictKey'
             },
-            search: true,
+            //search: true,
             required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
             trigger: "blur"
@@ -465,10 +631,12 @@ export default {
             label: "订单类型",
             prop: "orderType",
             type: "select",
+            slot: true,
             props: {
               label: 'dictValue',
               value: 'dictKey'
             },
+            search: true,
             required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
             trigger: "blur"
@@ -482,8 +650,8 @@ export default {
               label: 'dictValue',
               value: 'dictKey'
             },
-            required: true,
             search: true,
+            required: true,
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_differentiation",
             trigger: "blur"
           },
@@ -552,26 +720,14 @@ export default {
               trigger: "blur"
             }]
           },
+          {
+            label: "驳回原因",
+            prop: "auditorText",
+            type:"text",
+          },
         ]
       },
       data: [],
-      obj0: {
-        auditorText: ''
-      },
-      option0: {
-        emptyBtn: false,
-        submitBtn: false,
-        column: [
-
-          {
-            label: "驳回理由",
-            prop: "auditorText",
-            type: 'textarea',
-            span: 20,
-          },
-
-        ]
-      },
     };
   },
   watch: {
@@ -630,19 +786,15 @@ export default {
     //取消
     rejectYin() {
       this.addYinDialogVisible = false;
-      this.refreshChange();
     },
     rejectKe() {
       this.addKeDialogVisible = false;
-      this.refreshChange();
     },
     newAddYin(){
       this.addYinDialogVisible = true;
-      this.refreshChange();
     },
     newAddKe(){
       this.addKeDialogVisible = true;
-      this.refreshChange();
     },
 
 
@@ -656,6 +808,27 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
 
+    openDialog(){
+      this.dialogUpadate = true;
+    },
+    //修改接单状态  //1 未接单  //2 已接单
+    updateOrderStaticH(row) {
+
+      updateOrderStaticH(row.id).then(res => {
+        this.$confirm("确定将数据还原?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+        if (res.data.success) {
+          this.$message.success(res.data.msg);
+        } else {
+          this.$message.error(res.data.msg);
+        }
+
+      })
+
+    },
 
     //打印
     dayin(row) {
@@ -755,7 +928,7 @@ export default {
         this.query.releaseTimeRange = null;
       }
       this.loading = true;
-      getListJianyao(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+      getListHs(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
         const data = res.data.data;
         this.page.total = data.total;
         this.data = data.records;
@@ -763,39 +936,27 @@ export default {
         this.selectionClear();
       });
     },
-
-    openDialog(row) {
-      this.dialogUpadate = true;
-      this.Id= row.id;
-    },
-    //修改接单状态  //1 未接单  //2 已接单
-    updateOrderStatic(zt) {
-      console.log(zt)
-      updateOrderStatic(this.Id,zt).then(res => {
-        if (res.data.success) {
-          this.$message.success(res.data.msg);
-          this.dialogUpadate = false;
-        } else {
-          this.$message.error(res.data.msg);
-        }
-        this.refreshChange();
-        this.onLoad(this.page);
-      })
-    },
-    updateOrderStaticBh(zt) {
-      if (zt === 6 && this.obj0.auditorText === '') {
-        return this.$message.error("请输入驳回理由!");
+    handleDelete(){
+      if (this.selectionList.length === 0) {
+        this.$message.warning("请选择至少一条数据");
+        return;
       }
-      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
-        if (res.data.success) {
-          this.$message.success(res.data.msg);
-          this.dialogUpadate = false;
-        } else {
-          this.$message.error(res.data.msg);
-        }
-        this.refreshChange();
-        this.onLoad(this.page);
+      this.$confirm("确定将选择数据删除?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
+        .then(() => {
+          return remove(this.ids);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.$refs.crud.toggleSelection();
+        });
     },
     //查看
     lockInfo(row) {

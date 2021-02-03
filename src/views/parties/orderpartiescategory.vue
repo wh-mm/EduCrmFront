@@ -27,6 +27,12 @@
                    plain
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="warning"
+                   size="small"
+                   plain
+                   icon="el-icon-download"
+                   @click="handleExport">导出
+        </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button
@@ -50,6 +56,7 @@
 <script>
 import {getLazyList, remove, update, add, getDetail,getpartiesTree} from "@/api/parties/orderpartiescategory";
 import {mapGetters} from "vuex";
+import {getToken} from "@/util/auth";
 
 export default {
   data() {
@@ -290,6 +297,15 @@ export default {
         this.data = res.data.data;
         this.loading = false;
         this.selectionClear();
+      });
+    },
+    handleExport() {
+      this.$confirm("是否导出协定方信息?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        window.open(`/api/parties/orderpartiescategory/export?${this.website.tokenHeader}=${getToken()}`);
       });
     },
     treeLoad(tree, treeNode, resolve) {
