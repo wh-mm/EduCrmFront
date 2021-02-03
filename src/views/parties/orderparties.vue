@@ -259,7 +259,34 @@ export default {
           },
         ]
       },
-      data: []
+      data: [],
+      excelBox: false,
+      excelForm: {},
+      excelOption: {
+        submitBtn: false,
+        emptyBtn: false,
+        column: [
+          {
+            label: '模板上传',
+            prop: 'excelFile',
+            type: 'upload',
+            drag: true,
+            loadText: '模板上传中，请稍等',
+            span: 24,
+            propsHttp: {
+              res: 'data'
+            },
+            tip: '请上传 .xls,.xlsx 标准格式文件',
+            action: "api/parties/orderparties/import-OrderParties"
+          },
+          {
+            label: '模板下载',
+            prop: 'excelTemplate',
+            formslot: true,
+            span: 24,
+          }
+        ]
+      },
     };
   },
   computed: {
