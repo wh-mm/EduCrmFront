@@ -16,17 +16,13 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-<!--        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>-->
-        <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
-         </el-button> -->
       </template>
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
         <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
-                   @click="openDialog(scope.row)">审 方
+                   @click="openDialog(scope.row.id)">审 方
         </el-button>
         <!--处方中心打印功能-->
 <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
@@ -64,12 +60,12 @@
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj0" :option="option0">
-        <div> 十八反</div>
       </avue-form>
+      <span>11111111111111111111</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
         <el-button type="primary" @click="updateOrderStatic(2)">同 意</el-button>
-         </span>
+      </span>
     </el-dialog>
 
     <!-- 新增饮片 -->
@@ -124,7 +120,6 @@
           </div>
 
           <hr align="center" width="100%" size="1px" length="10" color="black"/>
-
           <div class="yinpianshou" style="width: 100%">
 
             <el-row :gutter="5" style="">
@@ -190,8 +185,6 @@
               </el-col>
             </el-row>
           </div>
-
-
           <div class="yinpianfooter" style="width: 100%">
             <el-table
               :data="printJianYaoDrugData"
@@ -278,13 +271,10 @@
             </el-col>
 
           </div>
-
-
         </div>
       </div>
 
     </el-form>
-
     <el-form :model="form">
       <div style="display: none" id="printkeli" ref="printkeli">
         <!-- 隐藏打印区域，避免用户看到 -->
@@ -454,6 +444,7 @@ import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
 
+import {shenfang} from "@/api/prescription/review";
 export default {
   components:{
     addYinPian,
@@ -519,7 +510,6 @@ export default {
           drugweight: '',//药品总量
           description: '',//药品说明
           shelf_number: '',//货位号
-
         }
       ],
       printData: [
@@ -569,7 +559,6 @@ export default {
 
         }
       ],
-
       orderInfo: {
         form: {},
         drugList: []
@@ -822,9 +811,20 @@ export default {
     sendHttp() {
       this.$alert("业务暂未对接", {},)
     },
-    openDialog(row) {
+    openDialog(rowID){
+
+
+      shenfang(rowID).then(() => {
+        this.$message({
+          type: "success",
+          message: "操作成功!"
+        });
+      }, error => {
+        window.console.log(error);
+      });
+
       this.dialogUpadate = true;
-      this.Id= row.id;
+      this.Id= rowID;
     },
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStatic(zt) {
@@ -964,6 +964,14 @@ export default {
         this.selectionClear();
       });
     },
+    //审方
+/*    openDialog(ids){
+      console.log(ids);
+      console.log(ids);
+      console.log(ids);
+
+      this.dialogUpadate = true;
+    },*/
     //查看
     lockInfo(row) {
       let url = '';

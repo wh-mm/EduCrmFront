@@ -48,3 +48,12 @@ export const update = (row) => {
   })
 }
 
+export const shenfang = (ids) => {
+  return request({
+    url: '/api/taocao-prescription/review/shenfang',
+    method: 'post',
+    params: {
+      ids,
+    }
+  })
+}

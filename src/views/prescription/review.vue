@@ -72,14 +72,15 @@
             {
               label: "药品ID",
               prop: "drugsIdsArray",
-              type: 'tree',
+              type: 'select',
               filterText:'搜索关键字制自定义',
               props: {
                 label: 'goodsName',
                 value: 'id'
               },
               multiple:true,
-       //       dicMethod:post,
+              remote: true,
+//              search: true,
               dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
             },
             {
