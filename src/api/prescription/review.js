@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-prescription/review/submit',
+    url: '/api/taocao-prescription/review/submitNew',
     method: 'post',
     data: row
   })
@@ -42,7 +42,7 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-prescription/review/submit',
+    url: '/api/taocao-prescription/review/submitNew',
     method: 'post',
     data: row
   })
