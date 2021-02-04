@@ -24,7 +24,10 @@
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-        <el-button type="text" icon="el-icon-view" size="small" @click="openDialog(scope.row)">审 批 </el-button>
+
+        <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
+                   @click="openDialog(scope.row)">审 方
+        </el-button>
         <!--处方中心打印功能-->
 <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
@@ -53,7 +56,7 @@
       </template>
 
     </avue-crud>
-    <!--弹窗-->
+
     <el-dialog
       title="审批"
       :visible.sync="dialogUpadate"
@@ -61,14 +64,13 @@
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj0" :option="option0">
+        <div> 十八反</div>
       </avue-form>
       <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="updateStatusNew(101)">驳 回</el-button>
-            <el-button @click="updateStatusNew(104)">撤 销</el-button>
-            <el-button type="primary" @click="updateStatusNew(2)">同 意</el-button>
+        <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
+        <el-button type="primary" @click="updateOrderStatic(2)">同 意</el-button>
          </span>
     </el-dialog>
-
 
     <!-- 新增饮片 -->
     <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
@@ -442,7 +444,7 @@ import {
   getInfo,
   getListjr,
   selectByOrderId,
-  updateOrderStatic
+  updateOrderStatic, updateOrderStaticBh
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
@@ -481,6 +483,7 @@ export default {
   },
   data() {
     return {
+      id:'',
       addYinDialogVisible: false,
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
@@ -722,17 +725,20 @@ export default {
       },
       data: [],
       obj0: {
-        rejectText: ''
+        auditorText: ''
       },
       option0: {
         emptyBtn: false,
         submitBtn: false,
-        column: [{
-          label: "驳回理由",
-          prop: "rejectText",
-          type: 'textarea',
-          span: 24,
-        }]
+        column: [
+
+          {
+            label: "驳回理由",
+            prop: "auditorText",
+            type: 'textarea',
+            span: 20,
+          },
+        ]
       },
     };
   },
@@ -816,21 +822,40 @@ export default {
     sendHttp() {
       this.$alert("业务暂未对接", {},)
     },
-
+    openDialog(row) {
+      this.dialogUpadate = true;
+      this.Id= row.id;
+    },
     //修改接单状态  //1 未接单  //2 已接单
-    updateOrderStatic(row) {
-      updateOrderStatic(row.id).then(res => {
+    updateOrderStatic(zt) {
+      console.log(zt)
+      updateOrderStatic(this.Id,zt).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
+          this.dialogUpadate = false;
         } else {
           this.$message.error(res.data.msg);
         }
         this.refreshChange();
         this.onLoad(this.page);
       })
-
     },
+    updateOrderStaticBh(zt) {
+      if (zt === 6 && this.obj0.auditorText === '') {
+        return this.$message.error("请输入驳回理由!");
+      }
+      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
+        if (res.data.success) {
+          this.$message.success(res.data.msg);
+          this.dialogUpadate = false;
+          this.refreshChange();
+          this.obj0.auditorText = "";
+        } else {
+          this.$message.error(res.data.msg);
+        }
 
+      })
+    },
     //打印
     dayin(row) {
       let yy = new Date().getFullYear();
@@ -938,9 +963,6 @@ export default {
         this.loading = false;
         this.selectionClear();
       });
-    },
-    openDialog(){
-      this.dialogUpadate = true;
     },
     //查看
     lockInfo(row) {

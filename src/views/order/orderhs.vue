@@ -23,38 +23,39 @@
                    v-if="permission.order_delete"
                    @click="handleDelete">删 除
         </el-button>
-<!--
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
--->
+        <!--
+                <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
+                <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
+        -->
 
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
-<!--修改-->
+        <!--修改-->
       </template>
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
-        <el-button type="text" icon="el-icon-refresh-left" size="small"  v-if="scope.row.orderStatic==6"
-                   @click="updateOrderStaticH(scope.row)">还 原</el-button>
+        <el-button type="text" icon="el-icon-refresh-left" size="small" v-if="scope.row.orderStatic==6"
+                   @click="updateOrderStaticH(scope.row)">还 原
+        </el-button>
 
 
         <!--处方中心打印功能-->
-<!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
-                   v-if="scope.row.orderStatic==1"
-                   @click.stop="updateOrderStatic(scope.row)">审 方
-        </el-button>-->
+        <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                           v-if="scope.row.orderStatic==1"
+                           @click.stop="updateOrderStatic(scope.row)">审 方
+                </el-button>-->
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
         <!--        <el-button type="text" @click="dialogFormVisible = true">查看打印格式</el-button>-->
         <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==2"
                    @click="dayin(scope.row)">打 印 调 配 单
         </el-button>
-<!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
-                   v-if="scope.row.orderStatic!=1 &&scope.row.orderStatic!=2"
-                   @click="dayin(scope.row)">补 打
-        </el-button>-->
+        <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
+                           v-if="scope.row.orderStatic!=1 &&scope.row.orderStatic!=2"
+                           @click="dayin(scope.row)">补 打
+                </el-button>-->
       </template>
 
       <template slot="orderDifferentiation" slot-scope="scope">
@@ -72,12 +73,12 @@
     <!-- 新增饮片 -->
     <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addYinPian @reject="rejectYin" ></addYinPian>
+      <addYinPian @reject="rejectYin"></addYinPian>
     </el-dialog>
 
     <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addKeLi @reject="rejectKe" ></addKeLi>
+      <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
 
     <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
@@ -454,7 +455,7 @@ import {remove} from "@/api/quality/customer";
 
 
 export default {
-  components:{
+  components: {
     addYinPian,
     addKeLi,
     viewYinPian,
@@ -487,7 +488,7 @@ export default {
       viewKeDialogVisible: false,
       viewYinDialogVisible: false,
       dialogFormVisible: false,
-      dialogUpadate:false,
+      dialogUpadate: false,
       time: '',
       printJianYaoData: [
         {
@@ -583,9 +584,9 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
-        excelBtn:true,
-        printBtn:true,
-        border:true,
+        excelBtn: true,
+        printBtn: true,
+        border: true,
         height: "auto",
         calcHeight: 30,
         tip: false,
@@ -599,7 +600,7 @@ export default {
           {
             label: "订单id",
             prop: "id",
-            sortable:true,
+            sortable: true,
             search: true,
           },
           {
@@ -723,7 +724,7 @@ export default {
           {
             label: "驳回原因",
             prop: "auditorText",
-            type:"text",
+            type: "text",
           },
         ]
       },
@@ -790,10 +791,10 @@ export default {
     rejectKe() {
       this.addKeDialogVisible = false;
     },
-    newAddYin(){
+    newAddYin() {
       this.addYinDialogVisible = true;
     },
-    newAddKe(){
+    newAddKe() {
       this.addKeDialogVisible = true;
     },
 
@@ -808,37 +809,29 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
 
-    openDialog(){
+    openDialog() {
       this.dialogUpadate = true;
     },
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStaticH(row) {
 
-      updateOrderStaticH(row.id).then(res => {
-        this.$confirm("确定将数据还原?", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-          .then(() => {
-            return remove(this.ids);
-          })
-          .then(() => {
-            this.onLoad(this.page);
-            this.$message({
-              type: "success",
-              message: "操作成功!"
-            });
-            this.$refs.crud.toggleSelection();
-          });
-        if (res.data.success) {
-          this.$message.success(res.data.msg);
-        } else {
-          this.$message.error(res.data.msg);
-        }
+      this.$confirm("确定将数据还原?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
-    },
+        .then(() => {
+          return updateOrderStaticH(row.id);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "还原成功！"
+          });
+        });
 
+    },
     //打印
     dayin(row) {
       let yy = new Date().getFullYear();
@@ -945,7 +938,7 @@ export default {
         this.selectionClear();
       });
     },
-    handleDelete(){
+    handleDelete() {
       if (this.selectionList.length === 0) {
         this.$message.warning("请选择至少一条数据");
         return;
@@ -984,9 +977,9 @@ export default {
       getInfo(url, row.id).then(res => {
         this.orderInfo = res.data.data;
         if (row.orderType === "jianyao") {
-          this.viewYinDialogVisible=true;
+          this.viewYinDialogVisible = true;
         } else if (row.orderType === "tiaopei") {
-          this.viewKeDialogVisible=true;
+          this.viewKeDialogVisible = true;
         } else {
           this.$message({
             type: 'error',

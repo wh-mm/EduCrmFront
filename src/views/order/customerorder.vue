@@ -21,6 +21,8 @@
       <!--修改-->
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
+
+        <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">编 辑</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
       </template>
 
@@ -247,7 +249,7 @@ export default {
         addBtn: this.vaildData(this.permission.order_add, false),
         viewBtn: this.vaildData(this.permission.order_view, false),
         delBtn: false,
-        editBtn: false
+        editBtn: this.vaildData(this.permission.order_edit,false)
       };
     },
     ids() {
@@ -340,6 +342,8 @@ export default {
         this.selectionClear();
       });
     },
+    //修改
+
 
     //查看
     lockInfo(row) {
