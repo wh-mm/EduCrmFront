@@ -34,8 +34,26 @@
                    v-if="permission.orderparties_export"
                    @click="handleExport">导出
         </el-button>
+        <el-button type="success"
+                   size="small"
+                   plain
+                   icon="el-icon-upload2"
+                   @click="handleImport">导 入
+        </el-button>
       </template>
     </avue-crud>
+    <el-dialog title="协定方导入"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
@@ -75,6 +93,7 @@ export default {
             sortable:true,
             type: "select",
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请选择医院名称",
@@ -92,6 +111,7 @@ export default {
             sortable:true,
             prop: "partiesName",
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请输入协定方名称",
@@ -105,6 +125,7 @@ export default {
             prop: "partiesCategory",
             type: 'tree',
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请选择协定方类型",
@@ -122,6 +143,7 @@ export default {
             sortable:true,
             prop: "therapeuticPrinciples",
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请输入功能/治疗原则",
@@ -134,6 +156,7 @@ export default {
             prop: "indications",
             sortable:true,
             labelWidth: 130,
+            searchLabelWidth: 130,
             rules: [{
               required: true,
               message: "请输入主治",
@@ -189,6 +212,10 @@ export default {
               },
               rowDel: (row, done) => {
                 if (row.id==""||row.id==null){
+                  this.$message({
+                    type: "success",
+                    message: "操作成功!"
+                  });
                 }else{
                   zremove(row.id);
                   this.$message({
@@ -223,12 +250,12 @@ export default {
                   dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}'
                 },
                 {
-                  label: "药品规格(克/g)",
+                  label: "数量(克/g)",
                   prop: "drugSpecs",
                   sortable:true,
                   rules: [{
                     required: true,
-                    message: "请输入药品规格",
+                    message: "请输入数量规格",
                     trigger: "blur"
                   }]
                 },
@@ -237,7 +264,34 @@ export default {
           },
         ]
       },
-      data: []
+      data: [],
+      excelBox: false,
+      excelForm: {},
+      excelOption: {
+        submitBtn: false,
+        emptyBtn: false,
+        column: [
+          {
+            label: '模板上传',
+            prop: 'excelFile',
+            type: 'upload',
+            drag: true,
+            loadText: '模板上传中，请稍等',
+            span: 24,
+            propsHttp: {
+              res: 'data'
+            },
+            tip: '请上传 .xls,.xlsx 标准格式文件',
+            action: "api/parties/orderparties/import-OrderParties"
+          },
+          {
+            label: '模板下载',
+            prop: 'excelTemplate',
+            formslot: true,
+            span: 24,
+          }
+        ]
+      },
     };
   },
   computed: {
@@ -313,6 +367,13 @@ export default {
         window.open(`/api/parties/orderparties/export-orderParties?${this.website.tokenHeader}=${getToken()}`);
       });
     },
+    uploadAfter(res, done, loading, column) {
+      window.console.log(column);
+      console.log(res);
+      this.excelBox = false;
+      this.refreshChange();
+      done();
+    },
     handleDelete() {
       if (this.selectionList.length === 0) {
         this.$message.warning("请选择至少一条数据");
@@ -342,6 +403,13 @@ export default {
         });
       }
       done();
+    },
+
+    handleTemplate() {
+      window.open(this.ERP_WMS_NAME + `/goods/export-template?${this.website.tokenHeader}=${getToken()}`);
+    },
+    handleImport() {
+      this.excelBox = true;
     },
     searchReset() {
       this.query = {};

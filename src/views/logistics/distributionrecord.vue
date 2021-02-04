@@ -48,6 +48,7 @@
           searchMenuSpan: 6,
           border: true,
           index: false,
+          excelBtn:true,
           menu: false,
           viewBtn: false,
           selection: true,
@@ -138,6 +139,8 @@
               label: "患者手机号",
               prop: "addresseePhone",
               width: 180,
+              search: true,
+              searchLabelWidth: 130,
             },
             {
               label: "备注",

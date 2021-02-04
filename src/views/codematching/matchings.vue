@@ -148,6 +148,7 @@
               prop: "hospitalId",
               type: "tree",
               sortable:true,
+              searchLabelWidth: 130,
               props: {
                 label: "hospitalName",
                 value: "id"
@@ -166,6 +167,7 @@
               label: "库房药名称",
               prop: "goodsId",
               sortable:true,
+              searchLabelWidth: 130,
               type: "select",
               hide: true,
               viewDisplay: true,
@@ -180,6 +182,7 @@
             {
               label: "HIS药品码",
               prop: "hisDrugsUmber",
+              searchLabelWidth: 130,
               sortable:true,
               rules: [{
                 required: true,
@@ -191,6 +194,7 @@
             {
               label: "HIS药品名称",
               prop: "hisDrugsName",
+              searchLabelWidth: 130,
               sortable:true,
               rules: [{
                 required: true,

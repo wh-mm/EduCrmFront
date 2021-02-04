@@ -21,7 +21,19 @@
       <!--修改-->
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
+
+        <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">编 辑</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
+      </template>
+
+      <template slot="orderDifferentiation" slot-scope="scope">
+        <div style="color:#f391a9" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
+        <div style="color: #009ad6" v-else>医院下单</div>
+      </template>
+
+      <template slot="orderType" slot-scope="scope">
+        <div style="color: #1d1626" v-if="scope.row.orderType =='tiaopei'?true:false">颗粒</div>
+        <div style="color: #ef5b9c" v-else>饮片</div>
       </template>
     </avue-crud>
 
@@ -133,6 +145,7 @@ export default {
             label: "订单类型",
             prop: "orderType",
             type: "select",
+            slot: true,
             props: {
               label: 'dictValue',
               value: 'dictKey'
@@ -146,6 +159,7 @@ export default {
             label: "订单区分",
             prop: "orderDifferentiation",
             type: "select",
+            slot: true,
             props: {
               label: 'dictValue',
               value: 'dictKey'
@@ -235,7 +249,7 @@ export default {
         addBtn: this.vaildData(this.permission.order_add, false),
         viewBtn: this.vaildData(this.permission.order_view, false),
         delBtn: false,
-        editBtn: false
+        editBtn: this.vaildData(this.permission.order_edit,false)
       };
     },
     ids() {
@@ -278,15 +292,19 @@ export default {
     //取消
     rejectYin() {
       this.addYinDialogVisible = false;
+      this.refreshChange();
     },
     rejectKe() {
       this.addKeDialogVisible = false;
+      this.refreshChange();
     },
     newAddYin(){
       this.addYinDialogVisible = true;
+      this.refreshChange();
     },
     newAddKe(){
       this.addKeDialogVisible = true;
+      this.refreshChange();
     },
 
 
@@ -324,6 +342,8 @@ export default {
         this.selectionClear();
       });
     },
+    //修改
+
 
     //查看
     lockInfo(row) {

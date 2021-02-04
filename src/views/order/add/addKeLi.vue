@@ -2,6 +2,27 @@
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
+      <template slot="goodsName" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.goodsName"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入关键词"
+          :remote-method="remoteMethod"
+          @change="getPrice(scope.row.goodsName,scope.index)"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.goodsName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </template>
+
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
@@ -30,56 +51,63 @@ import {isInteger, isOneToNinetyNine, phonelength, zhongwen} from "@/const/order
 import {getGoodsDetail} from "@/api/warehouse/goods";
 import {receiveBlenderSave} from "@/api/order/order";
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
+import {likeListKL} from "@/api/warehouse/goods"
 
 export default {
   name: "addKeLi",
   data() {
     return {
       data: [],
+      options: [],
+      value: "",
+      list: [],
+      loading:false,
       option: {
         addBtn: false,
         editBtn: false,
         addRowBtn: true,
-        cellBtn: true,
         menuWidth: 250,
+        cellBtn:true,
         column: [
           {
             label: '*商品',
             prop: "goodsName",
-            type: 'tree',
-            width: 130,
-            filterable: true,
-            remote: true,
-            rules: [{
-              require: true,
-              message: '请选择商品',
-            }],
-            props: {
-              label: 'goodsName',
-              value: 'id'
-            },
-            dicUrl: '/api/erp-wms/goods/likeListKL',
-            change: ({value}) => {
-              if (value) {
-                getGoodsDetail(value).then(res => {
-                  for (let i = 0; i < this.data.length; i++) {
-                    if (this.data[i].goodsName === value) {
-                      this.data[i].unitPrice = res.data.data.goodsPrice;
-                    }
-                  }
-                });
-              }
-            },
+            slot: true,
+
+            // filterable: true,
+            // remote: true,
+            // type: 'select',
+            //
+            // rules: [{
+            //   require: true,
+            //   message: '请选择商品',
+            // }],
+            // props: {
+            //   label: 'goodsName',
+            //   value: 'id'
+            // },
+            // dicUrl: '/api/erp-wms/goods/likeListKL',
+            // change: ({value}) => {
+            //   if (value) {
+            //     getGoodsDetail(value).then(res => {
+            //       for (let i = 0; i < this.data.length; i++) {
+            //         if (this.data[i].goodsName === value) {
+            //           this.data[i].unitPrice = res.data.data.goodsPrice;
+            //           return;
+            //         }
+            //       }
+            //     });
+            //   }
+            // },
           },
           {
             label: "单剂量/g",
             prop: "doseHerb",
-            cell: true
+            cell:true,
           },
           {
             label: "单价",
             prop: "unitPrice",
-            disabled: true,
           },
         ]
       },
@@ -284,9 +312,9 @@ export default {
                   label: 'title',
                   value: 'id'
                 },
-                parent:false,
-                search: true,
-                cascaderItem: ['partiesName'],
+                //parent:false,
+                //search: true,
+                //cascaderItem: ['partiesName'],
                 dicUrl: "/api/parties/orderpartiescategory/tree",
               },
               {
@@ -298,8 +326,8 @@ export default {
                   label: 'partiesName',
                   value: 'id'
                 },
-                dicFlag: false,
-                dicUrl: '/api/parties/orderparties/selectByPrescriptionCategoryID?partiesCategory={{key}}',
+               // dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByName',
               },
             ]
           },
@@ -307,9 +335,41 @@ export default {
       },
     }
   },
+  created() {
+    this.optionsData();
+  },
+  mounted() {
+
+  },
   methods: {
+    optionsData(){
+      likeListKL().then(res =>{
+        this.options = res.data.data;
+      })
+    },
+    getPrice(val,index){
+      getGoodsDetail(val).then(res => {
+        console.log(res.data.data);
+        this.data[index].unitPrice = res.data.data.unitPrice;
+      });
+      console.log(this.data);
+    },
     addUpdate(form, index, done, loading) {
       done();
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        setTimeout(() => {
+          this.loading = false;
+          likeListKL(query).then(res =>{
+            this.options = res.data.data;
+          })
+        }, 200);
+      } else {
+        this.options = [];
+      }
     },
     //协定方
     addXdf() {
@@ -320,7 +380,6 @@ export default {
         getSelectListByDrug(leibieID).then(res => {
           let data = res.data.data;
           console.log(res)
-          console.log(data)
           for (let i = 0; i < data.length; i++) {
             this.$refs.crud.rowCellAdd({
               goodsName: data[i].goodsId,
@@ -343,7 +402,7 @@ export default {
     },
     addNextRow(index) {
       this.data.splice(index + 1, 0, {
-        $cellEdit: true
+        $cellEdit: true,
       })
     },
     addBreakRow(index) {

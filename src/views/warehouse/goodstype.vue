@@ -82,7 +82,7 @@
           tree: true,
           border: true,
           index: false,
-          selection: false,
+          selection: true,
           viewBtn: true,
           menuWidth: 300,
           dialogClickModal: false,

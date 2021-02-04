@@ -32,6 +32,12 @@
                    v-if="permission.commodity_button"
                    @click="openInspectorNew()">审 批
         </el-button>
+        <el-button v-if="permission.region_import"
+                   type="primary"
+                   size="small"
+                   @click="handleImport">导 入
+          <i class="el-icon-upload el-icon--right"></i>
+        </el-button>
       </template>
       <template slot-scope="scope" slot="menu">
         <el-button
@@ -98,6 +104,18 @@
         </el-timeline>
       </div>
     </el-dialog>
+    <el-dialog title="导入供应商商品"
+               append-to-body
+               :visible.sync="excelBox"
+               width="555px">
+      <avue-form :option="excelOption" v-model="excelForm" :upload-after="uploadAfter">
+        <template slot="excelTemplate">
+          <el-button type="primary" @click="handleTemplate">
+            点击下载<i class="el-icon-download el-icon--right"></i>
+          </el-button>
+        </template>
+      </avue-form>
+    </el-dialog>
   </basic-container>
 </template>
 
@@ -113,6 +131,7 @@
   } from "@/api/quality/commodity";
   import {timeLine} from "@/api/log/approvalrecord"
   import {mapGetters} from "vuex";
+  import {getToken} from "@/util/auth";
   export default {
     data() {
       return {
@@ -121,6 +140,77 @@
           radio2: 0,
           checkbox1: [0, 1],
           checkbox2: [0, 1]
+        },
+        excelBox: false,
+        excelForm: {},
+        excelOption: {
+          submitBtn: false,
+          emptyBtn: false,
+          column: [
+
+            {
+              label: "公司名称",
+              prop: "companyId",
+              searchLabelWidth: 130,
+              sortable:true,
+              type: 'tree',
+              rules: [{
+                required: true,
+                message: "请选择公司名称",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'supplierName',
+                value: 'id'
+              },
+              dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
+            },
+            {
+              label: '模板上传',
+              prop: 'excelFile',
+              type: 'upload',
+              drag: true,
+              loadText: '模板上传中，请稍等',
+              span: 24,
+              propsHttp: {
+                res: 'data'
+              },
+              tip: '请上传 .xls,.xlsx 标准格式文件',
+              action: "/api/quality/commodity/import-com"
+            },
+            {
+              label: "数据覆盖",
+              prop: "isCovered",
+              type: "switch",
+              align: "center",
+              width: 80,
+              dicData: [
+                {
+                  label: "否",
+                  value: 0
+                },
+                {
+                  label: "是",
+                  value: 1
+                }
+              ],
+              value: 0,
+              slot: true,
+              rules: [
+                {
+                  required: true,
+                  message: "请选择是否覆盖",
+                  trigger: "blur"
+                }
+              ]
+            },
+            {
+              label: '模板下载',
+              prop: 'excelTemplate',
+              formslot: true,
+              span: 24,
+            }
+          ]
         },
         form: {},
         query: {},
@@ -193,7 +283,7 @@
               label: "基本单位",
               prop: "basicUnit",
               labelWidth: 140,
-              type: 'tree',
+              //type: 'tree',
               hide: true,
               /*rules: [{
                 required: true,
@@ -205,8 +295,7 @@
                 value: 'dictKey'
               },
               required: true,
-
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=placeOfOrigin",
             },
             {
               label: "产地",
@@ -289,6 +378,7 @@
               label: "剂型",
               labelWidth: 140,
               prop: "dosageForm",
+              hide:true,
               type: 'tree',
              /* rules: [{
                 required: true,
@@ -317,6 +407,13 @@
               },
               search: true,
               dicUrl: "/api/erp-wms/goods-type/tree",
+            },
+            {
+              label: "创建时间",
+              prop: "createTime",
+              viewDisplay: false,
+              addDisplay: false,
+              editDisplay: false,
             },
             {
               label: "审批状态",
@@ -505,7 +602,7 @@
         handler(val) {
           var signTow = this.findObject(this.option.column, 'signTow')
           var signs = this.findObject(this.option.column, 'sign')
-          if (val == 1) {
+          if (val == "1") {
             signs.viewDisplay = true
             signTow.display = true
             // signTow.viewDisplay = true
@@ -565,11 +662,18 @@
           }
         },
       },
-      /*     //拆零时间
-           'form.scattered': {
-
-             immediate: true
-           },*/
+      'excelForm.companyId'() {
+        if (this.excelForm.companyId !== '') {
+          const column = this.findObject(this.excelOption.column, "excelFile");
+          column.action = `/api/quality/commodity/import-com?companyId=${this.excelForm.companyId}&isCovered=${this.excelForm.isCovered}`;
+        }
+      },
+      'excelForm.isCovered'() {
+        if (this.excelForm.isCovered !== '') {
+          const column = this.findObject(this.excelOption.column, "excelFile");
+          column.action = `/api/quality/commodity/import-com?companyId=${this.excelForm.companyId}&isCovered=${this.excelForm.isCovered}`;
+        }
+      }
     },
     computed: {
       ...mapGetters(["permission"]),
@@ -632,6 +736,22 @@
               message: "操作成功!"
             });
           });
+      },
+
+      handleTemplate() {
+        window.open(`/api/quality/commodity/export-coms?${this.website.tokenHeader}=${getToken()}`);
+      },
+
+      //导入
+      handleImport() {
+        this.excelBox = true;
+        this.refreshChange();
+        this.onLoad(this.page);
+      },
+      uploadAfter(res, done, loading, column) {
+        this.excelBox = false;
+        //this.initTree();
+        done();
       },
       //审批
       openInspectorNew() {
@@ -706,6 +826,7 @@
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
+
       },
       searchChange(params, done) {
         this.query = params;
@@ -736,6 +857,7 @@
           this.page.total = data.total;
           this.data = data.records;
           this.loading = false;
+
           this.selectionClear();
         });
       }

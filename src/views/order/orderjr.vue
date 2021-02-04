@@ -19,12 +19,15 @@
 <!--        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>-->
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
-         </el-button>-->
+         </el-button> -->
       </template>
 
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
+        <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
+                   @click="openDialog(scope.row)">审 方
+        </el-button>
         <!--处方中心打印功能-->
 <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                    v-if="scope.row.orderStatic==1"
@@ -41,9 +44,33 @@
                    @click="dayin(scope.row)">补 打
         </el-button>
       </template>
+
+      <template slot="orderDifferentiation" slot-scope="scope">
+        <div style="color:#f391a9" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
+        <div style="color: #009ad6" v-else>医院下单</div>
+      </template>
+
+      <template slot="orderType" slot-scope="scope">
+        <div style="color: #1d1626" v-if="scope.row.orderType =='tiaopei'?true:false">颗粒</div>
+        <div style="color: #ef5b9c" v-else>饮片</div>
+      </template>
+
     </avue-crud>
 
-
+    <el-dialog
+      title="审批"
+      :visible.sync="dialogUpadate"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="obj0" :option="option0">
+        <div> 十八反</div>
+      </avue-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
+        <el-button type="primary" @click="updateOrderStatic(2)">同 意</el-button>
+         </span>
+    </el-dialog>
 
     <!-- 新增饮片 -->
     <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
@@ -417,7 +444,7 @@ import {
   getInfo,
   getListjr,
   selectByOrderId,
-  updateOrderStatic
+  updateOrderStatic, updateOrderStaticBh
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
@@ -456,11 +483,13 @@ export default {
   },
   data() {
     return {
+      id:'',
       addYinDialogVisible: false,
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
       viewYinDialogVisible: false,
       dialogFormVisible: false,
+      dialogUpadate:false,
       time: '',
       printJianYaoData: [
         {
@@ -557,7 +586,7 @@ export default {
       option: {
         addBtn: false,
         excelBtn:true,
-        printBtn:true,
+        //printBtn:true,
         height: "auto",
         calcHeight: 30,
         tip: false,
@@ -604,6 +633,7 @@ export default {
             label: "订单类型",
             prop: "orderType",
             type: "select",
+            slot: true,
             props: {
               label: 'dictValue',
               value: 'dictKey'
@@ -617,6 +647,7 @@ export default {
             label: "订单区分",
             prop: "orderDifferentiation",
             type: "select",
+            slot: true,
             props: {
               label: 'dictValue',
               value: 'dictKey'
@@ -692,7 +723,23 @@ export default {
           },
         ]
       },
-      data: []
+      data: [],
+      obj0: {
+        auditorText: ''
+      },
+      option0: {
+        emptyBtn: false,
+        submitBtn: false,
+        column: [
+
+          {
+            label: "驳回理由",
+            prop: "auditorText",
+            type: 'textarea',
+            span: 20,
+          },
+        ]
+      },
     };
   },
   watch: {
@@ -747,7 +794,6 @@ export default {
     refreshChange() {
       this.onLoad(this.page, this.query);
     },
-
     //取消
     rejectYin() {
       this.addYinDialogVisible = false;
@@ -762,6 +808,10 @@ export default {
       this.addKeDialogVisible = true;
     },
 
+    //审批
+    updateRevocation() {
+      this.dialogFormVisible = true;
+    },
 
     //清空选择
     toggleSelection() {
@@ -772,21 +822,40 @@ export default {
     sendHttp() {
       this.$alert("业务暂未对接", {},)
     },
-
+    openDialog(row) {
+      this.dialogUpadate = true;
+      this.Id= row.id;
+    },
     //修改接单状态  //1 未接单  //2 已接单
-    updateOrderStatic(row) {
-      updateOrderStatic(row.id).then(res => {
+    updateOrderStatic(zt) {
+      console.log(zt)
+      updateOrderStatic(this.Id,zt).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
+          this.dialogUpadate = false;
         } else {
           this.$message.error(res.data.msg);
         }
         this.refreshChange();
         this.onLoad(this.page);
       })
-
     },
+    updateOrderStaticBh(zt) {
+      if (zt === 6 && this.obj0.auditorText === '') {
+        return this.$message.error("请输入驳回理由!");
+      }
+      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
+        if (res.data.success) {
+          this.$message.success(res.data.msg);
+          this.dialogUpadate = false;
+          this.refreshChange();
+          this.obj0.auditorText = "";
+        } else {
+          this.$message.error(res.data.msg);
+        }
 
+      })
+    },
     //打印
     dayin(row) {
       let yy = new Date().getFullYear();
@@ -859,7 +928,9 @@ export default {
         })
       }
     },
-
+    newshenfang(){
+      this.addYinDialogVisible = true;
+    },
 
     //抓药
     prescription() {
@@ -893,7 +964,6 @@ export default {
         this.selectionClear();
       });
     },
-
     //查看
     lockInfo(row) {
       let url = '';

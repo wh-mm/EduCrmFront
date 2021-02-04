@@ -170,6 +170,7 @@
           calcHeight: 30,
           tip: false,
           searchShow: true,
+          excelBtn:true,
           searchMenuSpan: 6,
           border: true,
           index: true,
@@ -180,6 +181,7 @@
             {
               label: "单号",
               prop: "orderNumber",
+              searchLabelWidth: 130,
               addDisplay: false,
               editDisplay: false,
               width: 180,
@@ -202,6 +204,7 @@
               label: "医院",
               prop: "hospitalId",
               type: "tree",
+              searchLabelWidth: 130,
               labelWidth: 130,
               rules: [{
                 required: true,
@@ -268,6 +271,7 @@
               label: "患者姓名",
               prop: "addresseeName",
               labelWidth: 130,
+              searchLabelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入患者姓名",
@@ -308,8 +312,10 @@
               label: "患者手机号",
               prop: "addresseePhone",
               labelWidth: 130,
+              searchLabelWidth: 130,
               maxlength:11,
               showWordLimit:true,
+              search: true,
               rules: [{
                 required: true,
                 validator:isInteger,

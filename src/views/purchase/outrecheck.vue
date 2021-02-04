@@ -900,7 +900,6 @@
         if (status === 101 && this.obj0.rejectText === '') {
           return this.$message.error("请输入驳回理由！");
         }
-
           updateStatus(this.ids, status,this.obj0.rejectText).then(res => {
             if (res.data.success) {
               this.dialogFormVisible = false;
@@ -912,7 +911,6 @@
               this.$message.error(res.data.msg);
             }
           })
-
       },
       //审批
       updateRevocation() {

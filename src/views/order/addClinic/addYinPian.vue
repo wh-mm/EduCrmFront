@@ -2,6 +2,30 @@
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate" @row-click="handleRowClick">
+
+      <template slot="goodsName" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.goodsName"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入关键词"
+          :remote-method="remoteMethod"
+          @change="getPrice(scope.row.goodsName,scope.index)"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.goodsName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </template>
+
+
+
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">增加协定方</el-button>
@@ -27,7 +51,7 @@
 <script>
 
 import {isOneToNinetyNine, phonelength, zhongwen} from "@/const/order/customerorder";
-import {getGoodsDetail} from "@/api/warehouse/goods";
+import {getGoodsDetail, likeListYP} from "@/api/warehouse/goods";
 import {clinicReceiveBlender, clinicReceiveDecoctingSave} from "@/api/order/order";
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
 
@@ -37,6 +61,10 @@ export default {
   data() {
     return {
       data: [],
+      options: [],
+      value: "",
+      list: [],
+      loading:false,
       option: {
         addBtn: false,
         editBtn: false,
@@ -46,9 +74,12 @@ export default {
           {
             label: '*药品',
             prop: "goodsName",
-            type: 'tree',
+            slot: true,
+          },
+           /* type: 'select',
             filterable: true,
             remote: true,
+            cell: true,
             rules: [{
               require: true,
               message: '请选择商品',
@@ -63,13 +94,13 @@ export default {
                 getGoodsDetail(value).then(res => {
                   for (let i = 0; i < this.data.length; i++) {
                     if (this.data[i].goodsName === value) {
-                      this.data[i].unitPrice = res.data.data.goodsPrice;
+                      this.data[i].unitPrice = res.data.data.unitPrice;
                     }
                   }
                 });
               }
             },
-          },
+          },*/
           {
             label: "单剂量",
             prop: "drugAllnum",
@@ -228,7 +259,7 @@ export default {
                 prop: "dose",
                 span: 6,
                 rules: [{
-                  //required: true,
+                  required: true,
                   //validator: isInteger,
                   trigger: "blur",
                 }],
@@ -239,7 +270,7 @@ export default {
                 span: 6,
                 row: true,
                 rules: [{
-                  //required: true,
+                  required: true,
                   //validator: isInteger,
                   trigger: "blur",
                 }],
@@ -421,8 +452,8 @@ export default {
                   label: 'title',
                   value: 'id'
                 },
-                search: true,
-                cascaderItem: ['partiesName'],
+                //search: true,
+               // cascaderItem: ['partiesName'],
                 dicUrl: "/api/parties/orderpartiescategory/tree",
               },
               {
@@ -434,8 +465,8 @@ export default {
                   label: 'partiesName',
                   value: 'id'
                 },
-                dicFlag: false,
-                dicUrl: '/api/parties/orderparties/selectByPrescriptionCategoryID?partiesCategory={{key}}',
+                //dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByName',
               },
             ],
           },
@@ -445,11 +476,42 @@ export default {
       },
     }
   },
+  created() {
+    this.optionsData();
+  },
+  mounted() {
 
+  },
 
   methods: {
+    optionsData(){
+      likeListYP().then(res =>{
+        this.options = res.data.data;
+      })
+    },
+    getPrice(val,index){
+      getGoodsDetail(val).then(res => {
+        console.log(res.data.data);
+        this.data[index].unitPrice = res.data.data.unitPrice;
+      });
+      console.log(this.data);
+    },
     addUpdate(form, index, done, loading) {
       done();
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        setTimeout(() => {
+          this.loading = false;
+          likeListYP(query).then(res =>{
+            this.options = res.data.data;
+          })
+        }, 200);
+      } else {
+        this.options = [];
+      }
     },
     addRow() {
       this.$message.success('正在添加，请稍后')
@@ -469,7 +531,6 @@ export default {
         getSelectListByDrug(leibieID).then(res => {
           let data = res.data.data;
           console.log(res)
-          console.log(data)
           for (let i = 0; i < data.length; i++) {
             this.$refs.crud.rowCellAdd({
               goodsName: data[i].goodsId,

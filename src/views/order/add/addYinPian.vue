@@ -2,6 +2,27 @@
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
+      <template slot="goodsName" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.goodsName"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入关键词"
+          :remote-method="remoteMethod"
+          @change="getPrice(scope.row.goodsName,scope.index)"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.goodsName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </template>
+
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
@@ -27,49 +48,32 @@
 <script>
 
 import {isOneToNinetyNine, phonelength, zhongwen, isInteger} from "@/const/order/customerorder";
-import {getGoodsDetail, selectListGoodsByName} from "@/api/warehouse/goods";
+import {getGoodsDetail, likeListKL, selectListGoodsByName} from "@/api/warehouse/goods";
 import {receiveDecoctingSave} from "@/api/order/order";
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
-
+import {likeListYP} from "@/api/warehouse/goods"
 
 export default {
   name: "addYinPian",
   data() {
     return {
       data: [],
+      options: [],
+      value: "",
+      list: [],
+      loading: false,
       option: {
         addBtn: false,
         editBtn: false,
         addRowBtn: true,
+        menuWidth: 250,
         cellBtn: true,
         column: [
           {
             label: '*药品',
             prop: "goodsName",
-            width: 130,
-            type: 'tree',
-            filterable: true,
-            remote: true,
-            rules: [{
-              require: true,
-              message: '请选择商品',
-            }],
-            props: {
-              label: 'goodsName',
-              value: 'id'
-            },
-            dicUrl: '/api/erp-wms/goods/likeListYP',
-            change: ({value}) => {
-              if (value) {
-                getGoodsDetail(value).then(res => {
-                  for (let i = 0; i < this.data.length; i++) {
-                    if (this.data[i].goodsName === value) {
-                      this.data[i].unitPrice = res.data.data.unitPrice;
-                    }
-                  }
-                });
-              }
-            },
+            //width: 130,
+            slot: true,
           },
           {
             label: "单剂量",
@@ -89,7 +93,6 @@ export default {
           {
             label: "单价",
             prop: "unitPrice",
-            disabled: true,
           },
         ]
       },
@@ -438,8 +441,8 @@ export default {
                   label: 'title',
                   value: 'id'
                 },
-                search: true,
-                cascaderItem: ['partiesName'],
+                //search: true,
+                //cascaderItem: ['partiesName'],
                 dicUrl: "/api/parties/orderpartiescategory/tree",
               },
               {
@@ -451,8 +454,8 @@ export default {
                   label: 'partiesName',
                   value: 'id'
                 },
-                dicFlag: false,
-                dicUrl: '/api/parties/orderparties/selectByPrescriptionCategoryID?partiesCategory={{key}}',
+                //dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByName',
               },
 
 
@@ -464,18 +467,47 @@ export default {
       },
     }
   },
-
-  created: function () {
-    selectListGoodsByName().then(res => {
-      this.goodsList = res.data.data;
-      console.log(this.goodsList)
-    })
+  created() {
+    this.optionsData();
   },
+  mounted() {
+  },
+  /* created: function () {
+     selectListGoodsByName().then(res => {
+       this.goodsList = res.data.data;
+       console.log(this.goodsList)
+     })
+   },*/
   methods: {
+    optionsData(){
+      likeListYP().then(res =>{
+        this.options = res.data.data;
+      })
+    },
+    getPrice(val,index){
+      getGoodsDetail(val).then(res => {
+        console.log(res.data.data);
+        this.data[index].unitPrice = res.data.data.unitPrice;
+      });
+      console.log(this.data);
+    },
     addUpdate(form, index, done, loading) {
       done();
     },
-
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        setTimeout(() => {
+          this.loading = false;
+          likeListYP(query).then(res =>{
+            this.options = res.data.data;
+          })
+        }, 200);
+      } else {
+        this.options = [];
+      }
+    },
     //协定方
     addXdf() {
       //获取值然后进行查询
@@ -485,7 +517,6 @@ export default {
         getSelectListByDrug(leibieID).then(res => {
           let data = res.data.data;
           console.log(res)
-          console.log(data)
           for (let i = 0; i < data.length; i++) {
             this.$refs.crud.rowCellAdd({
               goodsName: data[i].goodsId,

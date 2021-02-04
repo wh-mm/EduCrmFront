@@ -43,7 +43,8 @@
         option: {
           index: true,
           menu:false,
-
+          excelBtn:true,
+          addBtn:false,
           column: [
             {
               label: "医院名字",

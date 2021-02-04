@@ -116,6 +116,7 @@
           calcHeight: 30,
           tip: false,
           searchShow: true,
+          excelBtn:true,
           searchMenuSpan: 6,
           border: true,
           index: true,

@@ -19,21 +19,21 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-      <!--  <el-button type="primary"
+       <el-button type="primary"
                    size="small"
                    icon="el-icon-plus"
                    plain
                    @click="viewTransport()">发起运输单
-        </el-button>-->
+        </el-button>
 
       </template>
       <template slot-scope="{type,size,row}" slot="menu">
-        <el-button  :size="size"
+<!--        <el-button  :size="size"
                     :type="type"
                     icon="el-icon-check"
                     v-if="row.status === 1"
                     @click="updateById(row.id,row.id)">完成
-        </el-button>
+        </el-button>-->
 
         <el-button  :size="size"
                     :type="type"
@@ -224,6 +224,7 @@
           tip: false,
           searchShow: true,
           searchMenuSpan: 6,
+          excelBtn:true,
           border: true,
           index: true,
           viewBtn: true,
@@ -611,6 +612,16 @@
           this.refreshChange();
           this.onLoad(this.page);
         })
+      },
+      viewTransport() {
+        if(this.ids){
+          this.dialogVisible = true;
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择配送单'
+          });
+        }
       },
 
       submitTransport() {

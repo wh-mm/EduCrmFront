@@ -56,6 +56,7 @@
           border: true,
           index: true,
           viewBtn: true,
+          excelBtn:true,
           selection: true,
           dialogClickModal: false,
           column: [

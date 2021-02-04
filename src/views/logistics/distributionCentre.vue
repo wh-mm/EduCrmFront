@@ -178,6 +178,7 @@
           calcHeight: 30,
           tip: false,
           searchShow: true,
+          excelBtn:true,
           searchMenuSpan: 6,
           border: true,
           index: true,
@@ -192,6 +193,7 @@
               addDisplay: false,
               editDisplay: false,
               width: 180,
+              searchLabelWidth: 130,
               search: true,
             },
             {
@@ -208,6 +210,7 @@
               label: "医院名称",
               prop: "hospitalId",
               type: "select",
+              searchLabelWidth: 130,
               props: {
                 label: "hospitalName",
                 value: "id"
@@ -221,6 +224,7 @@
             {
               label: "患者姓名",
               prop: "addresseeName",
+              searchLabelWidth: 130,
               rules: [{
                 required: true,
                 message: "请输入收件人",
@@ -240,6 +244,8 @@
             {
               label: "患者手机号",
               prop: "addresseePhone",
+              searchLabelWidth: 130,
+              search: true,
               rules: [{
                 required: true,
                 message: "请输入收件人手机号",
