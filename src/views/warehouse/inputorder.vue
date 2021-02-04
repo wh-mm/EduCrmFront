@@ -392,7 +392,6 @@
                               if(vals.goodsId == value){
                                 vals.goodsCode = selectValue.goodsCode
                               }
-
                         });
                         });
 

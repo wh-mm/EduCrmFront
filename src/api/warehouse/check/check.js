@@ -40,6 +40,14 @@ export const add = (row) => {
     data: row
   })
 }
+export const saveCheckOrder = (checkDetailList) => {
+  return request({
+    url: '/api/wh-check/check/saveCheckOrder',
+    method: 'post',
+    data:checkDetailList
+
+  })
+}
 
 export const update = (row) => {
   return request({
@@ -57,11 +65,45 @@ export const selectCheck = (id) => {
     }
   })
 }
-export const checkData = () => {
+export const detailNew = (current, size, params) => {
   return request({
-    url: '/api/wh-check/check/importInit',
-    method: 'post',
-
+    url: '/api/wh-check/check/detailNew',
+    method: 'get',
+    params:{
+      ...params,
+      current,
+      size,
+    }
   })
 }
 
+export const updateFatherCheckStatus = (id,checkStatus,rejectText) => {
+  return request({
+    url: '/api/wh-check/check/updateFatherCheckStatus',
+    method: 'post',
+    params: {
+      id,
+      checkStatus,
+      rejectText
+    }
+  })
+}
+export const checkDetailInWarehouse = (id) => {
+  return request({
+    url: '/api/wh-check/check/checkDetailInWarehouse',
+    method: 'post',
+    params: {
+      id
+    }
+  })
+}
+export const updateRow = (id,realRepertoryQuantity) => {
+  return request({
+    url: '/api/wh-check/check/updateRow',
+    method: 'post',
+    params: {
+      id,
+      realRepertoryQuantity
+    }
+  })
+}

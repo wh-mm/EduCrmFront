@@ -19,15 +19,11 @@ export const saveDate = (row) => {
     data:row
   })
 }
-export const saveRepertoryWarning = (id,warningQuantity,cycleToRemind) => { //保存预警信息
+export const saveRepertoryWarning = (repertoryWarnList) => { //保存预警信息
   return request({
     url: ERP_WMS_NAME + '/repertory/saveRepertoryWarning',
-    method: 'get',
-    params: {
-      id,
-      warningQuantity,
-      cycleToRemind
-    }
+    method: 'post',
+    data:repertoryWarnList
   })
 }
 

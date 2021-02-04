@@ -44,16 +44,9 @@
                    @click="handleCheckExportDialog">导出盘点模板
         </el-button>
       </template>
-      <template slot="warningQuantity" slot-scope="scope">
-        <el-input-number size="mini" v-model="scope.row.warningQuantity"></el-input-number>
-      </template>
-      <template slot="cycleToRemind" slot-scope="scope">
-        <el-input-number size="mini" v-model="scope.row.cycleToRemind"></el-input-number>
-      </template>
+
 
     <template slot="menu" slot-scope="scope">
-      <el-button type="text" size="small" @click="saveRepertoryWarning(scope.row.id,scope.row.warningQuantity,scope.row.cycleToRemind)" >预警信息</el-button>
-
       <el-button type="text" size="small"  icon="el-icon-warning" @click="deleteRepertory(scope.row.id)">删除</el-button>
     </template>
 
@@ -97,7 +90,7 @@
 </template>
 
 <script>
-  import {getList,saveRepertoryWarning,deleteRepertory} from "@/api/warehouse/repertory";
+  import {getList,deleteRepertory} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
@@ -271,26 +264,7 @@
               prop: "remark",
               sortable:true,
             },
-            {
-              label: "距离有效期(天)",
-              prop: "expire",
-              sortable:true,
-            },
-            {
-              label: "预警数量(g)",
-              prop: "warningQuantity",
-              width: 150,
-              slot:true,
-              sortable:true,
 
-            },
-            {
-              label: "日期预警(天)",
-              prop: "cycleToRemind",
-              width: 150,
-              slot:true,
-              sortable:true,
-            },
             {
               label: "入库时间",
               prop: "createTime",
@@ -534,14 +508,7 @@
       handleTemplate() {
         window.open(this.ERP_WMS_NAME + `/repertory/export-template?${this.website.tokenHeader}=${getToken()}`);
       },
-      saveRepertoryWarning(id,warningQuantity,cycleToRemind) {
-        saveRepertoryWarning(id,warningQuantity,cycleToRemind).then(res =>{
-          this.$message({
-            type:'info',
-            message:res.data.msg
-          })
-        })
-      },
+
       deleteRepertory(id) {
         deleteRepertory(id).then(res =>{
           this.$message({
