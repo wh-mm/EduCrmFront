@@ -259,6 +259,8 @@
 
 <script>
   import {getList, getDetail, add, update, remove,printOutWarehouseDetail} from "@/api/warehouse/outwarehouseorder";
+  import {selctRepertoryWarnQuantity} from "@/api/warehouse/repertorywarn";
+
   import {mapGetters} from "vuex";
   import {getGoodsDetail} from "@/api/warehouse/goods";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
@@ -373,7 +375,7 @@
             },
             {
               label: '商品列表',
-              prop: 'outputOrderDetailList',
+              prop: 'outwarehouseOrderDetailList',
               type: 'dynamic',
               span:24,
               children: {
@@ -414,13 +416,28 @@
                     change: ({value}) => {
                       getGoodsDetail(value).then(res => {
                         var selectValue = res.data.data;
-                        this.form.outputOrderDetailList.forEach(vals => {
+                        this.form.outwarehouseOrderDetailList.forEach(vals => {
                           if(vals.goodsId == value){
                             vals.goodsCode = selectValue.goodsCode
+                            vals.basicUnit = selectValue.unit
+                            vals.specification = selectValue.specification
                           }
 
                         });
                       });
+                      // selctRepertoryWarnQuantity(value).then(res => {
+                      //   var selctRepertoryWarnQuantity = res.data.data;
+                      //   this.form.outwarehouseOrderDetailList.forEach(vals => {
+                      //   selctRepertoryWarnQuantity.forEach(ress=>{
+                      //     if(ress.sumQuantitys<vals.goodsQuantity){
+                      //       this.$message({
+                      //         type: "success",
+                      //         message: "库存数量太少了!"
+                      //       });
+                      //     }
+                      //   });
+                      // });
+                      //   });
                       selectExpireGoods(value).then(res=>{
                         let expireGoods = res.data.data;
                         this.expireGoodsHint(expireGoods);
@@ -444,22 +461,19 @@
                         selectByBatchNumber(null,vals.goodsId,vals.batchNumber).then(res => {
                           var detail = res.data.data;
                           detail.forEach(val =>{
-                            if (value==vals.batchNumber) {
                               vals.warehouseId = val.warehouseId;
                               vals.storageRegionId = val.storageRegionId;
                               vals.storageId = val.storageId;
                               vals.repertoryQuantity  = val.repertoryQuantity
                               vals.dateOfManufacture = val.dateOfManufacture
                               vals.periodOfValidity = val.periodOfValidity
-
                               vals.placeOfOrigin = val.placeOfOrigin
                               vals.manufacturer = val.manufacturer
                               vals.supplierName = val.supplierName
-
                               vals.packageSpecification = val.packageSpecification
 
 
-                            }
+
                           });
                         });
                         });

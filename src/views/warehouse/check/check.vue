@@ -11,6 +11,7 @@
                @row-update="rowUpdate"
                @row-save="rowSave"
                @row-del="rowDel"
+               @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
                @current-change="currentChange"
@@ -19,55 +20,91 @@
                @on-load="onLoad">
       <template slot="menuLeft">
 
-        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.check_delete"
-                   :open="handleDelete">删 除
-        </el-button>
+<!--        <el-button type="danger"-->
+<!--                   size="small"-->
+<!--                   icon="el-icon-delete"-->
+<!--                   plain-->
+<!--                   v-if="permission.check_delete"-->
+<!--                   :open="handleDelete">删 除-->
+<!--        </el-button>-->
         <el-button type="danger"
                    size="small"
                    plain
                    @click="opencheckDialog()">创建盘点单
         </el-button>
+        <el-button type="danger"
+                   size="small"
+                   plain
+                   @click="openUpdateDialog()">审批
+        </el-button>
       </template>
 
       <template slot="menu" slot-scope="scope">
-
-      <el-button type="text"
-                 size="small"
-                 @click="saveCheckHistory(scope.row)"
-                 v-if="scope.row.checkStatus==0"
-                >保存盘点记录</el-button>
+    <el-button
+        type="text"
+        size="small"
+        @click="detailNewss(scope.row)">
+    查看
+    </el-button>
+<!--      <el-button type="text"-->
+<!--                 size="small"-->
+<!--                 @click="saveCheckInWarehouse(scope.row)"-->
+<!--                 v-if="scope.row.checkStatus==101"-->
+<!--                >保存盘点记录</el-button>-->
         <el-button type="text"
                  size="small"
                  @click="updateCheckStatus(scope.row)"
                    v-if="scope.row.checkStatus==1"
                 >编辑</el-button>
       </template>
-      <template slot="realRepertoryQuantity" slot-scope="scope">
-        <el-input-number :disabled="datas" size="mini" v-model="scope.row.realRepertoryQuantity" ></el-input-number>
-      </template>
+<!--      <template slot="realRepertoryQuantity" slot-scope="scope">-->
+<!--        <el-input-number :disabled="datas" size="mini"  v-model="scope.row.realRepertoryQuantity" ></el-input-number>-->
+<!--      </template>-->
 
       <template slot="profitAndLoss" slot-scope="scope">
         {{scope.row.realRepertoryQuantity - scope.row.repertoryQuantity }}
       </template>
 
     </avue-crud>
+    <el-dialog
+      title="审批"
+      :visible.sync="dialogApprove"
+      width="30%"
+      :modal="false"
+      :before-close="handleClose">
+      <avue-form ref="form" v-model="objApprove" :option="optionApprove">
+      </avue-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateFatherCheckStatus(102)">驳 回</el-button>
+        <el-button type="primary" @click="updateFatherCheckStatus(101)">同 意</el-button>
+      </span>
+    </el-dialog>
+
+
     <el-dialog title="开启盘点"
                append-to-body
                :visible.sync="checkDialog"
-               width="1600px">
-      <avue-crud ref="crud" :option="option0"  v-loadmore="handelLoadmore"  :data="filteredData"   @row-save="rowSave"
-                 @row-del="rowDel"  @search-change="searchChange" :data-size="tableData.length" >
+               width="1700px">
+      <avue-crud ref="crud" :option="option0"
+                 @row-update="updateRows"
+                 @row-click="handleRowClick"
+                 :page.sync="pageNew"
+                 :data="tableData"
+                 @selection-change="selectionChange"
+                 @size-change="sizeChange"
+                 @refresh-change="refreshChangeOut"
+                 @row-dblclick="detailNewss"
+                 @current-change="currentChanges"
+                 @search-reset="searchResetOut"
+                 @row-save="rowSave"
+                 @search-change="searchChangeOut"
+                 @on-load="onLoadNew">
 
         <template slot="menuLeft">
-          <el-button @click="open()">按钮</el-button>
+          <el-button @click="open()">导入盘点数据</el-button>
+          <el-button @click="saveCheck()">保存盘点单</el-button>
+          <el-button @click="deleteCheck()">清空</el-button>
         </template>
-
-
-
         <template slot="realRepertoryQuantity" slot-scope="scope">
           <el-input-number :disabled="datas" size="mini" v-model="scope.row.realRepertoryQuantity" ></el-input-number>
         </template>
@@ -76,6 +113,10 @@
           {{scope.row.realRepertoryQuantity - scope.row.repertoryQuantity }}
         </template>
 
+        <template slot-scope="{row,index}" slot="menu">
+          <el-button type="text" size="small" @click="rowCell(row,index)">{{row.$cellEdit?'保存':'修改'}}</el-button>
+            <el-button type="text" size="small" @click="rowDelNew(row)">删除</el-button>
+        </template>
 
       </avue-crud>
     </el-dialog>
@@ -90,22 +131,125 @@
       <el-button @click="a">赋值</el-button>
     </el-dialog>
 
+    <el-dialog title="查看盘点单详情"
+               append-to-body
+               :visible.sync="detailDialog"
+               v-if="detailDialog"
+               width="1200px"
+    >
+      <template>
+      <avue-crud :option="option0"
+                 :table-loading="loading"
+                 :data="detailData"
+                 :page.sync="pageCrud"
+                 :before-open="beforeOpenNewCrud"
+                 v-model="detailDataNewCrud"
+                 ref="crud"
+                 @search-reset="searchResetNewCrud"
+                 @selection-change="selectionChangeNewCrud"
+                 @current-change="currentChangeNewCrud"
+                 @size-change="sizeChangeNewCrud"
+                 @refresh-change="refreshChangeNewCrud"
+                 @on-load="detailNewCrud">
+
+        <template slot="profitAndLoss" slot-scope="scope">
+          {{scope.row.realRepertoryQuantity - scope.row.repertoryQuantity }}
+        </template>
+
+         <template slot="menu" slot-scope="scope">
+           <el-button type="text" size="small" v-if="scope.row.checkStatus==0" @click="updateCheckStatus(scope.row,2)">审核</el-button>
+
+        </template>
+
+        <template slot="menuLeft" slot-scope="scope">
+      <el-button   type="primary" size="small" @click="updateAllCheckStatus()"> 一键审核</el-button>
+        </template>
+
+      </avue-crud>
+
+<!--          <el-table-->
+<!--          :data="detailData"-->
+<!--          border-->
+<!--          :page-size="20"-->
+<!--          style="width: 100%">-->
+<!--          <el-table-column-->
+<!--            fixed-->
+<!--            prop="warehouseName"-->
+<!--            label="仓库"-->
+<!--            width="150">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="goodsName"-->
+<!--            label="商品名"-->
+<!--            width="120">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="goodsCode"-->
+<!--            label="商品编码"-->
+<!--            width="120">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="batchNumber"-->
+<!--            label="商品批号"-->
+<!--            width="120">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="manufacturer"-->
+<!--            label="生产厂家"-->
+<!--            width="150">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="repertoryQuantity"-->
+<!--            label="库存数量(g)"-->
+<!--            width="120">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="realRepertoryQuantity"-->
+<!--            label="实际数量(g)"-->
+<!--            width="120">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="remark"-->
+<!--            label="备注"-->
+<!--            width="120">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            fixed="right"-->
+<!--            label="操作"-->
+<!--            width="100">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>-->
+<!--              <el-button type="text" size="small">编辑</el-button>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+
+<!--        </el-table>-->
+      </template>
+    </el-dialog>
+
+
+
   </basic-container>
 
 
 </template>
 <script>
-  import {getList,getDetail, add, update, remove,checkData} from "@/api/warehouse/check/check";
+  import {getList,getDetail, add, update, remove,saveCheckOrder,updateRow,detailNew,updateFatherCheckStatus,checkDetailInWarehouse} from "@/api/warehouse/check/check";
+  import {updateCheckStatus,updateAllCheckStatus} from "@/api/warehouse/check/checkdetail";
   import {dropDown,lock} from "@/api/warehouse/warehouse";
   import {saveCheckHistory} from "@/api/warehouse/check/checkhistory";
+  import {saveImportExcelData,getListTemporary,deleteCheckTemporary,deleteCheck} from "@/api/warehouse/check/checktemporary";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
       return {
+        detailDataNewCrud: {},
         datas:false,
         tableData: [],
-        checkStatus:0,
+        deleteStatus: 0,
+        Id: '',
+        detailData: [],
         warehouseDetail:[
           {
             lockStatus: ''
@@ -119,9 +263,13 @@
         form: {},
         warehouseForm: {},
         query: {},
+        queryOut: {},
+        queryNewCrud: {},
         checkDialog:false,
+        dialogApprove:false,
         infoDialog:false,
         lockDialog:false,
+        detailDialog:false,
         data1: {},
         loading: true,
         page: {
@@ -129,7 +277,18 @@
           currentPage: 1,
           total: 0
         },
+        pageNew: {
+          pageSize: 10,
+          currentPage: 1,
+          total: 0
+        },
+        pageCrud: {
+          pageSize: 10,
+          currentPage: 1,
+          total: 0
+        },
         selectionList: [],
+        selectionListNewCrud: [],
         option: {
           height:'auto',
           calcHeight: 30,
@@ -143,87 +302,39 @@
           dialogClickModal: false,
           column: [
             {
-              label: "仓库",
-              prop: "warehouseId",
-              cell: true,
-              search :true,
+              label: "订单号",
+              prop: "orderNumber",
               sortable:true,
-              type:'select',
+            },
+            {
+              label:'类型',
+              prop:'type'
+            },
+            {
+              label:'审核状态',
+              prop:'checkStatus',
+              type:"select",
               props: {
-                label: 'title',
-                value: 'value'
+                label: "dictValue",
+                value: "dictKey"
               },
-              rules: [{
-                required: true,
-
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
-              dicUrl:'/api/erp-wms/warehouse/tree'
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=check_father_status"
             },
             {
-              label:'商品编码',
-              prop:'goodsCode'
+              label:'审批原因',
+              prop:'rejectText'
             },
             {
-              label: "商品",
-              prop: "goodsId",
-              type:'select',
-              sortable:true,
-              cell: true,
-              rules: [{
-                required: true,
-                message: "请输入商品id",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              dicMethod:"post",
-              dicUrl: 'api/erp-wms/goods/selecListGoods',
-            },
-            {
-              label:'单位',
-              prop:'unit'
-            },
-            {
-              label:'规格',
-              prop:'specification'
-            },
-            {
-              label:'生产商',
-              prop:'manufacturer'
-            },
-            {
-              label:'包装规格',
-              prop:'packageSpecification'
-            },
-            {
-              label: "批号",
-              prop: "batchNumber",
-              cell: true,
-            },
-            {
-              label: "库存总量",
-              prop: "repertoryQuantity",
-              sortable:true,
-            },
-            {
-              label: "实际数量",
-              prop: "realRepertoryQuantity",
-              slot:true,
-              cell: true,
-            },
-            {
-              label: "差值",
-              prop: "profitAndLoss",
-              slot:true,
+              label:'创建时间',
+              prop:'createTime'
             },
 
           ]
         },
         option0: {
+          editBtn: false,
+          addBtn:false,
+          delBtn: false,
           height:'auto',
           calcHeight: 30,
           tip: false,
@@ -231,14 +342,17 @@
           searchMenuSpan: 6,
           border: true,
           index: true,
-          viewBtn: true,
           selection: true,
           rowKey:"goodsCode",
           dialogClickModal: false,
           column: [
             {
+              label:'库存Id',
+              prop:'repertoryId'
+            },
+            {
               label: "仓库",
-              prop: "warehouseId",
+              prop: "warehouseName",
               cell: true,
               sortable:true,
               type:'select',
@@ -260,7 +374,7 @@
             },
             {
               label: "商品",
-              prop: "goodsId",
+              prop: "goodsName",
               type:'select',
               sortable:true,
               cell: true,
@@ -277,12 +391,8 @@
               dicUrl: 'api/erp-wms/goods/selecListGoods',
             },
             {
-              label:'单位',
-              prop:'unit'
-            },
-            {
-              label:'规格',
-              prop:'specification'
+              label:'规格等级',
+              prop:'specificationLevel'
             },
             {
               label:'生产商',
@@ -305,18 +415,42 @@
             {
               label: "实际数量",
               prop: "realRepertoryQuantity",
-              slot:true,
+              type:'number',
               cell: true,
             },
             {
               label: "差值",
               prop: "profitAndLoss",
               slot:true,
+
+            },
+            {
+              label: "审核状态",
+              prop: "checkStatus",
+              type:"select",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=check_status",
             },
 
           ]
         },
-
+        objApprove: {
+          rejectText: ''
+        },
+        optionApprove: {
+          emptyBtn: false,
+          submitBtn: false,
+          column: [{
+            label: "驳回理由",
+            prop: "rejectText",
+            type: 'textarea',
+            span: 24,
+          },
+          ]
+        },
         data: [],
         dataNew: [],
         excelForm: {},
@@ -358,78 +492,8 @@
         });
         return ids.join(",");
       },
-      filteredData() {
-        let list = this.tableData.filter((item, index) => {
-          if (index < this.currentStartIndex) {
-            return false;
-          } else if (index > this.currentEndIndex) {
-            return false;
-          } else {
-            return true;
-          }
-        });
-        return list
-      }
-    },
-    directives:{
-      loadmore:{
-        componentUpdated: function (el, binding, vnode, oldVnode) {
-          // 设置默认溢出显示数量
-          var spillDataNum = 20;
-
-          // 设置隐藏函数
-          var timeout = false;
-          let setRowDisableNone = function (topNum, showRowNum, binding) {
-            if (timeout) {
-              clearTimeout(timeout);
-            }
-            timeout = setTimeout(() => {
-              binding.value.call(null, topNum, topNum + showRowNum + spillDataNum);
-            });
-          };
-          setTimeout(() => {
-            const dataSize = vnode.data.attrs['data-size'];
-            const oldDataSize = oldVnode.data.attrs['data-size'];
-            if (dataSize === oldDataSize) return;
-            const selectWrap = el.querySelector('.el-table__body-wrapper');
-            const selectTbody = selectWrap.querySelector('table tbody');
-            const selectRow = selectWrap.querySelector('table tr');
-            if (!selectRow) {
-              return;
-            }
-            const rowHeight = selectRow.clientHeight;
-            let showRowNum = Math.round(selectWrap.clientHeight / rowHeight);
-
-            const createElementTR = document.createElement('tr');
-            let createElementTRHeight = (dataSize - showRowNum - spillDataNum) * rowHeight;
-            createElementTR.setAttribute('style', `height: ${createElementTRHeight}px;`);
-            selectTbody.append(createElementTR);
-
-            // 监听滚动后事件
-            selectWrap.addEventListener('scroll', function () {
-              let topPx = this.scrollTop - spillDataNum * rowHeight;
-              let topNum = Math.round(topPx / rowHeight);
-              let minTopNum = dataSize - spillDataNum - showRowNum;
-              if (topNum > minTopNum) {
-                topNum = minTopNum;
-              }
-              if (topNum < 0) {
-                topNum = 0;
-                topPx = 0;
-              }
-              selectTbody.setAttribute('style', `transform: translateY(${topPx}px)`);
-              createElementTR.setAttribute('style', `height: ${createElementTRHeight - topPx > 0 ? createElementTRHeight - topPx : 0}px;`);
-              setRowDisableNone(topNum, showRowNum, binding);
-            })
-          });
-        }
-      }
     },
     methods: {
-      handelLoadmore(currentStartIndex, currentEndIndex) {
-        this.currentStartIndex = currentStartIndex;
-        this.currentEndIndex = currentEndIndex;
-      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -473,6 +537,7 @@
             });
           });
       },
+
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -503,9 +568,25 @@
         }
         done();
       },
+      beforeOpenNewCrud(done, type) {
+        if (["edit", "view"].includes(type)) {
+          getDetail(this.form.id).then(res => {
+            this.detailDataNewCrud = res.data.data;
+          });
+        }
+        done();
+      },
       searchReset() {
         this.query = {};
         this.onLoad(this.page);
+      },
+      searchResetOut() {
+        this.queryOut = {};
+        this.onLoadNew(this.pageNew);
+      },
+      searchResetNewCrud() {
+        this.queryNewCrud = {};
+        this.detailNewCrud(this.pageCrud);
       },
       searchChange(params, done) {
         this.query = params;
@@ -513,21 +594,42 @@
         this.onLoad(this.page, params);
         done();
       },
+      searchChangeOut(params, done) {
+        this.queryOut = params;
+        this.pageNew.currentPage = 1;
+        this.onLoadNew(this.pageNew, params);
+        done();
+      },
       selectionChange(list) {
         this.selectionList = list;
+      },
+      selectionChangeNewCrud(list) {
+        this.selectionListNewCrud = list;
       },
       selectionClear() {
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      currentChangeNewCrud(currentPage) {
+        this.pageCrud.currentPage = currentPage;
+      },
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
+      },
+      sizeChangeNewCrud(pageSize) {
+        this.pageCrud.pageSize = pageSize;
       },
       refreshChange() {
         this.onLoad(this.page, this.query);
+      },
+      refreshChangeOut() {
+        this.onLoadNew(this.pageNew, this.queryOut);
+      },
+      refreshChangeNewCrud() {
+        this.detailNewCrud(this.pageCrud, this.queryNewCrud);
       },
       onLoad(page, params = {}) {
         const {updateTime} = params;
@@ -548,9 +650,6 @@
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
-          data.records.forEach( (d) => {
-            d.checkStatus=0;
-          })
           this.loading = false;
           this.selectionClear();
         });
@@ -559,16 +658,8 @@
         this.checkDialog = true;
       },
 
-
-      lockWarehouse() {
-        this.lockDialog = true;
-        dropDown().then(res => {
-          this.warehouseDetail = res.data.data;
-          console.log(res.data)
-        })
-      },
-      lock(id,lockStatus) {
-        lock(id,lockStatus).then(res =>{
+      lock(id, lockStatus) {
+        lock(id, lockStatus).then(res => {
           if (res.data.success) {
             this.$message.success(res.data.msg);
           } else {
@@ -579,32 +670,232 @@
         this.refreshChange();
 
       },
-      saveCheckHistory(row) {
-        row.checkStatus=1;
-        saveCheckHistory(row).then(res =>{
+      saveCheckInWarehouse(row) {
+        checkDetailInWarehouse(row.id).then(res => {
           this.$message.success(res.data.msg);
         });
       },
-      updateCheckStatus(row) {
-        row.checkStatus=0;
+      updateCheckStatus(row,checkStatus) {
+        this.$confirm("确定是否审核?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return updateCheckStatus(row.id,checkStatus);
+          })
+          .then(() => {
+            this.detailNewCrud(this.pageCrud);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          });
+      },
+      updateAllCheckStatus() {
+        console.log(this.detailData)
+        updateAllCheckStatus(this.detailData).then(() => {
+          this.detailNewCrud(this.pageCrud);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.refreshChangeNewCrud();
+        }, error => {
+          window.console.log(error);
+        });
       },
       opencheckDialog() {
-        this.checkDialog=true;
+        this.checkDialog = true;
       },
       open() {
-        this.infoDialog=true;
+        this.infoDialog = true;
       },
-      importCheckData(res,done){
-        console.log( res);
-        this.data1 = res;
+      importCheckData(res, done) {
+        this.data1 = res.data;
         done();
+      },
+      rowDelNew(row) {
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return deleteCheckTemporary(row.id);
+          })
+          .then(() => {
+            this.onLoadNew(this.pageNew);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          });
+        // console.log(this.deleteStatus)
+        // this.tableData.splice(index,1);
+        // this.pageNew.total = this.data1.length;
+        // this.tableData = this.tableData;
+      },
+      a(done, loading) {
+        saveImportExcelData(this.data1).then(() => {
+          this.onLoadNew(this.pageNew);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          setTimeout(()=>{
+            this.infoDialog = false;
+            this.onLoadNew(this.pageNew);
+          },10000);
+        }, error => {
+          loading();
+          window.console.log(error);
+        });
+        // this.dataNew = this.excelForm;
+        // console.log(  this.data1 );
+        // //this.tableData = this.data1;
+        // let datas = [];
+        // for (let i = 0; i < this.pageNew.pageSize; i++) {
+        //   datas.push(this.data1[this.pageNew.currentPage * this.pageNew.pageSize - 9 + i]);
+        // }
+        // this.tableData = datas;
+        // this.pageNew.total = this.data1.length;
+        // //this.pageNew.total = this.data1.splice(this.pageNew.currentPage*this.pageNew.pageSize-9,this.pageNew.currentPage*this.pageNew.pageSize);
+      },
+      currentChanges(currentPage) {
+        this.pageNew.currentPage = currentPage;
+      },
+      onLoadNew(pageNew, params = {}) {
+        // let datas = [];
+        // // debugger
+        // let num = this.data1.length - ((page.currentPage - 1) * this.pageNew.pageSize);
+        // num = num > this.pageNew.pageSize ? this.pageNew.pageSize : num;
+        // for (let i = 0; i < num; i++) {
+        //   datas.push(this.data1[((page.currentPage - 1) * this.pageNew.pageSize) + i]);
+        // }
+        // this.tableData = datas;
+        // this.pageNew.total = this.data1.length;
+        this.loading = true;
+        getListTemporary(pageNew.currentPage, pageNew.pageSize, Object.assign(params, this.query)).then(res => {
+          const data = res.data.data;
+          this.pageNew.total = data.total;
+          this.tableData = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
+      },
+
+
+      rowCell(row, index) {
+        this.$refs.crud.rowCell(row, index)
+      },
+      updateRows(row, index, done){
+        this.$message({
+          showClose: true,
+          message: '序号21212121' + row.$index,
+          type: 'success',
+        });
+
+        updateRow(row.id,row.realRepertoryQuantity).then(res=>{
+          if (res.data.success) {
+            this.searchReset();
+            this.$message.success(res.data.msg);
+            done();
+          } else {
+            this.searchReset();
+            this.$message.error(res.data.msg);
+            done();
+          }
+      })
 
       },
-      a(){
-        //this.dataNew = this.excelForm;
-        console.log( this.data1);
-        this.tableData = this.data1.data;
+      handleRowClick(row) {
+        this.$message({
+          showClose: true,
+          message: '序号' + row.$index,
+          type: 'success',
+        });
+      },
+      addUpdate(form, index, done, loading) {
+
+        setTimeout(() => {
+          this.$message.success('正在关闭按钮，请等待等待')
+          loading()
+        }, 1000)
+        setTimeout(() => {
+
+          done()
+        }, 2000)
+      },
+      saveCheck(done, loading) {
+        saveCheckOrder().then(() => {
+          this.onLoadNew(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          done();
+        }, error => {
+          loading();
+          window.console.log(error);
+        });
+
+      },
+      deleteCheck() {
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return deleteCheck();
+          })
+          .then(() => {
+            this.onLoadNew(this.pageNew);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          });
+
+      },
+
+      detailNewss(row) {
+        this.Id = row.id;
+        this.detailDialog = true;
+      },
+
+      detailNewCrud(pageCrud, params = {}) {
+        params.id = this.Id;
+        detailNew(pageCrud.currentPage, pageCrud.pageSize, Object.assign(params, this.query)).then(res => {
+          const data = res.data.data;
+          this.pageCrud.total = data.total;
+          this.detailData = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
+      },
+      openUpdateDialog(){
+         this.dialogApprove = true;
+      },
+      updateFatherCheckStatus(checkStatus){
+        if (checkStatus === 102 && this.objApprove.rejectText === '') {
+          return this.$message.error("请输入失败理由!");
+        }
+        updateFatherCheckStatus(this.ids,checkStatus,this.objApprove.rejectText).then(res => {
+          if (res.data.success) {
+            this.dialogApprove = false;
+            this.searchReset();
+            this.$message.success(res.data.msg);
+          } else {
+            this.dialogApprove = false;
+            this.searchReset();
+            this.$message.error(res.data.msg);
+          }
+        })
       }
+
+
     }
   };
 </script>

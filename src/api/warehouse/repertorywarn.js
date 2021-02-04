@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/list',
+    url: '/api/business_repertory_warn/repertorywarn/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/detail',
+    url: '/api/business_repertory_warn/repertorywarn/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/remove',
+    url: '/api/business_repertory_warn/repertorywarn/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/submit',
+    url: '/api/business_repertory_warn/repertorywarn/submit',
     method: 'post',
     data: row
   })
@@ -42,27 +42,25 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/submit',
+    url: '/api/business_repertory_warn/repertorywarn/submit',
     method: 'post',
     data: row
   })
 }
-export const updateCheckStatus = (id,checkStatus) => {
+export const selctRepertoryWarnQuantity = (goodsId) => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/updateCheckStatus',
+    url: '/api/business_repertory_warn/repertorywarn/selctRepertoryWarnQuantity',
     method: 'post',
     params:{
-      id,
-      checkStatus
+      goodsId
     }
   })
 }
-
-export const updateAllCheckStatus = (checkDetailList) => {
+export const ScanWarning = () => {
   return request({
-    url: '/api/business_repertory_detail/checkdetail/updateAllCheckStatus',
+    url: '/api/business_repertory_warn/repertorywarn/ScanWarning',
     method: 'post',
-    data:checkDetailList
+
   })
 }
 
