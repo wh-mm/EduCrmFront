@@ -1,4 +1,4 @@
- <template>
+<template>
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
@@ -48,56 +48,56 @@
 
 <script>
 
-import {isOneToNinetyNine, phonelength, zhongwen,isInteger} from "@/const/order/customerorder";
+import {isOneToNinetyNine, phonelength, zhongwen, isInteger} from "@/const/order/customerorder";
 import {getGoodsDetail, likeListKL} from "@/api/warehouse/goods";
 import {clinicReceiveBlender} from "@/api/order/order";
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
 
 export default {
   name: "addKeLi",
-  data(){
+  data() {
     return {
       data: [],
       options: [],
       value: "",
       list: [],
-      loading:false,
-      option:{
-        addBtn:false,
-        editBtn:false,
-        addRowBtn:true,
-        cellBtn:true,
-        menuWidth:250,
+      loading: false,
+      option: {
+        addBtn: false,
+        editBtn: false,
+        addRowBtn: true,
+        cellBtn: true,
+        menuWidth: 250,
         column: [
           {
             label: '*药品',
             prop: "goodsName",
             slot: true,
             //type: 'tree',
-          /*  filterable: true,
-            remote: true,
-            rules: [{
-              require: true,
-              message: '请选择商品',
-            }],
-            props: {
-              label: 'goodsName',
-              value: 'id'
-            },
-            cell: true,
-            dicUrl: '/api/erp-wms/goods/likeListKL',
-            change: ({value}) => {
-              if (value) {
-                getGoodsDetail(value).then(res => {
-                  for (let i = 0; i<this.data.length; i++){
-                    if(this.data[i].goodsName === value){
-                      console.log( res.data.data)
-                      this.data[i].unitPrice = res.data.data.unitPrice;
+            /*  filterable: true,
+              remote: true,
+              rules: [{
+                require: true,
+                message: '请选择商品',
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              cell: true,
+              dicUrl: '/api/erp-wms/goods/likeListKL',
+              change: ({value}) => {
+                if (value) {
+                  getGoodsDetail(value).then(res => {
+                    for (let i = 0; i<this.data.length; i++){
+                      if(this.data[i].goodsName === value){
+                        console.log( res.data.data)
+                        this.data[i].unitPrice = res.data.data.unitPrice;
+                      }
                     }
-                  }
-                });
-              }
-            },*/
+                  });
+                }
+              },*/
           },
           {
             label: "单剂量",
@@ -112,7 +112,7 @@ export default {
         ]
       },
       //煎药
-      addOption :{
+      addOption: {
         height: "auto",
         calcHeight: 30,
         tip: true,
@@ -292,8 +292,8 @@ export default {
                   label: 'title',
                   value: 'id'
                 },
-               // search: true,
-               // cascaderItem: ['partiesName'],
+                // search: true,
+                // cascaderItem: ['partiesName'],
                 dicUrl: "/api/parties/orderpartiescategory/tree",
               },
               {
@@ -321,13 +321,13 @@ export default {
   mounted() {
 
   },
-  methods:{
-    optionsData(){
-      likeListKL().then(res =>{
+  methods: {
+    optionsData() {
+      likeListKL().then(res => {
         this.options = res.data.data;
       })
     },
-    getPrice(val,index){
+    getPrice(val, index) {
       getGoodsDetail(val).then(res => {
         console.log(res.data.data);
         this.data[index].unitPrice = res.data.data.unitPrice;
@@ -343,7 +343,7 @@ export default {
         console.log(query);
         setTimeout(() => {
           this.loading = false;
-          likeListKL(query).then(res =>{
+          likeListKL(query).then(res => {
             this.options = res.data.data;
           })
         }, 200);
@@ -379,14 +379,14 @@ export default {
         }
       }, 500)
     },
-    addNextRow(index){
-      this.data.splice(index+1,0,{
-        $cellEdit:true
+    addNextRow(index) {
+      this.data.splice(index + 1, 0, {
+        $cellEdit: true
       })
     },
-    addBreakRow(index){
-      this.data.splice(index==0?0:(index-1),0,{
-        $cellEdit:true
+    addBreakRow(index) {
+      this.data.splice(index == 0 ? 0 : (index - 1), 0, {
+        $cellEdit: true
       })
     },
     //保存

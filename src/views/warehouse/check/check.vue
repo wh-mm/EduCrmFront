@@ -1,4 +1,4 @@
-<template>
+  <template>
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"

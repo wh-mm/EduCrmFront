@@ -107,7 +107,15 @@ export const likeListYP = (name) => {
     }
   })
 }
-
+export const selectAlll = (name) => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/selectAlll',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
 export const  selectListGoodsByName = (name) => {
   return request({
     url: ERP_WMS_NAME + '/goods/selectListGoodsByName',
@@ -150,7 +158,12 @@ export const updatePrice = (id,goodsCode,unitPrice) => {
     }
   })
 }
-
+export const selecListGoods = () => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/selecListGoods',
+    method: 'get',
+  })
+}
 
 
 

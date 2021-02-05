@@ -490,7 +490,7 @@ export default {
   },
   data() {
     return {
-      id:'',
+      id: '',
       addYinDialogVisible: false,
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
@@ -555,25 +555,20 @@ export default {
       ],
       printDrugData: [
         {
-
           drug_name: '',   //药品名称
           drug_allnum: '', //单剂量
           drug_description: '',//药品脚注
           drugweight: '',//药品总量
           description: '',//药品说明
           shelf_number: '',//货位号
-
           dose_herb: '',//剂量
           equivalent: '',//当量
-
-
           // name:'',
           // sex:'',
           // age:'',
           // packagenum:'',
           // drugAllnum:'',
           // soakwater:'',
-
         }
       ],
 
@@ -733,13 +728,18 @@ export default {
       },
       data: [],
       obj0: {
-        auditorText: ''
+        auditorText: '',
+        goods:''
       },
       option0: {
         emptyBtn: false,
         submitBtn: false,
         column: [
 
+          {
+            lebel:"是否冲突",
+            prpo:"goods"
+          },
           {
             label: "驳回理由",
             prop: "auditorText",
@@ -832,12 +832,12 @@ export default {
 
     openDialog(row) {
       this.dialogUpadate = true;
-      this.Id= row.id;
+      this.Id = row.id;
     },
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStatic(zt) {
       console.log(zt)
-      updateOrderStatic(this.Id,zt).then(res => {
+      updateOrderStatic(this.Id, zt).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -852,7 +852,7 @@ export default {
       if (zt === 6 && this.obj0.auditorText === '') {
         return this.$message.error("请输入驳回理由!");
       }
-      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
+      updateOrderStaticBh(this.Id, zt, this.obj0.auditorText).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;

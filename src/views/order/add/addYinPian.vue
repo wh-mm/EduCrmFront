@@ -479,12 +479,12 @@ export default {
      })
    },*/
   methods: {
-    optionsData(){
-      likeListYP().then(res =>{
+    optionsData() {
+      likeListYP().then(res => {
         this.options = res.data.data;
       })
     },
-    getPrice(val,index){
+    getPrice(val, index) {
       getGoodsDetail(val).then(res => {
         console.log(res.data.data);
         this.data[index].unitPrice = res.data.data.unitPrice;
@@ -500,7 +500,7 @@ export default {
         console.log(query);
         setTimeout(() => {
           this.loading = false;
-          likeListYP(query).then(res =>{
+          likeListYP(query).then(res => {
             this.options = res.data.data;
           })
         }, 200);

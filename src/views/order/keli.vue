@@ -16,7 +16,8 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒
+        </el-button>
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
       </template>
@@ -41,7 +42,6 @@
       </template>
 
 
-
       <template slot="orderDifferentiation" slot-scope="scope">
         <div style="color:#f391a9" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
         <div style="color: #009ad6" v-else>医院下单</div>
@@ -50,10 +50,9 @@
     </avue-crud>
 
 
-
     <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addKeLi @reject="rejectKe" ></addKeLi>
+      <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
 
     <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
@@ -243,7 +242,7 @@ import addKeLi from "./add/addKeLi";
 import viewKeLi from "./view/viewKeLi";
 
 export default {
-  components:{
+  components: {
     addKeLi,
     viewKeLi
   },
@@ -269,7 +268,7 @@ export default {
   },
   data() {
     return {
-      id:'',
+      id: '',
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
       dialogFormVisible: false,
@@ -344,12 +343,6 @@ export default {
           equivalent: '',//当量
 
 
-          // name:'',
-          // sex:'',
-          // age:'',
-          // packagenum:'',
-          // drugAllnum:'',
-          // soakwater:'',
 
         }
       ],
@@ -369,8 +362,8 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
-        excelBtn:true,
-        printBtn:true,
+        excelBtn: true,
+        printBtn: true,
         height: "auto",
         calcHeight: 30,
         tip: false,
@@ -385,7 +378,7 @@ export default {
           {
             label: "订单id",
             prop: "id",
-            sortable:true,
+            sortable: true,
             search: true,
           },
           {
@@ -580,12 +573,12 @@ export default {
 
     openDialog(row) {
       this.dialogUpadate = true;
-      this.Id= row.id;
+      this.Id = row.id;
     },
 
     updateOrderStatic(zt) {
       console.log(zt)
-      updateOrderStatic(this.Id,zt).then(res => {
+      updateOrderStatic(this.Id, zt).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -600,7 +593,7 @@ export default {
       if (zt === 6 && this.obj0.auditorText === '') {
         return this.$message.error("请输入驳回理由!");
       }
-      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
+      updateOrderStaticBh(this.Id, zt, this.obj0.auditorText).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -621,11 +614,11 @@ export default {
       this.addKeDialogVisible = false;
       this.refreshChange();
     },
-    newAddYin(){
+    newAddYin() {
       this.addYinDialogVisible = true;
       this.refreshChange();
     },
-    newAddKe(){
+    newAddKe() {
       this.addKeDialogVisible = true;
       this.refreshChange();
     },
@@ -766,9 +759,9 @@ export default {
       getInfo(url, row.id).then(res => {
         this.orderInfo = res.data.data;
         if (row.orderType === "jianyao") {
-          this.viewYinDialogVisible=true;
+          this.viewYinDialogVisible = true;
         } else if (row.orderType === "tiaopei") {
-          this.viewKeDialogVisible=true;
+          this.viewKeDialogVisible = true;
         } else {
           this.$message({
             type: 'error',
