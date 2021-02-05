@@ -722,9 +722,10 @@ export default {
         submitBtn: false,
         column: [
           {
-            label: "状态",
+            label: "冲突名称",
             prop: "tet",
             span: 20,
+            disadbled:true,
           },
           {
             label: "驳回理由",
@@ -818,12 +819,11 @@ export default {
     },
     openDialog(rowID){
 
-      console.log(this.option0)
-
 
       shenfang(rowID).then((res) => {
-        console.log(res)
-        this.obj0.tet="jhdsaxkjDSKJSADKJK"
+        console.log(res.data)
+        this.obj0.tet=res.data.data.name;
+
         this.$message({
           type: "success",
           message: "操作成功!"
