@@ -818,8 +818,6 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
     openDialog(rowID){
-
-
       shenfang(rowID).then((res) => {
         this.obj0.tet=res.data.data.name;
         this.$message({
