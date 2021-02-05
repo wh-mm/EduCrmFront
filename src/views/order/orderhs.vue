@@ -16,13 +16,6 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.order_delete"
-                   @click="handleDelete">解除匹配
-        </el-button>
         <!--
                 <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
                 <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
@@ -40,6 +33,9 @@
                    @click="updateOrderStaticH(scope.row)">还 原
         </el-button>
 
+        <el-button type="text" icon="el-icon-refresh-left" size="small" v-if="scope.row.orderStatic==6"
+                   @click="handleDelete(scope.row)">删 除
+        </el-button>
 
         <!--处方中心打印功能-->
         <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
@@ -452,7 +448,6 @@ import addYinPian from "./add/addYinPian";
 import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
-import {remove} from "@/api/quality/customer";
 
 
 export default {
@@ -939,18 +934,16 @@ export default {
         this.selectionClear();
       });
     },
-    handleDelete() {
-      if (this.selectionList.length === 0) {
-        this.$message.warning("请选择至少一条数据");
-        return;
-      }
+
+    handleDelete(row) {
+      console.log(row.id)
       this.$confirm("确定将选择数据删除?", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          return orderDelete(this.ids);
+          return orderDelete(row.id);
         })
         .then(() => {
           this.onLoad(this.page);
@@ -961,6 +954,7 @@ export default {
           this.$refs.crud.toggleSelection();
         });
     },
+
     //查看
     lockInfo(row) {
       let url = '';

@@ -94,12 +94,12 @@ export const remove = (ids) => {
   })
 };
 
-export const orderDelete = (ids) => {
+export const orderDelete = (id) => {
   return request({
     url: '/api/taocao-order/order/orderDelete',
     method: 'post',
     params: {
-      ids,
+      id,
     }
   })
 };
