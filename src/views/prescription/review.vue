@@ -96,7 +96,14 @@
             {
               label: '*药品',
               prop: "drugsIdsArray",
+              hide:true,
               formslot: true,
+            },
+            {
+              label: '*药品',
+              prop: "drugsIdsArrays",
+              addDisplay:false,
+              editDisplay:false,
             },
 
 /*            {
@@ -183,7 +190,6 @@
         });
       },
       rowUpdate(row, index, done, loading) {
-        row.drugsIdsArray = row.drugsIdsArray.join(",");
         update(row).then(() => {
           this.onLoad(this.page);
           this.$message({
