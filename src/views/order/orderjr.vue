@@ -725,7 +725,7 @@ export default {
             label: "冲突名称",
             prop: "tet",
             span: 20,
-            disadbled:true,
+            disabled:true,
           },
           {
             label: "驳回理由",
@@ -821,9 +821,7 @@ export default {
 
 
       shenfang(rowID).then((res) => {
-        console.log(res.data)
         this.obj0.tet=res.data.data.name;
-
         this.$message({
           type: "success",
           message: "操作成功!"
