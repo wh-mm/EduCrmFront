@@ -124,11 +124,6 @@
               label: "备注",
               prop: "remarks",
               labelWidth: 110,
-              rules: [{
-                required: true,
-                message: "请输入备注",
-                trigger: "blur"
-              }]
             },
           ]
         },
@@ -190,6 +185,7 @@
         });
       },
       rowUpdate(row, index, done, loading) {
+        row.drugsIdsArray = row.drugsIdsArray.join(",");
         update(row).then(() => {
           this.onLoad(this.page);
           this.$message({

@@ -722,9 +722,10 @@ export default {
         submitBtn: false,
         column: [
           {
-            label: "状态",
+            label: "冲突名称",
             prop: "tet",
             span: 20,
+            disabled:true,
           },
           {
             label: "驳回理由",
@@ -817,13 +818,8 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
     openDialog(rowID){
-
-      console.log(this.option0)
-
-
       shenfang(rowID).then((res) => {
-        console.log(res)
-        this.obj0.tet="jhdsaxkjDSKJSADKJK"
+        this.obj0.tet=res.data.data.name;
         this.$message({
           type: "success",
           message: "操作成功!"
