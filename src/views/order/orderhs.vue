@@ -21,7 +21,7 @@
                    icon="el-icon-delete"
                    plain
                    v-if="permission.order_delete"
-                   @click="handleDelete">删 除
+                   @click="handleDelete">解除匹配
         </el-button>
         <!--
                 <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
@@ -443,6 +443,7 @@ import {
   selectByOrderId,
   updateOrderStaticH,
   getListHs,
+  orderDelete
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
@@ -949,7 +950,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          return remove(this.ids);
+          return orderDelete(this.ids);
         })
         .then(() => {
           this.onLoad(this.page);
