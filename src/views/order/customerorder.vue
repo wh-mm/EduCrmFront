@@ -15,8 +15,10 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片
+        </el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒
+        </el-button>
       </template>
       <!--修改-->
       <template slot-scope="scope" slot="menu">
@@ -40,12 +42,12 @@
     <!-- 新增饮片 -->
     <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addYinPian @reject="rejectYin" ></addYinPian>
+      <addYinPian @reject="rejectYin"></addYinPian>
     </el-dialog>
 
     <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addKeLi @reject="rejectKe" ></addKeLi>
+      <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
 
     <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
@@ -60,7 +62,7 @@
 </template>
 
 <script>
-import {getInfo,getList} from "@/api/order/order";
+import {getInfo, getList} from "@/api/order/order";
 import addYinPian from "./addClinic/addYinPian";
 import addKeLi from "./addClinic/addKeLi";
 import viewYinPian from "./view/viewYinPian";
@@ -69,7 +71,7 @@ import {mapGetters} from "vuex";
 
 
 export default {
-  components:{
+  components: {
     addYinPian,
     addKeLi,
     viewYinPian,
@@ -96,8 +98,8 @@ export default {
       },
       selectionList: [],
       option: {
-        excelBtn:true,
-        printBtn:true,
+        excelBtn: true,
+        printBtn: true,
         addBtn: false,
         height: "auto",
         calcHeight: 30,
@@ -112,7 +114,7 @@ export default {
         column: [
           {
             label: "订单id",
-            sortable:true,
+            sortable: true,
             prop: "id",
             search: true,
           },
@@ -240,8 +242,7 @@ export default {
       data: []
     };
   },
-  watch: {
-  },
+  watch: {},
   computed: {
     ...mapGetters(["permission"]),
     permissionList() {
@@ -249,7 +250,7 @@ export default {
         addBtn: this.vaildData(this.permission.order_add, false),
         viewBtn: this.vaildData(this.permission.order_view, false),
         delBtn: false,
-        editBtn: this.vaildData(this.permission.order_edit,false)
+        editBtn: this.vaildData(this.permission.order_edit, false)
       };
     },
     ids() {
@@ -298,11 +299,11 @@ export default {
       this.addKeDialogVisible = false;
       this.refreshChange();
     },
-    newAddYin(){
+    newAddYin() {
       this.addYinDialogVisible = true;
       this.refreshChange();
     },
-    newAddKe(){
+    newAddKe() {
       this.addKeDialogVisible = true;
       this.refreshChange();
     },
@@ -362,9 +363,9 @@ export default {
       getInfo(url, row.id).then(res => {
         this.orderInfo = res.data.data;
         if (row.orderType === "jianyao") {
-          this.viewYinDialogVisible=true;
+          this.viewYinDialogVisible = true;
         } else if (row.orderType === "tiaopei") {
-          this.viewKeDialogVisible=true;
+          this.viewKeDialogVisible = true;
         } else {
           this.$message({
             type: 'error',

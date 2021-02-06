@@ -19,6 +19,7 @@
                @refresh-change="refreshChange"
                @on-load="onLoad">
       <template slot="menuLeft">
+
         <el-button type="danger"
                    size="small"
                    icon="el-icon-delete"
@@ -27,6 +28,27 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+
+      <template slot="drugsIdsArrayForm" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.drugsIdsArray"
+          multiple
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入关键词"
+          :remote-method="remoteMethod"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.goodsName"
+            :value="item.id">
+          </el-option>
+          </el-select>
+      </template>
     </avue-crud>
   </basic-container>
 </template>
@@ -34,6 +56,7 @@
 <script>
   import {getList, getDetail, add, update, remove} from "@/api/prescription/review";
   import {mapGetters} from "vuex";
+  import {likeListKL, selecListGoods,selectAlll} from "@/api/warehouse/goods";
 
   export default {
     data() {
@@ -46,6 +69,7 @@
           currentPage: 1,
           total: 0
         },
+        options:[],
         selectionList: [],
         option: {
           height:'auto',
@@ -70,6 +94,19 @@
               }]
             },
             {
+              label: '*药品',
+              prop: "drugsIdsArray",
+              hide:true,
+              formslot: true,
+            },
+            {
+              label: '*药品',
+              prop: "drugsIdsArrays",
+              addDisplay:false,
+              editDisplay:false,
+            },
+
+/*            {
               label: "药品ID",
               prop: "drugsIdsArray",
               type: 'select',
@@ -82,16 +119,11 @@
               remote: true,
 //              search: true,
               dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
-            },
+            },*/
             {
               label: "备注",
               prop: "remarks",
               labelWidth: 110,
-              rules: [{
-                required: true,
-                message: "请输入备注",
-                trigger: "blur"
-              }]
             },
           ]
         },
@@ -116,7 +148,29 @@
         return ids.join(",");
       }
     },
+    created() {
+      this.optionsData();
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        setTimeout(() => {
+          this.loading = false;
+          selectAlll(query).then(res => {
+            this.options = res.data.data;
+          })
+        }, 200);
+      } else {
+        this.options = [];
+      }
+    },
     methods: {
+      optionsData() {
+        likeListKL().then(res => {
+          this.options = res.data.data;
+        })
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -131,6 +185,7 @@
         });
       },
       rowUpdate(row, index, done, loading) {
+        row.drugsIdsArray = row.drugsIdsArray.join(",");
         update(row).then(() => {
           this.onLoad(this.page);
           this.$message({
@@ -181,6 +236,22 @@
             });
             this.$refs.crud.toggleSelection();
           });
+      },
+
+      remoteMethod(query) {
+        console.log(query)
+        if (query !== '') {
+          this.loading = true;
+          console.log(query);
+          setTimeout(() => {
+            this.loading = false;
+            selectAlll(query).then(res => {
+              this.options = res.data.data;
+            })
+          }, 200);
+        } else {
+          this.options = [];
+        }
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {

@@ -177,6 +177,7 @@
           window.console.log(error);
         });
       },
+
       rowUpdate(row, index, done, loading) {
         update(row).then(() => {
           this.onLoad(this.page);

@@ -16,7 +16,8 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片
+        </el-button>
         <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
          </el-button>-->
       </template>
@@ -50,13 +51,11 @@
     </avue-crud>
 
 
-
     <!-- 新增饮片 -->
     <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addYinPian @reject="rejectYin" ></addYinPian>
+      <addYinPian @reject="rejectYin"></addYinPian>
     </el-dialog>
-
 
 
     <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
@@ -291,7 +290,7 @@ import addYinPian from "./add/addYinPian";
 import viewYinPian from "./view/viewYinPian";
 
 export default {
-  components:{
+  components: {
     addYinPian,
     viewYinPian,
   },
@@ -317,7 +316,7 @@ export default {
   },
   data() {
     return {
-      id:'',
+      id: '',
       addYinDialogVisible: false,
       viewYinDialogVisible: false,
       dialogFormVisible: false,
@@ -418,8 +417,8 @@ export default {
       option: {
         addBtn: false,
         height: "auto",
-        excelBtn:true,
-        printBtn:true,
+        excelBtn: true,
+        printBtn: true,
         calcHeight: 30,
         tip: false,
         searchShow: true,
@@ -432,7 +431,7 @@ export default {
         column: [
           {
             label: "订单id",
-            sortable:true,
+            sortable: true,
             prop: "id",
             search: true,
           },
@@ -636,11 +635,11 @@ export default {
       this.addKeDialogVisible = false;
       this.refreshChange();
     },
-    newAddYin(){
+    newAddYin() {
       this.addYinDialogVisible = true;
       this.refreshChange();
     },
-    newAddKe(){
+    newAddKe() {
       this.addKeDialogVisible = true;
       this.refreshChange();
     },
@@ -766,12 +765,12 @@ export default {
 
     openDialog(row) {
       this.dialogUpadate = true;
-      this.Id= row.id;
+      this.Id = row.id;
     },
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStatic(zt) {
       console.log(zt)
-      updateOrderStatic(this.Id,zt).then(res => {
+      updateOrderStatic(this.Id, zt).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -786,7 +785,7 @@ export default {
       if (zt === 6 && this.obj0.auditorText === '') {
         return this.$message.error("请输入驳回理由!");
       }
-      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
+      updateOrderStaticBh(this.Id, zt, this.obj0.auditorText).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -814,9 +813,9 @@ export default {
       getInfo(url, row.id).then(res => {
         this.orderInfo = res.data.data;
         if (row.orderType === "jianyao") {
-          this.viewYinDialogVisible=true;
+          this.viewYinDialogVisible = true;
         } else if (row.orderType === "tiaopei") {
-          this.viewKeDialogVisible=true;
+          this.viewKeDialogVisible = true;
         } else {
           this.$message({
             type: 'error',

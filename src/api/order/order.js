@@ -94,6 +94,16 @@ export const remove = (ids) => {
   })
 };
 
+export const orderDelete = (id) => {
+  return request({
+    url: '/api/taocao-order/order/orderDelete',
+    method: 'post',
+    params: {
+      id,
+    }
+  })
+};
+
 export const add = (row) => {
   return request({
     url: '/api/taocao-order/order/submit',

@@ -16,6 +16,10 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
+<!--        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
+        <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>-->
+        <!-- <el-button type="primary" size="small" icon="el-icon-upload" plain @click="sendHttp()">推 送
+         </el-button> -->
       </template>
 
       <template slot-scope="scope" slot="menu">
@@ -60,23 +64,24 @@
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj0" :option="option0">
+
       </avue-form>
-      <span>11111111111111111111</span>
       <span slot="footer" class="dialog-footer">
+
         <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
         <el-button type="primary" @click="updateOrderStatic(2)">同 意</el-button>
-      </span>
+         </span>
     </el-dialog>
 
     <!-- 新增饮片 -->
     <el-dialog title="新增饮片" :visible.sync="addYinDialogVisible" v-if="addYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addYinPian @reject="rejectYin" ></addYinPian>
+      <addYinPian @reject="rejectYin"></addYinPian>
     </el-dialog>
 
     <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <addKeLi @reject="rejectKe" ></addKeLi>
+      <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
 
     <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
@@ -120,6 +125,7 @@
           </div>
 
           <hr align="center" width="100%" size="1px" length="10" color="black"/>
+
           <div class="yinpianshou" style="width: 100%">
 
             <el-row :gutter="5" style="">
@@ -271,10 +277,13 @@
             </el-col>
 
           </div>
+
+
         </div>
       </div>
 
     </el-form>
+
     <el-form :model="form">
       <div style="display: none" id="printkeli" ref="printkeli">
         <!-- 隐藏打印区域，避免用户看到 -->
@@ -446,7 +455,7 @@ import viewKeLi from "./view/viewKeLi";
 
 import {shenfang} from "@/api/prescription/review";
 export default {
-  components:{
+  components: {
     addYinPian,
     addKeLi,
     viewYinPian,
@@ -510,6 +519,7 @@ export default {
           drugweight: '',//药品总量
           description: '',//药品说明
           shelf_number: '',//货位号
+
         }
       ],
       printData: [
@@ -538,27 +548,17 @@ export default {
       ],
       printDrugData: [
         {
-
           drug_name: '',   //药品名称
           drug_allnum: '', //单剂量
           drug_description: '',//药品脚注
           drugweight: '',//药品总量
           description: '',//药品说明
           shelf_number: '',//货位号
-
           dose_herb: '',//剂量
           equivalent: '',//当量
-
-
-          // name:'',
-          // sex:'',
-          // age:'',
-          // packagenum:'',
-          // drugAllnum:'',
-          // soakwater:'',
-
         }
       ],
+
       orderInfo: {
         form: {},
         drugList: []
@@ -574,7 +574,7 @@ export default {
       selectionList: [],
       option: {
         addBtn: false,
-        excelBtn:true,
+        excelBtn: true,
         //printBtn:true,
         height: "auto",
         calcHeight: 30,
@@ -590,7 +590,7 @@ export default {
           {
             label: "订单id",
             prop: "id",
-            sortable:true,
+            sortable: true,
             search: true,
           },
           {
@@ -714,13 +714,19 @@ export default {
       },
       data: [],
       obj0: {
-        auditorText: ''
+        auditorText: '',
+        tet:''
       },
       option0: {
         emptyBtn: false,
         submitBtn: false,
         column: [
-
+          {
+            label: "冲突名称",
+            prop: "tet",
+            span: 20,
+            disabled:true,
+          },
           {
             label: "驳回理由",
             prop: "auditorText",
@@ -812,9 +818,8 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
     openDialog(rowID){
-
-
-      shenfang(rowID).then(() => {
+      shenfang(rowID).then((res) => {
+        this.obj0.tet=res.data.data.name;
         this.$message({
           type: "success",
           message: "操作成功!"
@@ -822,14 +827,13 @@ export default {
       }, error => {
         window.console.log(error);
       });
-
       this.dialogUpadate = true;
       this.Id= rowID;
     },
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStatic(zt) {
       console.log(zt)
-      updateOrderStatic(this.Id,zt).then(res => {
+      updateOrderStatic(this.Id, zt).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -844,7 +848,7 @@ export default {
       if (zt === 6 && this.obj0.auditorText === '') {
         return this.$message.error("请输入驳回理由!");
       }
-      updateOrderStaticBh(this.Id,zt,this.obj0.auditorText).then(res => {
+      updateOrderStaticBh(this.Id, zt, this.obj0.auditorText).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.msg);
           this.dialogUpadate = false;
@@ -928,7 +932,7 @@ export default {
         })
       }
     },
-    newshenfang(){
+    newshenfang() {
       this.addYinDialogVisible = true;
     },
 
@@ -964,14 +968,6 @@ export default {
         this.selectionClear();
       });
     },
-    //审方
-/*    openDialog(ids){
-      console.log(ids);
-      console.log(ids);
-      console.log(ids);
-
-      this.dialogUpadate = true;
-    },*/
     //查看
     lockInfo(row) {
       let url = '';
@@ -989,9 +985,9 @@ export default {
       getInfo(url, row.id).then(res => {
         this.orderInfo = res.data.data;
         if (row.orderType === "jianyao") {
-          this.viewYinDialogVisible=true;
+          this.viewYinDialogVisible = true;
         } else if (row.orderType === "tiaopei") {
-          this.viewKeDialogVisible=true;
+          this.viewKeDialogVisible = true;
         } else {
           this.$message({
             type: 'error',

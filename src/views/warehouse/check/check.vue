@@ -1,4 +1,4 @@
-<template>
+  <template>
   <basic-container>
     <avue-crud :option="option"
                :table-loading="loading"
@@ -492,6 +492,13 @@
         });
         return ids.join(",");
       },
+      checkStatuss() {
+        let checkStatuss = [];
+        this.selectionList.forEach(ele => {
+          checkStatuss.push(ele.checkStatus);
+        });
+        return checkStatuss.join(",");
+      },
     },
     methods: {
       rowSave(row, done, loading) {
@@ -876,6 +883,13 @@
         });
       },
       openUpdateDialog(){
+        if (this.selectionList.length === 0) {
+          return this.$message.error("请选择需要的商品！");
+        }if (this.checkStatuss ==102) {
+          return this.$message.error("该订单已经驳回无法修改！");
+        }if (this.checkStatuss ==101) {
+          return this.$message.error("该订单已经完成无法修改！");
+        }
          this.dialogApprove = true;
       },
       updateFatherCheckStatus(checkStatus){

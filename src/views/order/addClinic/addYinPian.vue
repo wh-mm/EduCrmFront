@@ -25,7 +25,6 @@
       </template>
 
 
-
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">增加协定方</el-button>
@@ -64,7 +63,7 @@ export default {
       options: [],
       value: "",
       list: [],
-      loading:false,
+      loading: false,
       option: {
         addBtn: false,
         editBtn: false,
@@ -76,31 +75,31 @@ export default {
             prop: "goodsName",
             slot: true,
           },
-           /* type: 'select',
-            filterable: true,
-            remote: true,
-            cell: true,
-            rules: [{
-              require: true,
-              message: '请选择商品',
-            }],
-            props: {
-              label: 'goodsName',
-              value: 'id'
-            },
-            dicUrl: '/api/erp-wms/goods/likeListYP',
-            change: ({value}) => {
-              if (value) {
-                getGoodsDetail(value).then(res => {
-                  for (let i = 0; i < this.data.length; i++) {
-                    if (this.data[i].goodsName === value) {
-                      this.data[i].unitPrice = res.data.data.unitPrice;
-                    }
-                  }
-                });
-              }
-            },
-          },*/
+          /* type: 'select',
+           filterable: true,
+           remote: true,
+           cell: true,
+           rules: [{
+             require: true,
+             message: '请选择商品',
+           }],
+           props: {
+             label: 'goodsName',
+             value: 'id'
+           },
+           dicUrl: '/api/erp-wms/goods/likeListYP',
+           change: ({value}) => {
+             if (value) {
+               getGoodsDetail(value).then(res => {
+                 for (let i = 0; i < this.data.length; i++) {
+                   if (this.data[i].goodsName === value) {
+                     this.data[i].unitPrice = res.data.data.unitPrice;
+                   }
+                 }
+               });
+             }
+           },
+         },*/
           {
             label: "单剂量",
             prop: "drugAllnum",
@@ -453,7 +452,7 @@ export default {
                   value: 'id'
                 },
                 //search: true,
-               // cascaderItem: ['partiesName'],
+                // cascaderItem: ['partiesName'],
                 dicUrl: "/api/parties/orderpartiescategory/tree",
               },
               {
@@ -484,12 +483,12 @@ export default {
   },
 
   methods: {
-    optionsData(){
-      likeListYP().then(res =>{
+    optionsData() {
+      likeListYP().then(res => {
         this.options = res.data.data;
       })
     },
-    getPrice(val,index){
+    getPrice(val, index) {
       getGoodsDetail(val).then(res => {
         console.log(res.data.data);
         this.data[index].unitPrice = res.data.data.unitPrice;
@@ -505,7 +504,7 @@ export default {
         console.log(query);
         setTimeout(() => {
           this.loading = false;
-          likeListYP(query).then(res =>{
+          likeListYP(query).then(res => {
             this.options = res.data.data;
           })
         }, 200);

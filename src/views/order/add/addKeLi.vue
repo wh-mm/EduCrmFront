@@ -61,13 +61,13 @@ export default {
       options: [],
       value: "",
       list: [],
-      loading:false,
+      loading: false,
       option: {
         addBtn: false,
         editBtn: false,
         addRowBtn: true,
         menuWidth: 250,
-        cellBtn:true,
+        cellBtn: true,
         column: [
           {
             label: '*商品',
@@ -103,7 +103,7 @@ export default {
           {
             label: "单剂量/g",
             prop: "doseHerb",
-            cell:true,
+            cell: true,
           },
           {
             label: "单价",
@@ -219,7 +219,7 @@ export default {
                 span: 6,
                 rules: [{
                   required: true,
-                  validator:isOneToNinetyNine,
+                  validator: isOneToNinetyNine,
                   trigger: "blur"
                 },
                   {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
@@ -231,7 +231,7 @@ export default {
                 span: 6,
                 rules: [{
                   required: true,
-                  validator:isOneToNinetyNine,
+                  validator: isOneToNinetyNine,
                   trigger: "blur"
                 },
                   {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
@@ -326,7 +326,7 @@ export default {
                   label: 'partiesName',
                   value: 'id'
                 },
-               // dicFlag: false,
+                // dicFlag: false,
                 dicUrl: '/api/parties/orderparties/selectByName',
               },
             ]
@@ -342,17 +342,15 @@ export default {
 
   },
   methods: {
-    optionsData(){
-      likeListKL().then(res =>{
+    optionsData() {
+      likeListKL().then(res => {
         this.options = res.data.data;
       })
     },
-    getPrice(val,index){
+    getPrice(val, index) {
       getGoodsDetail(val).then(res => {
-        console.log(res.data.data);
         this.data[index].unitPrice = res.data.data.unitPrice;
       });
-      console.log(this.data);
     },
     addUpdate(form, index, done, loading) {
       done();
@@ -363,7 +361,7 @@ export default {
         console.log(query);
         setTimeout(() => {
           this.loading = false;
-          likeListKL(query).then(res =>{
+          likeListKL(query).then(res => {
             this.options = res.data.data;
           })
         }, 200);
