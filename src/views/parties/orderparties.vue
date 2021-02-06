@@ -371,6 +371,7 @@ export default {
       window.console.log(column);
       console.log(res);
       this.excelBox = false;
+      this.excelForm = {};
       this.refreshChange();
       done();
     },
