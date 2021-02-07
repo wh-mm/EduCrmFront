@@ -31,6 +31,20 @@ export const remove = (ids) => {
   })
 }
 
+
+
+
+export const zremove = (ids) => {
+  return request({
+    url: '/api/taocao-codematching/matching/zremove',
+    method: 'post',
+    params: {
+      ids,
+    }
+  })
+}
+
+
 export const add = (row) => {
   return request({
     url: '/api/taocao-codematching/matching/submit',

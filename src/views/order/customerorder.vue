@@ -23,8 +23,13 @@
       <!--修改-->
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
+        <el-button type="text" icon="el-icon-edit" size="small"
+                   v-if="scope.row.orderStatic==1"
+                   @click.stop="orderEdits(scope.row)">编 辑</el-button>
+        <el-button type="text" icon="el-icon-delete-solid" size="small" v-if="scope.row.orderStatic==1"
+                   @click="handleDelete(scope.row)">删 除
+        </el-button>
 
-        <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">编 辑</el-button>
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
       </template>
 
@@ -44,38 +49,47 @@
                width="90%" :modal="false" :close-on-click-modal="false">
       <addYinPian @reject="rejectYin"></addYinPian>
     </el-dialog>
-
     <el-dialog title="新增颗粒" :visible.sync="addKeDialogVisible" v-if="addKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
-
-    <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
+    <el-dialog title="订单饮片详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewYinPian :orderInfo="orderInfo"></viewYinPian>
     </el-dialog>
-    <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
+    <el-dialog title="订单颗粒详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewKeLi :orderInfo="orderInfo"></viewKeLi>
+    </el-dialog>
+    <el-dialog title="订单颗粒编辑" :visible.sync="editKeLiDialogVisible" v-if="editKeLiDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <editKeLi @reject="rerejectKeLi" :orderEdit="orderEdit" ></editKeLi>
+    </el-dialog>
+    <el-dialog title="订单饮片编辑" :visible.sync="editYinPianDialogVisible" v-if="editYinPianDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <edityinPian @reject="rerejectYinPian" :orderEdit="orderEdit"></edityinPian>
     </el-dialog>
   </basic-container>
 </template>
 
 <script>
-import {getInfo, getList} from "@/api/order/order";
+import {getInfo, getList, orderDelete} from "@/api/order/order";
 import addYinPian from "./addClinic/addYinPian";
 import addKeLi from "./addClinic/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
 import {mapGetters} from "vuex";
-
+import editKeLi from "./edit/editKeLi";
+import editYinPian from "./edit/editYinPian";
 
 export default {
   components: {
     addYinPian,
     addKeLi,
     viewYinPian,
-    viewKeLi
+    viewKeLi,
+    editKeLi,
+    editYinPian
   },
   name: "customerorder",
   data() {
@@ -84,10 +98,18 @@ export default {
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
       viewYinDialogVisible: false,
+      editKeLiDialogVisible:false,
+      editYinPianDialogVisible:false,
+
       orderInfo: {
         form: {},
         drugList: []
       },
+      orderEdit:{
+        form: {},
+        drugList: []
+      },
+
       form: {},
       query: {},
       loading: true,
@@ -250,7 +272,7 @@ export default {
         addBtn: this.vaildData(this.permission.order_add, false),
         viewBtn: this.vaildData(this.permission.order_view, false),
         delBtn: false,
-        editBtn: this.vaildData(this.permission.order_edit, false)
+        editBtn: false
       };
     },
     ids() {
@@ -307,7 +329,14 @@ export default {
       this.addKeDialogVisible = true;
       this.refreshChange();
     },
+    rerejectKeLi () {
+      this.editKeLiDialogVisible = false;
 
+    },
+    rerejectYinPian () {
+      this.editYinPianDialogVisible = false,
+        this.refreshChange()
+    },
 
     //抓药
     prescription() {
@@ -343,8 +372,55 @@ export default {
         this.selectionClear();
       });
     },
-    //修改
-
+    //删除
+    handleDelete(row) {
+      console.log(row.id)
+      this.$confirm("确定将选择数据删除?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          return orderDelete(row.id);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.$refs.crud.toggleSelection();
+        });
+    },
+    //编辑
+    orderEdits(row){
+      let url = '';
+      if (row.orderType === "jianyao") {
+        url = "/api/taocao-order/order/decoctingSelectByOrderId"
+      } else if (row.orderType === "tiaopei") {
+        url = "/api/taocao-order/order/blenderSelectByOrderId"
+      } else {
+        this.$message({
+          type: 'error',
+          message: '订单类型不匹配!'
+        })
+        return;
+      }
+      getInfo(url, row.id).then(res => {
+        this.orderEdit = res.data.data;
+        if (row.orderType === "jianyao") {
+          this.editYinPianDialogVisible = true;
+        } else if (row.orderType === "tiaopei") {
+          this.editKeLiDialogVisible = true;
+        } else {
+          this.$message({
+            type: 'error',
+            message: '订单类型不匹配!'
+          })
+          return;
+        }
+      })
+    },
 
     //查看
     lockInfo(row) {

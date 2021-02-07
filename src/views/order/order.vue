@@ -26,13 +26,20 @@
         <!--修改-->
       </template>
 
+
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
 
-        <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
-                   @click="openDialog(scope.row)">审 方
-        </el-button>
+        <el-button type="text" icon="el-icon-edit" size="small"
+                   v-if="scope.row.orderStatic==1"
+                   @click.stop="orderEdits(scope.row)">编 辑</el-button>
 
+        <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
+                   @click="openDialog(scope.row.id)">审 方
+        </el-button>
+        <el-button type="text" icon="el-icon-delete-solid" size="small" v-if="scope.row.orderStatic==1"
+                   @click="handleDelete(scope.row)">删 除
+        </el-button>
 
         <!--处方中心打印功能-->
         <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
@@ -71,7 +78,7 @@
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj0" :option="option0">
-        <div> 十八反</div>
+
       </avue-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
@@ -96,6 +103,14 @@
     <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewKeLi :orderInfo="orderInfo"></viewKeLi>
+    </el-dialog>
+    <el-dialog title="订单编辑" :visible.sync="editYinPianDialogVisible" v-if="editYinPianDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <editKeLi :orderEdit="orderEdit"></editKeLi>
+    </el-dialog>
+    <el-dialog title="订单编辑" :visible.sync="editKeLiDialogVisible" v-if="editKeLiDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <editKeLi :orderEdit="orderEdit" ></editKeLi>
     </el-dialog>
     <el-form :model="form">
       <div style="display: none" id="printyinpian" ref="printyinpian">
@@ -447,7 +462,7 @@
 <script>
 import {
   getInfo,
-  getList,
+  getList, orderDelete,
   selectByOrderId,
   updateOrderStatic, updateOrderStaticBh,
 
@@ -459,6 +474,7 @@ import addYinPian from "./add/addYinPian";
 import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
+import {shenfang} from "@/api/prescription/review";
 
 
 export default {
@@ -495,6 +511,8 @@ export default {
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
       viewYinDialogVisible: false,
+      editKeLiDialogVisible:false,
+      editYinPianDialogVisible:false,
       dialogFormVisible: false,
       dialogUpadate: false,
       time: '',
@@ -573,6 +591,10 @@ export default {
       ],
 
       orderInfo: {
+        form: {},
+        drugList: []
+      },
+      orderEdit:{
         form: {},
         drugList: []
       },
@@ -729,16 +751,17 @@ export default {
       data: [],
       obj0: {
         auditorText: '',
-        goods:''
+        tet:''
       },
       option0: {
         emptyBtn: false,
         submitBtn: false,
         column: [
-
           {
-            lebel:"是否冲突",
-            prpo:"goods"
+            label: "冲突名称",
+            prop: "tet",
+            span: 20,
+            disabled:true,
           },
           {
             label: "驳回理由",
@@ -765,7 +788,7 @@ export default {
         addBtn: this.vaildData(this.permission.order_add, false),
         viewBtn: this.vaildData(this.permission.order_view, false),
         delBtn: false,
-        editBtn: false
+        editBtn: this.vaildData(this.permission.order_edit, false),
       };
     },
     ids() {
@@ -819,6 +842,11 @@ export default {
     newAddKe() {
       this.addKeDialogVisible = true;
       this.refreshChange();
+
+    },
+    //审批
+    updateRevocation() {
+      this.dialogFormVisible = true;
     },
     //清空选择
     toggleSelection() {
@@ -830,10 +858,21 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
 
-    openDialog(row) {
+    openDialog(rowID){
+      shenfang(rowID).then((res) => {
+        this.obj0.tet=res.data.data.name;
+        this.$message({
+          type: "success",
+          message: "操作成功!"
+        });
+      }, error => {
+        window.console.log(error);
+      });
+
       this.dialogUpadate = true;
-      this.Id = row.id;
+      this.Id= rowID;
     },
+
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStatic(zt) {
       console.log(zt)
@@ -969,6 +1008,55 @@ export default {
         this.loading = false;
         this.selectionClear();
       });
+    },
+    //删除
+    handleDelete(row) {
+      console.log(row.id)
+      this.$confirm("确定将选择数据删除?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          return orderDelete(row.id);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.$refs.crud.toggleSelection();
+        });
+    },
+    //编辑
+    orderEdits(row){
+      let url = '';
+      if (row.orderType === "jianyao") {
+        url = "/api/taocao-order/order/decoctingSelectByOrderId"
+      } else if (row.orderType === "tiaopei") {
+        url = "/api/taocao-order/order/blenderSelectByOrderId"
+      } else {
+        this.$message({
+          type: 'error',
+          message: '订单类型不匹配!'
+        })
+        return;
+      }
+      getInfo(url, row.id).then(res => {
+        this.orderEdit = res.data.data;
+        if (row.orderType === "jianyao") {
+          this.editKeLiDialogVisible = true;
+        } else if (row.orderType === "tiaopei") {
+          this.editYinPianDialogVisible = true;
+        } else {
+          this.$message({
+            type: 'error',
+            message: '订单类型不匹配!'
+          })
+          return;
+        }
+      })
     },
 
     //查看

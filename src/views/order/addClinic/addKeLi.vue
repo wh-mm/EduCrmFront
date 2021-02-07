@@ -266,10 +266,10 @@ export default {
                 label: "医生姓名",
                 prop: "doctorName",
                 span: 6,
-                rules: [{
+                /*rules: [{
                   //required: true,
-                  validator: zhongwen,
-                }],
+                  //validator: zhongwen,
+                }],*/
               },
             ]
           },

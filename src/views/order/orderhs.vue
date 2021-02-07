@@ -25,18 +25,14 @@
          </el-button>-->
         <!--修改-->
       </template>
-
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-
         <el-button type="text" icon="el-icon-refresh-left" size="small" v-if="scope.row.orderStatic==6"
                    @click="updateOrderStaticH(scope.row)">还 原
         </el-button>
-
-        <el-button type="text" icon="el-icon-refresh-left" size="small" v-if="scope.row.orderStatic==6"
+        <el-button type="text" icon="el-icon-delete" size="small" v-if="scope.row.orderStatic==6"
                    @click="handleDelete(scope.row)">删 除
         </el-button>
-
         <!--处方中心打印功能-->
         <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                            v-if="scope.row.orderStatic==1"
@@ -53,7 +49,6 @@
                            @click="dayin(scope.row)">补 打
                 </el-button>-->
       </template>
-
       <template slot="orderDifferentiation" slot-scope="scope">
         <div style="color: #2a5caa " font-weight="900" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
         <div style="color: #009ad6" v-else>医院下单</div>

@@ -47,6 +47,7 @@
             :label="item.goodsName"
             :value="item.id">
           </el-option>
+<!--          原38行 :disabled="disabled"-->
           </el-select>
       </template>
     </avue-crud>
@@ -70,6 +71,7 @@
           total: 0
         },
         options:[],
+       // disabled:true,
         selectionList: [],
         option: {
           height:'auto',
@@ -87,6 +89,7 @@
               label: "审核方名字",
               prop: "prescriptionName",
               labelWidth: 110,
+              sortable: true,
               rules: [{
                 required: true,
                 message: "请输入审核方名字",
@@ -104,6 +107,7 @@
               prop: "drugsIdsArrays",
               addDisplay:false,
               editDisplay:false,
+              viewDisplay:false,
             },
 
 /*            {
@@ -185,7 +189,6 @@
         });
       },
       rowUpdate(row, index, done, loading) {
-        row.drugsIdsArray = row.drugsIdsArray.join(",");
         update(row).then(() => {
           this.onLoad(this.page);
           this.$message({
@@ -259,6 +262,11 @@
             this.form = res.data.data;
           });
         }
+        /*if(type === "view"){
+          this.disabled = true;
+        }else if(type === "edit"){
+          this.disabled = false;
+        }*/
         done();
       },
       searchReset() {
