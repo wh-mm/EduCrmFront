@@ -24,10 +24,10 @@ export const selectOrderListNumberByTime = (params) => {
   })
 }
 /*医院订单数量查询*/
-export const selectOrderStatistics = (params) => {
+export const selectOrderStatistics = (values) => {
   return request({
     url: '/api/orderStatisticsController/selectOrderStatistics',
     method: 'get',
-    params: params,
+    params: values,
   })
 }

@@ -801,6 +801,7 @@ export default {
   },
   methods: {
     searchReset() {
+      alert("333")
       this.query = {};
       this.onLoad(this.page);
     },
@@ -811,6 +812,7 @@ export default {
       done();
     },
     selectionChange(list) {
+      alert("111")
       this.selectionList = list;
     },
     selectionClear() {
