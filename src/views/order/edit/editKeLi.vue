@@ -3,16 +3,16 @@
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="orderEdit.drugList">
 
-      <template slot="goodsName" slot-scope="scope">
+      <template slot="drugId" slot-scope="scope">
         <el-select
           size="small"
-          v-model="scope.row.goodsName"
+          v-model="scope.row.drugId"
           filterable
           remote
           reserve-keyword
           placeholder="请输入关键词"
           :remote-method="remoteMethod"
-          @change="getPrice(scope.row.goodsName,scope.index)"
+          @change="getPrice(scope.row.drugId,scope.index)"
           :data-index="scope.index"
           :loading="loading">
           <el-option
@@ -23,6 +23,7 @@
           </el-option>
         </el-select>
       </template>
+
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
@@ -31,7 +32,6 @@
         <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
         <el-button @click="addNextRow(index)" :size="size" :type="type">向下添加</el-button>
       </template>
-
     </avue-crud>
 
     <el-row>
@@ -70,22 +70,24 @@ export default {
         currentPage: 1,
         total: 0
       },
-      option:{
-        addBtn:false,
-        editBtn:true,
-        addRowBtn:false,
-        cellBtn:true,
-        delBtn:false,
-        menu:false,
+      option: {
+        addBtn: false,
+        editBtn: false,
+        addRowBtn: true,
         menuWidth: 250,
+        cellBtn: true,
         column: [
           {
-            label: '*药品',
-            prop: "drugName",
+            label: 'id',
+            prop: "id",
+          },
+          {
+            label: '*商品',
+            prop: "drugId",
             slot: true,
           },
           {
-            label: "*单剂量/g",
+            label: "单剂量/g",
             prop: "doseHerb",
             cell: true,
           },
