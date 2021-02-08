@@ -1,27 +1,7 @@
 <template>
   <!--医院接口-->
   <basic-container>
-<!--    <div class="block">
-      <el-date-picker
-        v-model="value1"
-        type="datetimerange"
-        range-separator="至"
-        value-format="yyyy-MM-dd HH:mm:ss"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        @change="dateChange">
-      </el-date-picker>
-    </div>-->
-<!--   <avue-crud :option="option"
-               :search.sync="search"
-               :data="data"
-               :permission="permissionList"
-               search="true"
-               @search-reset="searchReset"
-               @refresh-change="refreshChange"
-               @on-load="onLoad">
-    </avue-crud>-->
-    <avue-crud :option="option"
+  <avue-crud :option="option"
                :table-loading="loading"
                :data="data"
                :page.sync="page"
@@ -39,9 +19,8 @@
 <script>
 
   import { selectOrderStatistics } from "@/api/statistics/statistics";
-  //import { getselectOrderListMoneyByTime } from "@/api/statistics/statistics";
   import {mapGetters} from "vuex";
-  import {getList} from "@/api/order/order";
+
   export default {
     data() {
       return {
@@ -90,7 +69,7 @@
               prop: "prices",
             },
             {
-              label: "数量总和",
+              label: "贴数",
               prop: "dose",
             },
             {
@@ -133,7 +112,6 @@
       },
       selectionClear() {
         this.selectionList = [];
-        // this.$refs.crud.toggleSelection();
       },
       refreshChange() {
         this.onLoad(this.page, this.query);
@@ -151,39 +129,6 @@
         this.onLoad(this.page, params);
         done();
       },
-/*      onLoad(params = {}) {
-        const {releaseTimeRange} = params;
-        let values = {
-          ...params,
-        };
-        if (releaseTimeRange) {
-          values = {
-            ...params,
-           startTime: releaseTimeRange[0],
-            endTime: releaseTimeRange[1],
-          };
-          values.releaseTimeRange = null;
-          this.query.releaseTimeRange = null;
-
-        }
-        this.loading = true;
-       // console.log(params);
-        console.log(111111111111111111111111);
-        console.log(this.option);
-        console.log(111111111111111111111111);
-       // console.log(values);
-
-
-        selectOrderStatistics( Object.assign(params, this.query)).then(res => {
-          const data = res.data.data;
-          data.forEach((value)=>{
-            value.$cellEdit = true
-          })
-          this.data = data;
-          this.loading = false;
-          this.selectionClear();
-        });
-      },*/
       onLoad(page, params = {}) {
         const {releaseTimeRange} = params;
         let values = {

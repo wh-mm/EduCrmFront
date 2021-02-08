@@ -109,21 +109,6 @@
               editDisplay:false,
               viewDisplay:false,
             },
-
-/*            {
-              label: "药品ID",
-              prop: "drugsIdsArray",
-              type: 'select',
-              filterText:'搜索关键字制自定义',
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              multiple:true,
-              remote: true,
-//              search: true,
-              dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
-            },*/
             {
               label: "备注",
               prop: "remarks",
