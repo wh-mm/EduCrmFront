@@ -104,6 +104,13 @@ export default {
             label: "单剂量/g",
             prop: "doseHerb",
             cell: true,
+            rules: [
+              {
+                required: true,
+                message: '请输入单剂量',
+                trigger: 'blur'
+              }
+            ]
           },
           {
             label: "单价",

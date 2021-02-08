@@ -2,26 +2,6 @@
   <basic-container>
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="orderEdit.drugList">
-      <template slot="goodsName" slot-scope="scope">
-        <el-select
-          size="small"
-          v-model="scope.row.goodsName"
-          filterable
-          remote
-          reserve-keyword
-          placeholder="请输入关键词"
-          :remote-method="remoteMethod"
-          @change="getPrice(scope.row.goodsName,scope.index)"
-          :data-index="scope.index"
-          :loading="loading">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.goodsName"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </template>
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
@@ -47,7 +27,7 @@
 <script>
 
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
-import {getGoodsDetail, likeListKL} from "@/api/warehouse/goods";
+import {getGoodsDetail, likeListKL, likeListYP} from "@/api/warehouse/goods";
 
 export default {
   name: "editYinPian",
@@ -78,8 +58,32 @@ export default {
         column: [
           {
             label: '*药品',
-            prop: "goodsName",
-            width: 130,
+            prop: "drugId",
+            cell: true,
+            filterable: true,
+            remote: true,
+            type: 'select',
+            rules: [{
+              require: true,
+              message: '请选择商品',
+            }],
+            props: {
+              label: 'goodsName',
+              value: 'id'
+            },
+            dicUrl: '/api/erp-wms/goods/likeListYP',
+            change: ({value}) => {
+              if (value) {
+                getGoodsDetail(value).then(res => {
+                  for (let i = 0; i < this.data.length; i++) {
+                    if (this.data[i].goodsName === value) {
+                      this.data[i].unitPrice = res.data.data.unitPrice;
+                      return;
+                    }
+                  }
+                });
+              }
+            },
           },
           {
             label: "单剂量/g",
@@ -422,7 +426,7 @@ export default {
         console.log(query);
         setTimeout(() => {
           this.loading = false;
-          likeListKL(query).then(res => {
+          likeListYP(query).then(res => {
             this.options = res.data.data;
           })
         }, 200);

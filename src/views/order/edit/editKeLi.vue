@@ -1,36 +1,14 @@
 <template>
   <basic-container>
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
-    <avue-crud ref="crud" :option="option" :data="orderEdit.drugList">
-
-      <template slot="drugId" slot-scope="scope">
-        <el-select
-          size="small"
-          v-model="scope.row.drugId"
-          filterable
-          remote
-          reserve-keyword
-          placeholder="请输入关键词"
-          :remote-method="remoteMethod"
-          @change="getPrice(scope.row.drugId,scope.index)"
-          :data-index="scope.index"
-          :loading="loading">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.goodsName"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </template>
-
+    <avue-crud ref="crud" :option="option" @row-update="addUpdate" :data="orderEdit.drugList">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
-      <template slot="menu" slot-scope="{row,index,size,type}">
-        <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
-        <el-button @click="addNextRow(index)" :size="size" :type="type">向下添加</el-button>
+      <template slot-scope="{row,index}" slot="menu">
+        <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
+        <el-button type="text" size="small" @click="del(row.id)">删 除</el-button>
       </template>
     </avue-crud>
 
@@ -50,12 +28,13 @@
 <script>
 
 import {getGoodsDetail, likeListKL} from "@/api/warehouse/goods";
-import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
+import {getSelectListByDrug } from "@/api/parties/orderpartiesdrug";
+import {iBlenderDelete} from "@/api/order/order";
 
 export default {
   name: "editKeLi",
   props: ['orderEdit'],
-  data(){
+  data() {
     return {
       data: [],
       options: [],
@@ -73,23 +52,55 @@ export default {
       option: {
         addBtn: false,
         editBtn: false,
-        addRowBtn: true,
-        menuWidth: 250,
-        cellBtn: true,
+        addRowBtn: false,
+        cellBtn: false,
+        delBtn: false,
         column: [
           {
             label: 'id',
             prop: "id",
+            hide:true,
           },
           {
-            label: '*商品',
+            label: '*药品',
             prop: "drugId",
-            slot: true,
+            cell: true,
+            filterable: true,
+            remote: true,
+            type: 'select',
+            rules: [{
+               require: true,
+               message: '请选择商品',
+             }],
+            props: {
+              label: 'goodsName',
+               value: 'id'
+             },
+             dicUrl: '/api/erp-wms/goods/likeListKL',
+             change: ({value}) => {
+               if (value) {
+                 getGoodsDetail(value).then(res => {
+                   for (let i = 0; i < this.data.length; i++) {
+                     if (this.data[i].goodsName === value) {
+                       this.data[i].unitPrice = res.data.data.unitPrice;
+                       return;
+                     }
+                   }
+                 });
+               }
+             },
           },
           {
-            label: "单剂量/g",
+            label: "*单剂量/g",
             prop: "doseHerb",
             cell: true,
+            rules: [
+              {
+                required: true,
+                message: '请输入单剂量',
+                trigger: 'blur'
+              }
+            ]
           },
           {
             label: "单价",
@@ -97,8 +108,9 @@ export default {
           },
         ]
       },
+
       //煎药
-      editOption :{
+      editOption: {
         detail: false,
         height: "auto",
         calcHeight: 30,
@@ -106,7 +118,7 @@ export default {
         border: true,
         index: true,
         viewBtn: false,
-        editBtn:false,
+        editBtn: false,
         selection: true,
         dialogClickModal: false,
         menuBtn: false,
@@ -259,26 +271,29 @@ export default {
       },
     }
   },
-  methods:{
+  methods: {
+
+    rowCell(row, index) {
+      this.$refs.crud.rowCell(row, index)
+    },
+    rowUpdate(form, index, done) {
+      this.$message.success(
+        '编辑数据' + JSON.stringify(form) + '数据序号' + index
+      )
+      done()
+    },
+    /* rowCell(row, index) {
+       this.$refs.crud.rowCell(row, index)
+     },*/
     addRow() {
       this.$message.success('正在添加，请稍后')
       setTimeout(() => {
         for (let i = 0; i < 5; i++) {
           this.$refs.crud.rowCellAdd({
-            goodsName: '',
+            drugId: '',
           });
         }
       }, 500)
-    },
-    addNextRow(index) {
-      this.data.splice(index + 1, 0, {
-        $cellEdit: true
-      })
-    },
-    addBreakRow(index) {
-      this.data.splice(index == 0 ? 0 : (index - 1), 0, {
-        $cellEdit: true
-      })
     },
     addXdf() {
       //获取值然后进行查询
@@ -290,7 +305,7 @@ export default {
           console.log(res)
           for (let i = 0; i < data.length; i++) {
             this.$refs.crud.rowCellAdd({
-              goodsName: data[i].goodsId,
+              goodsId: data[i].goodsId,
               doseHerb: data[i].consumption,
               unitPrice: data[i].goodsPrice,
             });
@@ -305,10 +320,13 @@ export default {
       });
       console.log(this.data);
     },
+
     addUpdate(form, index, done, loading) {
       done();
     },
+
     remoteMethod(query) {
+      console.log(query)
       if (query !== '') {
         this.loading = true;
         console.log(query);
@@ -323,13 +341,53 @@ export default {
       }
     },
 
+    del(id) {
+      console.log(id)
+      this.$confirm("确定将选择数据删除?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          return iBlenderDelete(id);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.$refs.crud.toggleSelection();
+        });
+    },
+/*    del(id) {
+
+      if (id==null||id==""){
+        this.$message.success("请选择取消");
+      }else {
+        iBlenderDelete(id).then(res => {
+          let data = res.data.data;
+          console.log(data);
+
+        });
+      }
+      alert(id)
+    },*/
+
     //取消
     reject() {
       this.$emit("reject");
     },
   },
-
+  handleRowClick(row, event, column) {
+    this.$message({
+      showClose: true,
+      message: '序号' + row.$index,
+      type: 'success',
+    });
+  }
 }
+
 </script>
 
 
