@@ -104,13 +104,13 @@
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewKeLi :orderInfo="orderInfo"></viewKeLi>
     </el-dialog>
-    <el-dialog title="订单饮片编辑" :visible.sync="editYinPianDialogVisible" v-if="editYinPianDialogVisible"
-               width="90%" :modal="false" :close-on-click-modal="false">
-      <editKeLi :orderEdit="orderEdit"></editKeLi>
-    </el-dialog>
     <el-dialog title="订单颗粒编辑" :visible.sync="editKeLiDialogVisible" v-if="editKeLiDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <editKeLi :orderEdit="orderEdit" ></editKeLi>
+      <editKeLi @reject="rerejectKeLi" :orderEdit="orderEdit"></editKeLi>
+    </el-dialog>
+    <el-dialog title="订单饮片编辑" :visible.sync="editYinPianDialogVisible" v-if="editYinPianDialogVisible"
+               width="90%" :modal="false" :close-on-click-modal="false">
+      <editYinPian @reject="rerejectYinPian" :orderEdit="orderEdit"></editYinPian>
     </el-dialog>
     <el-form :model="form">
       <div style="display: none" id="printyinpian" ref="printyinpian">
@@ -475,6 +475,8 @@ import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
 import {shenfang} from "@/api/prescription/review";
+import editKeLi from "@/views/order/edit/editKeLi";
+import editYinPian from "@/views/order/edit/editYinPian";
 
 
 export default {
@@ -482,7 +484,9 @@ export default {
     addYinPian,
     addKeLi,
     viewYinPian,
-    viewKeLi
+    viewKeLi,
+    editKeLi,
+    editYinPian
   },
   filters: {
     rounding(value) {
@@ -844,7 +848,12 @@ export default {
     newAddKe() {
       this.addKeDialogVisible = true;
       this.refreshChange();
-
+    },
+    rerejectKeLi() {
+      this.editKeLiDialogVisible = false;
+    },
+    rerejectYinPian() {
+      this.editYinPianDialogVisible = false;
     },
     //审批
     updateRevocation() {

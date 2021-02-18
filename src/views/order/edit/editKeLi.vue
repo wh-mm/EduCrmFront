@@ -6,10 +6,12 @@
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
+
       <template slot-scope="{row,index}" slot="menu">
         <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
         <el-button type="text" size="small" @click="del(row.id)">删 除</el-button>
       </template>
+
     </avue-crud>
 
     <el-row>
@@ -272,7 +274,6 @@ export default {
     }
   },
   methods: {
-
     rowCell(row, index) {
       this.$refs.crud.rowCell(row, index)
     },
@@ -361,14 +362,12 @@ export default {
         });
     },
 /*    del(id) {
-
       if (id==null||id==""){
         this.$message.success("请选择取消");
       }else {
         iBlenderDelete(id).then(res => {
           let data = res.data.data;
           console.log(data);
-
         });
       }
       alert(id)

@@ -25,7 +25,8 @@
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
         <el-button type="text" icon="el-icon-edit" size="small"
                    v-if="scope.row.orderStatic==1"
-                   @click.stop="orderEdits(scope.row)">编 辑</el-button>
+                   @click.stop="orderEdits(scope.row)">编 辑
+        </el-button>
         <el-button type="text" icon="el-icon-delete-solid" size="small" v-if="scope.row.orderStatic==1"
                    @click="handleDelete(scope.row)">删 除
         </el-button>
@@ -63,11 +64,11 @@
     </el-dialog>
     <el-dialog title="订单颗粒编辑" :visible.sync="editKeLiDialogVisible" v-if="editKeLiDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <editKeLi @reject="rerejectKeLi" :orderEdit="orderEdit" ></editKeLi>
+      <editKeLi @reject="rerejectKeLi" :orderEdit="orderEdit"></editKeLi>
     </el-dialog>
     <el-dialog title="订单饮片编辑" :visible.sync="editYinPianDialogVisible" v-if="editYinPianDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
-      <edityinPian @reject="rerejectYinPian" :orderEdit="orderEdit"></edityinPian>
+      <editYinPian @reject="rerejectYinPian" :orderEdit="orderEdit"></editYinPian>
     </el-dialog>
   </basic-container>
 </template>
@@ -98,14 +99,14 @@ export default {
       addKeDialogVisible: false,
       viewKeDialogVisible: false,
       viewYinDialogVisible: false,
-      editKeLiDialogVisible:false,
-      editYinPianDialogVisible:false,
+      editKeLiDialogVisible: false,
+      editYinPianDialogVisible: false,
 
       orderInfo: {
         form: {},
         drugList: []
       },
-      orderEdit:{
+      orderEdit: {
         form: {},
         drugList: []
       },
@@ -311,7 +312,6 @@ export default {
       this.onLoad(this.page, this.query);
     },
 
-
     //取消
     rejectYin() {
       this.addYinDialogVisible = false;
@@ -329,13 +329,11 @@ export default {
       this.addKeDialogVisible = true;
       this.refreshChange();
     },
-    rerejectKeLi () {
+    rerejectKeLi() {
       this.editKeLiDialogVisible = false;
-
     },
-    rerejectYinPian () {
-      this.editYinPianDialogVisible = false,
-        this.refreshChange()
+    rerejectYinPian() {
+      this.editYinPianDialogVisible = false;
     },
 
     //抓药
@@ -393,7 +391,8 @@ export default {
         });
     },
     //编辑
-    orderEdits(row){
+    orderEdits(row) {
+      //debugger
       let url = '';
       if (row.orderType === "jianyao") {
         url = "/api/taocao-order/order/decoctingSelectByOrderId"
@@ -450,8 +449,7 @@ export default {
           return;
         }
       })
-    },
-
+    }
   }
 };
 </script>

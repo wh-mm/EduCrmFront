@@ -1,14 +1,14 @@
 <template>
   <basic-container>
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
-    <avue-crud ref="crud" :option="option" :data="orderEdit.drugList">
+    <avue-crud ref="crud" :option="option" @row-update="addUpdate" :data="orderEdit.drugList">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
-      <template slot="menu" slot-scope="{row,index,size,type}">
-        <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
-        <el-button @click="addNextRow(index)" :size="size" :type="type">向下添加</el-button>
+      <template slot-scope="{row,index}" slot="menu">
+        <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
+        <el-button type="text" size="small" @click="del(row.id)">删 除</el-button>
       </template>
     </avue-crud>
     <el-row>
@@ -27,7 +27,8 @@
 <script>
 
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
-import {getGoodsDetail, likeListKL, likeListYP} from "@/api/warehouse/goods";
+import {getGoodsDetail, likeListYP} from "@/api/warehouse/goods";
+import {iBlenderDelete, receiveBlenderSave} from "@/api/order/order";
 
 export default {
   name: "editYinPian",
@@ -47,15 +48,18 @@ export default {
         currentPage: 1,
         total: 0
       },
-      option:{
-        addBtn:false,
-        editBtn:true,
-        addRowBtn:false,
-        cellBtn:true,
-        delBtn:false,
-        menu:false,
-        menuWidth: 250,
+      option: {
+        addBtn: false,
+        editBtn: false,
+        addRowBtn: false,
+        cellBtn: false,
+        delBtn: false,
         column: [
+          {
+            label: 'id',
+            prop: "id",
+            hide:true,
+          },
           {
             label: '*药品',
             prop: "drugId",
@@ -112,7 +116,7 @@ export default {
         border: true,
         index: true,
         viewBtn: false,
-        editBtn:false,
+        editBtn: false,
         selection: true,
         dialogClickModal: false,
         menuBtn: false,
@@ -374,33 +378,71 @@ export default {
                 dicUrl: "/api/blade-system/dict-biz/dictionary?code=dtbtype"
               },
             ]
-          }
+          },
+          {
+            icon: 'el-icon-info',
+            label: '药方信息',
+            collapse: true,
+            prop: 'group1',
+            column: [
+              {
+                label: "协定方类型",
+                prop: "partiesCategory",
+                type: 'tree',
+                labelWidth: 130,
+                rules: [{
+                  message: "请选择协定方类型",
+                  trigger: "blur"
+                }],
+                props: {
+                  label: 'title',
+                  value: 'id'
+                },
+                // search: true,
+                // cascaderItem: ['partiesName'],
+                dicUrl: "/api/parties/orderpartiescategory/tree",
+              },
+              {
+                label: "协定方名称",
+                prop: "partiesName",
+                type: "tree",
+                labelWidth: 130,
+                props: {
+                  label: 'partiesName',
+                  value: 'id'
+                },
+                //dicFlag: false,
+                dicUrl: '/api/parties/orderparties/selectByName',
+              },
 
-
+            ],
+          },
         ],
       },
     }
   },
-  methods:{
+  methods: {
+    rowCell(row, index) {
+      this.$refs.crud.rowCell(row, index)
+    },
+    rowUpdate(form, index, done) {
+      this.$message.success(
+        '编辑数据' + JSON.stringify(form) + '数据序号' + index
+      )
+      done()
+    },
+    /* rowCell(row, index) {
+       this.$refs.crud.rowCell(row, index)
+     },*/
     addRow() {
       this.$message.success('正在添加，请稍后')
       setTimeout(() => {
         for (let i = 0; i < 5; i++) {
           this.$refs.crud.rowCellAdd({
-            goodsName: '',
+            drugId: '',
           });
         }
       }, 500)
-    },
-    addNextRow(index) {
-      this.data.splice(index + 1, 0, {
-        $cellEdit: true
-      })
-    },
-    addBreakRow(index) {
-      this.data.splice(index == 0 ? 0 : (index - 1), 0, {
-        $cellEdit: true
-      })
     },
     addXdf() {
       //获取值然后进行查询
@@ -412,7 +454,7 @@ export default {
           console.log(res)
           for (let i = 0; i < data.length; i++) {
             this.$refs.crud.rowCellAdd({
-              goodsName: data[i].goodsId,
+              goodsId: data[i].goodsId,
               doseHerb: data[i].consumption,
               unitPrice: data[i].goodsPrice,
             });
@@ -420,7 +462,53 @@ export default {
         });
       }, 500)
     },
+    getPrice(val, index) {
+      getGoodsDetail(val).then(res => {
+        console.log(res.data.data);
+        this.data[index].unitPrice = res.data.data.unitPrice;
+      });
+      console.log(this.data);
+    },
+
+    addUpdate(form, index, done, loading) {
+      done();
+    },
+/*    xgBtn() {
+      this.$refs.addForm.validate((valid, callback) => {
+        if (valid) {
+          this.$confirm("请仔细查阅！", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+            .then(() => {
+              let params = {};
+              params = this.form;
+              params.orderType = 'tiaopei';
+              params.drugList = this.data;
+              receiveBlenderSave(params).then(res => {
+                if (res.data.code === 200) {
+                  this.$message({
+                    type: "success",
+                    message: res.data.msg,
+                  })
+                  this.$emit("reject");
+                } else {
+                  this.$message({
+                    type: "error",
+                    message: res.data.msg
+                  })
+                  callback();
+                }
+              });
+            }).catch(() => {
+            callback();
+          })
+        }
+      })
+    },*/
     remoteMethod(query) {
+      console.log(query)
       if (query !== '') {
         this.loading = true;
         console.log(query);
@@ -434,17 +522,49 @@ export default {
         this.options = [];
       }
     },
-    getPrice(val, index) {
-      getGoodsDetail(val).then(res => {
-        console.log(res.data.data);
-        this.data[index].unitPrice = res.data.data.unitPrice;
-      });
-      console.log(this.data);
+
+    del(id) {
+      console.log(id)
+      this.$confirm("确定将选择数据删除?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          return iBlenderDelete(id);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.$refs.crud.toggleSelection();
+        });
     },
+    /*    del(id) {
+          if (id==null||id==""){
+            this.$message.success("请选择取消");
+          }else {
+            iBlenderDelete(id).then(res => {
+              let data = res.data.data;
+              console.log(data);
+            });
+          }
+          alert(id)
+        },*/
+
     //取消
     reject() {
       this.$emit("reject");
     },
+  },
+  handleRowClick(row, event, column) {
+    this.$message({
+      showClose: true,
+      message: '序号' + row.$index,
+      type: 'success',
+    });
   }
 }
 </script>

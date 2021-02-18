@@ -31,9 +31,22 @@ export const selectOrderStatistics = (values) => {
     params: values,
   })
 }
+//煎药统计
 export const selectDecoctingDrugPage = (current, size, params) => {
   return request({
     url: '/api/orderStatisticsController/selectDecoctingDrugPage',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+}
+//调配统计
+export const selectBlenderDetailsPage = (current, size, params) => {
+  return request({
+    url: '/api/orderStatisticsController/selectBlenderDetailsPage',
     method: 'get',
     params: {
       ...params,

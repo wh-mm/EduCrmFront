@@ -40,12 +40,13 @@
               label: "医院名字",
               prop: "hospitalId",
               type: "select",
+              required: true,
               props: {
                 label: "hospitalName",
                 value: "id"
               },
-              //search: true,
-              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
+              search: true,
+              dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal",
             },
             {
               label: "订单类型",
@@ -105,7 +106,6 @@
         };
       },
     },
-    //医院开关p[[
     methods: {
       selectionChange(list) {
         this.selectionList = list;

@@ -20,6 +20,7 @@
 
   import { selectDecoctingDrugPage } from "@/api/statistics/statistics";
   import {mapGetters} from "vuex";
+  import {getList} from "@/api/parties/orderparties";
   export default {
     data() {
       return {
@@ -28,7 +29,6 @@
         loading: true,
         selectionList: [],
         value1:'',
-
         option: {
           index: true,
           menu:false,
@@ -43,13 +43,13 @@
                 label: "hospitalName",
                 value: "id"
               },
-              //search: true,
+              search: true,
               dicUrl: "/api/taocao-hisHospital/hospital/selectHosptal"
             },
             {
               label: "订单类型",
               prop:"orderType",
-              search:true,
+              //search:true,
               type: "select",
               props: {
                 label: 'dictValue',
@@ -60,16 +60,38 @@
               trigger: "blur"
             },
             {
-              label: "数量",
-              prop: "number",
+              label: "药品名称",
+              prop: "goodsName",
+
+            },
+          /*  {
+              label: "药品规格",
+              prop: "goodsType",
+              type: "tree",
+              sortable:true,
+              rules: [{
+                required: true,
+                message: "请选择货物类型",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              search: true,
+              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
+            },*/
+            {
+              label: "药品单位",
+              prop: "unit",
             },
             {
-              label: "金额",
-              prop: "prices",
+              label: "药品数量",
+              prop: "zl",
             },
             {
-              label: "贴数",
-              prop: "dose",
+              label: '金额',
+              prop: "zjg",
             },
             {
               label: "订单时间",
@@ -104,7 +126,6 @@
         };
       },
     },
-    //医院开关
     methods: {
       selectionChange(list) {
         this.selectionList = list;
@@ -158,10 +179,11 @@
        // selectOrderStatistics((values)).then(res => {
         selectDecoctingDrugPage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
-          data.forEach((value)=>{
+          this.page.total = data.total;
+          data.records.forEach((value) => {
             value.$cellEdit = true
           })
-          this.data = data;
+          this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
@@ -170,13 +192,14 @@
         let params = {}
         params.startTime=this.value1[0];
         params.endTime=this.value1[1];
-        selectOrderStatistics( Object.assign(params)).then(res => {
+        selectDecoctingDrugPage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
-          console.log(data)
-          data.forEach((value)=>{
+          this.page.total = data.total;
+          data.records.forEach((value) => {
             value.$cellEdit = true
           })
-          this.data = data;
+          this.data = data.records;
+          this.loading = false;
           this.selectionClear();
         });
 
