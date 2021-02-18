@@ -359,6 +359,12 @@ export default {
     },
     //导出
     handleExport() {
+
+      if (this.selectionList.length === 0) {
+        return this.$message.error("请选择需要的商品");
+      }
+      this.dialogVisible = true;
+
       this.$confirm("是否导出协定方信息?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

@@ -31,3 +31,14 @@ export const selectOrderStatistics = (values) => {
     params: values,
   })
 }
+export const selectDecoctingDrugPage = (current, size, params) => {
+  return request({
+    url: '/api/orderStatisticsController/selectDecoctingDrugPage',
+    method: 'get',
+    params: {
+      ...params,
+      current,
+      size,
+    }
+  })
+}

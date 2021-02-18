@@ -1,7 +1,7 @@
 <template>
   <!--医院接口-->
   <basic-container>
-  <avue-crud :option="option"
+    <avue-crud :option="option"
                :table-loading="loading"
                :data="data"
                :page.sync="page"
@@ -18,9 +18,8 @@
 </template>
 <script>
 
-  import { selectOrderStatistics } from "@/api/statistics/statistics";
+  import { selectDecoctingDrugPage } from "@/api/statistics/statistics";
   import {mapGetters} from "vuex";
-
   export default {
     data() {
       return {
@@ -105,7 +104,7 @@
         };
       },
     },
-    //医院开关p[[
+    //医院开关
     methods: {
       selectionChange(list) {
         this.selectionList = list;
@@ -129,6 +128,17 @@
         this.onLoad(this.page, params);
         done();
       },
+
+      /*onLoad(page, params = {}) {
+        this.loading = true;
+        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
+      }*/
       onLoad(page, params = {}) {
         const {releaseTimeRange} = params;
         let values = {
@@ -144,7 +154,9 @@
           this.query.releaseTimeRange = null;
         }
         this.loading = true;
-        selectOrderStatistics((values)).then(res => {
+        //getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+       // selectOrderStatistics((values)).then(res => {
+        selectDecoctingDrugPage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
           const data = res.data.data;
           data.forEach((value)=>{
             value.$cellEdit = true
