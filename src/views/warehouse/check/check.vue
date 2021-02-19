@@ -314,12 +314,14 @@
             },
             {
               label:'类型',
-              prop:'type'
+              prop:'type',
+              sortable:true,
             },
             {
               label:'审核状态',
               prop:'checkStatus',
               type:"select",
+              sortable:true,
               props: {
                 label: "dictValue",
                 value: "dictKey"
@@ -328,11 +330,13 @@
             },
             {
               label:'审批原因',
-              prop:'rejectText'
+              prop:'rejectText',
+              sortable:true,
             },
             {
               label:'创建时间',
-              prop:'createTime'
+              prop:'createTime',
+              sortable:true,
             },
 
           ]

@@ -314,13 +314,6 @@
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
             {
-              label: "总价",
-              prop: "sumMoney",
-              editDisplay: false,
-              disabled: true,
-              hide:true
-            },
-            {
               label: '商品列表',
               prop: 'inputOrderDetailList',
               type: 'dynamic',
@@ -975,18 +968,18 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        const {updateTime} = params;
+        const {createTime} = params;
         let values = {
           ...params,
         };
-        if (updateTime) {
+        if (createTime) {
           values = {
             ...params,
-            start_time: updateTime[0],
-            end_time: updateTime[1],
+            start_time: createTime[0],
+            end_time: createTime[1],
           };
-          values.updateTime = null;
-          this.query.updateTime = null;
+          values.createTime = null;
+          this.query.createTime = null;
         }
         this.loading = true;
         getLists(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {

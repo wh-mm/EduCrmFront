@@ -30,9 +30,10 @@
     </avue-crud>
 
 
-    <el-dialog title="盘点模板导出"
+    <el-dialog title="仓库报表导出"
                append-to-body
                :visible.sync="exportDialog"
+               v-if="exportDialog"
                width="555px">
       <avue-form :option="excelCheckOption" v-model="excelCheckForm" :upload-after="uploadAfter">
         <template slot="excelTemplate">

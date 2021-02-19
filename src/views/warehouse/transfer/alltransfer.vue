@@ -51,6 +51,7 @@
           height:'auto',
           calcHeight: 30,
           tip: false,
+          menu:false,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
@@ -148,6 +149,10 @@
                 message: "请输入储位id",
                 trigger: "blur"
               }]
+            },
+            {
+              label: "创建时间",
+              prop: "createTime",
             },
           ]
         },
