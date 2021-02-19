@@ -267,7 +267,7 @@
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
                       this.form.outputOrderDetailList.forEach(vals => {
-                      selectByBatchNumber(null,vals.goodsId,value).then(res => {
+                      selectByBatchNumber(vals.goodsId,value).then(res => {
                         var detail = res.data.data;
                         detail.forEach(val =>{
                                vals.warehouseId = val.warehouseId;

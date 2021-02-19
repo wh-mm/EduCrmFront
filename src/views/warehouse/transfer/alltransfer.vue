@@ -105,25 +105,7 @@
               }]
             },
             {
-              label: "规格",
-              prop: "specification",
-              rules: [{
-                required: true,
-                message: "请输入规格",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "单位",
-              prop: "unitName",
-              rules: [{
-                required: true,
-                message: "请输入单位",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "原有数量",
+              label: "原有数量(g)",
               prop: "oldQuantity",
               rules: [{
                 required: true,
@@ -132,7 +114,7 @@
               }]
             },
             {
-              label: "转移数量",
+              label: "转移数量(g)",
               prop: "newQuantity",
               rules: [{
                 required: true,
