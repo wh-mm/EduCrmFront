@@ -12,6 +12,14 @@ export const getList = (current, size, params) => {
     }
   })
 }
+export const update = (row) => {
+  return request({
+    url: ERP_WMS_NAME + '/repertory/submit',
+    method: 'post',
+    data: row
+  })
+}
+
 export const saveDate = (row) => {
   return request({
     url: ERP_WMS_NAME + '/repertory/saveDate',
@@ -27,12 +35,11 @@ export const saveRepertoryWarning = (repertoryWarnList) => { //保存预警信�
   })
 }
 
-export const selectByBatchNumber = (batchNumber,goodsId,id) => {   //根据批号查询商品所在位置
+export const selectByBatchNumber = (goodsId,id) => {   //根据批号查询商品所在位置
   return request({
     url: ERP_WMS_NAME + '/repertory/selectByBatchNumber',
     method: 'post',
     params: {
-      batchNumber,
       goodsId,
       id
     }

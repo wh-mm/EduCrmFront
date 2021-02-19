@@ -130,7 +130,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>部门 : <span style="margin-left: 10px;"></span></p>
+                    <p>部门 : <span style="margin-left: 10px;">{{printData.detailData.deptName}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -142,12 +142,17 @@
               <el-row>
                 <el-col :span="8">
                   <div class="grid-content bg-purple">
-                    <p>仓库 : <span style="margin-left: 10px;"></span></p>
+                    <p>仓库 : <span style="margin-left: 10px;">{{printData.detailData.warehouseName}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
                     <p>备注 : <span style="margin-left: 10px;"></span></p>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -161,6 +166,11 @@
                   width="60">
                 </el-table-column>
                 <el-table-column
+                  prop="goodsCode"
+                  label="品号"
+                  width="60">
+                </el-table-column>
+                <el-table-column
                   prop="goodsName"
                   label="品名"
                   width="100">
@@ -168,10 +178,10 @@
                 <el-table-column
                   prop="batchNumber"
                   label="批号"
-                  width="147">
+                  width="90">
                 </el-table-column>
                 <el-table-column
-                  prop="specification"
+                  prop="specificationName"
                   label="规格"
                   width="90">
                 </el-table-column>
@@ -192,7 +202,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="goodsQuantity"
-                  label="数量"
+                  label="数量(g)"
                   width="55">
                 </el-table-column>
               </el-table>
@@ -203,7 +213,7 @@
                 </el-col>
                 <el-col :span="6">
                   <div class="grid-content bg-purple-light">
-                    <p>领料人 : <span style="margin-left: 10px;"></span></p>
+                    <p> <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
                 <el-col :span="3">
@@ -212,7 +222,7 @@
                 </el-col>
                 <el-col :span="5">
                   <div class="grid-content bg-purple-light">
-                    <p>保管员 : <span style="margin-left: 10px;"></span></p>
+                    <p>领料人 :<span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -279,6 +289,7 @@
         printData: {
           orderNumber: '',
           tableData: [],
+          detailData:[]
         },
         selectionList: [],
         option: {
@@ -869,6 +880,10 @@
         this.printData.orderNumber = row.orderNumber;
         printOutputorderDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
+
+          this.printData.tableData.forEach(detail=>{
+            this.printData.detailData = detail;
+          })
         })
       },
       printOut(row){
@@ -876,6 +891,7 @@
         this.printData.orderNumber = row.orderNumber;
         printOutputorderDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
+
         })
       }
     }

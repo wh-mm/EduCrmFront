@@ -31,7 +31,9 @@
         <el-button :size="scope.size" v-if="scope.row.status===101" :type="text" @click="viewReason(scope.row.id)"> 查看驳回理由</el-button>
         <el-button :size="scope.size" icon="el-icon-printer" :type="scope.type" @click="print(scope.row)"> 打印入库单</el-button>
       </template>
-
+      <template slot-scope="{row}" slot="totalPriceForm">
+        {{(row.price*row.goodsQuantity)}}
+      </template>
      </avue-crud>
 
     <el-dialog title="入库数据导入"
@@ -98,7 +100,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>供应商 : <span style="margin-left: 10px;">{{printData.detailData.sname}}</span></p>
+                    <p>部门 : <span style="margin-left: 10px;">{{printData.detailData.deptName}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -114,6 +116,9 @@
                   </div>
                 </el-col>
                 <el-col :span="8">
+                  <div class="grid-content bg-purple">
+                    <p>原因 : <span style="margin-left: 10px;"></span></p>
+                  </div>
                 </el-col>
 
               </el-row>
@@ -128,7 +133,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="goodsCode"
-                  label="索引码"
+                  label="品号"
                   width="65">
                 </el-table-column>
                 <el-table-column
@@ -142,29 +147,14 @@
                   width="80">
                 </el-table-column>
                 <el-table-column
-                  prop="goodsQuantity"
-                  label="数量"
-                  width="55">
-                </el-table-column>
-                <el-table-column
-                  prop="packageSpecification"
-                  label="包装规格"
-                  width="60">
-                </el-table-column>
-                <el-table-column
-                  prop="packageQuantity"
-                  label="包装数量"
-                  width="60">
+                  prop="specificationName"
+                  label="规格"
+                  width="57">
                 </el-table-column>
                 <el-table-column
                   prop="dateOfManufacture"
                   label="生产日期"
-                  width="70">
-                </el-table-column>
-                <el-table-column
-                  prop="specification"
-                  label="规格"
-                  width="55">
+                  width="80">
                 </el-table-column>
                 <el-table-column
                   prop="manufacturer"
@@ -173,8 +163,18 @@
                 </el-table-column>
                 <el-table-column
                   prop="placeOfOrigin"
+                  label="供应商"
+                  width="60">
+                </el-table-column>
+                <el-table-column
+                  prop="placeOfOrigin"
                   label="产地"
-                  width="55">
+                  width="60">
+                </el-table-column>
+                <el-table-column
+                  prop="goodsQuantity"
+                  label="数量(g)"
+                  width="90">
                 </el-table-column>
               </el-table>
               <el-row style="margin-top: 20px;">
@@ -184,7 +184,7 @@
                 </el-col>
                 <el-col :span="6">
                   <div class="grid-content bg-purple-light">
-                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
+                    <p><span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
                 <el-col :span="3">
@@ -193,7 +193,7 @@
                 </el-col>
                 <el-col :span="5">
                   <div class="grid-content bg-purple-light">
-                    <p>保管员 : <span style="margin-left: 10px;"></span></p>
+                    <p>入库人 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -314,6 +314,13 @@
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
             {
+              label: "总价",
+              prop: "sumMoney",
+              editDisplay: false,
+              disabled: true,
+              hide:true
+            },
+            {
               label: '商品列表',
               prop: 'inputOrderDetailList',
               type: 'dynamic',
@@ -415,6 +422,19 @@
                     width:150
                   },
                   {
+                    label: "商品单价",
+                    prop: "price",
+                    width:150,
+                    change: () => {
+                      this.form.sumMoney = 0;
+                      this.form.inputOrderDetailList.forEach(val => {
+                        if (val.goodsId != "") {
+                          this.form.sumMoney = (this.form.sumMoney * 1 + val.price * val.goodsQuantity).toFixed(2);
+                        }
+                      });
+                    },
+                  },
+                  {
                     label: '*入库数量(g)',
                     prop: "goodsQuantity",
                     type: "number",
@@ -422,7 +442,21 @@
                     rules: [{
                       required: true,
                       validator: validateQuantity,
-                    }]
+                    }],
+                    change: () => {
+                      this.form.sumMoney = 0;
+                      this.form.inputOrderDetailList.forEach(val => {
+                        if (val.goodsId != "") {
+                          this.form.sumMoney = (this.form.sumMoney * 1 + val.price * val.goodsQuantity).toFixed(2);
+                        }
+                      });
+                    },
+                  },
+                  {
+                    label: "商品总价",
+                    prop: "totalPrice",
+                    formslot: true,
+
                   },
                   {
                     label: '供应商',

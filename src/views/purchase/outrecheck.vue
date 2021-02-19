@@ -270,7 +270,6 @@
                       selectByBatchNumber(null,vals.goodsId,value).then(res => {
                         var detail = res.data.data;
                         detail.forEach(val =>{
-                            if (value==vals.batchNumber) {
                                vals.warehouseId = val.warehouseId;
                                vals.storageRegionId = val.storageRegionId;
                                vals.storageId = val.storageId;
@@ -283,7 +282,7 @@
                               vals.supplierName = val.supplierName
                               vals.packageQuantity = val.packageQuantity
                               vals.specification = val.specification
-                            }
+
                           });
                         });
                       });
@@ -312,7 +311,7 @@
                       trigger: 'blur'
                     }],
                     change: () => {
-                      if(this.value1 == true){
+                      if(this.value1){
                         getGoodsDetail().then(res => {
                           this.form.sumMoney = 0;
                           this.form.outputOrderDetailList.forEach(val => {
@@ -953,7 +952,7 @@
       },
       handleEdit(row, index) {
         this.$refs.crud.rowEdit(row, index);
-      }
+      },
     }
   };
 </script>

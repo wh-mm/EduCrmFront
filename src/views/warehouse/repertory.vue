@@ -7,6 +7,7 @@
                :permission="permissionList"
                v-model="form"
                ref="crud"
+               @row-update="rowUpdate"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -48,10 +49,34 @@
 
     <template slot="menu" slot-scope="scope">
       <el-button type="text" size="small"  icon="el-icon-warning" @click="deleteRepertory(scope.row.id)">删除</el-button>
+      <!--全部-->
+      <el-button type="text" size="small" @click="oneTransferDialog(scope.row)" >全移库</el-button>
+      <!--单体-->
+      <el-button type="text" size="small" @click="AllTransferDialog(scope.row)" >单转库</el-button>
     </template>
 
 
     </avue-crud>
+    <el-dialog title="全移库"
+               append-to-body
+               :visible.sync="dialogOne"
+               width="555px">
+      <template slot-scope="scope">
+        <avue-form :option="optionOne"  v-model="formOne"  @submit="oneTransfer">
+        </avue-form>
+      </template>
+
+    </el-dialog>
+    <el-dialog title="单转库"
+               append-to-body
+               :visible.sync="dialogAll"
+               width="555px">
+      <template slot-scope="scope">
+        <avue-form :option="optionAll"  v-model="formAll"  @submit="saveALLTransfer">
+        </avue-form>
+      </template>
+
+    </el-dialog>
 
     <el-dialog title="库存数据导入"
                append-to-body
@@ -90,15 +115,18 @@
 </template>
 
 <script>
-  import {getList,deleteRepertory} from "@/api/warehouse/repertory";
+  import {getList,deleteRepertory,update} from "@/api/warehouse/repertory";
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
-
+  import { saveOneTransfer } from "@/api/warehouse/transfer/onetransfer";
+  import { saveALLTransfer } from "@/api/warehouse/transfer/alltransfer";
   export default {
     data() {
 
       return {
+        formOne: {},
+        formAll: {},
         form: {},
         query: {},
         loading: true,
@@ -140,11 +168,6 @@
                 value: 'value'
               },
               cascaderItem: ['storageRegionId','storageId'],
-              rules: [{
-                required: true,
-                message: "请输入仓库",
-                trigger: "blur"
-              }],
               dicUrl:'/api/erp-wms/warehouse/tree'
             },
 
@@ -154,11 +177,6 @@
               type:'tree',
               search:true,
               sortable:true,
-              rules: [{
-                required: true,
-                message: "请输入储位",
-                trigger: "blur"
-              }],
               props: {
                 label: 'title',
                 value: 'id'
@@ -170,12 +188,6 @@
               prop: "storageName",
               type:'tree',
               sortable:true,
-              rules: [{
-                required: true,
-                message: "请输入储位",
-                trigger: "blur"
-              }],
-
             },
             {
               label: "商品",
@@ -363,7 +375,275 @@
               span: 24,
             }
           ]
-        }
+        },
+        optionOne: {
+          column: [
+            {
+              label: "仓库",
+              prop: "oldWarehouseId",
+              type:'tree',
+              row: true,
+              search:true,
+              sortable:true,
+              disabled:true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['oldStorageRegionId','oldStorageId'],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+
+            {
+              label: "区域",
+              prop: "oldStorageRegionId",
+              type:'tree',
+              search:true,
+              sortable:true,
+              disabled:true,
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+          {
+          label: "储位",
+          prop: "oldStorageId",
+          type:'tree',
+          disabled:true,
+          rules: [{
+          message: "请输入储位id",
+          trigger: "blur"
+          }],
+            props: {
+              label: 'title',
+              value: 'id'
+            },
+            dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
+          },
+            {
+              label: "商品",
+              prop: "goodsId",
+              type:'tree',
+              search:true,
+              sortable:true,
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod:"post",
+              dicUrl: '/api/erp-wms/goods/selecListGoods',
+            },
+            {
+              label: "商品编码",
+              prop: "goodsCode",
+              disabled:true,
+              rules: [{
+                message: "请输入商品编码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "规格",
+              prop: "specification",
+              disabled:true,
+              rules: [{
+                message: "请输入规格",
+                trigger: "blur"
+              }]
+            },
+
+            {
+              label: "仓库",
+              prop: "newWarehouseId",
+              type:'tree',
+              row: true,
+              search:true,
+              sortable:true,
+              span: 24,
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['newStorageRegionId','newStorageId'],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+
+            {
+              label: "区域",
+              prop: "newStorageRegionId",
+              type:'tree',
+              search:true,
+              sortable:true,
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+            {
+              label: "储位",
+              prop: "newStorageId",
+              type:'tree',
+              rules: [{
+                message: "请输入储位id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
+            },
+          ]
+        },
+        optionAll: {
+          column: [
+            {
+              label: "仓库",
+              prop: "oldWarehouseId",
+              type:'tree',
+              disabled:true,
+              rules: [{
+                required: true,
+                message: "请输入仓库id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['oldStorageRegionId','oldStorageId'],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "区",
+              prop: "oldStorageRegionId",
+              type:'tree',
+              disabled:true,
+              rules: [{
+                message: "请输入区id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+            {
+              label: "储位",
+              prop: "oldStorageId",
+              type:'tree',
+              disabled:true,
+              rules: [{
+                message: "请输入储位id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
+            },
+            {
+              label: "商品",
+              prop: "goodsId",
+              type:'select',
+              disabled:true,
+              rules: [{
+                message: "请输入商品id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'goodsName',
+                value: 'id'
+              },
+              dicMethod:"post",
+              dicUrl: '/api/erp-wms/goods/selecListGoods',
+            },
+            {
+              label: "商品编码",
+              prop: "goodsCode",
+              disabled:true,
+              rules: [{
+                message: "请输入商品编码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "规格",
+              prop: "specification",
+              disabled:true,
+              rules: [{
+                message: "请输入规格",
+                trigger: "blur"
+              }]
+            },
+            {
+              label:"原有数量",
+              prop:'oldQuantity',
+              disabled: true,
+              type:'number'
+            },
+            {
+              label:"转移数量",
+              prop:'newQuantity',
+              type:'number'
+            },
+            {
+              label:"批号",
+              prop:'newBatchNumber',
+            },
+            {
+              label: "仓库",
+              prop: "newWarehouseId",
+              type:'tree',
+              rules: [{
+                required: true,
+                message: "请输入仓库id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'value'
+              },
+              cascaderItem: ['newStorageRegionId'],
+              dicUrl:'/api/erp-wms/warehouse/tree'
+            },
+            {
+              label: "区",
+              type:'tree',
+              prop: "newStorageRegionId",
+              rules: [{
+                message: "请输入区id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              cascaderItem: ['newStorageId'],
+              dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+            },
+            {
+              label: "储位",
+              type:'tree',
+              prop: "newStorageId",
+              rules: [{
+                message: "请输入储位id",
+                trigger: "blur"
+              }],
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
+            },
+          ]
+        },
       };
     },
     computed: {
@@ -373,7 +653,7 @@
           addBtn: false,
           viewBtn: this.vaildData(this.permission.repertory_view, false),
           delBtn: false,
-          editBtn: false
+          editBtn: this.vaildData(this.permission.repertory_edit, false),
         };
       },
       ids() {
@@ -396,6 +676,19 @@
         }, error => {
           loading();
           window.console.log(error);
+        });
+      },
+      rowUpdate(row, index, done, loading) {
+        update(row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          done();
+        }, error => {
+          loading();
+          console.log(error);
         });
       },
       searchReset() {
@@ -515,9 +808,65 @@
             type:'info',
             message:res.data.msg
           })
-          this.searchReset();
         })
       },
+
+      oneTransferDialog(row){
+        this.dialogOne=true;
+        this.rowId = row.id
+        this.formOne.oldWarehouseId = row.warehouseId;
+        this.formOne.oldStorageRegionId = row.storageRegionId;
+        this.formOne.oldStorageId = row.storageId;
+        this.formOne.goodsId = row.goodsId;
+        this.formOne.goodsCode = row.goodsCode;
+        this.formOne.specification = row.specification;
+        this.formOne.unit = row.unit;
+        this.formOne.conversionUnit = row.conversionUnit;
+
+      },
+      AllTransferDialog(row){
+        this.dialogAll=true;
+        this.rowId = row.id
+        this.formAll.oldWarehouseId = row.warehouseId;
+        this.formAll.oldStorageRegionId = row.storageRegionId;
+        this.formAll.oldStorageId = row.storageId;
+        this.formAll.goodsId = row.goodsId;
+        this.formAll.goodsCode = row.goodsCode;
+        this.formAll.specification = row.specification;
+        this.formAll.unit = row.unit;
+        this.formAll.conversionUnit = row.conversionUnit;
+        this.formAll.oldQuantity = row.repertoryQuantity;
+        this.formAll.newBatchNumber = row.batchNumber;
+
+      },
+      oneTransfer(row){
+        saveOneTransfer(this.rowId,row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.checkDialog =false;
+          this.checkObj = null;
+        }, error => {
+          window.console.log(error);
+        });
+
+      },
+      saveALLTransfer(row){
+        saveALLTransfer(this.rowId,row).then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.checkDialog =false;
+          this.checkObj = null;
+        }, error => {
+          window.console.log(error);
+        });
+
+      }
 
     }
   };

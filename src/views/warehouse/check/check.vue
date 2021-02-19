@@ -37,6 +37,11 @@
                    plain
                    @click="openUpdateDialog()">审批
         </el-button>
+        <el-button type="danger"
+                   size="small"
+                   plain
+                   @click="handleExport()">导出盘点单
+        </el-button>
       </template>
 
       <template slot="menu" slot-scope="scope">
@@ -240,6 +245,7 @@
   import {saveCheckHistory} from "@/api/warehouse/check/checkhistory";
   import {saveImportExcelData,getListTemporary,deleteCheckTemporary,deleteCheck} from "@/api/warehouse/check/checktemporary";
   import {mapGetters} from "vuex";
+  import {getToken} from "@/util/auth";
 
   export default {
     data() {
@@ -907,7 +913,20 @@
             this.$message.error(res.data.msg);
           }
         })
+      },
+      handleExport() {
+        if (this.selectionList.length === 0 || this.selectionList.length>1){
+          return this.$message.error("请选择一条盘点单！");
+        }
+        this.$confirm("是否导出盘点单数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          window.open( `/api/wh-check/check/exportCheckRepertory?${this.website.tokenHeader}=${getToken()}&checkId=${this.ids}`);
+        });
       }
+
 
 
     }
