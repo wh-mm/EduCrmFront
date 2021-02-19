@@ -3,8 +3,8 @@
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
     <avue-crud ref="crud" :option="option" @row-update="addUpdate" :data="orderEdit.drugList">
       <template slot="menuLeft">
-        <el-button @click="addRow" size="small">添加5条</el-button>
-        <el-button @click="addXdf" size="small">添加协定方</el-button>
+        <el-button @click="addRow" icon="el-icon-circle-plus" size="small">新增</el-button>
+        <el-button @click="addXdf" icon="el-icon-s-operation" size="small">添加协定方</el-button>
       </template>
 
       <template slot-scope="{row,index}" slot="menu">
@@ -289,7 +289,7 @@ export default {
     addRow() {
       this.$message.success('正在添加，请稍后')
       setTimeout(() => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 1; i++) {
           this.$refs.crud.rowCellAdd({
             drugId: '',
           });

@@ -3,8 +3,8 @@
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
     <avue-crud ref="crud" :option="option" @row-update="addUpdate" :data="orderEdit.drugList">
       <template slot="menuLeft">
-        <el-button @click="addRow" size="small">添加5条</el-button>
-        <el-button @click="addXdf" size="small">添加协定方</el-button>
+        <el-button @click="addRow" icon="el-icon-circle-plus" size="small">新增</el-button>
+        <el-button @click="addXdf" icon="el-icon-s-operation" size="small">添加协定方</el-button>
       </template>
       <template slot-scope="{row,index}" slot="menu">
         <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
@@ -62,7 +62,7 @@ export default {
           },
           {
             label: '*药品',
-            prop: "drugId",
+            prop: "drugNum",
             cell: true,
             filterable: true,
             remote: true,
@@ -92,14 +92,17 @@ export default {
           {
             label: "单剂量/g",
             prop: "drugAllnum",
+            cell: true,
           },
           {
             label: "药品脚注",
             prop: "drugDescription",
+            cell: true,
           },
           {
             label: "说明",
             prop: "description",
+            cell: true,
           },
           {
             label: "单价",
@@ -437,7 +440,7 @@ export default {
     addRow() {
       this.$message.success('正在添加，请稍后')
       setTimeout(() => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 1; i++) {
           this.$refs.crud.rowCellAdd({
             drugId: '',
           });
@@ -454,8 +457,8 @@ export default {
           console.log(res)
           for (let i = 0; i < data.length; i++) {
             this.$refs.crud.rowCellAdd({
-              goodsId: data[i].goodsId,
-              doseHerb: data[i].consumption,
+              goodsName: data[i].goodsId,
+              drugAllnum: data[i].consumption,
               unitPrice: data[i].goodsPrice,
             });
           }
