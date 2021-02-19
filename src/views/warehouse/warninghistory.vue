@@ -63,8 +63,9 @@
             {
               label: "商品",
               prop: "goodsId",
-              type:'select',
+              type:'tree',
               search:true,
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入商品",
@@ -82,6 +83,7 @@
               prop: "warehouseId",
               type:'tree',
               search:true,
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入仓库id",
@@ -96,6 +98,7 @@
             {
               label: "库存数量",
               prop: "repertoryQuantity",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入库存数量",
@@ -105,6 +108,7 @@
             {
               label: "预警数量",
               prop: "drownQuantity",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入预警下限数量",
@@ -114,6 +118,7 @@
             {
               label: "类型",
               prop: "type",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入类型",
@@ -122,6 +127,7 @@
             },{
               label: "备注",
               prop: "remark",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入类型",
@@ -131,6 +137,7 @@
             {
               label: "预警时间",
               prop: "createTime",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入类型",

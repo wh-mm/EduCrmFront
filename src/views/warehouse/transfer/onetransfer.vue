@@ -51,6 +51,7 @@
           height:'auto',
           calcHeight: 30,
           tip: false,
+          menu:false,
           searchShow: true,
           searchMenuSpan: 6,
           border: true,
@@ -105,24 +106,6 @@
               }]
             },
             {
-              label: "规格",
-              prop: "specification",
-              rules: [{
-                required: true,
-                message: "请输入规格",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "单位",
-              prop: "unitName",
-              rules: [{
-                required: true,
-                message: "请输入单位",
-                trigger: "blur"
-              }]
-            },
-            {
               label: "新仓库",
               prop: "newWarehouseName",
               rules: [{
@@ -148,6 +131,10 @@
                 message: "请输入储位id",
                 trigger: "blur"
               }]
+            },
+            {
+              label: "创建时间",
+              prop: "createTime",
             },
           ]
         },
