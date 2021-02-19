@@ -335,13 +335,12 @@
               label: "类型",
               prop: "type",
               type: "select",
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
               search:true,
               sortable:true,
               props: {
                 label: "dictValue",
                 value: "dictKey"
-              }
+              },
             }, {
               label:"创建时间",
               prop:"createTime",

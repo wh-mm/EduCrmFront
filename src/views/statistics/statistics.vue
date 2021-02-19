@@ -118,7 +118,7 @@ export default {
           });
           console.log(this.orderList);
           console.log(this.nameList);
-          console.log(this.pricesList);
+          console.log("集合",this.pricesList);
           this.drawLine();
         } else {
           this.$message({

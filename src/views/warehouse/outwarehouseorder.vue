@@ -144,7 +144,7 @@
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>出库去向 : <span style="margin-left: 10px;"></span></p>
+                    <p>部门 : <span style="margin-left: 10px;">{{printDatas.deptName}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -156,12 +156,17 @@
               <el-row>
                 <el-col :span="8">
                   <div class="grid-content bg-purple">
-                    <p>仓库 : <span style="margin-left: 10px;"></span></p>
+                    <p>仓库 : <span style="margin-left: 10px;">{{printDatas.warehouseName}}</span></p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div class="grid-content bg-purple-light">
-                    <p>备注 : <span style="margin-left: 10px;"></span></p>
+                    <p>原因 : <span style="margin-left: 10px;"></span></p>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
 
@@ -177,7 +182,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="goodsCode"
-                  label="索引码"
+                  label="品号"
                   width="65">
                 </el-table-column>
                 <el-table-column
@@ -191,29 +196,19 @@
                   width="80">
                 </el-table-column>
                 <el-table-column
-                  prop="goodsQuantity"
-                  label="数量(g)"
-                  width="55">
-                </el-table-column>
-                <el-table-column
-                  prop="packageSpecification"
-                  label="包装规格"
-                  width="60">
-                </el-table-column>
-                <el-table-column
-                  prop="packageQuantity"
-                  label="包装数量"
-                  width="60">
+                  prop="specificationName"
+                  label="规格"
+                  width="80">
                 </el-table-column>
                 <el-table-column
                   prop="dateOfManufacture"
                   label="生产日期"
-                  width="70">
+                  width="90">
                 </el-table-column>
                 <el-table-column
-                  prop="specification"
-                  label="规格"
-                  width="55">
+                  prop="placeOfOrigin"
+                  label="产地"
+                  width="90">
                 </el-table-column>
                 <el-table-column
                   prop="manufacturer"
@@ -221,9 +216,9 @@
                   width="90">
                 </el-table-column>
                 <el-table-column
-                  prop="placeOfOrigin"
-                  label="产地"
-                  width="55">
+                  prop="goodsQuantity"
+                  label="数量(g)"
+                  width="90">
                 </el-table-column>
               </el-table>
               <el-row style="margin-top: 20px;">
@@ -233,7 +228,7 @@
                 </el-col>
                 <el-col :span="6">
                   <div class="grid-content bg-purple-light">
-                    <p>出库人 : <span style="margin-left: 10px;"></span></p>
+                    <p><span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
                 <el-col :span="3">
@@ -242,7 +237,7 @@
                 </el-col>
                 <el-col :span="5">
                   <div class="grid-content bg-purple-light">
-                    <p>保管员 : <span style="margin-left: 10px;"></span></p>
+                    <p>出库人 : <span style="margin-left: 10px;"></span></p>
                   </div>
                 </el-col>
               </el-row>
@@ -302,6 +297,7 @@
           orderNumber: '',
           tableData: [],
         },
+        printDatas:{},
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -448,7 +444,6 @@
                     label: "批号",
                     prop: "batchNumber",
                     type:"select",
-                    // formslot:true,
                     width:170,
                     props: {
                       label: 'batchNumber',
@@ -458,24 +453,24 @@
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
                       this.form.outwarehouseOrderDetailList.forEach(vals => {
-                        selectByBatchNumber(null,vals.goodsId,vals.batchNumber).then(res => {
-                          var detail = res.data.data;
-                          detail.forEach(val =>{
-                              vals.warehouseId = val.warehouseId;
-                              vals.storageRegionId = val.storageRegionId;
-                              vals.storageId = val.storageId;
-                              vals.repertoryQuantity  = val.repertoryQuantity
-                              vals.dateOfManufacture = val.dateOfManufacture
-                              vals.periodOfValidity = val.periodOfValidity
-                              vals.placeOfOrigin = val.placeOfOrigin
-                              vals.manufacturer = val.manufacturer
-                              vals.supplierName = val.supplierName
-                              vals.packageSpecification = val.packageSpecification
+                          selectByBatchNumber(vals.goodsId,vals.batchNumber).then(res => {
+                            var detail = res.data.data;
+                            detail.forEach(val =>{
 
+                                vals.warehouseId = val.warehouseId;
+                                vals.storageRegionId = val.storageRegionId;
+                                vals.storageId = val.storageId;
+                                vals.repertoryQuantity  = val.repertoryQuantity
+                                vals.dateOfManufacture = val.dateOfManufacture
+                                vals.periodOfValidity = val.periodOfValidity
+                                vals.placeOfOrigin = val.placeOfOrigin
+                                vals.manufacturer = val.manufacturer
+                                vals.supplierName = val.supplierName
+                                vals.packageSpecification = val.packageSpecification
+                                vals.specificationLevel = val.specificationLevel
 
-
+                            });
                           });
-                        });
                         });
 
                     },
@@ -591,6 +586,12 @@
                   {
                     label: "包装规格",
                     prop: "packageSpecification",
+                    disabled: true,
+                    width:150,
+                  },
+                  {
+                    label: "规格等级",
+                    prop: "specificationLevel",
                     disabled: true,
                     width:150,
                   },
@@ -819,6 +820,9 @@
         this.printData.orderNumber = row.orderNumber;
         printOutWarehouseDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
+          this.printData.tableData.forEach(ress=>{
+            this.printDatas = ress;
+          })
         })
       },
       printOut(row){
@@ -826,6 +830,7 @@
         this.printData.orderNumber = row.orderNumber;
         printOutWarehouseDetail(row.id).then( res => {
           this.printData.tableData = res.data.data;
+
         })
       },
       expireGoodsHint(expireGoods) {
