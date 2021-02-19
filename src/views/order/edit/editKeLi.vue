@@ -11,9 +11,7 @@
         <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
         <el-button type="text" size="small" @click="del(row.id)">删 除</el-button>
       </template>
-
     </avue-crud>
-
     <el-row>
       <el-col :span="24">
         <div class="grid-content bg-purple-dark">
@@ -31,7 +29,7 @@
 
 import {getGoodsDetail, likeListKL} from "@/api/warehouse/goods";
 import {getSelectListByDrug } from "@/api/parties/orderpartiesdrug";
-import {iBlenderDelete} from "@/api/order/order";
+import {iBlenderDelete, updateReceiveBlender} from "@/api/order/order";
 
 export default {
   name: "editKeLi",
@@ -80,11 +78,13 @@ export default {
              },
              dicUrl: '/api/erp-wms/goods/likeListKL',
              change: ({value}) => {
+
+
                if (value) {
                  getGoodsDetail(value).then(res => {
-                   for (let i = 0; i < this.data.length; i++) {
-                     if (this.data[i].goodsName === value) {
-                       this.data[i].unitPrice = res.data.data.unitPrice;
+                   for (let i = 0; i < this.orderEdit.drugList.length; i++) {
+                     if (this.orderEdit.drugList[i].drugId === value) {
+                       this.orderEdit.drugList[i].unitPrice = res.data.data.unitPrice;
                        return;
                      }
                    }
@@ -341,7 +341,45 @@ export default {
         this.options = [];
       }
     },
+    //修改
+    xgBtn(){
+      this.$refs.addForm.validate((valid, callback) => {
+        if (valid) {
+          this.$confirm("请仔细查阅一经保存无法删除！", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+            .then(() => {
+              let params = {};
+              console.log("===================================================================================================")
+              console.log(this.orderEdit.form)
+              console.log("===================================================================================================")
+              params = this.orderEdit.form;
 
+              params.orderType = 'tiaopei';
+              params.drugList = this.orderEdit.drugList;
+              updateReceiveBlender(params).then(res => {
+                if (res.data.code === 200) {
+                  this.$message({
+                    type: "success",
+                    message: res.data.msg,
+                  })
+                  this.$emit("reject");
+                } else {
+                  this.$message({
+                    type: "error",
+                    message: res.data.msg
+                  })
+                  callback();
+                }
+              });
+            }).catch(() => {
+            callback();
+          })
+        }
+      })
+    },
     del(id) {
       console.log(id)
       this.$confirm("确定将选择数据删除?", {
@@ -378,6 +416,7 @@ export default {
       this.$emit("reject");
     },
   },
+
   handleRowClick(row, event, column) {
     this.$message({
       showClose: true,

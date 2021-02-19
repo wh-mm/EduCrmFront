@@ -171,9 +171,19 @@ export const receiveDecoctingSave = (row) => {
     data: row
   })
 };
+//保存
 export const receiveBlenderSave = (row) => {
   return request({
     url: '/api/taocao-order/order/receiveBlenderSave',
+    method: 'post',
+    data: row
+  })
+};
+
+//修改 调配机
+export const updateReceiveBlender = (row) => {
+  return request({
+    url: '/api/taocao-order/order/updateReceiveBlender',
     method: 'post',
     data: row
   })
