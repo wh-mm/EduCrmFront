@@ -69,6 +69,7 @@
             {
               label: "商品",
               prop: "goodsId",
+              type:'tree',
               editDisplay:false,
               rules: [{
                 required: true,
@@ -88,6 +89,7 @@
               label: "仓库",
               prop: "warehouseId",
               editDisplay:false,
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入仓库",
@@ -105,6 +107,7 @@
               label: "总数量",
               prop: "sumQuantitys",
               editDisplay:false,
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入总数量",
@@ -114,6 +117,7 @@
             {
               label: "库存预警上限",
               prop: "warningQuantity",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入库存预警数量",
@@ -123,6 +127,7 @@
             {
               label: "库存预警下限",
               prop: "warningDownQuantity",
+              sortable:true,
               rules: [{
                 required: true,
                 message: "请输入库存预警下限",
