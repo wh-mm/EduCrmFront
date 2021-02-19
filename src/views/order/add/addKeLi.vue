@@ -2,6 +2,7 @@
   <basic-container>
     <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
     <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
+
       <template slot="goodsName" slot-scope="scope">
         <el-select
           size="small"
@@ -10,7 +11,6 @@
           remote
           reserve-keyword
           placeholder="请输入关键词"
-          :remote-method="remoteMethod"
           @change="getPrice(scope.row.goodsName,scope.index)"
           :data-index="scope.index"
           :loading="loading">
@@ -104,6 +104,13 @@ export default {
             label: "单剂量/g",
             prop: "doseHerb",
             cell: true,
+            rules: [
+              {
+                required: true,
+                message: '请输入单剂量',
+                trigger: 'blur'
+              }
+            ]
           },
           {
             label: "单价",
@@ -286,10 +293,10 @@ export default {
                 label: "医生姓名",
                 prop: "doctorName",
                 span: 6,
-                rules: [{
+              /*  rules: [{
                   required: true,
                   validator: zhongwen,
-                }],
+                }],*/
               },
             ]
           },

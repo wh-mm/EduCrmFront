@@ -16,13 +16,6 @@
                @on-load="onLoad">
 
       <template slot-scope="scope" slot="menuLeft">
-        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   plain
-                   v-if="permission.order_delete"
-                   @click="handleDelete">删 除
-        </el-button>
         <!--
                 <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片</el-button>
                 <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddKe()">新增颗粒</el-button>
@@ -32,15 +25,14 @@
          </el-button>-->
         <!--修改-->
       </template>
-
       <template slot-scope="scope" slot="menu">
         <el-button type="text" icon="el-icon-view" size="small" @click.stop="lockInfo(scope.row)">查 看</el-button>
-
         <el-button type="text" icon="el-icon-refresh-left" size="small" v-if="scope.row.orderStatic==6"
                    @click="updateOrderStaticH(scope.row)">还 原
         </el-button>
-
-
+        <el-button type="text" icon="el-icon-delete" size="small" v-if="scope.row.orderStatic==6"
+                   @click="handleDelete(scope.row)">删 除
+        </el-button>
         <!--处方中心打印功能-->
         <!--        <el-button :type="scope.type" :size="scope.size" icon="el-icon-printer"
                            v-if="scope.row.orderStatic==1"
@@ -57,7 +49,6 @@
                            @click="dayin(scope.row)">补 打
                 </el-button>-->
       </template>
-
       <template slot="orderDifferentiation" slot-scope="scope">
         <div style="color: #2a5caa " font-weight="900" v-if="scope.row.orderDifferentiation =='1'?true:false">手动下单</div>
         <div style="color: #009ad6" v-else>医院下单</div>
@@ -81,11 +72,11 @@
       <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
 
-    <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
+    <el-dialog title="订单饮片详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewYinPian :orderInfo="orderInfo"></viewYinPian>
     </el-dialog>
-    <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
+    <el-dialog title="订单颗粒详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewKeLi :orderInfo="orderInfo"></viewKeLi>
     </el-dialog>
@@ -443,6 +434,7 @@ import {
   selectByOrderId,
   updateOrderStaticH,
   getListHs,
+  orderDelete
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
@@ -451,7 +443,6 @@ import addYinPian from "./add/addYinPian";
 import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
-import {remove} from "@/api/quality/customer";
 
 
 export default {
@@ -938,18 +929,16 @@ export default {
         this.selectionClear();
       });
     },
-    handleDelete() {
-      if (this.selectionList.length === 0) {
-        this.$message.warning("请选择至少一条数据");
-        return;
-      }
+
+    handleDelete(row) {
+      console.log(row.id)
       this.$confirm("确定将选择数据删除?", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          return remove(this.ids);
+          return orderDelete(row.id);
         })
         .then(() => {
           this.onLoad(this.page);
@@ -960,6 +949,7 @@ export default {
           this.$refs.crud.toggleSelection();
         });
     },
+
     //查看
     lockInfo(row) {
       let url = '';

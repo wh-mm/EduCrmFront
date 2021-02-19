@@ -12,6 +12,17 @@ export const getList = (current, size, params) => {
   })
 }
 
+
+export const zremove = (ids) => {
+  return request({
+    url: '/api/taocao-codematching/matching/zremove',
+    method: 'post',
+    params: {
+      ids,
+    }
+  })
+}
+
 export const getDetail = (id) => {
   return request({
     url: '/api/taocao-codematching/matching/detail',

@@ -25,7 +25,7 @@
                    plain
                    v-if="permission.certificates_delete"
                    @click="handleDelete">删 除
-        </el-button>-->
+        </el-button> -->
       </template>
     </avue-crud>
   </basic-container>

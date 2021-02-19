@@ -14,7 +14,6 @@
                @size-change="sizeChange"
                @refresh-change="refreshChange"
                @on-load="onLoad">
-
       <template slot-scope="scope" slot="menuLeft">
         <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" plain @click="newAddYin()">新增饮片
         </el-button>
@@ -28,7 +27,7 @@
         <!--处方中心打印功能-->
 
         <el-button type="text" icon="el-icon-view" size="small" v-if="scope.row.orderStatic==1"
-                   @click="openDialog(scope.row)">审 方
+                   @click="openDialog(scope.row.id)">审 方
         </el-button>
 
         <!-- <el-button type="text" icon="el-icon-check" size="small" @click.stop="prescription()">抓 药</el-button>-->
@@ -58,7 +57,7 @@
     </el-dialog>
 
 
-    <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
+    <el-dialog title="订单饮片详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewYinPian :orderInfo="orderInfo"></viewYinPian>
     </el-dialog>
@@ -71,7 +70,7 @@
       :modal="false"
       :before-close="handleClose">
       <avue-form ref="form" v-model="obj0" :option="option0">
-        <div> 十八反</div>
+
       </avue-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="updateOrderStaticBh(6)">驳 回</el-button>
@@ -285,7 +284,7 @@ import {
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
 import JsBarcode from 'jsbarcode';
-
+import {shenfang} from "@/api/prescription/review";
 import addYinPian from "./add/addYinPian";
 import viewYinPian from "./view/viewYinPian";
 
@@ -555,13 +554,19 @@ export default {
       },
       data: [],
       obj0: {
-        auditorText: ''
+        auditorText: '',
+        tet:''
       },
       option0: {
         emptyBtn: false,
         submitBtn: false,
         column: [
-
+          {
+            label: "冲突名称",
+            prop: "tet",
+            span: 20,
+            disabled:true,
+          },
           {
             label: "驳回理由",
             prop: "auditorText",
@@ -763,9 +768,19 @@ export default {
       });
     },
 
-    openDialog(row) {
+    openDialog(rowID){
+      shenfang(rowID).then((res) => {
+        this.obj0.tet=res.data.data.name;
+        this.$message({
+          type: "success",
+          message: "操作成功!"
+        });
+      }, error => {
+        window.console.log(error);
+      });
+
       this.dialogUpadate = true;
-      this.Id = row.id;
+      this.Id= rowID;
     },
     //修改接单状态  //1 未接单  //2 已接单
     updateOrderStatic(zt) {

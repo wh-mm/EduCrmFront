@@ -1,43 +1,24 @@
 <template>
   <basic-container>
-    <avue-form ref="addForm" v-model="form" :option="addOption"></avue-form>
-    <avue-crud ref="crud" :option="option" :data="data" @row-update="addUpdate">
-
-      <template slot="goodsName" slot-scope="scope">
-        <el-select
-          size="small"
-          v-model="scope.row.goodsName"
-          filterable
-          remote
-          reserve-keyword
-          placeholder="请输入关键词"
-          :remote-method="remoteMethod"
-          @change="getPrice(scope.row.goodsName,scope.index)"
-          :data-index="scope.index"
-          :loading="loading">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.goodsName"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </template>
-
+    <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
+    <avue-crud ref="crud" :option="option" @row-update="addUpdate" :data="orderEdit.drugList">
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
       </template>
-      <template slot="menu" slot-scope="{row,index,size,type}">
-        <el-button @click="addBreakRow(index)" :size="size" :type="type">向上添加</el-button>
-        <el-button @click="addNextRow(index)" :size="size" :type="type">向下添加</el-button>
+
+      <template slot-scope="{row,index}" slot="menu">
+        <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
+        <el-button type="text" size="small" @click="del(row.id)">删 除</el-button>
       </template>
+
     </avue-crud>
+
     <el-row>
       <el-col :span="24">
         <div class="grid-content bg-purple-dark">
           <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="bcBtn()">保 存</el-button>
+            <el-button type="primary" @click="xgBtn()">修 改</el-button>
             <el-button type="primary" @click="reject()">取 消</el-button>
           </span>
         </div>
@@ -48,77 +29,98 @@
 
 <script>
 
-import {isOneToNinetyNine, phonelength, zhongwen, isInteger} from "@/const/order/customerorder";
 import {getGoodsDetail, likeListKL} from "@/api/warehouse/goods";
-import {clinicReceiveBlender} from "@/api/order/order";
-import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
+import {getSelectListByDrug } from "@/api/parties/orderpartiesdrug";
+import {iBlenderDelete} from "@/api/order/order";
 
 export default {
-  name: "addKeLi",
+  name: "editKeLi",
+  props: ['orderEdit'],
   data() {
     return {
       data: [],
       options: [],
       value: "",
       list: [],
-      loading: false,
+      form: {},
+      selectionList: [],
+      query: {},
+      loading: true,
+      page: {
+        pageSize: 10,
+        currentPage: 1,
+        total: 0
+      },
       option: {
         addBtn: false,
         editBtn: false,
-        addRowBtn: true,
-        cellBtn: true,
-        menuWidth: 250,
+        addRowBtn: false,
+        cellBtn: false,
+        delBtn: false,
         column: [
           {
-            label: '*药品',
-            prop: "goodsName",
-            slot: true,
-            //type: 'tree',
-            /*  filterable: true,
-              remote: true,
-              rules: [{
-                require: true,
-                message: '请选择商品',
-              }],
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              cell: true,
-              dicUrl: '/api/erp-wms/goods/likeListKL',
-              change: ({value}) => {
-                if (value) {
-                  getGoodsDetail(value).then(res => {
-                    for (let i = 0; i<this.data.length; i++){
-                      if(this.data[i].goodsName === value){
-                        console.log( res.data.data)
-                        this.data[i].unitPrice = res.data.data.unitPrice;
-                      }
-                    }
-                  });
-                }
-              },*/
+            label: 'id',
+            prop: "id",
+            hide:true,
           },
           {
-            label: "单剂量",
+            label: '*药品',
+            prop: "drugId",
+            cell: true,
+            filterable: true,
+            remote: true,
+            type: 'select',
+            rules: [{
+               require: true,
+               message: '请选择商品',
+             }],
+            props: {
+              label: 'goodsName',
+               value: 'id'
+             },
+             dicUrl: '/api/erp-wms/goods/likeListKL',
+             change: ({value}) => {
+               if (value) {
+                 getGoodsDetail(value).then(res => {
+                   for (let i = 0; i < this.data.length; i++) {
+                     if (this.data[i].goodsName === value) {
+                       this.data[i].unitPrice = res.data.data.unitPrice;
+                       return;
+                     }
+                   }
+                 });
+               }
+             },
+          },
+          {
+            label: "*单剂量/g",
             prop: "doseHerb",
             cell: true,
+            rules: [
+              {
+                required: true,
+                message: '请输入单剂量',
+                trigger: 'blur'
+              }
+            ]
           },
           {
             label: "单价",
             prop: "unitPrice",
-
           },
         ]
       },
+
       //煎药
-      addOption: {
+      editOption: {
+        detail: false,
         height: "auto",
         calcHeight: 30,
         tip: true,
         border: true,
         index: true,
         viewBtn: false,
+        editBtn: false,
         selection: true,
         dialogClickModal: false,
         menuBtn: false,
@@ -133,21 +135,12 @@ export default {
                 label: "收件人",
                 prop: "addressee",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
                 search: true,
               },
               {
                 label: "收件人电话",
                 prop: "addresseePhone",
                 labelWidth: 100,
-                rules: [{
-                  required: true,
-                  validator: phonelength,
-                  trigger: 'blur'
-                }],
                 span: 6,
               },
               {
@@ -173,10 +166,6 @@ export default {
                 label: "患者姓名",
                 prop: "name",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: zhongwen,
-                }],
                 search: true,
               },
               {
@@ -184,11 +173,6 @@ export default {
                 prop: "sex",
                 type: "select",
                 span: 6,
-                rules: [{
-                  required: true,
-                  message: "请选择性别",
-                  trigger: "blur",
-                }],
                 props: {
                   label: "dictValue",
                   value: "dictKey"
@@ -199,34 +183,17 @@ export default {
                 label: "患者年龄",
                 prop: "age",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: isOneToNinetyNine,
-
-                },
-                  {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
-                ],
               },
               {
                 label: "详细年龄",
                 prop: "detailedAge",
                 span: 6,
-                rules: [{
-                  validator: isOneToNinetyNine,
-                },
-                  {min: 0, max: 200, message: '长度在 1 到 20 个字符', trigger: 'blur'}
-                ],
               },
               {
                 label: "患者联系电话",
                 prop: "tele",
                 span: 6,
                 labelWidth: 110,
-                rules: [{
-                  required: true,
-                  validator: phonelength,
-                  trigger: 'blur'
-                }],
               },
               {
                 label: "患者联系地址",
@@ -251,11 +218,6 @@ export default {
                 label: "处方付数（几副药）",
                 prop: "quantity",
                 span: 6,
-                rules: [{
-                  required: true,
-                  validator: isInteger,
-                  trigger: 'blur'
-                }],
               },
               {
                 label: "日服（每日吃几次）",
@@ -266,10 +228,6 @@ export default {
                 label: "医生姓名",
                 prop: "doctorName",
                 span: 6,
-                /*rules: [{
-                  //required: true,
-                  //validator: zhongwen,
-                }],*/
               },
             ]
           },
@@ -315,17 +273,46 @@ export default {
       },
     }
   },
-  created() {
-    this.optionsData();
-  },
-  mounted() {
-
-  },
   methods: {
-    optionsData() {
-      likeListKL().then(res => {
-        this.options = res.data.data;
-      })
+    rowCell(row, index) {
+      this.$refs.crud.rowCell(row, index)
+    },
+    rowUpdate(form, index, done) {
+      this.$message.success(
+        '编辑数据' + JSON.stringify(form) + '数据序号' + index
+      )
+      done()
+    },
+    /* rowCell(row, index) {
+       this.$refs.crud.rowCell(row, index)
+     },*/
+    addRow() {
+      this.$message.success('正在添加，请稍后')
+      setTimeout(() => {
+        for (let i = 0; i < 5; i++) {
+          this.$refs.crud.rowCellAdd({
+            drugId: '',
+          });
+        }
+      }, 500)
+    },
+    addXdf() {
+      //获取值然后进行查询
+      this.$message.success('正在添加，请稍后')
+      setTimeout(() => {
+        let leibieID = this.form.partiesName;
+        getSelectListByDrug(leibieID).then(res => {
+          let data = res.data.data;
+          console.log(res)
+          for (let i = 0; i < data.length; i++) {
+            this.$refs.crud.rowCellAdd({
+              goodsId: data[i].goodsId,
+              doseHerb: data[i].consumption,
+              unitPrice: data[i].goodsPrice,
+            });
+          }
+        });
+      }, 500)
     },
     getPrice(val, index) {
       getGoodsDetail(val).then(res => {
@@ -334,10 +321,13 @@ export default {
       });
       console.log(this.data);
     },
+
     addUpdate(form, index, done, loading) {
       done();
     },
+
     remoteMethod(query) {
+      console.log(query)
       if (query !== '') {
         this.loading = true;
         console.log(query);
@@ -351,86 +341,54 @@ export default {
         this.options = [];
       }
     },
-    addXdf() {
-      //获取值然后进行查询
-      this.$message.success('正在添加，请稍后')
-      setTimeout(() => {
-        let leibieID = this.form.partiesName;
-        getSelectListByDrug(leibieID).then(res => {
-          let data = res.data.data;
-          console.log(res)
-          for (let i = 0; i < data.length; i++) {
-            this.$refs.crud.rowCellAdd({
-              goodsName: data[i].goodsId,
-              doseHerb: data[i].consumption,
-              unitPrice: data[i].goodsPrice,
-            });
-          }
-        });
-      }, 500)
-    },
-    addRow() {
-      this.$message.success('正在添加，请稍后')
-      setTimeout(() => {
-        for (let i = 0; i < 5; i++) {
-          this.$refs.crud.rowCellAdd({
-            goodsName: '',
+
+    del(id) {
+      console.log(id)
+      this.$confirm("确定将选择数据删除?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          return iBlenderDelete(id);
+        })
+        .then(() => {
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
           });
-        }
-      }, 500)
+          this.$refs.crud.toggleSelection();
+        });
     },
-    addNextRow(index) {
-      this.data.splice(index + 1, 0, {
-        $cellEdit: true
-      })
-    },
-    addBreakRow(index) {
-      this.data.splice(index == 0 ? 0 : (index - 1), 0, {
-        $cellEdit: true
-      })
-    },
-    //保存
-    bcBtn() {
-      this.$refs.addForm.validate((valid, callback) => {
-        if (valid) {
-          this.$confirm("请仔细查阅一经保存无法删除！", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
-          })
-            .then(() => {
-              let params = {};
-              params = this.form;
-              params.orderType = 'tiaopei';
-              params.drugList = this.data;
-              clinicReceiveBlender(params).then(res => {
-                if (res.data.code === 200) {
-                  this.$message({
-                    type: "success",
-                    message: res.data.msg,
-                  })
-                  this.$emit("reject");
-                } else {
-                  this.$message({
-                    type: "error",
-                    message: res.data.msg
-                  })
-                  callback();
-                }
-              });
-            }).catch(() => {
-            callback();
-          })
-        }
-      })
-    },
+/*    del(id) {
+      if (id==null||id==""){
+        this.$message.success("请选择取消");
+      }else {
+        iBlenderDelete(id).then(res => {
+          let data = res.data.data;
+          console.log(data);
+        });
+      }
+      alert(id)
+    },*/
+
     //取消
     reject() {
       this.$emit("reject");
     },
+  },
+  handleRowClick(row, event, column) {
+    this.$message({
+      showClose: true,
+      message: '序号' + row.$index,
+      type: 'success',
+    });
   }
 }
+
 </script>
+
 
 <style scoped>
 

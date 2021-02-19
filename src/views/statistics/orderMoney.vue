@@ -54,8 +54,6 @@
               label: "收入金额",
               prop: "prices",
             },
-
-
           ]
         },
         data: []

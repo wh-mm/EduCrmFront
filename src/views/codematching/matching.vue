@@ -50,7 +50,7 @@
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/codematching/matching";
+  import {getList, getDetail, add, update, zremove} from "@/api/codematching/matching";
   import {mapGetters} from "vuex";
   import {getToken} from '@/util/auth';
 
@@ -311,7 +311,7 @@
           type: "warning"
         })
           .then(() => {
-            return remove(this.ids);
+            return zremove(this.ids);
           })
           .then(() => {
             this.onLoad(this.page);

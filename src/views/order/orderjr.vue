@@ -84,11 +84,11 @@
       <addKeLi @reject="rejectKe"></addKeLi>
     </el-dialog>
 
-    <el-dialog title="订单详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
+    <el-dialog title="订单饮片详情" :visible.sync="viewYinDialogVisible" v-if="viewYinDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewYinPian :orderInfo="orderInfo"></viewYinPian>
     </el-dialog>
-    <el-dialog title="订单详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
+    <el-dialog title="订单颗粒详情" :visible.sync="viewKeDialogVisible" v-if="viewKeDialogVisible"
                width="90%" :modal="false" :close-on-click-modal="false">
       <viewKeLi :orderInfo="orderInfo"></viewKeLi>
     </el-dialog>
@@ -722,9 +722,10 @@ export default {
         submitBtn: false,
         column: [
           {
-            label: "状态",
+            label: "冲突名称",
             prop: "tet",
             span: 20,
+            disabled:true,
           },
           {
             label: "驳回理由",
@@ -817,13 +818,8 @@ export default {
       this.$alert("业务暂未对接", {},)
     },
     openDialog(rowID){
-
-      console.log(this.option0)
-
-
       shenfang(rowID).then((res) => {
-        console.log(res)
-        this.obj0.tet="jhdsaxkjDSKJSADKJK"
+        this.obj0.tet=res.data.data.name;
         this.$message({
           type: "success",
           message: "操作成功!"
@@ -831,7 +827,6 @@ export default {
       }, error => {
         window.console.log(error);
       });
-
       this.dialogUpadate = true;
       this.Id= rowID;
     },

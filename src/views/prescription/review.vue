@@ -47,6 +47,7 @@
             :label="item.goodsName"
             :value="item.id">
           </el-option>
+<!--          原38行 :disabled="disabled"-->
           </el-select>
       </template>
     </avue-crud>
@@ -70,6 +71,7 @@
           total: 0
         },
         options:[],
+       // disabled:true,
         selectionList: [],
         option: {
           height:'auto',
@@ -87,6 +89,7 @@
               label: "审核方名字",
               prop: "prescriptionName",
               labelWidth: 110,
+              sortable: true,
               rules: [{
                 required: true,
                 message: "请输入审核方名字",
@@ -104,31 +107,12 @@
               prop: "drugsIdsArrays",
               addDisplay:false,
               editDisplay:false,
+              viewDisplay:false,
             },
-
-/*            {
-              label: "药品ID",
-              prop: "drugsIdsArray",
-              type: 'select',
-              filterText:'搜索关键字制自定义',
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              multiple:true,
-              remote: true,
-//              search: true,
-              dicUrl: '/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
-            },*/
             {
               label: "备注",
               prop: "remarks",
               labelWidth: 110,
-              rules: [{
-                required: true,
-                message: "请输入备注",
-                trigger: "blur"
-              }]
             },
           ]
         },
@@ -263,6 +247,11 @@
             this.form = res.data.data;
           });
         }
+        /*if(type === "view"){
+          this.disabled = true;
+        }else if(type === "edit"){
+          this.disabled = false;
+        }*/
         done();
       },
       searchReset() {

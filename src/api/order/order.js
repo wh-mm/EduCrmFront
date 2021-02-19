@@ -94,6 +94,16 @@ export const remove = (ids) => {
   })
 };
 
+export const orderDelete = (id) => {
+  return request({
+    url: '/api/taocao-order/order/orderDelete',
+    method: 'post',
+    params: {
+      id,
+    }
+  })
+};
+
 export const add = (row) => {
   return request({
     url: '/api/taocao-order/order/submit',
@@ -235,6 +245,16 @@ export const updateApply = (id, status) => {
     params:{
       id,
       status
+    }
+  })
+}
+//颗粒子项删除
+export const iBlenderDelete = (id) => {
+  return request({
+    url: '/api/taocao-order/order/iBlenderDelete',
+    method: 'post',
+    params: {
+      id,
     }
   })
 }
