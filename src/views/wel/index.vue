@@ -1,3 +1,4 @@
+<!--
 <template>
   <basic-container>
     <avue-data-box :option="option"></avue-data-box>
@@ -20,7 +21,7 @@ export default {
         span: 6,
         data: [
 
-      {
+     /* {
         click: function (item) {
           alert(JSON.stringify(item));
         },
@@ -28,16 +29,16 @@ export default {
         title: '日活跃数',
        // href:'https://avuejs.com',
       //  target:'_blank'
-      },
-          {
+      },*/
+          /*{
             title: '库存有效期到期提醒',
             count: 10,
             icon: 'el-icon-warning',
             color: 'rgb(49, 180, 141)',
             //href:'https://avuejs.com',
             //target:'_blank'
-          },
-          {
+          },*/
+/*          {
             title: '供应商有效期到期提醒',
             count: 15,
             subtitle: '实时',
@@ -46,7 +47,7 @@ export default {
             color: 'rgb(255,192,203)',
             //href:'https://avuejs.com',
             //target:'_blank'
-          },
+          },*/
         ]
       },
     };
@@ -58,3 +59,4 @@ export default {
 
 <style>
 </style>
+-->
