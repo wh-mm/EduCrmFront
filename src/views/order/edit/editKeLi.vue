@@ -78,8 +78,6 @@ export default {
              },
              dicUrl: '/api/erp-wms/goods/likeListKL',
              change: ({value}) => {
-
-
                if (value) {
                  getGoodsDetail(value).then(res => {
                    for (let i = 0; i < this.orderEdit.drugList.length; i++) {
@@ -352,11 +350,7 @@ export default {
           })
             .then(() => {
               let params = {};
-              console.log("===================================================================================================")
-              console.log(this.orderEdit.form)
-              console.log("===================================================================================================")
               params = this.orderEdit.form;
-
               params.orderType = 'tiaopei';
               params.drugList = this.orderEdit.drugList;
               updateReceiveBlender(params).then(res => {
