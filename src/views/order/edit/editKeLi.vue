@@ -366,6 +366,7 @@ export default {
                     message: res.data.msg
                   })
                   callback();
+                  this.$emit("reject");
                 }
               });
             }).catch(() => {
@@ -393,18 +394,6 @@ export default {
           this.$refs.crud.toggleSelection();
         });
     },
-/*    del(id) {
-      if (id==null||id==""){
-        this.$message.success("请选择取消");
-      }else {
-        iBlenderDelete(id).then(res => {
-          let data = res.data.data;
-          console.log(data);
-        });
-      }
-      alert(id)
-    },*/
-
     //取消
     reject() {
       this.$emit("reject");

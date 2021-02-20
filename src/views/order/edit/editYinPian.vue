@@ -28,7 +28,7 @@
 
 import {getSelectListByDrug} from "@/api/parties/orderpartiesdrug";
 import {getGoodsDetail, likeListYP} from "@/api/warehouse/goods";
-import {iBlenderDelete, receiveBlenderSave} from "@/api/order/order";
+import {iBlenderDelete, updateReceiveDecocting} from "@/api/order/order";
 
 export default {
   name: "editYinPian",
@@ -80,9 +80,9 @@ export default {
               if (value) {
                 getGoodsDetail(value).then(res => {
                   console.log(value);
-                  for (let i = 0; i < this.data.length; i++) {
-                    if (this.data[i].drugNum === value) {
-                      this.data[i].unitPrice = res.data.data.unitPrice;
+                  for (let i = 0; i < this.orderEdit.drugList.length; i++) {
+                    if (this.orderEdit.drugList[i].drugNum === value) {
+                      this.orderEdit.drugList[i].unitPrice = res.data.data.unitPrice;
                       return;
                     }
                   }
@@ -383,44 +383,6 @@ export default {
               },
             ]
           },
-          // {
-          //   icon: 'el-icon-info',
-          //   label: '药方信息',
-          //   collapse: true,
-          //   prop: 'group1',
-          //   column: [
-          //     {
-          //       label: "协定方类型",
-          //       prop: "partiesCategory",
-          //       type: 'tree',
-          //       labelWidth: 130,
-          //       rules: [{
-          //         message: "请选择协定方类型",
-          //         trigger: "blur"
-          //       }],
-          //       props: {
-          //         label: 'title',
-          //         value: 'id'
-          //       },
-          //       // search: true,
-          //       // cascaderItem: ['partiesName'],
-          //       dicUrl: "/api/parties/orderpartiescategory/tree",
-          //     },
-          //     {
-          //       label: "协定方名称",
-          //       prop: "partiesName",
-          //       type: "tree",
-          //       labelWidth: 130,
-          //       props: {
-          //         label: 'partiesName',
-          //         value: 'id'
-          //       },
-          //       //dicFlag: false,
-          //       dicUrl: '/api/parties/orderparties/selectByName',
-          //     },
-          //
-          //   ],
-          // },
         ],
       },
     }
@@ -435,9 +397,6 @@ export default {
       )
       done()
     },
-    /* rowCell(row, index) {
-       this.$refs.crud.rowCell(row, index)
-     },*/
     addRow() {
       this.$message.success('正在添加，请稍后')
       setTimeout(() => {
@@ -469,25 +428,29 @@ export default {
     addUpdate(form, index, done, loading) {
       done();
     },
-/*    xgBtn() {
+    //修改
+    xgBtn(){
       this.$refs.addForm.validate((valid, callback) => {
         if (valid) {
-          this.$confirm("请仔细查阅！", {
+          this.$confirm("请仔细查阅一经保存无法删除！", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
           })
             .then(() => {
               let params = {};
-              params = this.form;
-              params.orderType = 'tiaopei';
-              params.drugList = this.data;
-              receiveBlenderSave(params).then(res => {
+              params = this.orderEdit.form;
+              params.orderType = 'jianyao';
+              params.drugList = this.orderEdit.drugList;
+              updateReceiveDecocting(params).then(res => {
                 if (res.data.code === 200) {
                   this.$message({
                     type: "success",
                     message: res.data.msg,
                   })
+                  this.$refs.addForm.resetForm();
+                  this.data = []
+                  this.form = {};
                   this.$emit("reject");
                 } else {
                   this.$message({
@@ -502,7 +465,8 @@ export default {
           })
         }
       })
-    },*/
+
+    },
     remoteMethod(query) {
       console.log(query)
       if (query !== '') {
@@ -518,7 +482,6 @@ export default {
         this.options = [];
       }
     },
-
     del(id) {
       console.log(id)
       this.$confirm("确定将选择数据删除?", {
@@ -538,18 +501,6 @@ export default {
           this.$refs.crud.toggleSelection();
         });
     },
-    /*    del(id) {
-          if (id==null||id==""){
-            this.$message.success("请选择取消");
-          }else {
-            iBlenderDelete(id).then(res => {
-              let data = res.data.data;
-              console.log(data);
-            });
-          }
-          alert(id)
-        },*/
-
     //取消
     reject() {
       this.$emit("reject");
