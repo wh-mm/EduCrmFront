@@ -48,26 +48,26 @@
 
 
     <template slot="menu" slot-scope="scope">
-      <el-button type="text" size="small"  icon="el-icon-warning" @click="deleteRepertory(scope.row.id)">删除</el-button>
-      <!--全部-->
-      <el-button type="text" size="small" @click="oneTransferDialog(scope.row)" >全移库</el-button>
+      <el-button type="text" size="small"  v-if="permission.repertory_realDelete" icon="el-icon-warning" @click="deleteRepertory(scope.row.id)">删除</el-button>
+<!--      &lt;!&ndash;全部&ndash;&gt;-->
+<!--      <el-button type="text" size="small" @click="oneTransferDialog(scope.row)" >全移库</el-button>-->
       <!--单体-->
-      <el-button type="text" size="small" @click="AllTransferDialog(scope.row)" >单转库</el-button>
+      <el-button type="text" size="small" @click="AllTransferDialog(scope.row)" >移库</el-button>
     </template>
 
 
     </avue-crud>
-    <el-dialog title="全移库"
-               append-to-body
-               :visible.sync="dialogOne"
-               width="555px">
-      <template slot-scope="scope">
-        <avue-form :option="optionOne"  v-model="formOne"  @submit="oneTransfer">
-        </avue-form>
-      </template>
+<!--    <el-dialog title="全移库"-->
+<!--               append-to-body-->
+<!--               :visible.sync="dialogOne"-->
+<!--               width="555px">-->
+<!--      <template slot-scope="scope">-->
+<!--        <avue-form :option="optionOne"  v-model="formOne"  @submit="oneTransfer">-->
+<!--        </avue-form>-->
+<!--      </template>-->
 
-    </el-dialog>
-    <el-dialog title="单转库"
+<!--    </el-dialog>-->
+    <el-dialog title="移库"
                append-to-body
                :visible.sync="dialogAll"
                width="555px">
@@ -145,7 +145,7 @@
         selectionList: [],
         option: {
           height:'auto',
-          calcHeight: 30,
+          calcHeight: 10,
           tip: false,
           searchShow: true,
           searchMenuSpan: 6,
@@ -291,7 +291,15 @@
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
-          ]
+          ],showSummary: true,
+          sumColumnList: [
+            {
+              label:'总数:',
+              name: 'repertoryQuantity',
+              type: 'sum',
+              decimals:1
+            }
+          ],
         },
         data: [],
         excelBox: false,
@@ -718,18 +726,18 @@
         this.onLoad(this.page, this.query);
       },
       onLoad(page, params = {}) {
-        const {updateTime} = params;
+        const {createTime} = params;
         let values = {
           ...params,
         };
-        if (updateTime) {
+        if (createTime) {
           values = {
             ...params,
-            start_time: updateTime[0],
-            end_time: updateTime[1],
+            start_time: createTime[0],
+            end_time: createTime[1],
           };
-          values.updateTime = null;
-          this.query.updateTime = null;
+          values.createTime = null;
+          this.query.createTime = null;
         }
         this.loading = true;
         getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
@@ -810,20 +818,20 @@
           })
         })
       },
-
-      oneTransferDialog(row){
-        this.dialogOne=true;
-        this.rowId = row.id
-        this.formOne.oldWarehouseId = row.warehouseId;
-        this.formOne.oldStorageRegionId = row.storageRegionId;
-        this.formOne.oldStorageId = row.storageId;
-        this.formOne.goodsId = row.goodsId;
-        this.formOne.goodsCode = row.goodsCode;
-        this.formOne.specification = row.specification;
-        this.formOne.unit = row.unit;
-        this.formOne.conversionUnit = row.conversionUnit;
-
-      },
+      //
+      // oneTransferDialog(row){
+      //   this.dialogOne=true;
+      //   this.rowId = row.id
+      //   this.formOne.oldWarehouseId = row.warehouseId;
+      //   this.formOne.oldStorageRegionId = row.storageRegionId;
+      //   this.formOne.oldStorageId = row.storageId;
+      //   this.formOne.goodsId = row.goodsId;
+      //   this.formOne.goodsCode = row.goodsCode;
+      //   this.formOne.specification = row.specification;
+      //   this.formOne.unit = row.unit;
+      //   this.formOne.conversionUnit = row.conversionUnit;
+      //
+      // },
       AllTransferDialog(row){
         this.dialogAll=true;
         this.rowId = row.id
@@ -853,7 +861,7 @@
         });
 
       },
-      saveALLTransfer(row){
+      saveALLTransfer(row,done){
         saveALLTransfer(this.rowId,row).then(() => {
           this.onLoad(this.page);
           this.$message({
@@ -862,6 +870,8 @@
           });
           this.checkDialog =false;
           this.checkObj = null;
+          done();
+          this.refreshChange();
         }, error => {
           window.console.log(error);
         });
