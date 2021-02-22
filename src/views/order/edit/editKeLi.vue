@@ -2,12 +2,35 @@
   <basic-container>
     <avue-form ref="addForm" v-model="orderEdit.form" :option="editOption"></avue-form>
     <avue-crud ref="crud" :option="option" @row-update="addUpdate" :data="orderEdit.drugList">
+
+
+      <template slot="drugId" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.drugId"
+          :disabled="scope.row.disabled==null?true:scope.row.disabled"
+          filterable
+          reserve-keyword
+          placeholder="请输入关键词"
+          @change="getPrice(scope.row.drugId,scope.index,scope)"
+          :data-index="scope.index">
+          <el-option
+            v-for="item in options"
+            :key="item.id"
+            :label="item.goodsName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </template>
+
+
       <template slot="menuLeft">
         <el-button @click="addRow" icon="el-icon-circle-plus" size="small">新增</el-button>
 <!--        <el-button @click="addXdf" icon="el-icon-s-operation" size="small">添加协定方</el-button>-->
       </template>
 
       <template slot-scope="{row,index}" slot="menu">
+        <el-button type="text" size="small" @click="rowCancel(row,index)" v-if="row.$cellEdit">取消</el-button>
         <el-button type="text" size="small" @click="rowCell(row,index)">{{ row.$cellEdit ? '保存' : '修改' }}</el-button>
         <el-button type="text" size="small" @click="del(row.id)">删 除</el-button>
       </template>
@@ -54,6 +77,7 @@ export default {
         editBtn: false,
         addRowBtn: false,
         cellBtn: false,
+        cancelBtn:false,
         delBtn: false,
         column: [
           {
@@ -64,31 +88,7 @@ export default {
           {
             label: '*药品',
             prop: "drugId",
-            cell: true,
-            filterable: true,
-            remote: true,
-            type: 'tree',
-            rules: [{
-               require: true,
-               message: '请选择商品',
-             }],
-            props: {
-              label: 'goodsName',
-               value: 'id'
-             },
-             dicUrl: '/api/erp-wms/goods/likeListKL',
-             change: ({value}) => {
-               if (value) {
-                 getGoodsDetail(value).then(res => {
-                   for (let i = 0; i < this.orderEdit.drugList.length; i++) {
-                     if (this.orderEdit.drugList[i].drugId === value) {
-                       this.orderEdit.drugList[i].unitPrice = res.data.data.unitPrice;
-                       return;
-                     }
-                   }
-                 });
-               }
-             },
+            slot: true,
           },
           {
             label: "*单剂量/g",
@@ -271,9 +271,49 @@ export default {
       },
     }
   },
+  created() {
+    this.optionsData();
+  },
   methods: {
+    optionsData() {
+      likeListKL().then(res => {
+        this.options = res.data.data;
+      })
+    },
+    remoteMethod(query) {
+      console.log(query)
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        setTimeout(() => {
+          this.loading = false;
+          likeListKL(query).then(res => {
+            this.options = res.data.data;
+          })
+        }, 200);
+      } else {
+        this.options = [];
+      }
+    },
+    getPrice(val, index) {
+      getGoodsDetail(val).then(res => {
+        console.log(res.data.data);
+        this.orderEdit.drugList[index].unitPrice = res.data.data.unitPrice;
+      });
+    },
     rowCell(row, index) {
+      if(row.$cellEdit){
+        this.orderEdit.drugList[index].disabled = true;
+      }else{
+        this.orderEdit.drugList[index].disabled = false;
+      }
       this.$refs.crud.rowCell(row, index)
+    },
+    rowCancel(row, index){
+      this.$refs.crud.rowCancel(row, index);
+      if(this.orderEdit.drugList[index] != null){
+        this.orderEdit.drugList[index].disabled = true;
+      }
     },
     rowUpdate(form, index, done) {
       this.$message.success(
@@ -290,6 +330,7 @@ export default {
         for (let i = 0; i < 1; i++) {
           this.$refs.crud.rowCellAdd({
             drugId: '',
+            disabled : false,
           });
         }
       }, 500)
@@ -312,33 +353,11 @@ export default {
         });
       }, 500)
     },
-    getPrice(val, index) {
-      getGoodsDetail(val).then(res => {
-        console.log(res.data.data);
-        this.data[index].unitPrice = res.data.data.unitPrice;
-      });
-      console.log(this.data);
-    },
 
     addUpdate(form, index, done, loading) {
       done();
     },
 
-    remoteMethod(query) {
-      console.log(query)
-      if (query !== '') {
-        this.loading = true;
-        console.log(query);
-        setTimeout(() => {
-          this.loading = false;
-          likeListKL(query).then(res => {
-            this.options = res.data.data;
-          })
-        }, 200);
-      } else {
-        this.options = [];
-      }
-    },
     //修改
     xgBtn(){
       this.$refs.addForm.validate((valid, callback) => {

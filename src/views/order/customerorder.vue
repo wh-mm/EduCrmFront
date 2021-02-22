@@ -139,6 +139,7 @@ export default {
             label: "订单id",
             sortable: true,
             prop: "id",
+            width: 150,
             search: true,
           },
           {
@@ -165,7 +166,6 @@ export default {
             dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_status",
             trigger: "blur"
           },
-
           {
             label: "订单类型",
             prop: "orderType",
@@ -226,7 +226,7 @@ export default {
             format: "yyyy-MM-dd hh:mm:ss",
             valueFormat: "yyyy-MM-dd hh:mm:ss",
             searchRange: true,
-            searchSpan: 12,
+            searchSpan: 6,
             hide: true,
             addDisplay: false,
             editDisplay: false,

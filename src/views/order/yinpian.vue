@@ -432,6 +432,7 @@ export default {
             label: "订单id",
             sortable: true,
             prop: "id",
+            width:150,
             search: true,
           },
           {

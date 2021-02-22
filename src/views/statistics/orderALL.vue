@@ -29,12 +29,12 @@
         loading: true,
         selectionList: [],
         value1:'',
-
         option: {
           index: true,
           menu:false,
           excelBtn:true,
           addBtn:false,
+
           column: [
             {
               label: "医院名字",
@@ -62,16 +62,16 @@
               trigger: "blur"
             },
             {
-              label: "数量",
+              label: "处方总数量",
               prop: "number",
             },
             {
-              label: "金额",
-              prop: "prices",
+              label: "处方总贴数",
+              prop: "dose",
             },
             {
-              label: "贴数",
-              prop: "dose",
+              label: "总收入",
+              prop: "prices",
             },
             {
               label: "订单时间",

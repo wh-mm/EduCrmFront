@@ -60,27 +60,25 @@
               trigger: "blur"
             },
             {
+              label: "处方类型",
+              prop: "isDaijian",
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              search: true,
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=isDaijian",
+            },
+            {
               label: "药品名称",
               prop: "goodsName",
 
             },
-          /*  {
+            {
               label: "药品规格",
-              prop: "goodsType",
-              type: "tree",
-              sortable:true,
-              rules: [{
-                required: true,
-                message: "请选择货物类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
-            },*/
+              prop: "goods_specification",
+            },
             {
               label: "药品单位",
               prop: "unit",
@@ -91,7 +89,7 @@
             },
             {
               label: '金额',
-              prop: "zjg",
+              prop: "zlg",
             },
             {
               label: "订单时间",

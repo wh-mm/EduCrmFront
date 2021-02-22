@@ -591,6 +591,7 @@ export default {
             label: "订单id",
             prop: "id",
             sortable: true,
+            width:150,
             search: true,
           },
           {
