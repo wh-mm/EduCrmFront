@@ -171,7 +171,7 @@ export const receiveDecoctingSave = (row) => {
     data: row
   })
 };
-//保存
+//保存 调配机
 export const receiveBlenderSave = (row) => {
   return request({
     url: '/api/taocao-order/order/receiveBlenderSave',
@@ -188,6 +188,16 @@ export const updateReceiveBlender = (row) => {
     data: row
   })
 };
+//煎药机修改方法
+export const updateReceiveDecocting = (row) => {
+  return request({
+    url: '/api/taocao-order/order/updateReceiveDecocting',
+    method: 'post',
+    data: row
+  })
+};
+
+
 
 //调配机诊所保存方法
 export const clinicReceiveBlender = (row) => {
@@ -205,6 +215,7 @@ export const clinicReceiveDecoctingSave = (row) => {
     data: row
   })
 };
+
 export const selectByOrderId = (orderId) => {
   return request({
     url: '/api/taocao-order/order/selectByOrderId',

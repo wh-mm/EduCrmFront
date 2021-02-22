@@ -78,8 +78,6 @@ export default {
              },
              dicUrl: '/api/erp-wms/goods/likeListKL',
              change: ({value}) => {
-
-
                if (value) {
                  getGoodsDetail(value).then(res => {
                    for (let i = 0; i < this.orderEdit.drugList.length; i++) {
@@ -352,11 +350,7 @@ export default {
           })
             .then(() => {
               let params = {};
-              console.log("===================================================================================================")
-              console.log(this.orderEdit.form)
-              console.log("===================================================================================================")
               params = this.orderEdit.form;
-
               params.orderType = 'tiaopei';
               params.drugList = this.orderEdit.drugList;
               updateReceiveBlender(params).then(res => {
@@ -372,6 +366,7 @@ export default {
                     message: res.data.msg
                   })
                   callback();
+                  this.$emit("reject");
                 }
               });
             }).catch(() => {
@@ -399,18 +394,6 @@ export default {
           this.$refs.crud.toggleSelection();
         });
     },
-/*    del(id) {
-      if (id==null||id==""){
-        this.$message.success("请选择取消");
-      }else {
-        iBlenderDelete(id).then(res => {
-          let data = res.data.data;
-          console.log(data);
-        });
-      }
-      alert(id)
-    },*/
-
     //取消
     reject() {
       this.$emit("reject");
