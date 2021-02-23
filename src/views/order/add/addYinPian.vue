@@ -21,7 +21,6 @@
           </el-option>
         </el-select>
       </template>
-
       <template slot="menuLeft">
         <el-button @click="addRow" size="small">添加5条</el-button>
         <el-button @click="addXdf" size="small">添加协定方</el-button>
@@ -552,7 +551,7 @@ export default {
     bcBtn() {
       this.$refs.addForm.validate((valid, callback) => {
         if (valid) {
-          this.$confirm("请仔细查阅一经保存无法删除！", {
+          this.$confirm("请仔细查阅！", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"

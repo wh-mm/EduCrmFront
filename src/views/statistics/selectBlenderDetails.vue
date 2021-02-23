@@ -29,11 +29,29 @@ export default {
       loading: true,
       selectionList: [],
       value1:'',
+
       option: {
         index: true,
         menu:false,
         excelBtn:true,
         addBtn:false,
+        showSummary: true,
+        sumColumnList: [
+          {
+            label:'金额：',
+            name: 'zlg',
+            type: 'sum',
+          },
+          {
+            name: 'dose',
+            type: 'avg'
+          },
+          {
+            name: 'prices',
+            type: 'count'
+          }
+
+          ],
         column: [
           {
             label: "医院名字",
@@ -81,6 +99,11 @@ export default {
               search: true,
               dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
             },*/
+          {
+            label: "药品规格",
+            prop: "goods_specification",
+          },
+
           {
             label: "药品单位",
             prop: "unit",

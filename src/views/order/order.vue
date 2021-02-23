@@ -629,6 +629,8 @@ export default {
           {
             label: "订单id",
             prop: "id",
+            width:150,
+
             sortable: true,
             search: true,
           },
@@ -716,7 +718,7 @@ export default {
             format: "yyyy-MM-dd hh:mm:ss",
             valueFormat: "yyyy-MM-dd hh:mm:ss",
             searchRange: true,
-            searchSpan: 12,
+            searchSpan: 6,
             hide: true,
             addDisplay: false,
             editDisplay: false,
@@ -1041,7 +1043,8 @@ export default {
         });
     },
     //编辑
-    orderEdits(row){
+    orderEdits(row) {
+      //debugger
       let url = '';
       if (row.orderType === "jianyao") {
         url = "/api/taocao-order/order/decoctingSelectByOrderId"
@@ -1057,9 +1060,9 @@ export default {
       getInfo(url, row.id).then(res => {
         this.orderEdit = res.data.data;
         if (row.orderType === "jianyao") {
-          this.editKeLiDialogVisible = true;
-        } else if (row.orderType === "tiaopei") {
           this.editYinPianDialogVisible = true;
+        } else if (row.orderType === "tiaopei") {
+          this.editKeLiDialogVisible = true;
         } else {
           this.$message({
             type: 'error',

@@ -419,7 +419,7 @@ export default {
     bcBtn() {
       this.$refs.addForm.validate((valid, callback) => {
         if (valid) {
-          this.$confirm("请仔细查阅一经保存无法删除！", {
+          this.$confirm("请仔细查阅！", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
