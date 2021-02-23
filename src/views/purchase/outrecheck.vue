@@ -25,26 +25,6 @@
                      @click="updateRevocation()">审 批
           </el-button>
 
-       <el-button
-       size="small"
-       type="text">
-         <el-switch
-         style="display: block"
-         v-model="value1"
-         active-color="#13ce66"
-         inactive-color="#ff4949"
-         active-text="启用数量同步"
-         inactive-text="关闭数量同步"
-         @change="changeSwitch()">
-       </el-switch>
-       </el-button>
-      </template>
-      <template slot-scope="scope" slot="inventoryToRetrieveForm">
-        <el-button :size="scope.size"  @click="inventoryToRetrieve(scope.row.goodsId)">库 存 检 索</el-button>
-      </template>
-
-      <template slot-scope="scope" slot="unitForm">
-        <el-button :size="scope.size"  @click="viewCommodity(scope.row.goodsId)">查 看 资 质</el-button>
       </template>
       <template slot-scope="scope" slot="menu">
        <el-button icon="el-icon-check"
@@ -53,6 +33,48 @@
                             v-if="scope.row.status==1 || scope.row.status==102|| scope.row.status==103"
                             @click.stop="handleEdit(scope.row,scope.index)">复核数量
       </el-button>
+      </template>
+      <template slot="goodsIdForm" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.goodsId"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入商品"
+          @change="selectRepertoryByGoodsId(scope.index,scope.row.goodsId)"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in options"
+            :key="item.goodsId"
+            :label="item.goodsName"
+            :value="item.goodsId">
+          </el-option>
+        </el-select>
+      </template>
+      <template slot="batchNumberForm" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.batchNumber"
+          filterable
+          remote
+          reserve-keyword
+          @change="selectByBatchNumber(scope.index,scope.row)"
+          placeholder="请输入批号"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in scope.row.optionss"
+            :key="item.id"
+            :label="item.batchNumber"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </template>
+      <template slot="checkboxForm" slot-scope="scope">
+      <el-checkbox v-model="scope.row.checked" @change="checkValue(scope.row)">选中当前行</el-checkbox>
+
       </template>
 
      </avue-crud>
@@ -71,33 +93,51 @@
         <el-button type="primary" @click="updateStatusNew(2)">同 意</el-button>
       </span>
     </el-dialog>
-
     <el-dialog
-      title="商品资质"
-      :append-to-body="true"
-      :visible.sync="commoditydialogVisible"
-       width="50%"
-      :modal="false"
-      :before-close="handleClose"
+      title="商品信息"
+      :visible.sync="expireDialog"
       :close-on-click-modal="false"
-      v-dialogDrag>
-      <avue-crud v-model="form" :data="commoditydata" :option="commoditydataoption"  >
-      </avue-crud>
+      width="80%"
+      :append-to-body="true"
+      :modal="false">
+      <template>
+        <el-table
+          :data="tableDatas"
+          style="width: 100%">
+          <el-table-column
+            prop="goodsName"
+            label="商品名称"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="batchNumber"
+            label="商品批号"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="repertoryQuantity"
+            label="库存数量">
+          </el-table-column>
+          <el-table-column
+            prop="dateOfManufacture"
+            label="生产日期">
+          </el-table-column>
+          <el-table-column
+            prop="periodOfValidity"
+            label="有效期至">
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="selectGoods(scope.$index, scope.row)">选择</el-button>
+
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
     </el-dialog>
 
-    <el-dialog
-      title="库存检索"
-      :append-to-body="true"
-      :visible.sync="dialogVisible"
-       width="50%"
-      :modal="false"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-      v-dialogDrag
-    >
-      <avue-crud v-model="form" :data="inventoryToRetrievedata" :option="inventoryToRetrievedataoption"  >
-      </avue-crud>
-    </el-dialog>
 
 
 
@@ -105,12 +145,14 @@
 
 </template>
 <script>
-  import {getList, add, getDetail,update, remove, updateStatus,inventoryToRetrieve,updaterejectText} from "@/api/purchase/outputorder";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
+  import {getList, add, getDetail,update, remove, updateStatus} from "@/api/purchase/outputorder";
   import {mapGetters} from "vuex";
-  import {viewCommodity} from "@/api/purchase/purchaseorder";
   import '@/views/purchase/dialogdrag.ts'
-  import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import {
+    dropDownbatchnumber,
+    selectByBatchNumber, selectRepertoryByGoodsId,
+    selectRepertoryGoods
+  } from "@/api/warehouse/repertory";
   export default {
 
     data() {
@@ -124,7 +166,15 @@
         }
       };
       return {
-        value1: true,
+        expireDialog:false,
+        options: [],
+        optionss: [],
+        tableDatas: [],
+        index:'',
+        checked:false,
+        goodsId:'',
+        pickingPerson:'',
+        deptName:'',
         form: {},
         query: {},
         loading: true,
@@ -216,8 +266,11 @@
                 headerAlign: 'center',
                  rowAdd:(done)=>{
                    done({
-                    goodsQuantity: 1,
-                    discountPercentage: 0,
+                      goodsId: this.goodsId,
+                      pickingPerson: this.pickingPerson,
+                     deptName: this.deptName,
+                      goodsQuantity: 1,
+                      discountPercentage: 0,
                    });
                  },
                  rowDel:(row,done)=>{
@@ -225,8 +278,21 @@
                  },
                 column: [
                   {
+                    width: 200,
+                    label: '选中',
+                    prop: "checkbox",
+                    type: 'checkbox',
+                    formslot: true,
+                  },
+                  {
                     label: '领料人',
                     prop: "pickingPerson",
+                    disabled:true,
+                    width: 200,
+
+                  },{
+                    label: '部门',
+                    prop: "deptName",
                     disabled:true,
                     width: 200,
 
@@ -239,20 +305,8 @@
                     filterable: true,
                     remote: true,
                     display:false,
-                    // disabled: true,
-                    rules: [{
-                      require: true,
-                      message: '请选择商品',
-                    }],
-                    props: {
-                      label: 'goodsName',
-                      value: 'goodsId'
-                    },
+                    formslot: true,
                     cascaderItem: ['batchNumber'],
-                    dicMethod:'post',
-                    // dicUrl:'/api/erp-wms/goods/selecListGoods',
-                    dicUrl: '/api/erp-wms/repertory/dropDowns',
-
                   },
                   {
                     label: "批号",
@@ -267,26 +321,24 @@
                     dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
                     change: ({value}) => {
                       this.form.outputOrderDetailList.forEach(vals => {
-                      selectByBatchNumber(vals.goodsId,value).then(res => {
-                        var detail = res.data.data;
-                        detail.forEach(val =>{
-                               vals.warehouseId = val.warehouseId;
-                               vals.storageRegionId = val.storageRegionId;
-                               vals.storageId = val.storageId;
-                               vals.repertoryQuantity  = val.repertoryQuantity
-                               vals.periodOfValidity  = val.periodOfValidity
-
-                              vals.dateOfManufacture = val.dateOfManufacture
-                              vals.placeOfOrigin = val.placeOfOrigin
-                              vals.manufacturer = val.manufacturer
-                              vals.supplierName = val.supplierName
-                              vals.packageQuantity = val.packageQuantity
-                              vals.specification = val.specification
-
+                        setTimeout(()=>{
+                          selectByBatchNumber(vals.batchNumber).then(res => {
+                            let detail  = res.data.data;
+                            vals.repertoryQuantity = detail.repertoryQuantity
+                              vals.warehouseId  =detail.warehouseId
+                            vals.dateOfManufacture = detail.dateOfManufacture
+                            vals.periodOfValidity = detail.periodOfValidity
+                            vals.placeOfOrigin = detail.placeOfOrigin
+                            vals.manufacturer = detail.manufacturer
+                            vals.supplierName = detail.supplierName
+                            vals.packageSpecification = detail.packageSpecification
+                            vals.specificationLevel = detail.specificationLevel
                           });
-                        });
+                        },500);
+
                       });
                     },
+
                   },
                   {
                     label: "商品索引码",
@@ -306,25 +358,6 @@
                     type: "number",
                     width: 130,
                     disabled: true,
-                    rules: [{
-                      validator: validateQuantity,
-                      trigger: 'blur'
-                    }],
-                    change: () => {
-                      if(this.value1){
-                        getGoodsDetail().then(res => {
-                          this.form.sumMoney = 0;
-                          this.form.outputOrderDetailList.forEach(val => {
-                            var detail = res.data.data;
-                            if(val.recheckGoodsQuantity ==null || val.recheckGoodsQuantity ==""){
-                              val.recheckGoodsQuantity = val.goodsQuantity;
-                            }
-                            val.basicUnit = detail.basicUnit;
-                          });
-                        });
-                      }
-
-                    },
                   }, {
                     label: '复核出库数量(g)',
                     prop: "recheckGoodsQuantity",
@@ -336,66 +369,36 @@
                     }]
                   },
                   {
-                    label: '*出货仓库',
+                    label: '出货仓库',
                     prop: "warehouseId",
-                    type: "tree",
-                    rsearch: true,
-                    disabled: true,
-                    width:150,
-                    rules: [{
-                      required: true,
-                      message: "请输入仓库",
-                      trigger: "blur"
-                    }],
+                    type:'select',
                     props: {
                       label: 'title',
                       value: 'id'
                     },
-                    cascaderItem: ['storageId'],
                     dicUrl: '/api/erp-wms/warehouse/tree'
                   },
                   {
                     label:'区域',
                     prop: "storageRegionId",
-                    type:'tree',
-                    row: true,
-                    disabled: true,
-                    width:150,
+                    type:"select",
                     props: {
-                      label: 'title',
+                      label: 'name',
                       value: 'id'
                     },
-                    cascaderItem: ['storageId'],
-                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+                    dicMethod:'post',
+                    dicUrl:'/api/erp-wms/storage/dropDown'
                   },
                   {
                     label: "储位",
                     prop: "storageId",
-                    type:'tree',
-                    disabled: true,
-                    width:150,
+                    type:'select',
                     props: {
-                      label: 'title',
+                      label: 'name',
                       value: 'id'
                     },
-                    // cascaderItem: ['goodsId'],
-                    dicUrl:'/api/erp-wms/storage/tree?warehouseId={{key}}'
-                  },
-                  {
-                    label: "库存检索",
-                    prop: "inventoryToRetrieve",
-                    type:'input',
-                    placeholder: " ",
-                    formslot:true,
-                    width: 100,
-                  },
-                  {
-                    label: '商品资质',
-                    prop: "unit",
-                    type:'input',
-                    placeholder: " ",
-                    formslot:true,
-                    width: 100,
+                    dicMethod:'post',
+                    dicUrl:'/api/erp-wms/storage/dropDown'
                   },
                   {
                     label: "生产日期",
@@ -422,30 +425,11 @@
                     disabled: true,
                   },
                   {
-                    label: "供应商",
-                    prop: "supplierName",
-                    width:150,
-                    disabled: true,
-                  },
-                  {
                     label: "生产厂家",
                     prop: "manufacturer",
                     width:150,
                     disabled: true,
                   },
-                  // {
-                  //   label: "基本单位",
-                  //   prop: "basicUnit",
-                  //   editDisplay: false,
-                  //   disabled: true,
-                  //   width: 150,
-                  //   type:'select',
-                  //   props: {
-                  //     label: 'dictValue',
-                  //     value: 'dictKey'
-                  //   },
-                  //   dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
-                  // },
                   {
                     label: '规格',
                     prop: "specification",
@@ -463,263 +447,6 @@
           ]
         },
         data: [],
-        commoditydata:[],
-        commoditydataoption : {
-          addBtn: false,
-          menu:false,
-          align:'center',
-          calcHeight: 30,
-          dialogWidth: '80%',
-          column: [
-
-            {
-              label: "公司名称",
-              prop: "companyId",
-              props: {
-                label: 'supplierName',
-                value: 'id'
-              },
-              dicUrl: '/api/quality/information/dropDownsss?name={{key}}',
-            },
-            {
-              label: "通用名",
-              prop: "commonName",
-              tip: '通用名',
-            },
-            {
-              label: "商品名",
-              prop: "tradeName",
-            },
-            {
-              label: "基本单位",
-              prop: "basicUnit",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
-            },
-            {
-              label: "产地",
-              prop: "placeOfOrigin"
-            },
-            {
-              label: "生产厂家",
-              prop: "manufacturer"
-            },
-
-            {
-              label: "规格(型号)",
-              prop: "specifications"
-            },
-            {
-              label: "最小销售包装规格",
-              prop: "minimumSalesSpecification",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              required: true,
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=package_size",
-            },
-            {
-              label: "进项税",
-              prop: "inputTax",
-              type: 'number',
-            },
-            {
-              label: "销项税",
-              prop: "outputTax",
-              type: 'number',
-            },
-            {
-              label: "剂型",
-              prop: "dosageForm",
-              type: 'tree',
-              rules: [{
-                required: true,
-                message: "请选择剂型",
-                trigger: "blur",
-              }],
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=dosage_form",
-            },
-            {
-              label: "产品分类",
-              prop: "productClassification",
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              dicUrl: "/api/erp-wms/goods-type/tree",
-            },
-
-            {
-              label: "存储期限",
-              prop: "storageLife",
-            },
-            {
-              label: "存储期限类型",
-              prop: "storagePeriodType",
-            },
-            {
-              label: "特管药品",
-              prop: "specialDrugs",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drug",
-            },
-            {
-              label: "特殊药品",
-              prop: "specialDrug",
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=special_drugs",
-            },
-
-            {
-              label: "存储条件",
-              prop: "storageConditions",
-            },
-            {
-              label: "税收分类",
-              prop: "taxClassification",
-            },
-            {
-              label: "是否可拆零",
-              prop: "scattered",
-              type: 'radio',
-              value: 0,
-              dicData: [{
-                label: '是',
-                value: 0
-              }, {
-                label: '否',
-                value: 1,
-              }]
-            },
-            {
-              label: "OTC标志",
-              prop: "sign",
-              type: 'radio',
-              value: '1',
-              dicData: [{
-                label: '有',
-                value: '1'
-              }, {
-                label: '无',
-                value: '2',
-              }]
-            },
-            {
-              label: 'OTC标志',
-              prop: 'signTow',
-              display: true,
-              type: 'select',
-              props: {
-                label: 'dictValue',
-                value: 'dictKey'
-              },
-              dicUrl: "/api/blade-system/dict-biz/dictionary?code=otc_sign",
-            },
-            {
-              label: '国产/进口标示',
-              prop: 'domesticImportIndication',
-              type: 'radio',
-              labelWidth: 110,
-              // viewDisplay: true,   true是可已查看
-              value: '1',
-              dicData: [{
-                label: '国产',
-                value: '1'
-              }, {
-                label: '进口',
-                value: '2'
-              }]
-            },
-            {
-              label: "批准文号",
-              prop: "approvalNumber",
-              display: true,
-              rules: [],
-            },
-            {
-              label: "进口注册证",
-              labelWidth: 110,
-              prop: "importRegistrationCertificate",
-              rules: [],
-            },
-            {
-              label: "分包装企业",
-              prop: "subPackagingEnterprises",
-              labelWidth: 110,
-              rules: [],
-            },
-            {
-              label: "分包装批准文号",
-              labelWidth: 130,
-              prop: "approvalNumberOfSubPackage",
-              rules: [],
-            },
-          ],
-        },
-        inventoryToRetrievedata:[],
-        inventoryToRetrievedataoption : {
-          addBtn: false,
-          menu:false,
-          align:'center',
-          column:[
-            {
-              label: "仓库",
-              prop: "warehouseId",
-              type:'tree',
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              // cascaderItem: ['storageId'],
-              dicUrl:this.ERP_WMS_NAME + '/warehouse/tree'
-            },
-            {
-              label: "储位",
-              prop: "storageId",
-              type:'tree',
-              props: {
-                label: 'name',
-                value: 'id'
-              },
-              dicUrl:this.ERP_WMS_NAME + '/storage/dropDown'
-            },
-            {
-              label: '批号',
-              prop:'batchNumber'
-            },
-            {
-              label:'商品名称',
-              prop:'goodsId',
-              props: {
-                label: 'goodsName',
-                value: 'id'
-              },
-              dicMethod:"post",
-              dicUrl: 'api/erp-wms/goods/selecListGoods',
-            },
-            {
-              label: "库存数量(g)",
-              prop: "repertoryQuantity",
-              rules: [{
-                trigger: "blur"
-              }]
-            },
-          ]
-        },
         obj0: {
           rejectText: ''
         },
@@ -758,16 +485,17 @@
           status1.push(ele.status);
         });
         return status1.join(",");
-      },
-      batchNumber1() {
-        let batchNumber1 = [];
-        this.selectionList.forEach(ele => {
-          batchNumber1.push(ele.batchNumber);
-        });
-        return batchNumber1.join(",");
       }
     },
+    created() {
+      this.optionsData();
+    },
     methods: {
+      optionsData() {
+        selectRepertoryGoods().then(res => {
+          this.options=res.data.data;
+        })
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -924,35 +652,68 @@
         }
         this.dialogFormVisible = true;
       },
-
-      //查看资质
-      viewCommodity(goodsId){
-        this.commoditydialogVisible = true;
-        viewCommodity(goodsId).then(res=>{
-          if (res.data.success) {
-            this.commoditydata = res.data.data;
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
-
-      //库存检索
-      inventoryToRetrieve(goodsId){
-        this.dialogVisible = true;
-        inventoryToRetrieve(goodsId).then(res=>{
-          if (res.data.success) {
-            this.inventoryToRetrievedata = res.data.data;
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
       handleEdit(row, index) {
         this.$refs.crud.rowEdit(row, index);
       },
+      selectRepertoryByGoodsId(index,goodsId){
+        this.index = index;
+        selectRepertoryByGoodsId(goodsId).then(res=>{
+          this.expireGoodsHint(res.data.data)
+        });
+        dropDownbatchnumber(goodsId).then(ress=>{
+          this.form.outputOrderDetailList[index].optionss = ress.data.data;
+        });
+
+      },
+      selectGoods(index,row) {
+        let vals = this.form.outputOrderDetailList[this.index];
+        vals.batchNumber = row.id
+        vals.warehouseId = row.warehouseId;
+        setTimeout(()=>{
+          vals.storageRegionId = row.storageRegionId;
+        },1500);
+        setTimeout(()=>{
+          vals.storageId = row.storageId;
+        },2000);
+        vals.repertoryQuantity  = row.repertoryQuantity
+        vals.dateOfManufacture = row.dateOfManufacture
+        vals.periodOfValidity = row.periodOfValidity
+        vals.placeOfOrigin = row.placeOfOrigin
+        vals.manufacturer = row.manufacturer
+        vals.supplierName = row.supplierName
+        vals.packageSpecification = row.packageSpecification
+        vals.specificationLevel = row.specificationLevel
+        this.expireDialog = false;
+      },
+      selectByBatchNumber(index,row){
+
+        selectByBatchNumber(row.batchNumber).then(res=>{
+          let detail = res.data.data;
+          let vals =this.form.outputOrderDetailList[index];
+          vals.warehouseId = detail.warehouseId;
+          vals.storageRegionId = detail.storageRegionId;
+          vals.storageId = detail.storageId;
+          vals.repertoryQuantity  = detail.repertoryQuantity
+          vals.dateOfManufacture = detail.dateOfManufacture
+          vals.periodOfValidity = detail.periodOfValidity
+          vals.placeOfOrigin = detail.placeOfOrigin
+          vals.manufacturer = detail.manufacturer
+          vals.supplierName = detail.supplierName
+          vals.packageSpecification = detail.packageSpecification
+          vals.specificationLevel = detail.specificationLevel
+        })
+      },
+      expireGoodsHint(expireGoods) {
+        this.tableDatas = expireGoods
+        if(expireGoods.length>0){
+          this.expireDialog = true;
+        }
+      },
+      checkValue(row){
+         this.goodsId= row.goodsId
+         this.pickingPerson= row.pickingPerson
+         this.deptName= row.deptName
+      }
     }
   };
 </script>

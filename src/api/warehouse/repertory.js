@@ -35,12 +35,11 @@ export const saveRepertoryWarning = (repertoryWarnList) => { //保存预警信�
   })
 }
 
-export const selectByBatchNumber = (goodsId,id) => {   //根据批号查询商品所在位置
+export const selectByBatchNumber = (id) => {   //根据批号查询商品所在位置
   return request({
     url: ERP_WMS_NAME + '/repertory/selectByBatchNumber',
     method: 'post',
     params: {
-      goodsId,
       id
     }
   })
@@ -67,6 +66,31 @@ export const selectWarningGoods = () => {  //查询预警库存
   return request({
     url: ERP_WMS_NAME + '/repertory/selectWarningGoods',
     method: 'post',
+  })
+}
+export const selectRepertoryByGoodsId = (goodsId) => {  //根据商品id查询批号以及库存信息
+  return request({
+    url: ERP_WMS_NAME + '/repertory/selectRepertoryByGoodsId',
+    method: 'post',
+    params:{
+      goodsId
+    }
+  })
+}
+export const selectRepertoryGoods = () => {  //根据商品id查询批号以及库存信息
+  return request({
+    url: ERP_WMS_NAME + '/repertory/selectRepertoryGoods',
+    method: 'post',
+
+  })
+}
+export const dropDownbatchnumber = (goodsId) => {  //根据商品id查询批号以及库存信息
+  return request({
+    url: ERP_WMS_NAME + '/repertory/dropDownbatchnumber',
+    method: 'post',
+    params:{
+      goodsId
+    }
   })
 }
 

@@ -178,6 +178,10 @@
           dialogClickModal: false,
           column: [
             {
+              label: "订单号",
+              prop: "orderNumber",
+            },
+            {
               label: "仓库",
               prop: "warehouseId",
               type:"select",

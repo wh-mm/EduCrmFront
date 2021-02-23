@@ -23,7 +23,7 @@
                    size="small"
                    plain
                    icon="el-icon-download"
-                   @click="handleExportDialog">导出入库报表
+                   @click="handleExportDialog">导出仓库报表
         </el-button>
       </template>
 
@@ -288,9 +288,7 @@
         this.exportDialog = true;
       },
       handleExport() {
-        console.log(this.excelCheckForm.daterange[0])
-        console.log(this.excelCheckForm.daterange[1])
-        console.log(this.excelCheckForm.type)
+
         this.$confirm("是否导出盘点库存数据模板?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",

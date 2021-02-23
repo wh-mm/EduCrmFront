@@ -32,36 +32,69 @@
                    icon="el-icon-printer"
                    :type="scope.type"
                    @click="print(scope.row)"> 打印出库单</el-button>
+
+
       </template>
       <template slot-scope="scope" slot="inventoryToRetrieveForm">
         <el-button :size="scope.size"  @click="selectGoodsGross(scope.row.goodsId)">现 有 库 存 量</el-button>
       </template>
 
-      <template slot-scope="scope" slot="batchNumberForm">
-        <el-select v-model="selectValues"
-                   multiple
-                   placeholder="请选择批号">
+
+
+
+
+
+      <template slot="goodsIdForm" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.goodsId"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入商品"
+          @change="selectRepertoryByGoodsId(scope.index,scope.row.goodsId)"
+          :data-index="scope.index"
+          :loading="loading">
           <el-option
-            v-for="item in selectValue"
-            :key="item.batchNumber"
+            v-for="item in options"
+            :key="item.goodsId"
+            :label="item.goodsName"
+            :value="item.goodsId">
+          </el-option>
+        </el-select>
+      </template>
+      <template slot="batchNumberForm" slot-scope="scope">
+        <el-select
+          size="small"
+          v-model="scope.row.batchNumber"
+          filterable
+          remote
+          reserve-keyword
+          @change="selectByBatchNumber(scope.index,scope.row)"
+          placeholder="请输入批号"
+          :data-index="scope.index"
+          :loading="loading">
+          <el-option
+            v-for="item in scope.row.optionss"
+            :key="item.id"
             :label="item.batchNumber"
-            :value="item.batchNumber">
+            :value="item.id">
           </el-option>
         </el-select>
       </template>
 
-
     </avue-crud>
 
     <el-dialog
-      title="即将过期商品"
+      title="商品信息"
       :visible.sync="expireDialog"
+      :close-on-click-modal="false"
       width="80%"
       :append-to-body="true"
       :modal="false">
       <template>
         <el-table
-          :data="tableData"
+          :data="tableDatas"
           style="width: 100%">
           <el-table-column
             prop="goodsName"
@@ -78,8 +111,12 @@
             label="库存数量">
           </el-table-column>
           <el-table-column
-            prop="expire"
-            label="剩余天数">
+            prop="dateOfManufacture"
+            label="生产日期">
+          </el-table-column>
+          <el-table-column
+            prop="periodOfValidity"
+            label="有效期至">
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
@@ -92,7 +129,6 @@
         </el-table>
       </template>
     </el-dialog>
-
 
     <el-dialog
       title="商品总量"
@@ -165,9 +201,7 @@
                   </div>
                 </el-col>
                 <el-col :span="8">
-                  <div class="grid-content bg-purple-light">
-                    <p>处方号 : <span style="margin-left: 10px;"></span></p>
-                  </div>
+
                 </el-col>
 
               </el-row>
@@ -249,18 +283,21 @@
 
 
 
+
+
+
+
   </basic-container>
 </template>
 
 <script>
   import {getList, getDetail, add, update, remove,printOutWarehouseDetail} from "@/api/warehouse/outwarehouseorder";
   import {selctRepertoryWarnQuantity} from "@/api/warehouse/repertorywarn";
-
-  import {mapGetters} from "vuex";
-  import {getGoodsDetail} from "@/api/warehouse/goods";
-  import {selectByBatchNumber} from "@/api/warehouse/repertory";
+  import {mapGetters, mapState} from "vuex";
+  import {getGoodsDetail, likeListKL,selectAlll} from "@/api/warehouse/goods";
+  import {selectByBatchNumber,dropDownbatchnumber} from "@/api/warehouse/repertory";
   import {selectGoodsGross} from "@/api/purchase/outputorder";
-  import {selectExpireGoods} from "@/api/warehouse/repertory";
+  import {selectExpireGoods,selectRepertoryByGoodsId,selectRepertoryGoods} from "@/api/warehouse/repertory";
 
   export default {
     filters: {
@@ -285,14 +322,19 @@
     },
     data() {
       return {
+        options: [],
+        optionss: [],
+        index:'',
         selectValue:[],
         selectValues:[],
         form: {},
         query: {},
         loading: true,
         dialogVisible:false,
+        viewDialog:false,
         printDialogVisible:false,
         expireDialog:false,
+        tableDatas:[],
         printData: {
           orderNumber: '',
           tableData: [],
@@ -391,89 +433,15 @@
                   {
                     label: '*商品',
                     prop: "goodsId",
-                    type: 'tree',
-                    width: 130,
-                    filterable: true,
-                    remote: true,
-                    display:false,
-                    // disabled: true,
-                    rules: [{
-                      require: true,
-                      message: '请选择商品',
-                    }],
-                    props: {
-                      label: 'goodsName',
-                      value: 'goodsId'
-                    },
-                    cascaderItem: ['batchNumber'],
-                    dicMethod:'post',
-                    // dicUrl:'/api/erp-wms/goods/selecListGoods',
-                    dicUrl: '/api/erp-wms/repertory/dropDowns',
-                    change: ({value}) => {
-                      getGoodsDetail(value).then(res => {
-                        var selectValue = res.data.data;
-                        this.form.outwarehouseOrderDetailList.forEach(vals => {
-                          if(vals.goodsId == value){
-                            vals.goodsCode = selectValue.goodsCode
-                            vals.basicUnit = selectValue.unit
-                            vals.specification = selectValue.specification
-                          }
-
-                        });
-                      });
-                      // selctRepertoryWarnQuantity(value).then(res => {
-                      //   var selctRepertoryWarnQuantity = res.data.data;
-                      //   this.form.outwarehouseOrderDetailList.forEach(vals => {
-                      //   selctRepertoryWarnQuantity.forEach(ress=>{
-                      //     if(ress.sumQuantitys<vals.goodsQuantity){
-                      //       this.$message({
-                      //         type: "success",
-                      //         message: "库存数量太少了!"
-                      //       });
-                      //     }
-                      //   });
-                      // });
-                      //   });
-                      selectExpireGoods(value).then(res=>{
-                        let expireGoods = res.data.data;
-                        this.expireGoodsHint(expireGoods);
-                      });
-                    },
+                    width:170,
+                    formslot: true,
                   },
                   {
                     label: "批号",
                     prop: "batchNumber",
-                    type:"select",
+                    formslot: true,
+                    editDisplay:false,
                     width:170,
-                    props: {
-                      label: 'batchNumber',
-                      value: 'id'
-                    },
-                    dicMethod:'post',
-                    dicUrl: '/api/erp-wms/repertory/dropDownbatchnumber?goodsId={{key}}',
-                    change: ({value}) => {
-                      this.form.outwarehouseOrderDetailList.forEach(vals => {
-                          selectByBatchNumber(vals.goodsId,vals.batchNumber).then(res => {
-                            var detail = res.data.data;
-                            detail.forEach(val =>{
-
-                                vals.warehouseId = val.warehouseId;
-                                vals.storageRegionId = val.storageRegionId;
-                                vals.storageId = val.storageId;
-                                vals.repertoryQuantity  = val.repertoryQuantity
-                                vals.dateOfManufacture = val.dateOfManufacture
-                                vals.periodOfValidity = val.periodOfValidity
-                                vals.placeOfOrigin = val.placeOfOrigin
-                                vals.manufacturer = val.manufacturer
-                                vals.supplierName = val.supplierName
-                                vals.packageSpecification = val.packageSpecification
-                                vals.specificationLevel = val.specificationLevel
-
-                            });
-                          });
-                        });
-
-                    },
                   },
                   {
                     label: "商品索引码",
@@ -542,27 +510,29 @@
                   {
                     label:'区域',
                     prop: "storageRegionId",
-                    type:'tree',
+                    type:'select',
                     width:150,
                     disabled: true,
                     props: {
-                      label: 'title',
+                      label: 'name',
                       value: 'id'
                     },
+                    dicMethod:'post',
                     cascaderItem: ['storageId'],
-                    dicUrl:'/api/erp-wms/storage/queryRegionTree?warehouseId={{key}}'
+                    dicUrl:'/api/erp-wms/storage/dropDown'
                   },
                   {
                     label: "储位",
                     prop: "storageId",
-                    type:'tree',
+                    type:'select',
                     disabled: true,
                     width: 150,
                     props: {
-                      label: 'title',
+                      label: 'name',
                       value: 'id'
                     },
-                    dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
+                    dicMethod:'post',
+                    dicUrl:'/api/erp-wms/storage/dropDown'
                   },
                   {
                     label: "基本单位",
@@ -676,7 +646,15 @@
         return ids.join(",");
       }
     },
+    created() {
+      this.optionsData();
+    },
     methods: {
+      optionsData() {
+        selectRepertoryGoods().then(res => {
+          this.options=res.data.data;
+        })
+      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           this.onLoad(this.page);
@@ -749,7 +727,9 @@
           },10);
         }
         if (["edit", "view"].includes(type)) {
+          console.log("查看")
           getDetail(this.form.id).then(res => {
+            console.log(res.data.data);
             this.form = res.data.data;
           });
         }
@@ -833,17 +813,58 @@
 
         })
       },
+      selectRepertoryByGoodsId(index,goodsId){
+        this.index = index;
+        selectRepertoryByGoodsId(goodsId).then(res=>{
+          this.expireGoodsHint(res.data.data)
+        });
+        dropDownbatchnumber(goodsId).then(ress=>{
+          this.form.outwarehouseOrderDetailList[index].optionss = ress.data.data;
+        });
+      },
+      selectByBatchNumber(index,row){
+        selectByBatchNumber(row.batchNumber).then(res=>{
+          let detail = res.data.data;
+          let vals =this.form.outwarehouseOrderDetailList[index];
+              vals.warehouseId = detail.warehouseId;
+             vals.storageRegionId = detail.storageRegionId;
+             vals.storageId = detail.storageId;
+             vals.repertoryQuantity  = detail.repertoryQuantity
+             vals.dateOfManufacture = detail.dateOfManufacture
+             vals.periodOfValidity = detail.periodOfValidity
+             vals.placeOfOrigin = detail.placeOfOrigin
+             vals.manufacturer = detail.manufacturer
+             vals.supplierName = detail.supplierName
+             vals.packageSpecification = detail.packageSpecification
+             vals.specificationLevel = detail.specificationLevel
+        })
+        },
+
       expireGoodsHint(expireGoods) {
-        this.tableData = expireGoods
+        this.tableDatas = expireGoods
         if(expireGoods.length>0){
           this.expireDialog = true;
         }
       },
       selectGoods(index,row) {
-        this.form.outputOrderDetailList.forEach(vals => {
-          vals.batchNumber = row.id
-        });
-        this.expireDialog=false;
+        let vals = this.form.outwarehouseOrderDetailList[this.index];
+        vals.batchNumber = row.id
+        vals.warehouseId = row.warehouseId;
+        setTimeout(()=>{
+          vals.storageRegionId = row.storageRegionId;
+        },1500);
+         setTimeout(()=>{
+           vals.storageId = row.storageId;
+        },2000);
+        vals.repertoryQuantity  = row.repertoryQuantity
+        vals.dateOfManufacture = row.dateOfManufacture
+        vals.periodOfValidity = row.periodOfValidity
+        vals.placeOfOrigin = row.placeOfOrigin
+        vals.manufacturer = row.manufacturer
+        vals.supplierName = row.supplierName
+        vals.packageSpecification = row.packageSpecification
+        vals.specificationLevel = row.specificationLevel
+        this.expireDialog = false;
       },
     }
   };

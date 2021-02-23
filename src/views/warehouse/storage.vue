@@ -308,9 +308,7 @@ export default {
       add(row).then(
         res => {
           // 获取新增数据的相关字段
-          const data = res.data.data;
           if (res.data.success) {
-            row.id = data.id;
             this.$message({
               type: "success",
               message: "操作成功!",

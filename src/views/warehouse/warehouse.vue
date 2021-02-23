@@ -214,22 +214,6 @@
               dicUrl: "/api/blade-system/dict-biz/dictionary?code=warehouse_type"
             },
             {
-              label: "地址",
-              prop: "addressArray",
-              type: "cascader",
-              sortable:true,
-              rules: [{
-                required: true,
-                message: "请输入地址",
-                trigger: "blur"
-              }],
-              props: {
-                label: "title",
-                value: "id"
-              },
-              dicUrl: "/api/blade-system/region/lazy-tree",
-            },
-            {
               label: "详细地址",
               prop: "addressDetail",
               sortable:true,
