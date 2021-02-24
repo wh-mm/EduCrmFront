@@ -168,67 +168,10 @@
 
         <template slot="menuLeft" slot-scope="scope">
       <el-button   type="primary" size="small" @click="updateAllCheckStatus()"> 一键审核</el-button>
+      <el-button   type="primary" size="small" @click="updateAllsCheckStatus()"> 全部审核</el-button>
         </template>
 
       </avue-crud>
-
-<!--          <el-table-->
-<!--          :data="detailData"-->
-<!--          border-->
-<!--          :page-size="20"-->
-<!--          style="width: 100%">-->
-<!--          <el-table-column-->
-<!--            fixed-->
-<!--            prop="warehouseName"-->
-<!--            label="仓库"-->
-<!--            width="150">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="goodsName"-->
-<!--            label="商品名"-->
-<!--            width="120">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="goodsCode"-->
-<!--            label="商品编码"-->
-<!--            width="120">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="batchNumber"-->
-<!--            label="商品批号"-->
-<!--            width="120">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="manufacturer"-->
-<!--            label="生产厂家"-->
-<!--            width="150">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="repertoryQuantity"-->
-<!--            label="库存数量(g)"-->
-<!--            width="120">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="realRepertoryQuantity"-->
-<!--            label="实际数量(g)"-->
-<!--            width="120">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            prop="remark"-->
-<!--            label="备注"-->
-<!--            width="120">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--            fixed="right"-->
-<!--            label="操作"-->
-<!--            width="100">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>-->
-<!--              <el-button type="text" size="small">编辑</el-button>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-
-<!--        </el-table>-->
       </template>
     </el-dialog>
 
@@ -240,9 +183,8 @@
 </template>
 <script>
   import {getList,getDetail, add, update, remove,saveCheckOrder,updateRow,detailNew,updateFatherCheckStatus,checkDetailInWarehouse} from "@/api/warehouse/check/check";
-  import {updateCheckStatus,updateAllCheckStatus} from "@/api/warehouse/check/checkdetail";
-  import {dropDown,lock} from "@/api/warehouse/warehouse";
-  import {saveCheckHistory} from "@/api/warehouse/check/checkhistory";
+  import {updateCheckStatus,updateAllCheckStatus,updateAllsCheckStatus} from "@/api/warehouse/check/checkdetail";
+  import {lock} from "@/api/warehouse/warehouse";
   import {saveImportExcelData,getListTemporary,deleteCheckTemporary,deleteCheck} from "@/api/warehouse/check/checktemporary";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
@@ -710,8 +652,19 @@
           });
       },
       updateAllCheckStatus() {
-        console.log(this.detailData)
         updateAllCheckStatus(this.detailData).then(() => {
+          this.detailNewCrud(this.pageCrud);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.refreshChangeNewCrud();
+        }, error => {
+          window.console.log(error);
+        });
+      },
+      updateAllsCheckStatus() {
+        updateAllsCheckStatus(this.detailData[0].checkId).then(() => {
           this.detailNewCrud(this.pageCrud);
           this.$message({
             type: "success",

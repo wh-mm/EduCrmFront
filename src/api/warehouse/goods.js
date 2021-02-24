@@ -164,6 +164,12 @@ export const selecListGoods = () => {
     method: 'get',
   })
 }
+export const deleteAllGoods = () => {
+  return request({
+    url: ERP_WMS_NAME + '/goods/deleteAllGoods',
+    method: 'post',
+  })
+}
 
 
 

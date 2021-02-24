@@ -186,7 +186,7 @@
                   width="100">
                 </el-table-column>
                 <el-table-column
-                  prop="goodsQuantity"
+                  prop="recheckGoodsQuantity"
                   label="数量(g)"
                   width="55">
                 </el-table-column>

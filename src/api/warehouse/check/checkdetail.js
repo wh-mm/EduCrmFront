@@ -65,4 +65,13 @@ export const updateAllCheckStatus = (checkDetailList) => {
     data:checkDetailList
   })
 }
+export const updateAllsCheckStatus = (id) => {
+  return request({
+    url: '/api/business_repertory_detail/checkdetail/updateAllsCheckStatus',
+    method: 'post',
+    params:{
+      id
+    }
+  })
+}
 

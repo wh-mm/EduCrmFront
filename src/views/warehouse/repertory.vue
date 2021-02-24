@@ -14,6 +14,7 @@
                @current-change="currentChange"
                @size-change="sizeChange"
                @refresh-change="refreshChange"
+
                @on-load="onLoad">
       <template slot="menuLeft">
         <el-button type="success"
@@ -119,7 +120,6 @@
   import {add} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
-  import { saveOneTransfer } from "@/api/warehouse/transfer/onetransfer";
   import { saveALLTransfer } from "@/api/warehouse/transfer/alltransfer";
   export default {
     data() {
@@ -201,6 +201,7 @@
               },
               dicMethod:"post",
               dicUrl: 'api/erp-wms/goods/selecListGoods',
+
             },
             {
               label: "商品索引码",
@@ -291,7 +292,8 @@
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
-          ],showSummary: true,
+          ],
+          showSummary: false,
           sumColumnList: [
             {
               label:'总数:',
@@ -708,6 +710,12 @@
         this.page.currentPage = 1;
         this.onLoad(this.page, params);
         done();
+        setTimeout(()=>{
+          if(this.data.length>0){
+            console.log("长度大于0")
+          }
+        },1000);
+
       },
       selectionChange(list) {
         this.selectionList = list;
@@ -716,10 +724,10 @@
         this.selectionList = [];
         this.$refs.crud.toggleSelection();
       },
-      currentChange(currentPage){
+      currentChange(currentPage) {
         this.page.currentPage = currentPage;
       },
-      sizeChange(pageSize){
+      sizeChange(pageSize) {
         this.page.pageSize = pageSize;
       },
       refreshChange() {
@@ -744,22 +752,22 @@
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;
-          data.records.forEach( (d) => {
-            d.checkStatus=0;
+          data.records.forEach((d) => {
+            d.checkStatus = 0;
           })
           this.loading = false;
           this.selectionClear();
         });
       },
-      submit(form,done){
-        add(form).then( res => {
+      submit(form, done) {
+        add(form).then(res => {
           done();
-          if(res.data.success){
+          if (res.data.success) {
             this.$refs.form.resetForm();
             this.$message.success(res.data.msg);
             this.dialogVisible = false;
             this.onLoad(this.page, this.query);
-          }else {
+          } else {
             this.$message.error(res.data.msg);
           }
         }).catch(() => {
@@ -781,10 +789,10 @@
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          window.open( this.ERP_WMS_NAME + `/repertory/export?${this.website.tokenHeader}=${getToken()}`);
+          window.open(this.ERP_WMS_NAME + `/repertory/export?${this.website.tokenHeader}=${getToken()}`);
         });
       },
-      handleCheckExportDialog(){
+      handleCheckExportDialog() {
         this.checkDialog = true;
       },
       handleCheckExport() {
@@ -793,7 +801,7 @@
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          window.open( this.ERP_WMS_NAME + `/repertory/exportCheck?${this.website.tokenHeader}=${getToken()}&warehouseId=${this.excelCheckForm.warehouseId}`);
+          window.open(this.ERP_WMS_NAME + `/repertory/exportCheck?${this.website.tokenHeader}=${getToken()}&warehouseId=${this.excelCheckForm.warehouseId}`);
         });
       },
 
@@ -811,29 +819,15 @@
       },
 
       deleteRepertory(id) {
-        deleteRepertory(id).then(res =>{
+        deleteRepertory(id).then(res => {
           this.$message({
-            type:'info',
-            message:res.data.msg
+            type: 'info',
+            message: res.data.msg
           })
         })
       },
-      //
-      // oneTransferDialog(row){
-      //   this.dialogOne=true;
-      //   this.rowId = row.id
-      //   this.formOne.oldWarehouseId = row.warehouseId;
-      //   this.formOne.oldStorageRegionId = row.storageRegionId;
-      //   this.formOne.oldStorageId = row.storageId;
-      //   this.formOne.goodsId = row.goodsId;
-      //   this.formOne.goodsCode = row.goodsCode;
-      //   this.formOne.specification = row.specification;
-      //   this.formOne.unit = row.unit;
-      //   this.formOne.conversionUnit = row.conversionUnit;
-      //
-      // },
-      AllTransferDialog(row){
-        this.dialogAll=true;
+      AllTransferDialog(row) {
+        this.dialogAll = true;
         this.rowId = row.id
         this.formAll.oldWarehouseId = row.warehouseId;
         this.formAll.oldStorageRegionId = row.storageRegionId;
@@ -847,28 +841,14 @@
         this.formAll.newBatchNumber = row.batchNumber;
 
       },
-      oneTransfer(row){
-        saveOneTransfer(this.rowId,row).then(() => {
+      saveALLTransfer(row, done) {
+        saveALLTransfer(this.rowId, row).then(() => {
           this.onLoad(this.page);
           this.$message({
             type: "success",
             message: "操作成功!"
           });
-          this.checkDialog =false;
-          this.checkObj = null;
-        }, error => {
-          window.console.log(error);
-        });
-
-      },
-      saveALLTransfer(row,done){
-        saveALLTransfer(this.rowId,row).then(() => {
-          this.onLoad(this.page);
-          this.$message({
-            type: "success",
-            message: "操作成功!"
-          });
-          this.checkDialog =false;
+          this.checkDialog = false;
           this.checkObj = null;
           done();
           this.refreshChange();
@@ -876,8 +856,7 @@
           window.console.log(error);
         });
 
-      }
-
+      },
     }
   };
 </script>

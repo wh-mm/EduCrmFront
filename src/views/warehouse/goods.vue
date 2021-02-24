@@ -27,6 +27,13 @@
                    v-if="permission.goods_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="danger"
+                   size="small"
+                   icon="el-icon-delete"
+                   plain
+                   v-if="permission.goods_Alldelete"
+                   @click="deleteAllGoods">全 部 删 除
+        </el-button>
         <el-button type="success"
                    size="small"
                    plain
@@ -77,7 +84,7 @@
 </template>
 
 <script>
-  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode,updatePrice} from "@/api/warehouse/goods";
+  import {getList, getGoodsDetail, add, update, remove, selectGoodsName, selectGoodsCode,updatePrice,deleteAllGoods} from "@/api/warehouse/goods";
   import {mapGetters} from "vuex";
   import {getToken} from "@/util/auth";
 
@@ -374,6 +381,23 @@
         })
           .then(() => {
             return remove(row.id);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          });
+      },
+      deleteAllGoods() {
+        this.$confirm("确定删除所有数据?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return deleteAllGoods();
           })
           .then(() => {
             this.onLoad(this.page);
