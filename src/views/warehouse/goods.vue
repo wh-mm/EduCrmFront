@@ -53,7 +53,6 @@
             size="small"
             plain
             @click="openDialog(scope.row)"
-            v-if="permission.update_price"
            >价格与索引码维护</el-button>
 
       </template>
@@ -233,6 +232,15 @@
                 trigger: "blur"
               }]
             },
+            {
+              label: "进货价格",
+              prop: "salePrice",
+              sortable:true,
+              rules: [{
+                message: "请输入进货价格",
+                trigger: "blur"
+              }]
+            },
             /*{
               label: "货架号",
               prop: "shelfNumber",
@@ -311,6 +319,14 @@
             {
               label: "货品价格",
               prop: "unitPrice",
+              rules: [{
+                message: "请输入货品价格",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "进货价格",
+              prop: "salePrice",
               rules: [{
                 message: "请输入货品价格",
                 trigger: "blur"
@@ -502,7 +518,7 @@
         this.priceForm.goodsCode = row.goodsCode;
       },
       updatePrice(row, done){
-        updatePrice(this.Id,this.priceForm.goodsCode,this.priceForm.unitPrice).then(res => {
+        updatePrice(this.Id,this.priceForm.goodsCode,this.priceForm.unitPrice,this.priceForm.salePrice).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

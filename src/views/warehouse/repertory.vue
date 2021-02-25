@@ -204,8 +204,9 @@
 
             },
             {
-              label: "商品索引码",
+              label: "索引码",
               prop: "goodsCode",
+              width:90,
               search:true,
               sortable:true,
             },
@@ -222,6 +223,7 @@
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
               sortable:true,
+              width:100,
             },
             {
               label: "有效期至",
@@ -230,6 +232,7 @@
               format: "yyyy-MM-dd",
               valueFormat: "yyyy-MM-dd",
               sortable:true,
+              width:100,
             },
             {
               label: "产地",
@@ -240,12 +243,14 @@
               label: "生产厂家",
               prop: "manufacturer",
               sortable:true,
+              width:100,
             },
             {
-              label: "供应商名称",
+              label: "供应商",
               prop: "supplierName",
               sortable:true,
               type:'select',
+              width:100,
               props:{
                 label:'supplierName',
                 value:'id'
@@ -256,21 +261,25 @@
               label: "库存数量",
               prop: "repertoryQuantity",
               sortable:true,
+              width:100,
             },
             {
               label: "包装规格",
               prop: "packageSpecification",
               sortable:true,
+              width:100,
             },
             {
               label: "包装数量",
               prop: "packageQuantity",
               sortable:true,
+              width:100,
             },
             {
               label: "规格等级",
               prop: "specificationLevel",
               sortable:true,
+              width:100,
             },
             {
               label: "备注",
@@ -285,6 +294,7 @@
               addDisplay: false,
               viewDisplay: false,
               type: "datetime",
+              width:100,
               searchSpan:12,
               searchRange:true,
               sortable:true,
