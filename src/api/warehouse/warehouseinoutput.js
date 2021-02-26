@@ -66,14 +66,24 @@ export const selectByWarehouseInoutputId = (warehouseinoutputId) => {
     }
   })
 }
-export const selectWarehouseHistory = (type) => {
+// export const selectWarehouseHistory = (type) => {
+//   return request({
+//     url: '/api/taocao-warehouse/warehouseinoutput/selectWarehouseHistory',
+//     method: 'get',
+//     params:{
+//       type
+//     }
+//   })
+// }
+
+export const selectWarehouseHistory = (current, size, params) => {
   return request({
     url: '/api/taocao-warehouse/warehouseinoutput/selectWarehouseHistory',
     method: 'get',
-    params:{
-      type
+    params: {
+      ...params,
+      current,
+      size,
     }
   })
 }
-
-

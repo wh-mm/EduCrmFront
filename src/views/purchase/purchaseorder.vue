@@ -324,7 +324,6 @@
                             if (val.goodsId == value) {
                               var detail = res.data.data;
                               val.basicUnit = detail.basicUnit;
-
                             }
                             this.form.sumMoney = (this.form.sumMoney * 1 + val.money * val.goodsQuantity).toFixed(2);
                           });

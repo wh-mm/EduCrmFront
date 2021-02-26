@@ -332,7 +332,7 @@
                  },
                 column: [
                   {
-                    label: "*仓库",
+                    label: "仓库",
                     prop: "warehouseId",
                     type:'tree',
                     width: 200,
@@ -372,28 +372,46 @@
                     dicUrl:'/api/erp-wms/storage/tree?storageRegionId={{key}}'
                   },
                   {
-                    label: '*商品',
+                    label: '商品',
                     prop: "goodsId",
-                    type: 'tree',
+                    type: 'select',
                     width: 200,
-                    filterable: true,
-                    remote: true,
+                    //filterable: true,
                     display:false,
+                    rules: [{
+                      required: true,
+                      message: "请输入商品",
+                      trigger: "blur"
+                    }],
                     props: {
                       label: 'goodsName',
                       value: 'id'
                     },
-                    dicMethod:'post',
-                    dicUrl:'/api/erp-wms/goods/selecListGoods',
-                    change: ({value}) => {
-                        getGoodsDetail(value).then(res => {
+                    dicUrl:'/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
+                    change: (value) => {
+                      console.log(value)
+                      console.log(value.row)
+                      console.log(value.row.goodsId)
+                      setTimeout(()=>{
+                        getGoodsDetail(value.row.goodsId).then(res => {
                           var selectValue = res.data.data;
-                            this.form.inputOrderDetailList.forEach(vals => {
-                              if(vals.goodsId == value){
-                                vals.goodsCode = selectValue.goodsCode
-                              }
+                          this.form.inputOrderDetailList.forEach(vals => {
+                            if(vals.goodsId == value){
+                              vals.goodsCode = selectValue.goodsCode
+                              vals.salePrice = selectValue.salePrice
+                            }
+                          });
                         });
-                        });
+                      },1000);
+
+
+
+
+
+
+
+
+
 
                     },
 
@@ -403,8 +421,8 @@
                     prop: "batchNumber",
                     width: 200,
                     rules: [{
-                      require: true,
-                      message: '请输入批号',
+                      required: true,
+                      message: "请输入批号",
                       trigger: "blur"
                     }],
                   },

@@ -147,21 +147,22 @@ export const saveMaintenanceCycle = (id,maintenanceCycle) => {
     }
   })
 }
-export const updatePrice = (id,goodsCode,unitPrice) => {
+export const updatePrice = (id,goodsCode,unitPrice,salePrice) => {
   return request({
     url: ERP_WMS_NAME + '/goods/updatePrice',
     method: 'get',
     params: {
       id,
       goodsCode,
-      unitPrice
+      unitPrice,
+      salePrice
     }
   })
 }
 export const selecListGoods = () => {
   return request({
     url: ERP_WMS_NAME + '/goods/selecListGoods',
-    method: 'get',
+    method: 'post',
   })
 }
 export const deleteAllGoods = () => {

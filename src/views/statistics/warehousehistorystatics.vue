@@ -47,7 +47,7 @@
   </basic-container>
 </template>
 <script>
-  import {add,selectWarehouseHistory} from "@/api/warehouse/warehouseinoutput";
+  import {add, getList, selectWarehouseHistory} from "@/api/warehouse/warehouseinoutput";
   import {mapGetters} from "vuex";
   import {viewCommodity} from "@/api/purchase/purchaseorder";
   import {selectByBatchNumber} from "@/api/warehouse/repertory";
@@ -106,19 +106,45 @@
           column: [
             {
               label: "仓库",
-              prop: "warehouseId",
-              type:"select",
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-             search:true,
-              sortable:true,
-             dicUrl:'/api/erp-wms/warehouse/tree'
+              prop: "warehouseName",
             },
             {
-              label: "流动总数(g)",
-              prop: "sumQuantity",
+              label: "商品名称",
+              prop: "goodsName",
+            },
+            {
+              label: "订单号",
+              prop: "orderNumberName",
+            },
+            {
+              label: "部门",
+              prop: "deptName",
+            },
+            {
+              label: "操作人员",
+              prop: "userName",
+            },
+            {
+              label: "来源类型",
+              prop: "typeName",
+            },
+            {
+              label: "金额流动",
+              prop: "money",
+            },
+            {
+              label:"记录时间",
+              prop:"createTime",
+              dateDefault: true,
+              addDisplay: false,
+              viewDisplay: false,
+              type: "datetime",
+              searchSpan:12,
+              searchRange:true,
+              sortable:true,
+              search:true,
+              format: "yyyy-MM-dd HH:mm:ss",
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
             },
 
           ]
@@ -251,9 +277,9 @@
         }
         this.loading = true;
         selectWarehouseHistory(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
-          console.log(res.data.data);
           const data = res.data.data;
-          this.data = data;
+          this.page.total = data.total;
+          this.data = data.records;
           this.loading = false;
           this.selectionClear();
         });
