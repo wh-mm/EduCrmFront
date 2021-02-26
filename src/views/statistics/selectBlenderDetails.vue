@@ -20,7 +20,6 @@
 
 import { selectBlenderDetailsPage } from "@/api/statistics/statistics";
 import {mapGetters} from "vuex";
-import {getList} from "@/api/parties/orderparties";
 export default {
   data() {
     return {
@@ -35,20 +34,15 @@ export default {
         menu:false,
         excelBtn:true,
         addBtn:false,
-        showSummary: true,
+       showSummary: true,
         sumColumnList: [
           {
             label:'金额：',
-            name: 'zlg',
-            type: 'sum',
+            name: 'drugMoney',
           },
           {
-            name: 'dose',
-            type: 'avg'
-          },
-          {
-            name: 'prices',
-            type: 'count'
+            label: '总数量',
+            name: 'drugNumber',
           }
 
           ],
@@ -67,38 +61,20 @@ export default {
           {
             label: "订单类型",
             prop:"orderType",
-            //search:true,
             type: "select",
             props: {
               label: 'dictValue',
               value: 'dictKey'
             },
             required: true,
-            dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
+            search: true,
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=statistics_order_type",
             trigger: "blur"
           },
           {
             label: "药品名称",
             prop: "goodsName",
-
           },
-          /*  {
-              label: "药品规格",
-              prop: "goodsType",
-              type: "tree",
-              sortable:true,
-              rules: [{
-                required: true,
-                message: "请选择货物类型",
-                trigger: "blur"
-              }],
-              props: {
-                label: 'title',
-                value: 'id'
-              },
-              search: true,
-              dicUrl: this.ERP_WMS_NAME + "/goods-type/tree"
-            },*/
           {
             label: "药品规格",
             prop: "goods_specification",
@@ -110,11 +86,11 @@ export default {
           },
           {
             label: "药品数量",
-            prop: "zl",
+            prop: "drugNumber",
           },
           {
             label: '金额',
-            prop: "zlg",
+            prop: "drugMoney",
           },
           {
             label: "订单时间",
@@ -172,17 +148,6 @@ export default {
       this.onLoad(this.page, params);
       done();
     },
-
-    /*onLoad(page, params = {}) {
-      this.loading = true;
-      getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-        const data = res.data.data;
-        this.page.total = data.total;
-        this.data = data.records;
-        this.loading = false;
-        this.selectionClear();
-      });
-    }*/
     onLoad(page, params = {}) {
       const {releaseTimeRange} = params;
       let values = {
@@ -198,8 +163,6 @@ export default {
         this.query.releaseTimeRange = null;
       }
       this.loading = true;
-      //getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-      // selectOrderStatistics((values)).then(res => {
       selectBlenderDetailsPage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
         const data = res.data.data;
         this.page.total = data.total;
@@ -216,7 +179,9 @@ export default {
       params.startTime=this.value1[0];
       params.endTime=this.value1[1];
       selectBlenderDetailsPage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-        const data = res.data.data;
+
+        const data = res.data;
+        console.log(data);
         this.page.total = data.total;
         data.records.forEach((value) => {
           value.$cellEdit = true
