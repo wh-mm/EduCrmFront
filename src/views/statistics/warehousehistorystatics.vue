@@ -10,7 +10,6 @@
                ref="crud"
                @row-update="rowUpdate"
                @row-save="rowSave"
-               @row-del="rowDel"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
@@ -105,16 +104,34 @@
           dialogClickModal: false,
           column: [
             {
+              label: "订单号",
+              prop: "orderNumberName",
+            },
+            {
               label: "仓库",
-              prop: "warehouseName",
+              prop: "warehouseId",
+              type:"select",
+              props: {
+                label: 'title',
+                value: 'id'
+              },
+              search:true,
+              sortable:true,
+              dicUrl:'/api/erp-wms/warehouse/tree'
             },
             {
               label: "商品名称",
-              prop: "goodsName",
-            },
-            {
-              label: "订单号",
-              prop: "orderNumberName",
+              prop: "goodsId",
+              type:"select",
+              sortable:true,
+              props: {
+                required: true,
+                label: 'goodsName',
+                value: 'id'
+              },
+              search:true,
+              dicMethod:'post',
+              dicUrl:'/api/erp-wms/goods/selecListGoods'
             },
             {
               label: "部门",
@@ -126,7 +143,18 @@
             },
             {
               label: "来源类型",
-              prop: "typeName",
+              prop: "type",
+              type: "select",
+              row: true,
+              span: 24,
+              disabled:true,
+              sortable:true,
+              search:true,
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type",
             },
             {
               label: "金额流动",
@@ -138,13 +166,13 @@
               dateDefault: true,
               addDisplay: false,
               viewDisplay: false,
-              type: "datetime",
-              searchSpan:12,
-              searchRange:true,
               sortable:true,
-              search:true,
               format: "yyyy-MM-dd HH:mm:ss",
               valueFormat: "yyyy-MM-dd HH:mm:ss",
+              type:'datetime',
+              searchSpan:12,
+              searchRange:true,
+              search:true,
             },
 
           ]
@@ -266,6 +294,7 @@
         let values = {
           ...params,
         };
+        console.log(this.query)
         if (createTime) {
           values = {
             ...params,
@@ -274,9 +303,10 @@
           };
           values.createTime = null;
           this.query.createTime = null;
+          this.query = values;
         }
         this.loading = true;
-        selectWarehouseHistory(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
+        selectWarehouseHistory(page.currentPage, page.pageSize, Object.assign(values,this.query)).then(res => {
           const data = res.data.data;
           this.page.total = data.total;
           this.data = data.records;

@@ -1001,6 +1001,7 @@
           };
           values.createTime = null;
           this.query.createTime = null;
+          this.query = values;
         }
         this.loading = true;
         getList(page.currentPage, page.pageSize, Object.assign(values, this.query)).then(res => {
