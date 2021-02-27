@@ -89,38 +89,36 @@
             {
               label: "省",
               prop: "province",
-              rules: [{
-                required: true,
-                message: "请输入省",
-                trigger: "blur"
-              }]
+              type: 'select',
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              cascaderItem: ['city', 'district'],
+              dicUrl: '/api/blade-system/region/select',
             },
             {
               label: "城市",
               prop: "city",
-              rules: [{
-                required: true,
-                message: "请输入城市",
-                trigger: "blur"
-              }]
+              type: 'select',
+
+              dicFlag: false,
+              dicUrl: '/api/blade-system/region/select?code={{key}}',
             },
             {
               label: "区县",
               prop: "district",
-              rules: [{
-                required: true,
-                message: "请输入区县",
-                trigger: "blur"
-              }]
+              type: 'select',
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              dicFlag: false,
+              dicUrl: '/api/blade-system/region/select?code={{key}}',
             },
             {
               label: "街道",
               prop: "town",
-              rules: [{
-                required: true,
-                message: "请输入街道",
-                trigger: "blur"
-              }]
             },
             {
               label: "详细地址",
