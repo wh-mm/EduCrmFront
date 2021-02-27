@@ -101,7 +101,10 @@
               label: "城市",
               prop: "city",
               type: 'select',
-
+              props: {
+                label: 'name',
+                value: 'code'
+              },
               dicFlag: false,
               dicUrl: '/api/blade-system/region/select?code={{key}}',
             },
