@@ -60,22 +60,25 @@
           dialogClickModal: false,
           column: [
             {
-              label: "物流公司Code",
+              label: "物流公司",
               prop: "cpCode",
-              rules: [{
-                required: true,
-                message: "请输入物流公司Code",
-                trigger: "blur"
-              }]
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=KD",
             },
             {
-              label: "发送者信息选择",
+              label: "发送者信息",
               prop: "sendPhone",
-              rules: [{
-                required: true,
-                message: "请输入		固定电话",
-                trigger: "blur"
-              }]
+              type: "select",
+              props: {
+                label: "name",
+                value: "id"
+              },
+              search: true,
+              dicUrl: "/api/express/sendmessage/selectByName"
             },
             {
               label: "物流服务值",
@@ -141,40 +144,56 @@
               }]
             },
             {
-              label: "体积, 单位 ml",
+              label: "体积,单位ml",
               prop: "packageInfoVolume",
               rules: [{
                 required: true,
-                message: "请输入体积, 单位 ml",
+                message: "请输入体积,单位ml",
                 trigger: "blur"
               }]
             },
             {
-              label: "重量,单位 g",
+              label: "重量,单位g",
               prop: "packageInfoWeight",
               rules: [{
                 required: true,
-                message: "请输入重量,单位 g",
+                message: "请输入重量,单位g",
                 trigger: "blur"
               }]
             },
             {
-              label: "省",
+              label: "省份",
               prop: "recipientProvince",
               rules: [{
                 required: true,
                 message: "请输入省",
                 trigger: "blur"
-              }]
+              }],
+              showlabel: false,
+              type: 'select',
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              cascaderItem: ['recipientCity', 'recipientDistrict'],
+              dicUrl: '/api/blade-system/region/select',
             },
+
             {
               label: "城市",
               prop: "recipientCity",
               rules: [{
                 required: true,
-                message: "请输入		城市",
+                message: "请输入城市",
                 trigger: "blur"
-              }]
+              }],
+              type: 'select',
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              dicFlag: false,
+              dicUrl: '/api/blade-system/region/select?code={{key}}',
             },
             {
               label: "区县",
@@ -183,14 +202,21 @@
                 required: true,
                 message: "请输入区县",
                 trigger: "blur"
-              }]
+              }],
+              type: 'select',
+              props: {
+                label: 'name',
+                value: 'code'
+              },
+              dicFlag: false,
+              dicUrl: '/api/blade-system/region/select?code={{key}}',
             },
             {
               label: "街道",
               prop: "recipientTown",
               rules: [{
                 required: true,
-                message: "请输入		街道",
+                message: "请输入街道",
                 trigger: "blur"
               }]
             },
@@ -208,7 +234,7 @@
               prop: "recipientMobile",
               rules: [{
                 required: true,
-                message: "请输入收件人	手机号码",
+                message: "请输入收件人手机号码",
                 trigger: "blur"
               }]
             },
@@ -226,7 +252,7 @@
               prop: "recipientPhone",
               rules: [{
                 required: true,
-                message: "请输入		固定电话",
+                message: "请输入固定电话",
                 trigger: "blur"
               }]
             },
@@ -244,7 +270,7 @@
               prop: "userId",
               rules: [{
                 required: true,
-                message: "请输入		使用者ID",
+                message: "请输入使用者ID",
                 trigger: "blur"
               }]
             },

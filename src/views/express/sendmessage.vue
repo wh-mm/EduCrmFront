@@ -87,8 +87,9 @@
               }]
             },
             {
-              label: "省",
+              label: "省份",
               prop: "province",
+              showlabel: false,
               type: 'select',
               props: {
                 label: 'name',

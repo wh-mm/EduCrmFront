@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/express/sendmessage/list',
+    url: '/api/express/sendmessage/page',
     method: 'get',
     params: {
       ...params,
