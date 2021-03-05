@@ -71,7 +71,7 @@
             },
             {
               label: "发送者信息",
-              prop: "sendPhone",
+              prop: "sendMessageId",
               type: "select",
               props: {
                 label: "name",

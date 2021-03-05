@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/express/sendinfo/submit',
+    url: '/api/express/sendinfo/submitSendInfoVO',
     method: 'post',
     data: row
   })
