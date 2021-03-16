@@ -34,17 +34,31 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/express/sendinfo/submitSendInfoVO',
+    url: '/api/express/sendinfo/submit',
     method: 'post',
     data: row
   })
 }
+// export const add = (row) => {
+//   return request({
+//     url: '/api/express/sendinfo/submitSendInfoVO',
+//     method: 'post',
+//     data: row
+//   })
+// }
 
 export const update = (row) => {
   return request({
     url: '/api/express/sendinfo/submit',
     method: 'post',
     data: row
+  })
+}
+export const Test = (sendInfoVO) => {
+  return request({
+    url: '/api/express/sendinfo/Test',
+    method: 'post',
+    data: sendInfoVO
   })
 }
 

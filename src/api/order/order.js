@@ -279,4 +279,14 @@ export const iBlenderDelete = (id) => {
     }
   })
 }
+//颗粒子项删除
+export const selectRecipients = (orderId) => {
+  return request({
+    url: '/api/taocao-order/order/selectRecipients',
+    method: 'post',
+    params: {
+      orderId,
+    }
+  })
+}
 

@@ -27,13 +27,48 @@
                    @click="handleDelete">删 除
         </el-button>
       </template>
+      <template slot="menu" slot-scope="scope">
+        <el-button type="danger"
+                   size="small"
+                   icon="el-icon-delete"
+                   plain
+                   v-if="permission.sendinfo_delete"
+                   @click="Test(scope.row)">发送
+        </el-button>
+      </template>
+
+      <template slot="tradeOrdersForm" slot-scope="scope">
+
+        <el-button icon="el-icon-check"
+                   size="small"
+                   :type="type"
+                  @click="openDialog()">扫描新增电子面单
+        </el-button>
+      </template>
+
     </avue-crud>
+    <el-dialog
+      title="扫描新增配送单"
+      :visible.sync="dialogVisible"
+      :append-to-body="true"
+      width="30%">
+
+        <el-input v-model="input" placeholder="请输入内容" ></el-input>
+           <el-button size="small"
+                      @click="selectRecipients()">确定</el-button>
+
+
+
+    </el-dialog>
+
+
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/express/sendinfo";
+  import {getList, getDetail, add, update, remove,Test} from "@/api/express/sendinfo";
   import {mapGetters} from "vuex";
+  import {selectRecipients} from "@/api/order/order";
 
   export default {
     data() {
@@ -41,6 +76,8 @@
         form: {},
         query: {},
         loading: true,
+        input:'',
+        dialogVisible: false,
         page: {
           pageSize: 10,
           currentPage: 1,
@@ -80,18 +117,19 @@
               search: true,
               dicUrl: "/api/express/sendmessage/selectByName"
             },
-            {
-              label: "物流服务值",
-              prop: "logisticsServices",
-              rules: [{
-                required: true,
-                message: "请输入物流服务值",
-                trigger: "blur"
-              }]
-            },
+            // {
+            //   label: "物流服务值",
+            //   prop: "logisticsServices",
+            //   rules: [{
+            //     required: true,
+            //     message: "请输入物流服务值",
+            //     trigger: "blur"
+            //   }]
+            // },
             {
               label: "请求ID",
               prop: "objectId",
+              disabled:true,
               rules: [{
                 required: true,
                 message: "请输入请求ID",
@@ -101,11 +139,11 @@
             {
               label: "订单渠道平台，请按实际订单所属平台传入",
               prop: "orderChannelsType",
-              rules: [{
-                required: true,
-                message: "请输入订单渠道平台，请按实际订单所属平台传入",
-                trigger: "blur"
-              }]
+             value:'OTHERS'
+            },
+            {
+              prop: "tradeOrders",
+              formslot:true,
             },
             {
               label: "订单号",
@@ -114,11 +152,39 @@
                 required: true,
                 message: "请输入订单号",
                 trigger: "blur"
+              }],
+            },
+            {
+              label: "收件人手机号码",
+              prop: "recipientMobile",
+              rules: [{
+                required: true,
+                message: "请输入收件人手机号码",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "收件人姓名",
+              prop: "recipientName",
+              rules: [{
+                required: true,
+                message: "请输入收件人姓名",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "详细地址",
+              prop: "recipientDetail",
+              rules: [{
+                required: true,
+                message: "请输入详细地址",
+                trigger: "blur"
               }]
             },
             {
               label: "包裹id，用于拆合单场景",
               prop: "packageInfoId",
+              disabled: true,
               rules: [{
                 required: true,
                 message: "请输入包裹id，用于拆合单场景",
@@ -135,7 +201,7 @@
               }]
             },
             {
-              label: "名称",
+              label: "商品名称",
               prop: "packageInfoName",
               rules: [{
                 required: true,
@@ -177,6 +243,7 @@
               },
               cascaderItem: ['recipientCity', 'recipientDistrict'],
               dicUrl: '/api/blade-system/region/select',
+
             },
 
             {
@@ -221,33 +288,6 @@
               }]
             },
             {
-              label: "详细地址",
-              prop: "recipientDetail",
-              rules: [{
-                required: true,
-                message: "请输入详细地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "收件人手机号码",
-              prop: "recipientMobile",
-              rules: [{
-                required: true,
-                message: "请输入收件人手机号码",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "收件人姓名",
-              prop: "recipientName",
-              rules: [{
-                required: true,
-                message: "请输入收件人姓名",
-                trigger: "blur"
-              }]
-            },
-            {
               label: "固定电话",
               prop: "recipientPhone",
               rules: [{
@@ -256,18 +296,19 @@
                 trigger: "blur"
               }]
             },
-            {
-              label: "云打印标准模板URL",
-              prop: "templateUrl",
-              rules: [{
-                required: true,
-                message: "请输入云打印标准模板URL",
-                trigger: "blur"
-              }]
-            },
+            // {
+            //   label: "云打印标准模板URL",
+            //   prop: "templateUrl",
+            //   rules: [{
+            //     required: true,
+            //     message: "请输入云打印标准模板URL",
+            //     trigger: "blur"
+            //   }]
+            // },
             {
               label: "使用者ID",
               prop: "userId",
+              disabled: true,
               rules: [{
                 required: true,
                 message: "请输入使用者ID",
@@ -407,6 +448,33 @@
           this.loading = false;
           this.selectionClear();
         });
+      },
+      openDialog(){
+        this.dialogVisible = true;
+      },
+      selectRecipients(){
+        selectRecipients(this.input).then(res=>{
+          var selectData= res.data.data;
+          this.form.tradeOrder = this.input; //订单号
+          this.form.objectId = this.input;  //请求id
+          this.form.packageInfoId = this.input; //包裹id
+          this.form.userId = this.input; //userId
+          console.log(selectData)
+            this.form.recipientMobile = selectData.recipientMobile;
+            this.form.recipientName = selectData.recipientName;
+            this.form.recipientDetail = selectData.recipientDetail;
+
+        })
+      },
+      Test(row){
+        Test(row).then(res=>{
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+          this.refreshChange();
+        })
       }
     }
   };

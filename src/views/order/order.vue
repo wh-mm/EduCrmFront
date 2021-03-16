@@ -464,7 +464,7 @@ import {
   getInfo,
   getList, orderDelete,
   selectByOrderId,
-  updateOrderStatic, updateOrderStaticBh,
+  updateOrderStatic, updateOrderStaticBh
 
 } from "@/api/order/order";
 import {mapGetters} from "vuex";
