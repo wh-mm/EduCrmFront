@@ -28,6 +28,7 @@
     "node-gyp": "^5.0.6",
     "nprogress": "^0.2.0",
     "portfinder": "^1.0.23",
+    "react-bmapgl": "^0.1.8",
     "save": "^2.4.0",
     "script-loader": "^0.7.2",
     "vue": "^2.6.12",

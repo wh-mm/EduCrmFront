@@ -122,7 +122,7 @@ export default {
       };
       console.log(params);
       getOrderTotal(params).then(res => {
-        console.log(res);
+        console.log('res',res);
         if (res.data.code == 200) {
           this.pricesList = [];
           this.orderList = [];
