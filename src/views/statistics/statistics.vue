@@ -1,39 +1,57 @@
 <template>
-      <basic-container>
-         <el-row :span="24" :gutter="20">
-            <el-col :span="12">
-                <el-date-picker v-model="timeSlot"
-                                type="datetimerange"
-                                @change="orderTotal"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期"
-                                :default-time="['12:00:00']">
-                </el-date-picker>
-            </el-col>
-            <el-col :span="6">
-                <div class="total">金额总计：<span>￥{{totalPrices}}</span></div>
-            </el-col>
-            <el-col :span="6">
-                <div class="total">订单总计：<span>{{quantity}}</span></div>
-            </el-col>
-             <el-col :span="12">
-                 <div id="statisticsMoney" class="myChart"></div>
-             </el-col>
-             <el-col :span="12">
-                 <div id="statisticsNumber" class="myChart"></div>
-             </el-col>
-             <el-col :span="24">
-                 <div id="statistics" class="myChart" style="height:400px"></div>
-             </el-col>
-         </el-row>
-      </basic-container>
+  <basic-container>
+    <el-row :span="24" :gutter="20">
+      <el-col :span="12">
+        <el-date-picker v-model="timeSlot"
+                        type="datetimerange"
+                        @change="orderTotal"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        :default-time="['12:00:00']">
+        </el-date-picker>
+      </el-col>
+<!--      <el-col :span="6">
+        <el-select v-model="value" filterable placeholder="请选择医院">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>-->
+      <el-col :span="6">
+        <div class="total">金额总计：<span>￥{{ totalPrices }}</span></div>
+      </el-col>
+      <el-col :span="6">
+        <div class="total">订单总计：<span>{{ quantity }}</span></div>
+      </el-col>
+      <el-col :span="12">
+        <div id="statisticsMoney" class="myChart"></div>
+      </el-col>
+      <el-col :span="12">
+        <div id="statisticsNumber" class="myChart"></div>
+      </el-col>
+      <el-col :span="12">
+        <div id="statisticss" class="myChart"></div>
+      </el-col>
+      <el-col :span="12">
+        <div id="statistics" class="myChart"></div>
+      </el-col>
+      <!--             <el-col :span="24">
+                       <div id="statistics" class="myChart" style="height:400px"></div>
+                   </el-col>-->
+    </el-row>
+  </basic-container>
 </template>
 
 <script>
 var statisticsMoney;
 var statisticsNumber;
 var statistics;
-import { getOrderTotal } from "@/api/statistics/statistics";
+var statisticss;
+import {getOrderTotal} from "@/api/statistics/statistics";
+
 export default {
   name: "statistics",
   data() {
@@ -43,7 +61,18 @@ export default {
       quantity: 0,
       pricesList: [],
       orderList: [],
-      nameList: [],
+      legendDataXiaoShou:[],
+      selectedXiaoShou:[],
+      legendDataJinEr:[],
+      selectedJinEr:[],
+      //nameList: [],
+      orderki: [],
+      orderYinP:[],
+      legendDataYin:[],
+      selectedYin:[],
+      legendDataKeLi:[],
+      selectedKeLi:[],
+
     };
   },
   mounted() {
@@ -52,7 +81,7 @@ export default {
   },
   methods: {
     getTime() {
-      Date.prototype.Format = function(fmt) {
+      Date.prototype.Format = function (fmt) {
         var o = {
           "M+": this.getMonth() + 1, //月份
           "d+": this.getDate(), //日
@@ -97,6 +126,8 @@ export default {
         if (res.data.code == 200) {
           this.pricesList = [];
           this.orderList = [];
+          this.orderki = [];
+          this.orderYinP= [];
           this.nameList = [];
           this.hospitalList = [];
           this.totalPrices = res.data.data.orderTotal.totalPrices;
@@ -107,6 +138,7 @@ export default {
               value: value.count,
             };
             this.orderList.push(item);
+            this.legendDataXiaoShou.push(value.hospital_name);
             this.nameList.push(value.hospital_name);
           });
           res.data.data.orderTotalHospital.forEach(value => {
@@ -114,11 +146,32 @@ export default {
               name: value.hospital_name,
               value: value.prices,
             };
+            this.legendDataJinEr.push(value.hospital_name);
             this.pricesList.push(item);
+          });
+          res.data.data.orderkiLi.forEach(value =>{
+            let item = {
+              name: value.goodsName,
+              value: value.drugNumber,
+            }
+            this.orderki.push(item);
+            this.legendDataKeLi.push(value.goodsName);
+            this.nameList.push(value.goodsName);
+          });
+          res.data.data.orderYinP.forEach(value =>{
+            let item ={
+              name: value.goodsName,
+              value : value.drugNumber,
+            }
+            this.orderYinP.push(item);
+            this.legendDataYin.push(value.goodsName);
+            this.nameList.push(value.goodsName);
           });
           console.log(this.orderList);
           console.log(this.nameList);
-          console.log("集合",this.pricesList);
+          console.log(this.orderki);
+          console.log(this.orderYinP);
+          console.log("集合", this.pricesList);
           this.drawLine();
         } else {
           this.$message({
@@ -136,13 +189,26 @@ export default {
       statisticsNumber = this.$echarts.init(
         document.getElementById("statisticsNumber")
       );
-      statistics = this.$echarts.init(document.getElementById("statistics"));
+      statisticss = this.$echarts.init(
+        document.getElementById("statisticss")
+      )
+      statistics = this.$echarts.init(
+        document.getElementById("statistics"));
       // 医院金额统计
       statisticsMoney.setOption({
-        title: { text: "金额统计" },
+        title: {text: "销售统计"},
         tooltip: {
           trigger: "item",
           formatter: "{a} <br/>{b} : ￥{c} ({d}%)",
+        },
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          data: this.legendDataXiaoShou,
+          selected: this.selectedXiaoShou,
         },
         series: [
           // 每个系列，也有 type 描述“子类型”，即“图表类型”。
@@ -162,19 +228,28 @@ export default {
             },
           },
         ],
-        color:['#37A2DA','#32C5E9','#67E0E3','#FFDB5C','#FF9F7F','#FB7293','#E062AE','#E690D1','#E7BCF3','#9D96F5','#67E0E3','#96BFFF',]
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#FFDB5C', '#FF9F7F', '#FB7293', '#E062AE', '#E690D1', '#E7BCF3', '#9D96F5', '#67E0E3', '#96BFFF',]
       });
       // statisticsNumber
       statisticsNumber.setOption({
-        title: { text: "订单统计" },
+        title: {text: "处方统计"},
         tooltip: {
           trigger: "item",
           formatter: "{a} <br/>{b} : {c} ({d}%)",
         },
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          data: this.legendDataJinEr,
+          selected: this.selectedJinEr,
+        },
         series: [
           // 每个系列，也有 type 描述“子类型”，即“图表类型”。
           {
-            name: "订单",
+            name: "数量",
             type: "pie",
             // 设置成相对的百分比
             center: ["40%", 160],
@@ -189,73 +264,142 @@ export default {
             },
           },
         ],
-        color:['#37A2DA','#32C5E9','#67E0E3','#FFDB5C','#FF9F7F','#FB7293','#E062AE','#E690D1','#E7BCF3','#9D96F5','#67E0E3','#96BFFF',]
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#FFDB5C', '#FF9F7F', '#FB7293', '#E062AE', '#E690D1', '#E7BCF3', '#9D96F5', '#67E0E3', '#96BFFF',]
       });
       // 双统计 订单
+      /*      statistics.setOption({
+              title: { text: "医院统计" },
+              tooltip: {
+                trigger: "axis",
+                axisPointer: {
+                  type: "shadow",
+                  label: {
+                    show: true,
+                  },
+                },
+              },
+              legend: {
+                data: ["金额", "订单"],
+              },
+              xAxis: {
+                data: this.nameList,
+              },
+              yAxis: {},
+              dataZoom: [
+                {
+                  show: true,
+                  start: 0,
+                  end: 100,
+                },
+                {
+                  type: "inside",
+                  start: 0,
+                  end: 100,
+                },
+                {
+                  show: true,
+                  yAxisIndex: 0,
+                  filterMode: "empty",
+                  width: 30,
+                  height: "80%",
+                  showDataShadow: false,
+                  left: "0",
+                },
+              ],
+              series: [
+              {
+                  name: "金额",
+                  type: "bar",
+                  itemStyle: {
+                    //柱体的颜色
+                    //右，下，左，上（1，0，0，0）表示从正右开始向左渐变
+                    color: "#00C9FF",
+                  },
+                  data: this.orderList,
+                },
+                {
+                  name: "订单",
+                  type: "bar",
+                  itemStyle: {
+                    //柱体的颜色
+                    //右，下，左，上（1，0，0，0）表示从正右开始向左渐变
+                    color: "#409EFF",
+                  },
+                  data: this.orderList,
+                },
+              ],
+
+            });*/
       statistics.setOption({
-        title: { text: "医院统计" },
+        title: {text: "颗粒用量统计"},
         tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow",
-            label: {
-              show: true,
-            },
-          },
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)",
         },
         legend: {
-          data: ["金额", "订单"],
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          data: this.legendDataKeLi,
+          selected: this.selectedKeLi
         },
-        xAxis: {
-          data: this.nameList,
-        },
-        yAxis: {},
-        dataZoom: [
+        series: [
+          // 每个系列，也有 type 描述“子类型”，即“图表类型”。
           {
-            show: true,
-            start: 0,
-            end: 100,
-          },
-          {
-            type: "inside",
-            start: 0,
-            end: 100,
-          },
-          {
-            show: true,
-            yAxisIndex: 0,
-            filterMode: "empty",
-            width: 30,
-            height: "80%",
-            showDataShadow: false,
-            left: "0",
+            name: "药品",
+            type: "pie",
+            // 设置成相对的百分比
+            center: ["40%", 160],
+            radius: 120,
+            data: this.orderki,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+            },
           },
         ],
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#FFDB5C', '#FF9F7F', '#FB7293', '#E062AE', '#E690D1', '#E7BCF3', '#9D96F5', '#67E0E3', '#96BFFF',]
+      });
+      statisticss.setOption({
+        title: {text: "饮片用量统计"},
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)",
+        },
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          data: this.legendDataYin,
+          selected: this.selectedYin
+        },
         series: [
-/*          {
-            name: "金额",
-            type: "bar",
-            itemStyle: {
-              //柱体的颜色
-              //右，下，左，上（1，0，0，0）表示从正右开始向左渐变
-              color: "#00C9FF",
-            },
-            data: this.orderList,
-          },*/
+          // 每个系列，也有 type 描述“子类型”，即“图表类型”。
           {
             name: "订单",
-            type: "bar",
-            itemStyle: {
-              //柱体的颜色
-              //右，下，左，上（1，0，0，0）表示从正右开始向左渐变
-              color: "#409EFF",
+            type: "pie",
+            // 设置成相对的百分比
+            center: ["40%", 160],
+            radius: 120,
+            data: this.orderYinP,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
             },
-            data: this.orderList,
           },
         ],
-
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#FFDB5C', '#FF9F7F', '#FB7293', '#E062AE', '#E690D1', '#E7BCF3', '#9D96F5', '#67E0E3', '#96BFFF',]
       });
-
     },
   },
 };
@@ -267,11 +411,13 @@ export default {
   line-height: 40px;
   font-weight: bold;
 }
+
 .total span {
   color: #ff0000;
 }
+
 .myChart {
   width: 100%;
-  height: 300px;
+  height: 375px;
 }
 </style>

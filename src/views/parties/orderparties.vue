@@ -87,7 +87,7 @@ export default {
         selection: true,
         dialogClickModal: false,
         column: [
-          {
+        /*  {
             label: "医院名称",
             prop: "hospitalName",
             sortable:true,
@@ -105,7 +105,7 @@ export default {
             },
             search: true,
             dicUrl: '/api/taocao-hisHospital/hospital/selectHosptal'
-          },
+          },*/
           {
             label: "协定方名称",
             sortable:true,

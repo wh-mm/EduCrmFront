@@ -97,7 +97,6 @@
                 message: "请输入数量",
                 trigger: "blur",
                 validator: validateQuantity,
-
               }]
             },
 

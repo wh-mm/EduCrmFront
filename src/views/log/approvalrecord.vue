@@ -86,11 +86,11 @@
               label: "操作",
               prop: "operation",
               searchLabelWidth:130,
-              type: 'select',
+             // type: 'select',
              // addDisplay: false,
              // editDisplay: false,
               //viewDisplay: false,
-              search: true,
+              //search: true,
               props: {
                 label: "dictValue",
                 value: "dictKey"
