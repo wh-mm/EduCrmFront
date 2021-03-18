@@ -345,6 +345,11 @@
                 label: "dictValue",
                 value: "dictKey"
               },
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=put_type"
             }, {
               label:"创建时间",
               prop:"createTime",
@@ -591,6 +596,18 @@
               cascaderItem: ['batchNumber'],
               dicMethod:'post',
               dicUrl:'/api/erp-wms/goods/selecListGoods'
+            },
+            {
+              label: '规格',
+              prop: "specification",
+              placeholder: " ",
+              width: 140,
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
             },
             {
               label: "批号",
