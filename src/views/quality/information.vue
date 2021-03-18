@@ -56,6 +56,7 @@
         <el-button icon="el-icon-check"
                    :size="scope.size"
                    :type="scope.type"
+                   v-if="scope.row.stateExamine !='1' "
                    @click.stop="handleTimeline (scope.row.id)">审 批 查 看
         </el-button>
       </template>
@@ -124,9 +125,6 @@ import {
   update,
   remove,
   updateInspector,
-  shenfen,
-  validateContacts,
-  isInteger,
   selectName,
   selectTongyi,
   submitInspector,

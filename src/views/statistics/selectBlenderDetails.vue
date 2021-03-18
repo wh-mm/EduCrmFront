@@ -28,13 +28,12 @@ export default {
       loading: true,
       selectionList: [],
       value1:'',
-
       option: {
         index: true,
         menu:false,
         excelBtn:true,
         addBtn:false,
-       showSummary: true,
+      /* showSummary: true,
         sumColumnList: [
           {
             label:'金额：',
@@ -44,8 +43,7 @@ export default {
             label: '总数量',
             name: 'drugNumber',
           }
-
-          ],
+          ],*/
         column: [
           {
             label: "医院名字",
@@ -61,14 +59,14 @@ export default {
           {
             label: "订单类型",
             prop:"orderType",
+            search:true,
             type: "select",
             props: {
               label: 'dictValue',
               value: 'dictKey'
             },
             required: true,
-            search: true,
-            dicUrl: "/api/blade-system/dict-biz/dictionary?code=statistics_order_type",
+            dicUrl: "/api/blade-system/dict-biz/dictionary?code=order_type",
             trigger: "blur"
           },
           {
@@ -77,7 +75,7 @@ export default {
           },
           {
             label: "药品规格",
-            prop: "goods_specification",
+            prop: "specification",
           },
 
           {

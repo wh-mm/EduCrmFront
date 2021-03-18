@@ -474,7 +474,7 @@ import addYinPian from "./add/addYinPian";
 import addKeLi from "./add/addKeLi";
 import viewYinPian from "./view/viewYinPian";
 import viewKeLi from "./view/viewKeLi";
-import {shenfang} from "@/api/prescription/review";
+import {huChi} from "@/api/prescription/review";
 import editKeLi from "@/views/order/edit/editKeLi";
 import editYinPian from "@/views/order/edit/editYinPian";
 
@@ -872,7 +872,7 @@ export default {
     },
 
     openDialog(rowID){
-      shenfang(rowID).then((res) => {
+      huChi(rowID).then((res) => {
         this.obj0.tet=res.data.data.name;
         this.$message({
           type: "success",

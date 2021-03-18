@@ -319,9 +319,9 @@ export default {
                   label: 'title',
                   value: 'id'
                 },
-                //parent:false,
-                //search: true,
-                //cascaderItem: ['partiesName'],
+                /*parent:false,
+                search: true,
+                cascaderItem: ['partiesName'],*/
                 dicUrl: "/api/parties/orderpartiescategory/tree",
               },
               {
@@ -333,8 +333,8 @@ export default {
                   label: 'partiesName',
                   value: 'id'
                 },
-                // dicFlag: false,
-                dicUrl: '/api/parties/orderparties/selectByName',
+                 /*dicFlag: false,*/
+                dicUrl: '/api/parties/orderparties/selectByKl',
               },
             ]
           },

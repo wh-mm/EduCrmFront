@@ -453,7 +453,7 @@ export default {
                   value: 'id'
                 },
                 //dicFlag: false,
-                dicUrl: '/api/parties/orderparties/selectByName',
+                dicUrl: '/api/parties/orderparties/selectByYp',
               },
 
 

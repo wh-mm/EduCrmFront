@@ -240,7 +240,7 @@ import JsBarcode from 'jsbarcode';
 
 import addKeLi from "./add/addKeLi";
 import viewKeLi from "./view/viewKeLi";
-import {shenfang} from "@/api/prescription/review";
+import {huChi} from "@/api/prescription/review";
 
 export default {
   components: {
@@ -580,7 +580,7 @@ export default {
     },
 
     openDialog(rowID){
-      shenfang(rowID).then((res) => {
+      huChi(rowID).then((res) => {
         this.obj0.tet=res.data.data.name;
         this.$message({
           type: "success",

@@ -2,7 +2,7 @@ import request from '@/router/axios';
 
 export const getList = (current, size, params) => {
   return request({
-    url: '/api/taocao-prescription/review/page',
+    url: '/api/parties/orderdrugexclusion/page',
     method: 'get',
     params: {
       ...params,
@@ -14,7 +14,7 @@ export const getList = (current, size, params) => {
 
 export const getDetail = (id) => {
   return request({
-    url: '/api/taocao-prescription/review/detail',
+    url: '/api/parties/orderdrugexclusion/detail',
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export const getDetail = (id) => {
 
 export const remove = (ids) => {
   return request({
-    url: '/api/taocao-prescription/review/remove',
+    url: '/api/parties/orderdrugexclusion/remove',
     method: 'post',
     params: {
       ids,
@@ -34,7 +34,7 @@ export const remove = (ids) => {
 
 export const add = (row) => {
   return request({
-    url: '/api/taocao-prescription/review/submitNew',
+    url: '/api/parties/orderdrugexclusion/submitNew',
     method: 'post',
     data: row
   })
@@ -42,29 +42,28 @@ export const add = (row) => {
 
 export const update = (row) => {
   return request({
-    url: '/api/taocao-prescription/review/submitNew',
+    url: '/api/parties/orderdrugexclusion/submitNew',
     method: 'post',
     data: row
   })
 }
-
-export const shenfang = (ids) => {
+export const getLazyList = (parentId, params) => {
   return request({
-    url: '/api/taocao-prescription/review/shenfang',
-    method: 'post',
+    url: '/api/parties/orderdrugexclusion/lazy-list',
+    method: 'get',
     params: {
-      ids,
+      ...params,
+      parentId
     }
   })
 }
 
-export const huChi = (ids) => {
+export const getpartiesTree = (parentId) => {
   return request({
-    url: '/api/parties/orderdrugexclusion/huChi',
-    method: 'post',
+    url: '/api/parties/orderdrugexclusion/tree',
+    method: 'get',
     params: {
-      ids,
+      parentId,
     }
   })
 }
-
