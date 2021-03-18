@@ -539,19 +539,20 @@
                     prop: "basicUnit",
                     editDisplay: false,
                     disabled: true,
-                    type:'select',
-                    props: {
-                      label: 'dictValue',
-                      value: 'dictKey'
-                    },
-                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=goods_unit",
+                    value:"克"
                   },
                   {
                     label: '规格',
                     prop: "specification",
-                    disabled: true,
                     placeholder: " ",
-                    width: 100,
+                    width: 140,
+                    type: "select",
+                    disabled:true,
+                    props: {
+                      label: 'dictValue',
+                      value: 'dictKey'
+                    },
+                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
                   },
                   {
                     label: "包装规格",
@@ -575,13 +576,18 @@
                     label: "生产厂家",
                     prop: "manufacturer",
                     disabled: true,
-                    width:150,
+                    width:200,
                   },
                   {
                     label: "供应商",
                     prop: "supplierName",
-                    disabled: true,
-                    width:150,
+                    sortable:true,
+                    type:'select',
+                    props:{
+                      label:'supplierName',
+                      value:'id'
+                    },
+                    dicUrl: '/api/quality/information/dropDownsss'
                   },
                   {
                     label: "包装数量",
@@ -837,6 +843,7 @@
              vals.supplierName = detail.supplierName
              vals.packageSpecification = detail.packageSpecification
              vals.specificationLevel = detail.specificationLevel
+             vals.specification = detail.specification
         })
         },
 
@@ -864,6 +871,7 @@
         vals.supplierName = row.supplierName
         vals.packageSpecification = row.packageSpecification
         vals.specificationLevel = row.specificationLevel
+        vals.specification = row.specification
         this.expireDialog = false;
       },
     }

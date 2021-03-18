@@ -374,7 +374,7 @@
                   {
                     label: '商品',
                     prop: "goodsId",
-                    type: 'select',
+                    type: 'tree',
                     width: 200,
                     //filterable: true,
                     display:false,
@@ -403,16 +403,6 @@
                           });
                         });
                       },1000);
-
-
-
-
-
-
-
-
-
-
                     },
 
                   },
@@ -486,7 +476,12 @@
                     prop: "specification",
                     placeholder: " ",
                     width: 140,
-
+                    type: "select",
+                    props: {
+                      label: 'dictValue',
+                      value: 'dictKey'
+                    },
+                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
                   },
                   {
                     label: "生产日期",

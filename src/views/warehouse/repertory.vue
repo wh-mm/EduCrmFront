@@ -264,6 +264,18 @@
               width:100,
             },
             {
+              label: '规格',
+              prop: "specification",
+              placeholder: " ",
+              width: 140,
+              type: "select",
+              props: {
+                label: 'dictValue',
+                value: 'dictKey'
+              },
+              dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
+            },
+            {
               label: "包装规格",
               prop: "packageSpecification",
               sortable:true,

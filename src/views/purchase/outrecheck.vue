@@ -365,13 +365,15 @@
                     width: 130,
                     rules: [{
                       validator: validateQuantity,
-                      trigger: 'blur'
+                      trigger: 'blur',
+                      required: true,
                     }]
                   },
                   {
                     label: '出货仓库',
                     prop: "warehouseId",
                     type:'select',
+                    width: 200,
                     props: {
                       label: 'title',
                       value: 'id'
@@ -382,6 +384,7 @@
                     label:'区域',
                     prop: "storageRegionId",
                     type:"select",
+                    width: 200,
                     props: {
                       label: 'name',
                       value: 'id'
@@ -393,6 +396,7 @@
                     label: "储位",
                     prop: "storageId",
                     type:'select',
+                    width: 200,
                     props: {
                       label: 'name',
                       value: 'id'
@@ -433,9 +437,15 @@
                   {
                     label: '规格',
                     prop: "specification",
-                    disabled: true,
                     placeholder: " ",
-                    width: 150,
+                    disabled: true,
+                    width: 140,
+                    type: "select",
+                    props: {
+                      label: 'dictValue',
+                      value: 'dictKey'
+                    },
+                    dicUrl: "/api/blade-system/dict-biz/dictionary?code=specifications"
                   },
                   {
                   label: '备注',
@@ -683,6 +693,7 @@
         vals.supplierName = row.supplierName
         vals.packageSpecification = row.packageSpecification
         vals.specificationLevel = row.specificationLevel
+        vals.specification = row.specification
         this.expireDialog = false;
       },
       selectByBatchNumber(index,row){
@@ -701,6 +712,7 @@
           vals.supplierName = detail.supplierName
           vals.packageSpecification = detail.packageSpecification
           vals.specificationLevel = detail.specificationLevel
+          vals.specification = detail.specification
         })
       },
       expireGoodsHint(expireGoods) {
