@@ -374,9 +374,10 @@
                   {
                     label: '商品',
                     prop: "goodsId",
-                    type: 'tree',
+                    type: 'select',
                     width: 200,
-                    //filterable: true,
+                    filterable: true,
+                    remote:true,
                     display:false,
                     rules: [{
                       required: true,
@@ -389,9 +390,7 @@
                     },
                     dicUrl:'/api/erp-wms/goods/selectListGoodsByName?name={{key}}',
                     change: (value) => {
-                      console.log(value)
-                      console.log(value.row)
-                      console.log(value.row.goodsId)
+
                       setTimeout(()=>{
                         getGoodsDetail(value.row.goodsId).then(res => {
                           var selectValue = res.data.data;
