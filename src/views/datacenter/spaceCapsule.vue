@@ -198,11 +198,9 @@ export default {
           }else{
             this.separate = dataAll.separate.reverse()
           }
-          debugger
-          let panms ={}
           for(let i = 0; i < dataAll.hospitalgroup.length; i++){
-            panms[i].value = dataAll.hospitalgroup[i].number
-            panms[i].name = dataAll.hospitalgroup[i].hospitalName
+            that.variousHospitalOrderNumberName[i].value = dataAll.hospitalgroup[i].number
+            that.variousHospitalOrderNumberName[i].name = dataAll.hospitalgroup[i].hospitalName
           }
 
 
@@ -309,6 +307,10 @@ export default {
               }
             },
             data: this.variousHospitalOrderNumberName
+            //{value:'300',name:'医院1'},
+            //{value:'300',name:'医院1'},
+            //{value:'300',name:'医院1'},
+            //{value:'300',name:'医院1'}
           }
         ]
       });
