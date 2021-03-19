@@ -8,15 +8,15 @@
         <div class="con_div_text01 left">
           <img src="../../images/info_1.png" class="left text01_img"/>
           <div class="left text01_div">
-            <p>总采集数据量(G)</p>
-            <p>1235</p>
+            <p>颗粒生产线订单总数</p>
+            <p>{{separate[1].number}}</p>
           </div>
         </div>
         <div class="con_div_text01 right">
           <img src="../../images/info_2.png" class="left text01_img"/>
           <div class="left text01_div">
-            <p>当月采集数据量(G)</p>
-            <p>235</p>
+            <p>颗粒生产线订单金额</p>
+            <p>{{separate[1].money}}</p>
           </div>
         </div>
       </div>
@@ -24,15 +24,15 @@
         <div class="con_div_text01 left">
           <img src="../../images/info_3.png" class="left text01_img"/>
           <div class="left text01_div">
-            <p>总门诊数(人)</p>
-            <p class="sky">12356</p>
+            <p>饮片生产线订单总数</p>
+            <p class="sky">{{separate[0].number}}</p>
           </div>
         </div>
         <div class="con_div_text01 right">
           <img src="../../images/info_4.png" class="left text01_img"/>
           <div class="left text01_div">
-            <p>当月门诊数(人)</p>
-            <p class="sky">12356</p>
+            <p>饮片生产线订单金额</p>
+            <p class="sky">{{separate[0].money}}</p>
           </div>
         </div>
       </div>
@@ -41,15 +41,15 @@
         <div class="con_div_text01 left">
           <img src="../../images/info_5.png" class="left text01_img"/>
           <div class="left text01_div">
-            <p>总住院数(人)</p>
-            <p class="org">12356</p>
+            <p>订单总数</p>
+            <p class="org">{{znumber}}</p>
           </div>
         </div>
         <div class="con_div_text01 right">
           <img src="../../images/info_6.png" class="left text01_img"/>
           <div class="left text01_div">
-            <p>当月住院数(人)</p>
-            <p class="org">12356</p>
+            <p>订单总额</p>
+            <p class="org">{{zmoney}}</p>
           </div>
         </div>
       </div>
@@ -58,45 +58,45 @@
     <div class="div_any">
       <div class="left div_any01">
         <div class="div_any_child">
-          <div class="div_any_title"><img src="../../images/title_1.png">各医院采集数据量</div>
+          <div class="div_any_title"><img src="../../images/title_1.png">各医院订单数量</div>
           <p id="pieChart1" class="p_chart"></p>
         </div>
         <div class="div_any_child">
-          <div class="div_any_title"><img src="../../images/title_2.png">各医院门诊住院费用</div>
+          <div class="div_any_title"><img src="../../images/title_2.png">各医院订单金额</div>
           <p id="histogramChart" class="p_chart"></p>
         </div>
       </div>
       <div class="div_any02 left ">
         <div class="div_any_child div_height">
-          <div class="div_any_title any_title_width"><img src="../../images/title_0.png">厦门市地图 </div>
+          <div class="div_any_title any_title_width"><img src="../../images/title_0.png">泰来县地图</div>
           <div id="mapChart" style="width:97.5%;height:95%;display: inline-block;padding-left: 1.25%;padding-top:2.2%"></div>
         </div>
       </div>
       <div class="right div_any01">
         <div class="div_any_child">
-          <div class="div_any_title"><img src="../../images/title_3.png">数据采集条数(当日)</div>
+          <div class="div_any_title"><img src="../../images/title_3.png">各医院颗粒订单数量</div>
           <p id="lineChart" class="p_chart"></p>
         </div>
         <div class="div_any_child">
-          <div class="div_any_title"><img src="../../images/title_4.png">就诊人数(当日)</div>
+          <div class="div_any_title"><img src="../../images/title_4.png">各医院饮片订单数量</div>
           <p id="lineChart2" class="p_chart"></p>
         </div>
       </div>
     </div>
 
-    <div id="el-dialog" class="">
+    <div id="el-dialog" :class="display">
       <div class="xc_layer"></div>
       <div class="popBox" id="printView">
-        <div class="ttBox"><span class="tt" id="reportTitle">第一医院</span><img src="../../images/close.png" style="width: 30px;float: right;cursor: pointer;" title="关闭弹窗" class="close"/></div>
+        <div class="ttBox"><span class="tt" id="reportTitle">第一医院</span><img src="../../images/close.png" style="width: 30px;float: right;cursor: pointer;" title="关闭弹窗" class="close" onclick="closeFloat()"/></div>
         <div class="txtBox" id="el-dialog_body">
           <div style="height:100%;width: 98%;margin-left: 1%;">
             <div class="left div_any01" style="width: 64%;">
               <div class="div_any_child">
-                <div class="div_any_title"><div type="text" class="demo-input" id="date1" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../../images/title_4.png">门诊住院人次</div>
+                <div class="div_any_title"><div type="text" class="demo-input" id="date1" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../../images/title_4.png">颗粒</div>
                 <p id="lineChart3" class="p_chart"></p>
               </div>
               <div class="div_any_child">
-                <div class="div_any_title"><div type="text" class="demo-input" id="date2" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../../images/title_7.png">医疗费用</div>
+                <div class="div_any_title"><div type="text" class="demo-input" id="date2" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../../images/title_7.png">饮片</div>
                 <p id="lineChart4" class="p_chart"></p>
               </div>
             </div>
@@ -106,7 +106,7 @@
                 <p id="pieChart2" class="p_chart"></p>
               </div>
               <div class="div_any_child">
-                <div class="div_any_title"><div type="text" class="demo-input" id="date4" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../../images/title_20.png">医疗费用组成</div>
+                <div class="div_any_title"><div type="text" class="demo-input" id="date4" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../../images/title_20.png">颗粒饮片比例</div>
                 <p id="pieChart3" class="p_chart"></p>
               </div>
             </div>
@@ -121,12 +121,13 @@
   </basic-container>
 </template>
 <script>
-import {getOrderTotal} from "@/api/statistics/statistics";
+import {getOrderTotal} from "@/api/datacenter/SpaceCapsule";
 var mapChart;
 var lineChart3;
 var pieChart1;
 var pieChart2;
 var pieChart3;
+
 export default {
   name: "spaceCapsule",
   data() {
@@ -147,21 +148,33 @@ export default {
       selectedYin:[],
       legendDataKeLi:[],
       selectedKeLi:[],
-
+      separate:[{
+        number:'',
+        money:''
+      },{
+        number:'',
+        money:''
+      }], //
+      znumber:'',//订单总数
+      zmoney:'',//订单总额
+      display:'hide',//浮层隐藏显示
+      variousHospitalOrderNumberName:[], //各医院订单数量和名称
+      variousHospitalOrderPriceName:[], //各医院订单金额和名称
     };
   },
+
   mounted() {
     this.orderTotal();
     this.drawLine();
     this.init2();
-    $("#el-dialog").addClass("hide");
-    $(".close").click(function (event) {
-      $("#el-dialog").addClass("hide");
-    });
   },
   methods: {
-
+    //关闭浮层
+    closeFloat(){
+      this.display = 'hide'
+    },
     orderTotal() {
+      var that = this
       let params = {
         startTime: this.timeSlot[0],
         endTime: this.timeSlot[1],
@@ -176,48 +189,24 @@ export default {
           this.orderYinP= [];
           this.nameList = [];
           this.hospitalList = [];
-          this.totalPrices = res.data.data.orderTotal.totalPrices;
-          this.quantity = res.data.data.torderQuantity.Quantity;
-          res.data.data.orderQuantityHospital.forEach(value => {
-            let item = {
-              name: value.hospital_name,
-              value: value.count,
-            };
-            this.orderList.push(item);
-            this.legendDataXiaoShou.push(value.hospital_name);
-            this.nameList.push(value.hospital_name);
-          });
-          res.data.data.orderTotalHospital.forEach(value => {
-            let item = {
-              name: value.hospital_name,
-              value: value.prices,
-            };
-            this.legendDataJinEr.push(value.hospital_name);
-            this.pricesList.push(item);
-          });
-          res.data.data.orderkiLi.forEach(value =>{
-            let item = {
-              name: value.goodsName,
-              value: value.drugNumber,
-            }
-            this.orderki.push(item);
-            this.legendDataKeLi.push(value.goodsName);
-            this.nameList.push(value.goodsName);
-          });
-          res.data.data.orderYinP.forEach(value =>{
-            let item ={
-              name: value.goodsName,
-              value : value.drugNumber,
-            }
-            this.orderYinP.push(item);
-            this.legendDataYin.push(value.goodsName);
-            this.nameList.push(value.goodsName);
-          });
-          console.log(this.orderList);
-          console.log(this.nameList);
-          console.log(this.orderki);
-          console.log(this.orderYinP);
-          console.log("集合", this.pricesList);
+          this.variousHospitalOrderNumberName = [];
+          let dataAll = res.data.data;//数据集合
+          this.znumber = dataAll.sum.znumber;
+          this.zmoney = dataAll.sum.zmoney;
+          if(dataAll.separate[0].order_type == 'jianyao'){
+            this.separate = dataAll.separate;
+          }else{
+            this.separate = dataAll.separate.reverse()
+          }
+          debugger
+          let panms ={}
+          for(let i = 0; i < dataAll.hospitalgroup.length; i++){
+            panms[i].value = dataAll.hospitalgroup[i].number
+            panms[i].name = dataAll.hospitalgroup[i].hospitalName
+          }
+
+
+
           this.drawLine();
         } else {
           this.$message({
@@ -275,7 +264,7 @@ export default {
       bmap.setMapStyle({ style: 'midnight' })
 
 
-      pieChart1 = echarts.init(document.getElementById('pieChart1'));
+      pieChart1 = echarts.init(document.getElementById('pieChart1')); //各医院订单数量
       pieChart1.setOption({
 
         color: ["#87cefa", "#ff7f50", "#32cd32", "#da70d6",],
@@ -286,11 +275,11 @@ export default {
           textStyle: {
             color: '#ffffff',
           },
-          data: ['厦门第一医院', '厦门中山医院', '厦门中医院', '厦门第五医院',],
+          data: this.variousHospitalOrderName,
         },
         tooltip: {
           trigger: 'item',
-          formatter: "{a}<br/>{b}<br/>{c}G ({d}%)"
+          formatter: "{a}<br/>{b}<br/>{c} ({d}%)"
         },
         calculable: false,
         series: [
@@ -319,31 +308,15 @@ export default {
                 }
               }
             },
-            data: [
-              { value: 335, name: '厦门第一医院' },
-              { value: 310, name: '厦门中山医院' },
-              { value: 234, name: '厦门中医院' },
-              { value: 135, name: '厦门第五医院' }
-
-            ]
+            data: this.variousHospitalOrderNumberName
           }
         ]
       });
 
 
-      var lineChart = echarts.init(document.getElementById('lineChart'));
+      var lineChart = echarts.init(document.getElementById('lineChart'));//各医院颗粒订单数量
       lineChart.setOption({
-
-        color: ["#87cefa", "#ff7f50", "#32cd32", "#da70d6",],
-        legend: {
-          y: '260',
-          x: 'center',
-          textStyle: {
-            color: '#ffffff',
-
-          },
-          data: ['厦门第一医院', '厦门中山医院', '厦门中医院', '厦门第五医院',],
-        },
+        color: "#ff7f50",
         calculable: false,
         tooltip: {
           trigger: 'item',
@@ -353,248 +326,11 @@ export default {
           {
             type: 'value',
             // axisLine: { onZero: false },
-            // axisLine: {
-            //   lineStyle: {
-            //     color: '#034c6a'
-            //   },
-            // },
-
-            axisLabel: {
-              textStyle: {
-                color: '#fff'
-              },
-              formatter: function (value) {
-                return value + "k条"
-              },
-            },
-            splitLine: {
-              lineStyle: {
-                width: 0,
-                type: 'solid'
-              }
-            }
-          }
-        ],
-        xAxis: [
-          {
-            type: 'category',
-            data: ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
             axisLine: {
               lineStyle: {
                 color: '#034c6a'
               },
             },
-            splitLine: {
-              "show": false
-            },
-            axisLabel: {
-              textStyle: {
-                color: '#fff'
-              },
-              formatter: function (value) {
-                return value + ""
-              },
-            },
-            // splitLine: {
-            //   lineStyle: {
-            //     width: 0,
-            //     type: 'solid'
-            //   }
-            // },
-          }
-        ],
-        grid: {
-          left: '5%',
-          right: '5%',
-          bottom: '20%',
-          containLabel: true
-        },
-        series: [
-          {
-            name: '厦门第一医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
-            },
-            data: [15, 0, 20, 45, 22.1, 25, 70, 55, 76]
-          },
-          {
-            name: '厦门中山医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
-            },
-            data: [25, 10, 30, 55, 32.1, 35, 80, 65, 76]
-          },
-          {
-            name: '厦门中医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
-            },
-            data: [35, 20, 40, 65, 42.1, 45, 90, 75, 96]
-          },
-          {
-            name: '厦门第五医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
-            },
-            data: [45, 30, 50, 75, 52.1, 55, 100, 85, 106]
-          }
-        ]
-      });
-
-      var histogramChart = echarts.init(document.getElementById('histogramChart'));
-      histogramChart.setOption({
-
-        color: ["#87cefa", "#ff7f50", "#32cd32", "#da70d6",],
-        legend: {
-          y: '250',
-          x: 'center',
-          data: ['厦门第一医院', '厦门中山医院', '厦门中医院', '厦门第五医院'],
-          textStyle: {
-            color: '#ffffff',
-
-          }
-        },
-
-        calculable: false,
-
-
-        grid: {
-          left: '5%',
-          right: '5%',
-          bottom: '20%',
-          containLabel: true
-        },
-
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-
-        xAxis: [
-          {
-            type: 'value',
-            axisLabel: {
-              show: true,
-              textStyle: {
-                color: '#fff'
-              }
-            },
-            splitLine: {
-              lineStyle: {
-                color: ['#f2f2f2'],
-                width: 0,
-                type: 'solid'
-              }
-            }
-
-          }
-        ],
-
-        yAxis: [
-          {
-            type: 'category',
-            data: ['门诊人数(人)', '住院人次(人)', '人均费用(元)'],
-            axisLabel: {
-              show: true,
-              textStyle: {
-                color: '#fff'
-              }
-            },
-            splitLine: {
-              lineStyle: {
-                width: 0,
-                type: 'solid'
-              }
-            }
-          }
-        ],
-
-        series: [
-          {
-            name: '厦门第一医院',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: { normal: { label: { show: true, position: 'insideRight' } } },
-            data: [320, 302, 301]
-          },
-          {
-            name: '厦门中山医院',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: { normal: { label: { show: true, position: 'insideRight' } } },
-            data: [120, 132, 101]
-          },
-          {
-            name: '厦门中医院',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: { normal: { label: { show: true, position: 'insideRight' } } },
-            data: [220, 182, 191]
-          },
-          {
-            name: '厦门第五医院',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: { normal: { label: { show: true, position: 'insideRight' } } },
-            data: [150, 212, 201]
-          }
-
-        ]
-      });
-
-      var lineChart2 = echarts.init(document.getElementById('lineChart2'));
-      lineChart2.setOption({
-
-        color: ["#87cefa", "#ff7f50", "#32cd32", "#da70d6",],
-        legend: {
-          y: '260',
-          x: 'center',
-          textStyle: {
-            color: '#ffffff',
-
-          },
-          data: ['厦门第一医院', '厦门中山医院', '厦门中医院', '厦门第五医院',],
-        },
-        calculable: false,
-        tooltip: {
-          trigger: 'item',
-          formatter: "{a}<br/>{b}<br/>{c}条"
-        },
-        yAxis: [
-          {
-            type: 'value',
-            // axisLine: { onZero: false },
-            // axisLine: {
-            //   lineStyle: {
-            //     color: '#034c6a'
-            //   },
-            // },
 
             axisLabel: {
               textStyle: {
@@ -615,7 +351,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+            data: ['医院1','医院2','医院3','医院4','医院5','医院6','医院7','医院8','医院9','医院10','医院11','医院12','医院13','医院14','医院15','医院16'],
             axisLine: {
               lineStyle: {
                 color: '#034c6a'
@@ -640,6 +376,11 @@ export default {
             },
           }
         ],
+        dataZoom: [{
+          startValue: ''
+        }, {
+          type: 'inside'
+        }],
         grid: {
           left: '5%',
           right: '5%',
@@ -658,47 +399,183 @@ export default {
                 }
               }
             },
-            data: [15, 0, 20, 45, 22.1, 25,].reverse()
+            data: [15, 0, 20, 45, 22.1, 25,15, 0, 20, 45, 22.1, 25,15, 0, 20, 45, 22.1, 25,].reverse()
           },
-          {
-            name: '厦门中山医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
+        ]
+      });
+
+      var histogramChart = echarts.init(document.getElementById('histogramChart'));//各医院订单金额
+      histogramChart.setOption({
+        title: {
+          text: ''
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        xAxis: {
+          data: ['医院1','医院2','医院3','医院4','医院5','医院6','医院7','医院8','医院9','医院10','医院11','医院12','医院13','医院14','医院15','医院16',],
+          // axisLine: { onZero: false },
+          axisLine: {
+            lineStyle: {
+              color: '#034c6a'
             },
-            data: [25, 10, 30, 55, 32.1, 35,].reverse()
           },
-          {
-            name: '厦门中医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
+          axisLabel: {
+            textStyle: {
+              color: '#fff'
             },
-            data: [35, 20, 40, 65, 42.1, 45,].reverse()
           },
-          {
-            name: '厦门第五医院',
-            type: 'line',
-            smooth: true,
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  shadowColor: 'rgba(0,0,0,0.4)'
-                }
-              }
+        },
+        yAxis: {
+          splitLine: {
+            show: false
+          },
+          // axisLine: { onZero: false },
+          axisLine: {
+            lineStyle: {
+              color: '#034c6a'
             },
-            data: [45, 30, 50, 75, 52.1, 55, 6].reverse()
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#fff'
+            },
+          },
+        },
+
+        dataZoom: [{
+          startValue: ''
+        }, {
+          type: 'inside'
+        }],
+        visualMap: {
+          top: 10,
+          right: 10,
+          show:false,
+          color:'#fff',
+          pieces: [{
+            gt: 100,
+            lte: 500,
+            color: '#096'
+          }, {
+            gt: 500,
+            lte: 1000,
+            color: '#ffde33'
+          }, {
+            gt: 1000,
+            lte: 1500,
+            color: '#ff9933'
+          }, {
+            gt: 1500,
+            lte: 2000,
+            color: '#cc0033'
+          }, {
+            gt: 2000,
+            lte: 3000,
+            color: '#660099'
+          }, {
+            gt: 3000,
+            color: '#7e0023'
+          }],
+          outOfRange: {
+            color: '#fff'
           }
+        },
+        series: {
+          name: '',
+          type: 'line',
+          data: ['1631','1002','603','101','2002','1633','1004','650','106','2070','1683','1090','680','190','2700','2700',],
+        }
+      });
+
+      var lineChart2 = echarts.init(document.getElementById('lineChart2'));//各医院饮片订单数量
+      lineChart2.setOption({
+
+        color: "#87cefa",
+        calculable: false,
+        tooltip: {
+          trigger: 'item',
+          formatter: "{a}<br/>{b}<br/>{c}条"
+        },
+        yAxis: [
+          {
+            type: 'value',
+            // axisLine: { onZero: false },
+            axisLine: {
+              lineStyle: {
+                color: '#034c6a'
+              },
+            },
+
+            axisLabel: {
+              textStyle: {
+                color: '#fff'
+              },
+              formatter: function (value) {
+                return value + "k条"
+              },
+            },
+            splitLine: {
+              lineStyle: {
+                width: 0,
+                type: 'solid'
+              }
+            }
+          }
+        ],
+        xAxis: [
+          {
+            type: 'category',
+            data: ['医院1','医院2','医院3','医院4','医院5','医院6','医院7','医院8','医院9','医院10','医院11','医院12','医院13','医院14','医院15','医院16'],
+            axisLine: {
+              lineStyle: {
+                color: '#034c6a'
+              },
+            },
+            // splitLine: {
+            //   "show": false
+            // },
+            axisLabel: {
+              textStyle: {
+                color: '#fff'
+              },
+              formatter: function (value) {
+                return value + ""
+              },
+            },
+            splitLine: {
+              lineStyle: {
+                width: 0,
+                type: 'solid'
+              }
+            },
+          }
+        ],
+        dataZoom: [{
+          startValue: ''
+        }, {
+          type: 'inside'
+        }],
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '20%',
+          containLabel: true
+        },
+        series: [
+          {
+            name: '厦门第一医院',
+            type: 'line',
+            smooth: true,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  shadowColor: 'rgba(0,0,0,0.4)'
+                }
+              }
+            },
+            data: [15, 0, 20, 45, 22.1, 25,15, 0, 20, 45, 22.1, 25,15, 0, 20, 45, 22.1, 25,].reverse()
+          },
         ]
       });
     },
