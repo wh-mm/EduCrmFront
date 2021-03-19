@@ -468,6 +468,7 @@
       },
       Test(row){
         Test(row).then(res=>{
+          console.log(res.data.data.data[0].printData)
           if (res.data.success) {
             this.$message.success(res.data.msg);
           } else {
