@@ -396,7 +396,7 @@ export default {
         },
         series: [
           {
-            name: '',
+            name: '厦门第一医院',
             type: 'line',
             smooth: true,
             itemStyle: {

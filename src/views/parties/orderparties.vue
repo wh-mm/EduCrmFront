@@ -359,18 +359,26 @@ export default {
     },
     //导出
     handleExport() {
-
       if (this.selectionList.length === 0) {
         return this.$message.error("请选择需要的商品");
       }
       this.dialogVisible = true;
-
       this.$confirm("是否导出协定方信息?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        window.open(`/api/parties/orderparties/export-orderParties?${this.website.tokenHeader}=${getToken()}`);
+        console.log(this.selectionList)
+        alert(this.selectionList.length)
+        // eslint-disable-next-line no-unused-vars
+        let sendids = "";
+        for (let i = 0; i < this.selectionList.length; i++) {
+            sendids += this.selectionList[i].id +","
+        }
+      //  window.open(`/api/parties/orderparties/export-orderParties?${this.website.tokenHeader}=${getToken()}'8&ids=`+sendids);
+    //    window.open(`/api/parties/orderparties/export-orderParties?ids=`+sendids);
+
+        window.open(`/api/parties/orderparties/export-orderParties?${this.website.tokenHeader}=${getToken()}&ids=`+sendids);
       });
     },
     uploadAfter(res, done, loading, column) {
