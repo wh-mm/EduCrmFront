@@ -1,6 +1,6 @@
 export default {
   tip: '提示',
-  title: '淘草中医药',
+  title: 'EduCRM',
   logoutTip: '退出系统, 是否继续?',
   submitText: '确定',
   cancelText: '取消',
@@ -8,8 +8,8 @@ export default {
   menuTip: '没有发现菜单',
   route: {
     info: '个人信息',
-    website: '淘草中医药',
-    avuexwebsite: '淘草中医药',
+    website: 'EduCRM',
+    avuexwebsite: 'EduCRM',
     dashboard: '首页',
     more: '更多',
     tags: '标签',
@@ -26,7 +26,7 @@ export default {
   },
   login: {
     title: '登录 ',
-    info: '淘草中医药',
+    info: 'EduCRM',
     tenantId: '请输入租户ID',
     username: '请输入账号',
     password: '请输入密码',

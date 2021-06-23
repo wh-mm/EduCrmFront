@@ -304,7 +304,9 @@
               prop: "userTypeName",
               slot: true,
               display: false
+
             },
+
             {
               label: "薪资",
               prop: "salary",
@@ -379,7 +381,7 @@
                   slot: true,
                   prop: "userType",
                   rules: [{
-                    required: true,
+                    required: false,
                     message: "请选择用户平台",
                     trigger: "blur"
                   }]

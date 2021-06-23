@@ -90,6 +90,7 @@ export default {
               value: "dictKey"
             }
           },
+
           {
             label: "单号前缀",
             prop: "fieldOne",

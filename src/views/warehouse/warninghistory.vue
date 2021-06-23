@@ -26,6 +26,13 @@
                    v-if="permission.warninghistory_delete"
                    @click="handleDelete">删 除
         </el-button>
+        <el-button type="danger"
+                   size="small"
+                   icon="el-icon-delete"
+                   plain
+                   v-if="permission.warninghistory_delete"
+                   @click="Delete">彻底删除
+        </el-button>
 
       </template>
     </avue-crud>
@@ -233,6 +240,29 @@
             this.$refs.crud.toggleSelection();
           });
       },
+      Delete() {
+        if (this.selectionList.length === 0) {
+          this.$message.warning("请选择至少一条数据");
+          return;
+        }
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return delete(this.ids);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+            this.$refs.crud.toggleSelection();
+          });
+      },
+
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
           getDetail(this.form.id).then(res => {

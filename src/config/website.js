@@ -2,10 +2,10 @@
  * 全局配置文件
  */
 export default {
-  title: "淘草中医药",
+  title: "EduCRM",
   logo: "S",
   key: 'saber',//配置主键,目前用于存储
-  indexTitle: '淘草中医药',
+  indexTitle: 'EduCRM',
   clientId: 'saber', // 客户端id
   clientSecret: 'saber_secret', // 客户端密钥
   tenantMode: false, // 是否开启租户模式
